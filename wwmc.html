@@ -31,11 +31,7 @@
   --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
   --transition:all .18s ease;
 }
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#1a1a1a;min-height:100vh;font-size:13px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-html{scroll-behavior:smooth}
-.view{content-visibility:auto;contain-intrinsic-size:900px 1px}
-.card,.dash-card,.metric,.dash-stat,.dr-report-card,.approval-card,.user-card{content-visibility:auto;contain-intrinsic-size:280px 1px}
-.tbl-wrap{content-visibility:auto;contain-intrinsic-size:520px 1px}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#1a1a1a;min-height:100vh;font-size:13px;-webkit-font-smoothing:antialiased}
 
 /* ── LOGIN ── */
 .login-screen{display:flex;min-height:100vh;background:#060E1C;overflow:hidden}
@@ -462,7 +458,7 @@ tbody tr{transition:var(--transition)}
     <button class="tab admin-only" id="tab-pl-approvals" onclick="switchTab('approvals')" style="display:none">
       Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span>
     </button>
-    <button class="tab" id="tab-dailyreport-register" onclick="switchTab('dailyreport-register')">📋 Daily Report Register</button>
+    <button class="tab" id="tab-dailyreport" onclick="switchTab('dailyreport')">📋 Daily Report</button>
     <button class="tab" id="tab-docs" onclick="switchTab('docs')">📁 Documents</button>
   </div>
   <div class="content">
@@ -580,18 +576,14 @@ tbody tr{transition:var(--transition)}
     <!-- DAILY REPORT -->
     <div class="view no-print" id="view-dailyreport">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-        <div id="dr-page-title" style="font-size:16px;font-weight:700;color:#1F3864">New Daily Report</div>
-        <div id="dr-header-new" style="display:flex;gap:8px;align-items:center">
+        <div style="font-size:16px;font-weight:700;color:#1F3864">Daily Activity Report</div>
+        <div style="display:flex;gap:8px;align-items:center">
           <span id="dr-date-display" style="font-size:12px;font-weight:600;color:#1F3864;background:#EEF2F8;padding:6px 12px;border-radius:6px"></span>
-        </div>
-        <div id="dr-header-register" style="display:none;gap:8px;align-items:center">
-          <button class="btn primary" onclick="switchTab('dailyreport-new')">+ Add Daily Report</button>
           <button class="btn" id="dr-export-btn" onclick="exportDailyReportsCSV()">⇩ Export Reports CSV</button>
           <button class="btn primary admin-only" id="dr-compile-btn" onclick="compileMasterReport()" style="display:none">📄 Compile Master Report</button>
         </div>
       </div>
 
-      <div id="dr-entry-pane">
       <!-- SUBMIT FORM -->
       <div class="dr-form-section">
         <div class="dr-section-head">📋 Report Information</div>
@@ -654,34 +646,31 @@ tbody tr{transition:var(--transition)}
         <button class="btn" onclick="clearDRForm()">Clear</button>
         <button class="btn primary" onclick="submitDailyReport()">✓ Submit Report</button>
       </div>
-      </div>
 
-      <div id="dr-register-pane" style="display:none">
+
       <!-- ALL USERS: REPORT HISTORY -->
       <div id="dr-all-reports" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
           <div>
             <div style="font-size:14px;font-weight:700;color:#1F3864">Submitted Reports</div>
-            <div id="dr-reports-caption" style="font-size:11px;color:#6B7280;margin-top:3px">Showing all submitted reports ordered by upload date</div>
+            <div id="dr-reports-caption" style="font-size:11px;color:#6B7280;margin-top:3px">Showing reports for today</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
             <label for="dr-date-filter" style="font-size:11px;font-weight:700;color:#1F3864">Date</label>
             <input type="date" id="dr-date-filter" onchange="debouncedLoadTodayReports()" style="font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff">
-            <input type="text" id="dr-report-search" oninput="debouncedLoadTodayReports()" placeholder="Search ref, name, system or content..." style="font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;min-width:220px">
+            <input type="text" id="dr-report-search" oninput="debouncedLoadTodayReports()" placeholder="Search ref, name, system..." style="font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;min-width:220px">
             <select id="dr-report-sort" onchange="debouncedLoadTodayReports()" style="font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff">
-              <option value="uploaded_desc">Latest Upload</option>
-              <option value="uploaded_asc">Oldest Upload</option>
               <option value="ref_desc">Latest Ref</option>
               <option value="ref_asc">Oldest Ref</option>
               <option value="name">Prepared By</option>
             </select>
-            <button class="btn sm" onclick="clearTodayReportsDate()">All Dates</button>
+            <button class="btn sm" onclick="setTodayReportsDate(0)">Today</button>
+            <button class="btn sm" onclick="setTodayReportsDate(-1)">Yesterday</button>
             <button class="btn sm" onclick="loadTodayReports()">↻ Refresh</button>
             <span id="dr-submitted-count" style="background:#1F3864;color:#fff;font-size:11px;padding:2px 10px;border-radius:10px">0</span>
           </div>
         </div>
         <div id="dr-reports-list"></div>
-      </div>
       </div>
     </div>
 
@@ -706,7 +695,7 @@ tbody tr{transition:var(--transition)}
     <div class="view no-print" id="view-docs">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div style="font-size:16px;font-weight:700;color:var(--navy)">📁 Document Controller</div>
-        <button class="btn primary" id="doc-upload-btn" onclick="showUploadDoc()">+ Upload Document</button>
+        <button class="btn primary" onclick="showUploadDoc()">+ Upload Document</button>
       </div>
 
       <!-- Upload Form -->
@@ -768,7 +757,7 @@ tbody tr{transition:var(--transition)}
         <div id="doc-file-info" style="display:none;margin:0 18px 12px;padding:8px 12px;background:var(--navy-light);border-radius:6px;font-size:12px;color:var(--navy);font-weight:600"></div>
         <div style="padding:0 18px 16px;display:flex;gap:8px">
           <button class="btn primary" onclick="submitDoc()">Upload Document</button>
-          <button class="btn" onclick="cancelDocForm()">Cancel</button>
+          <button class="btn" onclick="document.getElementById('doc-upload-form').style.display='none';resetPendingDocFile();">Cancel</button>
         </div>
       </div>
 
@@ -825,15 +814,6 @@ tbody tr{transition:var(--transition)}
   <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;display:none" class="no-print" id="handover-btns">
     <button class="btn primary" onclick="savePDF()">&#128438; Print / Save as PDF</button>
     <button class="btn" onclick="closeHandoverReport()">Close</button>
-  </div>
-</div>
-
-
-<!-- DOCUMENT VIEW MODAL -->
-<div class="modal-bg" id="doc-view-modal-bg">
-  <div class="modal" style="max-width:900px">
-    <div class="modal-head"><h3 id="doc-view-title">Document</h3><button onclick="closeDocViewModal()">&times;</button></div>
-    <div class="modal-body" id="doc-view-body"></div>
   </div>
 </div>
 
@@ -898,7 +878,7 @@ tbody tr{transition:var(--transition)}
         <div class="field"><label for="u-user">Username</label><input id="u-user" placeholder="e.g. ahmed.rashidi"></div>
         <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password"></div>
         <div class="field"><label for="u-role">Role</label>
-          <select id="u-role"><option value="user">User – Submit tickets only</option><option value="viewer">Viewer – Dashboard &amp; Documents download only</option><option value="supervisor">Supervisor – Edit &amp; close tickets</option><option value="admin">Admin – Full access</option></select>
+          <select id="u-role"><option value="user">User – Submit tickets only</option><option value="supervisor">Supervisor – Edit &amp; close tickets</option><option value="admin">Admin – Full access</option></select>
         </div>
       </div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
@@ -957,11 +937,16 @@ tbody tr{transition:var(--transition)}
   </div>
 
   <!-- SIGNATURES -->
-  <div class="pt-signatures" style="grid-template-columns:1fr;gap:0">
+  <div class="pt-signatures">
     <div>
       <div class="pt-sig-title">Raised By</div>
       <div class="pt-sig-line"></div>
       <div class="pt-sig-name" id="print-sig-raised"></div>
+    </div>
+    <div>
+      <div class="pt-sig-title">Verified By / SIC Engineer</div>
+      <div class="pt-sig-line"></div>
+      <div class="pt-sig-name">Mohammed Alharish &nbsp;|&nbsp; SCE</div>
     </div>
   </div>
 
@@ -1030,35 +1015,14 @@ const ticketDetailCache=new Map();
 const ticketPhotosCache=new Map();
 const reportDetailCache=new Map();
 
-function roleRank(role){return {viewer:1,user:2,supervisor:3,admin:4}[role]||0;}
-function isAdmin(){return roleRank(currentUser?.role)>=4;}
-function isSupervisor(){return roleRank(currentUser?.role)>=3;}
-function isViewer(){return currentUser?.role==='viewer';}
+function roleRank(role){return {user:1,supervisor:2,admin:3}[role]||0;}
+function isAdmin(){return roleRank(currentUser?.role)>=3;}
+function isSupervisor(){return roleRank(currentUser?.role)>=2;}
 function ensureLoggedIn(){if(!currentUser){showToast('Session expired. Please sign in again.','error');throw new Error('Not logged in');}}
 function requireRole(minRole,message='You do not have permission for this action.'){ensureLoggedIn();if(roleRank(currentUser.role)<roleRank(minRole)){showToast(message,'error');throw new Error(message);}return true;}
 function canManageTickets(){return isSupervisor();}
 function canEditReport(report){if(!currentUser||!report)return false; if(isAdmin()) return true; return currentUser.role==='supervisor' && report.submitted_by_username===currentUser.username;}
 function canDeleteReport(report){return !!currentUser && isAdmin() && !!report;}
-function canUploadDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
-function canEditDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
-function canDeleteDocs(){return !!currentUser && currentUser.role==='admin';}
-function canViewDashboard(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='viewer');}
-
-const SESSION_KEY='qas2_session';
-function saveSession(user){
-  try{ localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }catch(e){}
-  try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); }catch(e){}
-}
-function clearSession(){
-  try{ localStorage.removeItem(SESSION_KEY); }catch(e){}
-  try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
-}
-function loadSession(){
-  let raw=null;
-  try{ raw=localStorage.getItem(SESSION_KEY)||sessionStorage.getItem(SESSION_KEY); }catch(e){}
-  if(!raw) return null;
-  try{ return JSON.parse(raw); }catch(e){ clearSession(); return null; }
-}
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
 // ── AUTH ──
@@ -1070,59 +1034,34 @@ async function doLogin(){
     const users=await sbFetch('qas2_users?username=eq.'+encodeURIComponent(uname)+'&password=eq.'+encodeURIComponent(pass)+'&select=*');
     if(!users||!users.length){document.getElementById('login-error').textContent='Incorrect username or password.';document.getElementById('login-pass').value='';setTimeout(()=>document.getElementById('login-error').textContent='',2500);return;}
     currentUser=users[0];
-    saveSession(currentUser);
+    sessionStorage.setItem('qas2_session',JSON.stringify(currentUser));
     showApp();
   }catch(e){document.getElementById('login-error').textContent='Connection error. Check internet.';}
 }
 
 function doLogout(){
   if(!confirm('Logout?'))return;
-  currentUser=null;clearSession();
+  currentUser=null;sessionStorage.removeItem('qas2_session');
   document.getElementById('main-app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
 }
 
 function showApp(){
-  const loginScreen=document.getElementById('login-screen');
-  const mainApp=document.getElementById('main-app');
-  const topbarUsername=document.getElementById('topbar-username');
-  if(!loginScreen || !mainApp || !topbarUsername){
-    return;
-  }
-  loginScreen.style.display='none';
-  mainApp.style.display='block';
-  topbarUsername.textContent=currentUser.name;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('topbar-username').textContent=currentUser.name;
   const isAdmin=currentUser.role==='admin';
   const isSupervisor=currentUser.role==='supervisor';
-  const isViewerRole=currentUser.role==='viewer';
   const rb=document.getElementById('role-badge');
   if(isAdmin){rb.style.display='inline-block';rb.style.background='#C00000';rb.textContent='ADMIN';}
   else if(isSupervisor){rb.style.display='inline-block';rb.style.background='#375623';rb.textContent='SUPERVISOR';}
-  else if(isViewerRole){rb.style.display='inline-block';rb.style.background='#555';rb.textContent='VIEWER';}
   else rb.style.display='none';
   document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
-  const setDisplay=(id,val)=>{const el=document.getElementById(id); if(el) el.style.display=val;};
-  setDisplay('tab-dash',(isAdmin||isViewerRole)?'':'none');
-  setDisplay('tab-new',isViewerRole?'none':'');
-  setDisplay('tab-register',isViewerRole?'none':'');
-  setDisplay('tab-users',isViewerRole?'none':'');
-  setDisplay('tab-approvals',isViewerRole?'none':'');
-  setDisplay('tab-dailyreport-new',isViewerRole?'none':'');
-  setDisplay('tab-dailyreport-register',isViewerRole?'none':'');
-  setDisplay('tab-docs','');
   initForm();
-  const restoredView=restoreAppViewState();
-  let initialTab=(isAdmin||isViewerRole)?'dashboard':(currentUser.role==='supervisor'?'register':'new');
-  let initialDRMode=null;
-  if(restoredView && restoredView.tab){
-    initialTab=restoredView.tab;
-    initialDRMode=restoredView.drMode||null;
-  }
-  if(initialTab==='dailyreport' && initialDRMode==='register') switchTab('dailyreport-register');
-  else if(initialTab==='dailyreport' && initialDRMode==='new') switchTab('dailyreport-new');
-  else switchTab(initialTab);
-  warmCoreCaches();
+  if(isAdmin)switchTab('dashboard');
+  else if(currentUser.role==='supervisor')switchTab('register');
+  else switchTab('new');
 }
 
 
@@ -1175,71 +1114,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 });
 
-window.__QAS2_APP_STATE = window.__QAS2_APP_STATE || {};
-window.__QAS2_APP_STATE.activeTabState = window.__QAS2_APP_STATE.activeTabState || '';
-window.__QAS2_APP_STATE.drViewModeState = window.__QAS2_APP_STATE.drViewModeState || 'new';
-function getActiveTabState(){ return window.__QAS2_APP_STATE.activeTabState || ''; }
-function setActiveTabState(v){ window.__QAS2_APP_STATE.activeTabState = v || ''; }
-function getDRViewModeState(){ return window.__QAS2_APP_STATE.drViewModeState || 'new'; }
-function setDRViewModeState(v){ window.__QAS2_APP_STATE.drViewModeState = v || 'new'; }
-function requestIdleTask(fn,timeout=900){
-  if('requestIdleCallback' in window){
-    return window.requestIdleCallback(fn,{timeout});
-  }
-  return setTimeout(fn,Math.min(timeout,400));
-}
-function persistAppViewState(){
-  try{
-    const payload={tab:getActiveTabState(), drMode:getDRViewModeState()};
-    localStorage.setItem('qas2_last_view',JSON.stringify(payload));
-  }catch(_e){}
-}
-function restoreAppViewState(){
-  try{
-    const raw=localStorage.getItem('qas2_last_view');
-    if(!raw) return null;
-    const parsed=JSON.parse(raw);
-    if(parsed && typeof parsed==='object') return parsed;
-  }catch(_e){}
-  return null;
-}
-let appWarmupStarted=false;
-function prefetchDocsCache(force=false){
-  const hasFresh=Array.isArray(allDocs) && allDocs.length && (Date.now()-docsLoadedAt)<DOCS_CACHE_MS;
-  if(!force && hasFresh) return Promise.resolve(allDocs);
-  if(docsLoadingPromise && !force) return docsLoadingPromise;
-  docsLoadingPromise=(async()=>{
-    try{
-      allDocs=await sbFetch('qas2_documents?select=*&order=upload_date.desc,created_at.desc')||[];
-      docsLoadedAt=Date.now();
-      return allDocs;
-    }finally{
-      docsLoadingPromise=null;
-    }
-  })();
-  return docsLoadingPromise;
-}
-function warmCoreCaches(){
-  if(appWarmupStarted || !currentUser) return;
-  appWarmupStarted=true;
-  requestIdleTask(()=>{ fetchAllTickets(false).catch(()=>{}); },700);
-  if(currentUser.role !== 'viewer'){
-    requestIdleTask(()=>{ fetchReportsByDate('',false).catch(()=>{}); },1200);
-  }
-  requestIdleTask(()=>{ prefetchDocsCache(false).catch(()=>{}); },1600);
-}
-
-function restoreSessionIfAny(){
-  const saved=loadSession();
-  if(saved){
-    currentUser=saved;
-    if(currentUser)showApp();
-  }
-}
-if(document.readyState === 'loading'){
-  window.addEventListener('DOMContentLoaded', restoreSessionIfAny, {once:true});
-}else{
-  restoreSessionIfAny();
+const saved=sessionStorage.getItem('qas2_session');
+if(saved){
+  try{currentUser=JSON.parse(saved);if(currentUser)showApp();}
+  catch(e){sessionStorage.removeItem('qas2_session');}
 }
 
 const TICKETS_CACHE_MS=15000;
@@ -1296,7 +1174,7 @@ async function fetchReportById(id, force=false){
   if(!force){
     if(reportDetailCache.has(key)) return reportDetailCache.get(key);
     const local=(Array.isArray(allReportsCache)?allReportsCache:[]).find(r=>String(r.id)===key);
-    if(local && !local.__summary){ reportDetailCache.set(key, local); return local; }
+    if(local){ reportDetailCache.set(key, local); return local; }
   }
   const rows=await sbFetch('qas2_daily_reports?id=eq.'+id+'&select=*');
   const report=(rows&&rows[0])||null;
@@ -1327,19 +1205,13 @@ async function fetchAllTickets(force=false){
   return ticketsLoadingPromise;
 }
 async function fetchReportsByDate(date,force=false){
-  const key=date||'ALL';
-  const hasFreshCache=Array.isArray(allReportsCache) && reportsCacheDate===key && allReportsCache.length && (Date.now()-reportsLoadedAt)<REPORTS_CACHE_MS;
+  const hasFreshCache=Array.isArray(allReportsCache) && reportsCacheDate===date && allReportsCache.length && (Date.now()-reportsLoadedAt)<REPORTS_CACHE_MS;
   if(!force && hasFreshCache)return allReportsCache;
-  if(reportsLoadingPromise && !force && reportsCacheDate===key)return reportsLoadingPromise;
-  reportsCacheDate=key;
+  if(reportsLoadingPromise && !force && reportsCacheDate===date)return reportsLoadingPromise;
+  reportsCacheDate=date;
   reportsLoadingPromise=(async()=>{
     try{
-      const selectFields='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
-      const query=date
-        ? 'qas2_daily_reports?report_date=eq.'+date+'&select='+selectFields+'&order=created_at.desc'
-        : 'qas2_daily_reports?select='+selectFields+'&order=created_at.desc';
-      const rows=await sbFetch(query)||[];
-      allReportsCache=rows.map(r=>({...r,__summary:true}));
+      allReportsCache=await sbFetch('qas2_daily_reports?report_date=eq.'+date+'&select=*&order=created_at.asc')||[];
       reportsLoadedAt=Date.now();
       return allReportsCache;
     }finally{
@@ -1861,7 +1733,7 @@ async function renderDashboard(force=false){
 }
 
 function refreshDashboard(force=false){
-  if(currentUser&&(currentUser.role==='admin'||currentUser.role==='viewer')&&document.getElementById('view-dashboard')?.classList.contains('active'))renderDashboard(force);
+  if(currentUser&&currentUser.role==='admin'&&document.getElementById('view-dashboard')?.classList.contains('active'))renderDashboard(force);
 }
 
 // ── USERS ──
@@ -1869,8 +1741,8 @@ async function loadUsers(){
   try{requireRole('admin','Only admins can access user management.');}catch(e){return;}
   document.getElementById('users-list').innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
   const users=await sbFetch('qas2_users?select=*&order=created_at.asc');
-  const roleColors={admin:'#C00000',supervisor:'#375623',viewer:'#555',user:'#888'};
-  const roleLabels={admin:'ADMIN',supervisor:'SUPERVISOR',viewer:'VIEWER',user:'USER'};
+  const roleColors={admin:'#C00000',supervisor:'#375623',user:'#888'};
+  const roleLabels={admin:'ADMIN',supervisor:'SUPERVISOR',user:'USER'};
   document.getElementById('users-list').innerHTML=users.map(u=>`
     <div class="user-card">
       <div><div class="uname">${u.name} <span class="role-badge" style="background:${roleColors[u.role]||'#888'};display:inline-block">${roleLabels[u.role]||u.role}</span></div><div class="urole">@${u.username}</div></div>
@@ -2433,19 +2305,10 @@ async function exportCSV(){
 
 // ── SWITCH TAB ──
 function switchTab(tab){
-  let drMode=null;
-  if(tab==='dailyreport-new'){drMode='new';tab='dailyreport';}
-  if(tab==='dailyreport-register'){drMode='register';tab='dailyreport';}
-  if(tab==='dashboard'&&!canViewDashboard()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
-  if(isViewer() && !['dashboard','docs'].includes(tab)) tab='docs';
-  if((tab==='users'||tab==='approvals')&&!isAdmin()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
-  const previousTab=getActiveTabState();
-  const currentDrMode=getDRViewModeState();
-  const targetDrMode=drMode || currentDrMode;
-  const sameTab=previousTab===tab && targetDrMode===currentDrMode;
-  setActiveTabState(tab);
-  if(drMode) setDRViewModeState(drMode);
-  persistAppViewState();
+  if(tab==='dashboard'&&!isAdmin()) tab=isSupervisor()?'register':'new';
+  if((tab==='users'||tab==='approvals')&&!isAdmin()) tab=isSupervisor()?'register':'new';
+  const sameTab=lastActiveTab===tab;
+  lastActiveTab=tab;
   const views=['dashboard','new','register','users','approvals','dailyreport','docs'];
   views.forEach(v=>{
     const el=document.getElementById('view-'+v);
@@ -2456,21 +2319,12 @@ function switchTab(tab){
       (v==='dashboard'?document.getElementById('tab-dash'):null);
     if(btn)btn.classList.toggle('active',v===tab);
   });
-  ['tab-dailyreport-new','tab-dailyreport-register'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b)b.classList.remove('active');
-  });
-  if(tab==='dailyreport'){
-    const drBtn=document.getElementById(getDRViewModeState()==='register'?'tab-dailyreport-register':'tab-dailyreport-new');
-    if(drBtn)drBtn.classList.add('active');
-  }
-  if(sameTab) return;
-  if(tab==='register') scheduleRender(()=>loadTickets(false));
-  if(tab==='users') scheduleRender(()=>loadUsers());
-  if(tab==='dashboard') setTimeout(renderDashboard,40);
-  if(tab==='approvals') scheduleRender(()=>loadPLApprovals());
-  if(tab==='dailyreport') scheduleRender(()=>initDailyReport(getDRViewModeState()));
-  if(tab==='docs') scheduleRender(()=>loadDocs(false));
+  if(tab==='register')loadTickets();
+  if(tab==='users')loadUsers();
+  if(tab==='dashboard' && !sameTab)setTimeout(renderDashboard,80);
+  if(tab==='approvals')loadPLApprovals();
+  if(tab==='dailyreport')initDailyReport();
+  if(tab==='docs')loadDocs(sameTab ? false : true);
 }
 
 // ── HELPERS ──
@@ -2488,7 +2342,6 @@ let editReportOriginalPhotos=[];
 let allDocs=[];
 let pendingDocFileData='';
 let uiTimers={};
-// daily report view mode state is managed through window.__QAS2_APP_STATE
 function debounceByKey(key,fn,wait=180){
   clearTimeout(uiTimers[key]);
   uiTimers[key]=setTimeout(fn,wait);
@@ -2504,6 +2357,7 @@ let pendingDocFileType='';
 let pendingDocFileReady=false;
 let docsLoadedAt=0;
 let docsLoadingPromise=null;
+let lastActiveTab='';
 const DOCS_CACHE_MS=20000;
 const DATA_URL_WARNING_MB=6;
 
@@ -2518,8 +2372,7 @@ function validateDailyReportForm(){
   return {ok:true};
 }
 
-async function initDailyReport(mode){
-  if(mode)setDRViewModeState(mode);
+async function initDailyReport(){
   const d=new Date();
   document.getElementById('dr-date').value=d.toISOString().split('T')[0];
   document.getElementById('dr-date-display').textContent=
@@ -2530,37 +2383,23 @@ async function initDailyReport(mode){
       currentUser.role==='admin'?'SCE – Senior Commissioning Engineer':
       currentUser.role==='supervisor'?'Commissioning Engineer':'Field Operator';
   }
+  // Get next report number preview without consuming the counter
   try{
     const next=await peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no');
     document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);
   }catch(e){
     document.getElementById('dr-rep-no').value=formatDailyReportRef(1,d);
   }
-  const isRegister=getDRViewModeState()==='register';
-  const entryPane=document.getElementById('dr-entry-pane');
-  const registerPane=document.getElementById('dr-register-pane');
-  const headerNew=document.getElementById('dr-header-new');
-  const headerRegister=document.getElementById('dr-header-register');
-  const title=document.getElementById('dr-page-title');
-  if(entryPane)entryPane.style.display=isRegister?'none':'block';
-  if(registerPane)registerPane.style.display=isRegister?'block':'none';
-  if(headerNew)headerNew.style.display=isRegister?'none':'flex';
-  if(headerRegister)headerRegister.style.display=isRegister?'flex':'none';
-  if(title)title.textContent=isRegister?'Daily Report Register':'New Daily Report';
-  if(!isRegister){
-    drPendingPhotos=[];
-    renderDRPhotoPreview();
-  }
-  const drAllReports=document.getElementById('dr-all-reports'); if(drAllReports)drAllReports.style.display=isRegister?'block':'none';
-  if(isRegister)loadTodayReports();
-  if(document.getElementById('dr-submit-btns'))document.getElementById('dr-submit-btns').style.display=isRegister?'none':'flex';
+  drPendingPhotos=[];
+  renderDRPhotoPreview();
+  document.getElementById('dr-all-reports').style.display='block';
+  loadTodayReports();
+  // All users can submit reports
+  if(document.getElementById('dr-submit-btns'))document.getElementById('dr-submit-btns').style.display='flex';
   if(currentUser&&currentUser.role==='admin'){
-    document.getElementById('dr-compile-btn').style.display=isRegister?'inline-block':'none';
-  } else if(document.getElementById('dr-compile-btn')) {
-    document.getElementById('dr-compile-btn').style.display='none';
+    document.getElementById('dr-compile-btn').style.display='inline-block';
   }
 }
-
 
 async function handleDRPhotos(e){
   const files=Array.from(e.target.files||[]);
@@ -2667,50 +2506,76 @@ function clearDRForm(){
   renderDRPhotoPreview();
 }
 
-
-function formatDateTime(v){
-  if(!v) return '–';
-  const d=new Date(v);
-  if(Number.isNaN(d.getTime())) return v;
-  return d.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
-}
-
 function getReportFilterDate(){
   const inp=document.getElementById('dr-date-filter');
-  return (inp&&inp.value)||'';
+  if(inp&&inp.value)return inp.value;
+  const today=new Date().toISOString().split('T')[0];
+  if(inp)inp.value=today;
+  return today;
 }
 
-function clearTodayReportsDate(){
+function setTodayReportsDate(offsetDays=0){
   const inp=document.getElementById('dr-date-filter');
-  if(inp)inp.value='';
-  loadTodayReports(true);
+  if(!inp)return;
+  const d=new Date();
+  d.setDate(d.getDate()+offsetDays);
+  inp.value=d.toISOString().split('T')[0];
+  loadTodayReports();
 }
 
-function buildReportsToolbar(reports){
-  return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#EEF2F8;border-radius:6px;margin-bottom:10px;font-size:11px;font-weight:600;color:#1F3864">
-      <input type="checkbox" id="chk-all" onchange="toggleAllReports(this.checked)" checked style="width:15px;height:15px;cursor:pointer">
-      <label for="chk-all" style="cursor:pointer">Select All (${reports.length} reports)</label>
-    </div>`;
-}
-function renderReportsList(reports, selectedDate){
+async function loadTodayReports(force=false){
+  const selectedDate=getReportFilterDate();
   const list=document.getElementById('dr-reports-list');
   if(!list)return;
+  const hasFreshCache=Array.isArray(allReportsCache) && reportsCacheDate===selectedDate && allReportsCache.length && (Date.now()-reportsLoadedAt)<REPORTS_CACHE_MS;
+  if(force || !hasFreshCache){
+    list.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading reports...</div>';
+  }
+  let reports=[];
+  try{
+    reports=[...(await fetchReportsByDate(selectedDate,force)||[])];
+  }catch(e){
+    list.innerHTML='<div class="empty">Unable to load reports</div>';
+    showToast('Unable to load reports','error');
+    return;
+  }
   const countEl=document.getElementById('dr-submitted-count');
   const captionEl=document.getElementById('dr-reports-caption');
+  const search=(document.getElementById('dr-report-search')?.value||'').trim().toLowerCase();
+  const sortMode=(document.getElementById('dr-report-sort')?.value||'ref_desc');
+  if(search){
+    reports=reports.filter(r=>
+      (r.report_no||'').toLowerCase().includes(search)||
+      (r.prepared_by||r.submitted_by_username||'').toLowerCase().includes(search)||
+      (r.role||'').toLowerCase().includes(search)||
+      (r.system_worked||'').toLowerCase().includes(search)||
+      (r.content||'').toLowerCase().includes(search)||
+      (r.issues||'').toLowerCase().includes(search)||
+      (r.achievements||'').toLowerCase().includes(search)
+    );
+  }
+  if(sortMode==='ref_asc') reports=[...reports].sort((a,b)=>extractRefSequence(a.report_no)-extractRefSequence(b.report_no));
+  else if(sortMode==='name') reports=[...reports].sort((a,b)=>String(a.prepared_by||a.submitted_by_username||'').localeCompare(String(b.prepared_by||b.submitted_by_username||'')) || extractRefSequence(b.report_no)-extractRefSequence(a.report_no));
+  else reports=[...reports].sort((a,b)=>extractRefSequence(b.report_no)-extractRefSequence(a.report_no));
   if(countEl)countEl.textContent=reports.length;
-  if(captionEl) captionEl.textContent=selectedDate?`Showing reports uploaded on ${selectedDate}`:'Showing all submitted reports ordered by upload date';
-  if(!reports.length){list.innerHTML=`<div class="empty">${selectedDate?`No reports found for ${selectedDate}`:'No reports found'}</div>`;return;}
-  const top=buildReportsToolbar(reports);
-  const firstChunk=reports.slice(0,12);
-  const rest=reports.slice(12);
-  const cardHtml=(r)=>`
+  if(captionEl){
+    const today=new Date().toISOString().split('T')[0];
+    const yesterday=new Date(Date.now()-86400000).toISOString().split('T')[0];
+    captionEl.textContent=selectedDate===today?`Showing reports for today (${selectedDate})`:selectedDate===yesterday?`Showing reports for yesterday (${selectedDate})`:`Showing reports for ${selectedDate}`;
+  }
+  if(!reports.length){list.innerHTML=`<div class="empty">No reports found for ${selectedDate}</div>`;return;}
+  requestAnimationFrame(()=>{
+    list.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#EEF2F8;border-radius:6px;margin-bottom:10px;font-size:11px;font-weight:600;color:#1F3864">
+      <input type="checkbox" id="chk-all" onchange="toggleAllReports(this.checked)" checked style="width:15px;height:15px;cursor:pointer">
+      <label for="chk-all" style="cursor:pointer">Select All (${reports.length} reports)</label>
+    </div>`+reports.map(r=>`
       <div class="dr-report-card" id="rcard-${r.id}">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <div style="display:flex;align-items:center;gap:10px">
             <input type="checkbox" class="report-chk" data-id="${r.id}" checked style="width:15px;height:15px;cursor:pointer;flex-shrink:0">
             <div>
               <div class="dr-report-user">${r.report_no||'–'} &nbsp;—&nbsp; ${r.prepared_by||r.submitted_by_username||'–'}</div>
-              <div class="dr-report-meta">${r.role||'–'} &nbsp;•&nbsp; Report Date: ${r.report_date||'–'} &nbsp;•&nbsp; Uploaded: ${formatDateTime(r.created_at)||'–'} &nbsp;•&nbsp; ${r.system_worked||'No system entered'}</div>
+              <div class="dr-report-meta">${r.role||'–'} &nbsp;•&nbsp; ${r.report_date||selectedDate} &nbsp;•&nbsp; ${r.system_worked||'No system entered'}</div>
             </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
@@ -2725,65 +2590,19 @@ function renderReportsList(reports, selectedDate){
           ${r.achievements&&r.achievements!=='None reported'?`<div style="margin-bottom:5px;color:#375623"><span class="dr-report-label">Achievements: </span>${r.achievements}</div>`:''}
           ${r.issues&&r.issues!=='No issues'?`<div style="margin-bottom:5px;color:#C00000"><span class="dr-report-label">Issues: </span>${r.issues}</div>`:''}
           <div><span class="dr-report-label">Tomorrow: </span>${r.next_plan||'–'}</div>
+          ${r.photos&&r.photos.length?`<div style="margin-top:8px"><span class="dr-report-label">Photos (${r.photos.length})</span>
+            <div class="modal-photos">${r.photos.map(p=>`<img src="${p}" onclick="openLightbox('${p}')" style="width:80px;height:60px;object-fit:cover;border-radius:4px;cursor:pointer;margin:3px">`).join('')}</div></div>`:''}
         </div>
-      </div>`;
-  list.innerHTML=top + firstChunk.map(cardHtml).join('') + (rest.length?'<div id="dr-report-rest"></div>':'');
-  if(rest.length){
-    requestIdleTask(()=>{
-      const holder=document.getElementById('dr-report-rest');
-      if(holder) holder.innerHTML=rest.map(cardHtml).join('');
-    },120);
-  }
-}
-function applyReportFiltersAndRender(sourceReports, selectedDate){
-  let reports=[...(sourceReports||[])];
-  const search=(document.getElementById('dr-report-search')?.value||'').trim().toLowerCase();
-  const sortMode=(document.getElementById('dr-report-sort')?.value||'ref_desc');
-  if(search){
-    reports=reports.filter(r=>
-      (r.report_no||'').toLowerCase().includes(search)||
-      (r.prepared_by||r.submitted_by_username||'').toLowerCase().includes(search)||
-      (r.role||'').toLowerCase().includes(search)||
-      (r.system_worked||'').toLowerCase().includes(search)||
-      (r.content||'').toLowerCase().includes(search)||
-      (r.issues||'').toLowerCase().includes(search)||
-      (r.achievements||'').toLowerCase().includes(search)
-    );
-  }
-  if(sortMode==='uploaded_asc') reports.sort((a,b)=>new Date(a.created_at||a.report_date||0)-new Date(b.created_at||b.report_date||0));
-  else if(sortMode==='ref_desc') reports.sort((a,b)=>extractRefSequence(b.report_no)-extractRefSequence(a.report_no));
-  else if(sortMode==='ref_asc') reports.sort((a,b)=>extractRefSequence(a.report_no)-extractRefSequence(b.report_no));
-  else if(sortMode==='name') reports.sort((a,b)=>String(a.prepared_by||a.submitted_by_username||'').localeCompare(String(b.prepared_by||b.submitted_by_username||'')) || new Date(b.created_at||b.report_date||0)-new Date(a.created_at||a.report_date||0));
-  else reports.sort((a,b)=>new Date(b.created_at||b.report_date||0)-new Date(a.created_at||a.report_date||0));
-  renderReportsList(reports, selectedDate);
-}
-async function loadTodayReports(force=false){
-  const selectedDate=getReportFilterDate();
-  const list=document.getElementById('dr-reports-list');
-  if(!list)return;
-  const cacheKey=selectedDate||'ALL';
-  const hasFreshCache=Array.isArray(allReportsCache) && reportsCacheDate===cacheKey && allReportsCache.length && (Date.now()-reportsLoadedAt)<REPORTS_CACHE_MS;
-  if(hasFreshCache && !force){
-    applyReportFiltersAndRender(allReportsCache, selectedDate);
-    requestIdleTask(()=>fetchReportsByDate(selectedDate,true).then(rows=>applyReportFiltersAndRender(rows, selectedDate)).catch(()=>{}),80);
-    return;
-  }
-  list.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading recent reports...</div>';
-  try{
-    const reports=[...(await fetchReportsByDate(selectedDate,force)||[])];
-    applyReportFiltersAndRender(reports, selectedDate);
-  }catch(e){
-    list.innerHTML='<div class="empty">Unable to load reports</div>';
-    showToast('Unable to load reports','error');
-  }
+      </div>`).join('');
+  });
 }
 
 function toggleAllReports(checked){
   document.querySelectorAll('.report-chk').forEach(cb=>cb.checked=checked);
 }
 
-async function editReport(id){
-  const report=await fetchReportById(id,false);
+function editReport(id){
+  const report=allReportsCache.find(r=>String(r.id)===String(id));
   if(!canEditReport(report)){showToast('You do not have permission to edit this report.','error');return;}
   const card=document.getElementById('rcard-'+id);
   const body=document.getElementById('rbody-'+id);
@@ -2871,13 +2690,8 @@ async function compileMasterReport(){
   if(!reports.length){alert('Please select at least one report.');return;}
   const allPunches=(await fetchAllTickets(false)||[]).filter(t=>t.status==='OPEN').map(({no,id,system_name,priority,description})=>({no,id,system_name,priority,description}));
   const checkedTickets=[...document.querySelectorAll('.ticket-chk:checked')];
-  const selectedTicketIds=checkedTickets.map(cb=>String(cb.dataset.id));
-  const includeSelectedPunchList=selectedTicketIds.length>0;
-  const punches=allPunches.filter(p=>selectedTicketIds.includes(String(p.id)));
-  if(!includeSelectedPunchList){
-    const proceedWithoutPunchList=confirm('No Punch List items selected. Generate the Master Report without Punch List?');
-    if(!proceedWithoutPunchList) return;
-  }
+  const selectedTicketIds=checkedTickets.map(cb=>cb.dataset.id);
+  const punches=selectedTicketIds.length?allPunches.filter(p=>selectedTicketIds.includes(String(p.id))):allPunches;
   const priA=punches.filter(p=>p.priority==='A').length;
   const priB=punches.filter(p=>p.priority==='B').length;
   const priC=punches.filter(p=>p.priority==='C').length;
@@ -3053,9 +2867,7 @@ async function compileMasterReport(){
   }
 
   // Open punch tickets
-  const punchSectionColor = punches.length ? '#991B1B' : (includeSelectedPunchList ? '#166534' : '#6B7280');
-  const punchSectionTitle = includeSelectedPunchList ? `Selected Punch List Items (${punches.length})` : 'Punch List Not Included';
-  html+=`<div class="sec-head" style="background:${punchSectionColor}"><span class="sec-head-dot"></span><span class="sec-head-txt">${punchSectionTitle}</span></div>
+  html+=`<div class="sec-head" style="background:${punches.length?'#991B1B':'#166534'}"><span class="sec-head-dot"></span><span class="sec-head-txt">Open Punch Tickets (${punches.length})</span></div>
   <div class="sec-body">`;
   if(punches.length){
     html+=`<table class="ptbl"><thead><tr>
@@ -3070,10 +2882,8 @@ async function compileMasterReport(){
       </tr>`;
     });
     html+='</tbody></table>';
-  }else if(includeSelectedPunchList){
-    html+='<div class="no-tickets">No open Punch List items matched your current selection.</div>';
   }else{
-    html+='<div class="no-tickets">No Punch List items were selected for this Master Report.</div>';
+    html+='<div class="no-tickets">✓ All punch tickets closed — system ready for handover</div>';
   }
   html+='</div>';
 
@@ -3226,25 +3036,7 @@ function invalidateDocsCache(){
   docsLoadingPromise=null;
 }
 
-function syncDocsUI(){
-  const uploadBtn=document.getElementById('doc-upload-btn');
-  if(uploadBtn) uploadBtn.style.display=canUploadDocs()?'inline-flex':'none';
-}
-
-function cancelDocForm(){
-  document.getElementById('doc-upload-form').style.display='none';
-  document.getElementById('doc-file-info').style.display='none';
-  window.editingDocId=null;
-  window.editingDocExistingData=null;
-  resetPendingDocFile();
-  const btn=document.querySelector('#doc-upload-form .btn.primary');
-  const titleBar=document.querySelector('#doc-upload-form > div');
-  if(btn) btn.textContent='Upload Document';
-  if(titleBar) titleBar.textContent='Upload New Document';
-}
-
 function showUploadDoc(){
-  if(!canUploadDocs()){showToast('You do not have permission to upload documents.','error');return;}
   document.getElementById('doc-upload-form').style.display='block';
   document.getElementById('doc-title').value='';
   document.getElementById('doc-no').value='';
@@ -3253,13 +3045,7 @@ function showUploadDoc(){
   document.getElementById('doc-rev').value='';
   document.getElementById('doc-file').value='';
   document.getElementById('doc-file-info').style.display='none';
-  window.editingDocId=null;
-  window.editingDocExistingData=null;
   resetPendingDocFile();
-  const btn=document.querySelector('#doc-upload-form .btn.primary');
-  const titleBar=document.querySelector('#doc-upload-form > div');
-  if(btn) btn.textContent='Upload Document';
-  if(titleBar) titleBar.textContent='Upload New Document';
 }
 
 async function handleDocFile(input){
@@ -3297,16 +3083,12 @@ async function handleDocFile(input){
 }
 
 async function submitDoc(){
-  if(!canUploadDocs()){showToast('You do not have permission to save documents.','error');return;}
   const title=document.getElementById('doc-title').value.trim();
   if(!title){showToast('Please enter document title');return;}
-  const isEdit=!!window.editingDocId;
-  const hasPreparedFile=!!pendingDocFileData && !!pendingDocFileReady;
-  if(!isEdit && !hasPreparedFile){showToast('Please choose a file and wait until it is ready');return;}
-  if(isEdit && !hasPreparedFile && !(window.editingDocExistingData&&window.editingDocExistingData.file_data)){showToast('Please choose a file and wait until it is ready');return;}
+  if(!pendingDocFileData||!pendingDocFileReady){showToast('Please choose a file and wait until it is ready');return;}
 
   const btn=document.querySelector('#doc-upload-form .btn.primary');
-  if(btn){btn.disabled=true;btn.textContent=isEdit?'Saving...':'Uploading...';}
+  if(btn){btn.disabled=true;btn.textContent='Uploading...';}
   try{
     const doc={
       title,
@@ -3314,34 +3096,28 @@ async function submitDoc(){
       system_name:document.getElementById('doc-system').value||null,
       category:document.getElementById('doc-category').value||null,
       revision:document.getElementById('doc-rev').value.trim()||'Rev.0',
-      file_name:hasPreparedFile ? (pendingDocFileName||'document') : ((window.editingDocExistingData&&window.editingDocExistingData.file_name)||'document'),
-      file_type:hasPreparedFile ? (pendingDocFileType||'application/octet-stream') : ((window.editingDocExistingData&&window.editingDocExistingData.file_type)||'application/octet-stream'),
-      file_data:hasPreparedFile ? pendingDocFileData : ((window.editingDocExistingData&&window.editingDocExistingData.file_data)||''),
+      file_name:pendingDocFileName||'document',
+      file_type:pendingDocFileType||'application/octet-stream',
+      file_data:pendingDocFileData,
       uploaded_by:(currentUser&&currentUser.name)||'System User',
       upload_date:new Date().toISOString().split('T')[0]
     };
 
-    let savedDoc;
-    if(isEdit){
-      const rows=await sbFetch('qas2_documents?id=eq.'+window.editingDocId,'PATCH',doc);
-      savedDoc=Array.isArray(rows)?rows[0]:rows;
-      showToast('Document updated successfully ✓','success');
-    }else{
-      const rows=await sbFetch('qas2_documents','POST',doc);
-      savedDoc=Array.isArray(rows)?rows[0]:rows;
-      showToast('Document uploaded successfully ✓','success');
-    }
-
-    cancelDocForm();
+    const savedDoc=await sbFetch('qas2_documents','POST',doc);
+    showToast('Document uploaded successfully ✓','success');
+    document.getElementById('doc-upload-form').style.display='none';
+    resetPendingDocFile();
     invalidateDocsCache();
     if(savedDoc){
-      const docs=Array.isArray(allDocs)?allDocs:[];
-      const idx=docs.findIndex(x=>x.id===savedDoc.id);
-      if(idx>=0) docs[idx]=savedDoc; else docs.unshift(savedDoc);
-      allDocs=docs;
-      docsLoadedAt=Date.now();
-      renderDocStats(allDocs);
-      renderDocs(allDocs);
+      const row=Array.isArray(savedDoc)?savedDoc[0]:savedDoc;
+      if(row){
+        allDocs=[row,...(Array.isArray(allDocs)?allDocs:[])];
+        docsLoadedAt=Date.now();
+        renderDocStats(allDocs);
+        renderDocs(allDocs);
+      }else{
+        await loadDocs(true);
+      }
     }else{
       await loadDocs(true);
     }
@@ -3350,7 +3126,6 @@ async function submitDoc(){
 }
 
 async function loadDocs(force=false){
-  syncDocsUI();
   const list=document.getElementById('doc-list');
   const stats=document.getElementById('doc-stats');
   const hasFreshCache=Array.isArray(allDocs) && allDocs.length && (Date.now()-docsLoadedAt)<DOCS_CACHE_MS;
@@ -3408,20 +3183,12 @@ function filterDocs(){
   );
   scheduleRender(()=>renderDocs(filtered));
 }
-
-function formatDocDate(v){
-  if(!v) return '–';
-  const d=new Date(v);
-  if(Number.isNaN(d.getTime())) return v;
-  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-}
-
 function renderDocs(docs){
-  syncDocsUI();
   const list=document.getElementById('doc-list');
   if(!list)return;
   if(!docs.length){list.innerHTML='<div class="empty">No documents found</div>';return;}
   const icons={'application/pdf':'📄','application/vnd.ms-excel':'📊','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'📊','application/msword':'📝','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'📝','image/jpeg':'🖼️','image/png':'🖼️'};
+  const isAdmin=currentUser&&currentUser.role==='admin';
   list.innerHTML=`<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
     <table style="width:100%;border-collapse:collapse;font-size:12.5px">
       <thead><tr>
@@ -3436,30 +3203,27 @@ function renderDocs(docs){
       <tbody>${docs.map((d,i)=>{
         const icon=icons[d.file_type]||'📎';
         const catColor={'SOP':'#1F3864','EOP':'#991B1B','Checklist':'#166534','Training Material':'#6B4FBB','P&ID':'#92400E','Datasheet':'#0369A1','Vendor Manual':'#374151','Commissioning Report':'#065F46'}[d.category]||'#374151';
-        const safeName=(d.file_name||'document').replace(/'/g,'');
         return `<tr style="background:${i%2===0?'#fff':'#FAFBFF'}">
           <td style="padding:10px 12px;vertical-align:middle">
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:20px">${icon}</span>
               <div>
-                <div style="font-weight:700;color:var(--navy);font-size:13px">${escapeHtml(d.title)}</div>
-                ${d.doc_no?`<div style="font-size:10px;color:var(--gray);font-family:monospace;margin-top:1px">${escapeHtml(d.doc_no)}</div>`:''}
+                <div style="font-weight:700;color:var(--navy);font-size:13px">${d.title}</div>
+                ${d.doc_no?`<div style="font-size:10px;color:var(--gray);font-family:monospace;margin-top:1px">${d.doc_no}</div>`:''}
               </div>
             </div>
           </td>
-          <td style="padding:10px 12px;font-size:11px;color:#555">${escapeHtml(d.system_name||'–')}</td>
+          <td style="padding:10px 12px;font-size:11px;color:#555">${d.system_name||'–'}</td>
           <td style="padding:10px 12px">
-            ${d.category?`<span style="background:${catColor}22;color:${catColor};font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid ${catColor}44">${escapeHtml(d.category)}</span>`:'–'}
+            ${d.category?`<span style="background:${catColor}22;color:${catColor};font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid ${catColor}44">${d.category}</span>`:'–'}
           </td>
-          <td style="padding:10px 12px;font-size:11px;color:var(--gray);font-family:monospace">${escapeHtml(d.revision||'Rev.0')}</td>
-          <td style="padding:10px 12px;font-size:11px;color:#555">${escapeHtml(d.uploaded_by||'–')}</td>
-          <td style="padding:10px 12px;font-size:11px;color:var(--gray);white-space:nowrap">${formatDocDate(d.upload_date||d.created_at)}</td>
+          <td style="padding:10px 12px;font-size:11px;color:var(--gray);font-family:monospace">${d.revision||'Rev.0'}</td>
+          <td style="padding:10px 12px;font-size:11px;color:#555">${d.uploaded_by||'–'}</td>
+          <td style="padding:10px 12px;font-size:11px;color:var(--gray);white-space:nowrap">${d.upload_date||'–'}</td>
           <td style="padding:10px 12px">
-            <div style="display:flex;gap:5px;flex-wrap:wrap">
-              <button class="btn sm" onclick="viewDoc('${d.id}')">👁 View</button>
-              <button class="btn sm primary" onclick="downloadDoc('${d.id}','${safeName}')">⬇ Download</button>
-              ${canEditDocs()?`<button class="btn sm" onclick="editDoc('${d.id}')">✏ Edit</button>`:''}
-              ${canDeleteDocs()?`<button class="btn sm danger" onclick="deleteDoc('${d.id}')">🗑 Delete</button>`:''}
+            <div style="display:flex;gap:5px">
+              <button class="btn sm primary" onclick="downloadDoc('${d.id}','${(d.file_name||'document').replace(/'/g,'')}')">⬇ Download</button>
+
             </div>
           </td>
         </tr>`;
@@ -3484,77 +3248,7 @@ async function downloadDoc(id,fileName){
   }catch(e){showToast('Error: '+e.message,'error');}
 }
 
-function closeDocViewModal(){
-  document.getElementById('doc-view-modal-bg').classList.remove('show');
-}
 
-async function viewDoc(id){
-  try{
-    const rows=await sbFetch('qas2_documents?id=eq.'+id+'&select=*');
-    if(!rows||!rows.length){showToast('Document not found','error');return;}
-    const d=rows[0];
-    document.getElementById('doc-view-title').textContent=d.title||'Document';
-    let preview='';
-    if((d.file_type||'').includes('pdf')){
-      preview=`<iframe src="${d.file_data}" style="width:100%;height:68vh;border:1px solid var(--border);border-radius:8px"></iframe>`;
-    }else if((d.file_type||'').startsWith('image/')){
-      preview=`<div style="text-align:center"><img src="${d.file_data}" style="max-width:100%;max-height:68vh;border-radius:8px;border:1px solid var(--border)"></div>`;
-    }else{
-      preview=`<div style="padding:18px;border:1px dashed var(--border);border-radius:8px;background:#fafbff;color:#555">Preview is not available for this file type. Please use Download.</div>`;
-    }
-    document.getElementById('doc-view-body').innerHTML=`
-      <div class="detail-grid">
-        <div class="detail-label">Document No.</div><div>${escapeHtml(d.doc_no||'–')}</div>
-        <div class="detail-label">System</div><div>${escapeHtml(d.system_name||'–')}</div>
-        <div class="detail-label">Category</div><div>${escapeHtml(d.category||'–')}</div>
-        <div class="detail-label">Revision</div><div>${escapeHtml(d.revision||'Rev.0')}</div>
-        <div class="detail-label">Uploaded By</div><div>${escapeHtml(d.uploaded_by||'–')}</div>
-        <div class="detail-label">Date</div><div>${formatDocDate(d.upload_date||d.created_at)}</div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn primary" onclick="downloadDoc('${d.id}','${(d.file_name||'document').replace(/'/g,'')}')">⬇ Download</button></div>
-      ${preview}`;
-    document.getElementById('doc-view-modal-bg').classList.add('show');
-  }catch(e){showToast('Error: '+e.message,'error');}
-}
-
-async function editDoc(id){
-  if(!canEditDocs()){showToast('You do not have permission to edit documents.','error');return;}
-  try{
-    const rows=await sbFetch('qas2_documents?id=eq.'+id+'&select=*');
-    if(!rows||!rows.length){showToast('Document not found','error');return;}
-    const d=rows[0];
-    window.editingDocId=d.id;
-    window.editingDocExistingData=d;
-    document.getElementById('doc-upload-form').style.display='block';
-    document.getElementById('doc-title').value=d.title||'';
-    document.getElementById('doc-no').value=d.doc_no||'';
-    document.getElementById('doc-system').value=d.system_name||'';
-    document.getElementById('doc-category').value=d.category||'';
-    document.getElementById('doc-rev').value=d.revision||'';
-    document.getElementById('doc-file').value='';
-    resetPendingDocFile();
-    const info=document.getElementById('doc-file-info');
-    info.style.display='block';
-    info.textContent='Current file: '+(d.file_name||'document')+' (choose another file only if you want to replace it)';
-    const btn=document.querySelector('#doc-upload-form .btn.primary');
-    const titleBar=document.querySelector('#doc-upload-form > div');
-    if(btn) btn.textContent='Save Changes';
-    if(titleBar) titleBar.textContent='Edit Document';
-    document.getElementById('doc-upload-form').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){showToast('Error: '+e.message,'error');}
-}
-
-async function deleteDoc(id){
-  if(!canDeleteDocs()){showToast('You do not have permission to delete documents.','error');return;}
-  if(!confirm('Delete this document?')) return;
-  try{
-    await sbFetch('qas2_documents?id=eq.'+id,'DELETE');
-    allDocs=(Array.isArray(allDocs)?allDocs:[]).filter(d=>d.id!==id);
-    renderDocStats(allDocs);
-    renderDocs(allDocs);
-    showToast('Document deleted successfully ✓','success');
-  }catch(e){showToast('Error: '+e.message,'error');}
-}
 
 function closePrintArea(){
   const pa=document.getElementById('print-area');

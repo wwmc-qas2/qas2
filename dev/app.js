@@ -69,14 +69,14 @@ async function doLogin(){
     const users=await sbFetch('qas2_users?username=eq.'+encodeURIComponent(uname)+'&password=eq.'+encodeURIComponent(pass)+'&select=*');
     if(!users||!users.length){document.getElementById('login-error').textContent='Incorrect username or password.';document.getElementById('login-pass').value='';setTimeout(()=>document.getElementById('login-error').textContent='',2500);return;}
     currentUser=users[0];
-    sessionStorage.setItem('qas2_session',JSON.stringify(currentUser));
+    localStorage.setItem('qas2_session', JSON.stringify(currentUser));;
     showApp();
   }catch(e){document.getElementById('login-error').textContent='Connection error. Check internet.';}
 }
 
 function doLogout(){
   if(!confirm('Logout?'))return;
-  currentUser=null;sessionStorage.removeItem('qas2_session');
+  currentUser=null;localStorage.removeItem('qas2_session');
   document.getElementById('main-app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
@@ -149,10 +149,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 });
 
-const saved=sessionStorage.getItem('qas2_session');
+const saved=localStorage.getItem('qas2_session');
 if(saved){
   try{currentUser=JSON.parse(saved);if(currentUser)showApp();}
-  catch(e){sessionStorage.removeItem('qas2_session');}
+  catch(e){localStorage.removeItem('qas2_session');}
 }
 
 const TICKETS_CACHE_MS=15000;

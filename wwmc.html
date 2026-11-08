@@ -397,6 +397,38 @@ tbody tr{transition:var(--transition)}
 .om-recent li{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
 .om-recent li span{color:#374151}.om-recent time{margin-left:auto;color:var(--gray);font-size:11px}
 @media(max-width:760px){.om-dgrid{grid-template-columns:minmax(0,1fr)}.om-linkrow{grid-template-columns:minmax(0,1fr)}}
+/* ═════════ EASE OF USE ═════════ */
+.ux-size{display:inline-flex;border:1px solid rgba(255,255,255,.3);border-radius:6px;overflow:hidden}
+.ux-size button{background:transparent;border:0;color:#fff;font:inherit;font-size:12px;font-weight:700;padding:5px 8px;cursor:pointer;opacity:.85}
+.ux-size button:hover{background:rgba(255,255,255,.15);opacity:1}
+.ux-size button+button{border-left:1px solid rgba(255,255,255,.3)}
+.ux-size button:focus-visible,.logout-btn:focus-visible,.tab:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+.tabs{position:sticky;top:52px;z-index:90;scroll-behavior:smooth;scrollbar-width:thin}
+.ux-top{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));width:42px;height:42px;border-radius:50%;border:0;background:var(--navy);color:#fff;font-size:18px;font-weight:700;box-shadow:var(--shadow-lg);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s;z-index:900}
+.ux-top.show{opacity:.9;pointer-events:auto}
+@media(max-width:640px){
+  .topbar{padding:0 12px;gap:8px}
+  .topbar-divider,.topbar-sub,.topbar-credit,.topbar-user{display:none}
+  .topbar-logo{height:28px;padding:2px 6px}
+  .topbar-right{gap:6px}
+  .ux-size button{padding:4px 6px}
+  .tabs{padding:0 8px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
+  .tab{padding:12px 13px}
+  /* Punch List register: one card per ticket on phones */
+  #register-body table,#register-body tbody{display:block;width:100%}
+  #register-body thead{display:none}
+  #register-body tr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:start;background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+  #register-body td{display:block;border:0!important;padding:0!important;min-width:0}
+  #register-body td:nth-child(1){grid-row:1;grid-column:1}
+  #register-body td:nth-child(2){grid-row:1;grid-column:2;align-self:center}
+  #register-body td:nth-child(7){grid-row:1;grid-column:3}
+  #register-body td:nth-child(3){grid-column:1/-1}
+  #register-body td:nth-child(4),#register-body td:nth-child(5),#register-body td:nth-child(6),#register-body td:nth-child(8){grid-column:span 1;font-size:11.5px}
+  #register-body td:nth-child(5)::before{content:'Raised ';color:var(--gray)}
+  #register-body td:nth-child(6)::before{content:'Due ';color:var(--gray)}
+  #register-body td:nth-child(8)::before{content:'📷 ';}
+  #register-body td:nth-child(9){grid-column:1/-1;padding-top:6px!important;border-top:1px solid var(--border)!important;margin-top:4px}
+}
 /* ═════════ O&M LIBRARY ═════════ */
 #view-om{--omR:#166534;--omRb:#E8F5EE;--omA:#92400E;--omAb:#FEF3C7;--omN:#C2410C;--omNb:#FFEDD5;--omM:#B91C1C;--omMb:#FEE2E2;--omC:#1D4ED8;--omCb:#DBEAFE;--omT:#4B5563;--omTb:#EEF0F3;--omP:#6B7280;--omPb:#F3F4F6;--omTree:#B6C2D2}
 .om-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -562,7 +594,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div>
         <div class="topbar-title">QAS2 — CORE</div>
         <div class="topbar-sub">Al-Qassim 2 CCGT &nbsp;|&nbsp; Wahat Al Wusta Maintenance Co.</div>
-        <div style="font-size:10px;opacity:.5;margin-top:1px">Designed & Developed by Mohammed Alharish</div>
+        <div class="topbar-credit" style="font-size:10px;opacity:.5;margin-top:1px">Designed & Developed by Mohammed Alharish</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -571,6 +603,10 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div id="pl-approval-bell" style="display:none;position:relative;cursor:pointer" onclick="switchTab('approvals')">
         <span style="font-size:18px">&#128276;</span>
         <span id="pl-approval-count" style="position:absolute;top:-4px;right:-6px;background:#C00000;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;display:none">0</span>
+      </div>
+      <div class="ux-size" role="group" aria-label="Text size">
+        <button type="button" onclick="uxSetZoom(-1)" title="Smaller text" aria-label="Smaller text">A−</button>
+        <button type="button" onclick="uxSetZoom(1)" title="Larger text" aria-label="Larger text">A+</button>
       </div>
       <button class="logout-btn" onclick="doLogout()">Logout</button>
     </div>
@@ -1138,6 +1174,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     <div class="modal-body"><div id="om-hist-list">Loading…</div></div>
   </div>
 </div>
+<button type="button" class="ux-top no-print" id="ux-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <div class="toast" id="toast"></div>
 
 <!-- PRINT AREA -->
@@ -4421,6 +4458,19 @@ async function omRenderDash(){
   }catch(e){const el=document.getElementById('om-dash-recent');if(el)el.textContent='Could not load recent changes.';}
 }
 
+</script>
+<script>
+// ═════════ EASE OF USE ═════════
+const UX_ZOOMS=[0.9,1,1.1,1.2,1.35];
+function uxApplyZoom(i){const app=document.getElementById('main-app');if(!app)return;i=Math.max(0,Math.min(UX_ZOOMS.length-1,i));app.style.zoom=UX_ZOOMS[i]===1?'':String(UX_ZOOMS[i]);app.dataset.zoom=i;try{localStorage.setItem('qas2_zoom',String(i));}catch(e){}}
+function uxSetZoom(d){const app=document.getElementById('main-app');const cur=app&&app.dataset.zoom!=null?+app.dataset.zoom:1;uxApplyZoom(cur+d);showToast('Text size '+Math.round(UX_ZOOMS[Math.max(0,Math.min(UX_ZOOMS.length-1,cur+d))]*100)+'%');}
+(function(){let z=1;try{const s=localStorage.getItem('qas2_zoom');if(s!=null)z=+s;}catch(e){}uxApplyZoom(z);})();
+// keep the active tab visible on small screens
+(function(){const orig=window.switchTab;if(typeof orig!=='function')return;window.switchTab=function(tab){const r=orig.apply(this,arguments);requestAnimationFrame(()=>{const b=document.querySelector('.tabs .tab.active');if(b&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'center'});});return r;};})();
+// back-to-top button
+window.addEventListener('scroll',()=>{const b=document.getElementById('ux-top');if(b)b.classList.toggle('show',window.scrollY>600);},{passive:true});
+// Escape closes any open modal
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const open=[...document.querySelectorAll('.modal-bg.show')].pop();if(open)open.classList.remove('show');});
 </script>
 </body>
 </html>

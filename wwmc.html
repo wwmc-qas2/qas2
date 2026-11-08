@@ -397,6 +397,56 @@ tbody tr{transition:var(--transition)}
 .om-recent li{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
 .om-recent li span{color:#374151}.om-recent time{margin-left:auto;color:var(--gray);font-size:11px}
 @media(max-width:760px){.om-dgrid{grid-template-columns:minmax(0,1fr)}.om-linkrow{grid-template-columns:minmax(0,1fr)}}
+/* ═════════ DAILY REPORT UPGRADE ═════════ */
+.dra-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.dra-hint{font-size:11px;color:var(--gray)}.dra-draft{margin-left:auto;font-size:11px;color:#166534;font-weight:600}
+.dra-head,.dra-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2.4fr) 128px minmax(0,.9fr) 30px;gap:6px;align-items:start}
+.dra-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;padding:0 2px 4px}
+.dra-row{margin-bottom:6px}
+.dra-row input,.dra-row select,.dra-row textarea{font:inherit;font-size:13px;padding:7px 9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;min-width:0;width:100%}
+.dra-row textarea{resize:vertical;line-height:1.4;min-height:36px}
+.dra-row input:focus,.dra-row select:focus,.dra-row textarea:focus{border-color:var(--navy);outline:none;box-shadow:0 0 0 3px rgba(31,56,100,.08)}
+.dra-kks{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px!important}
+.dra-st-0{color:#166534;font-weight:700}.dra-st-1{color:#1D4ED8;font-weight:700}.dra-st-2{color:#B45309;font-weight:700}.dra-st-3{color:#6B7280;font-weight:700}
+.dra-del{border:0;background:none;color:#9CA3AF;cursor:pointer;font-size:14px;padding:8px 4px;border-radius:5px}
+.dra-del:hover{color:#B91C1C;background:#FEF2F2}
+.dr-filters2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.dr-filters2 label{font-size:11px;font-weight:700;color:var(--navy);display:flex;gap:6px;align-items:center}
+.dr-filters2 input,.dr-filters2 select{font:inherit;font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff}
+.drs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.drs-tile{background:#fff;border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:var(--radius-md);padding:10px 12px;display:flex;flex-direction:column;gap:1px;box-shadow:var(--shadow-sm)}
+.drs-tile.good{border-left-color:#3BB273}.drs-tile.bad{border-left-color:#C00000}
+.drs-v{font-size:22px;font-weight:800;color:#111827;font-variant-numeric:tabular-nums}.drs-l{font-size:12px;font-weight:700;color:#374151}.drs-s{font-size:11px;color:var(--gray)}
+.drc-box{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.drc-box>summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em}
+.drc-box>summary small{font-weight:500;text-transform:none;letter-spacing:0;color:var(--gray);margin-left:6px}
+.drc-wrap{overflow-x:auto;margin-top:10px}
+.drc{border-collapse:separate;border-spacing:3px;font-size:11px}
+.drc thead th,.drc tbody th{background:none!important;border:0!important;text-transform:none;letter-spacing:0}
+.drc th{font-size:10px;font-weight:600;color:var(--gray);text-align:center;line-height:1.2;padding:0 2px}
+.drc th[scope=row]{text-align:left;color:#111827;font-size:12px;white-space:nowrap;padding-right:8px}
+.drc th.we{color:#C0C4CC}
+.drc td{width:26px;height:24px;border-radius:5px;text-align:center;padding:0}
+.drc td button{width:100%;height:100%;border:0;background:none;cursor:pointer;font-weight:800;font-size:12px;color:inherit;border-radius:5px}
+.drc td.ok{background:#DCFCE7;color:#166534}.drc td.miss{background:#FEE2E2;color:#DC2626}.drc td.we{background:#F3F4F6}.drc td.today{background:#fff;outline:1.5px dashed #D1D5DB}
+.drc td.drc-pct{width:auto;padding:0 8px;font-weight:700;white-space:nowrap}.drc-pct.good{color:#166534}.drc-pct.bad{color:#B91C1C}
+.drc-legend{display:flex;gap:12px;font-size:10.5px;color:var(--gray);margin-top:6px}
+.drc-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;background:#F3F4F6}
+.drc-legend .ok::before{background:#DCFCE7}.drc-legend .miss::before{background:#FEE2E2}
+.dri{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 8px}
+.dri th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#6B7280;text-align:left;padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--border)}
+.dri td{padding:5px 6px;border-bottom:1px solid #F1F3F6;vertical-align:top}
+.dri-kks{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#6B7280}
+.dri-st{font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 6px;white-space:nowrap}
+.dri-st-0{background:#DCFCE7;color:#166534}.dri-st-1{background:#DBEAFE;color:#1D4ED8}.dri-st-2{background:#FEF3C7;color:#B45309}.dri-st-3{background:#F3F4F6;color:#4B5563}
+.drb fieldset{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:12px 0 0}
+.drb legend{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);padding:0 4px}
+.drb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drb-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+.drb-opt{display:flex;gap:8px;align-items:center;font-size:13px;padding:4px 0;cursor:pointer}
+@media(max-width:760px){.drs{grid-template-columns:repeat(2,minmax(0,1fr))}.drb-grid,.drb-cols{grid-template-columns:1fr}
+  .dra-head{display:none}.dra-row{grid-template-columns:minmax(0,1fr) 118px 30px;border:1px solid var(--border);border-radius:8px;padding:8px;background:#FAFBFC}
+  .dra-sys{grid-column:1/3}.dra-act{grid-column:1/-1;grid-row:2}.dra-st{grid-column:2;grid-row:3}.dra-kks{grid-column:1;grid-row:3}.dra-del{grid-column:3;grid-row:1}}
 /* ═════════ DASHBOARD & TRACKING ═════════ */
 .db-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .db-title{font-size:16px;font-weight:700;color:var(--navy)}
@@ -808,6 +858,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         </div>
         <div id="dr-header-register" style="display:none;gap:8px;align-items:center">
           <button class="btn primary" onclick="switchTab('dailyreport-new')">+ Add Daily Report</button>
+          <button class="btn primary" type="button" onclick="drOpenBuilder()">🖨 Print / Save report…</button>
           <button class="btn" id="dr-export-btn" onclick="exportDailyReportsCSV()">⇩ Export Reports CSV</button>
           <button class="btn primary admin-only" id="dr-compile-btn" onclick="compileMasterReport()" style="display:none">📄 Compile Master Report</button>
         </div>
@@ -820,7 +871,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <div class="dr-section-body">
           <div class="dr-grid3">
             <div class="field"><label for="dr-rep-no">Report No.</label><input id="dr-rep-no" readonly style="background:#EEF2F8;color:#1F3864;font-weight:700;font-family:monospace"></div>
-            <div class="field"><label for="dr-date">Date</label><input id="dr-date" type="date" readonly style="background:#EEF2F8;color:#1F3864;font-weight:700"></div>
+            <div class="field"><label for="dr-date">Date</label><input id="dr-date" type="date" style="color:#1F3864;font-weight:700"></div>
             <div class="field"><label for="dr-name">Your Name</label><input id="dr-name" placeholder="Your full name"></div>
           </div>
           <div class="grid2" style="margin-top:10px">
@@ -833,10 +884,13 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div class="dr-form-section">
         <div class="dr-section-head">🔧 Activities Performed Today</div>
         <div class="dr-section-body">
-          <div class="field"><textarea id="dr-activities" style="min-height:90px" placeholder="Describe the activities performed today in detail...&#10;e.g. Conducted pre-commissioning walk down on ACW system, completed valve stroking on 00PGC01AP001, performed megger test on HT pumps..."></textarea></div>
+          <div class="dra-tools"><button class="btn sm" type="button" onclick="drFromYesterday()">↺ Start from my last plan</button><span class="dra-hint">One line per activity · Ctrl+Enter adds a new line</span><span id="dr-draft-state" class="dra-draft" aria-live="polite"></span></div>
+          <div id="dra-rows" class="dra-rows"></div>
+          <button class="btn sm" type="button" onclick="draAddRow()" style="margin-top:8px">+ Add activity</button>
+          <datalist id="dra-systems"></datalist>
+          <div class="field" style="margin-top:12px"><label for="dr-activities">Other notes (optional)</label><textarea id="dr-activities" style="min-height:60px" placeholder="Anything that does not fit in the list above"></textarea></div>
         </div>
       </div>
-
       <div class="dr-form-section">
         <div class="dr-section-head">✅ Achievements & Milestones</div>
         <div class="dr-section-body">
@@ -874,7 +928,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 
       <div id="dr-submit-btns" style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:20px">
         <button class="btn" onclick="clearDRForm()">Clear</button>
-        <button class="btn primary" onclick="submitDailyReport()">✓ Submit Report</button>
+        <button class="btn primary" id="dr-submit-btn" onclick="submitDailyReport()">✓ Submit Report</button>
       </div>
       </div>
 
@@ -902,6 +956,15 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
             <span id="dr-submitted-count" style="background:#1F3864;color:#fff;font-size:11px;padding:2px 10px;border-radius:10px">0</span>
           </div>
         </div>
+        <div class="dr-filters2">
+          <label>From <input type="date" id="dr-from" onchange="drRangeChanged()"></label>
+          <label>To <input type="date" id="dr-to" onchange="drRangeChanged()"></label>
+          <select id="dr-person" onchange="loadTodayReports()" aria-label="Person"><option value="">Everyone</option></select>
+          <select id="dr-sysf" onchange="loadTodayReports()" aria-label="System"><option value="">All systems</option></select>
+          <button class="btn sm" type="button" onclick="drClearFilters()">Clear filters</button>
+        </div>
+        <div id="dr-summary" class="drs"></div>
+        <details class="drc-box" id="dr-comp" open><summary>Submission tracker — last 14 days <small>who submitted their daily report · click a cell to open it</small></summary><div id="dr-comp-body"><div class="db-empty">Loading…</div></div></details>
         <div id="dr-reports-list"></div>
       </div>
       </div>
@@ -1190,6 +1253,27 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <button class="btn primary" type="button" id="om-f-save" onclick="omSaveModal()">Save</button>
       </div>
       <div class="om-confirm" id="om-del-confirm" hidden></div>
+    </div>
+  </div>
+</div>
+<!-- Daily report: print / save builder -->
+<div class="modal-bg" id="drb-bg">
+  <div class="modal" role="dialog" aria-labelledby="drb-h" style="width:620px">
+    <div class="modal-head"><h3 id="drb-h">Print / Save daily report</h3><button type="button" onclick="document.getElementById('drb-bg').classList.remove('show')" aria-label="Close">×</button></div>
+    <div class="modal-body drb">
+      <div class="drb-grid">
+        <div class="field"><label for="drb-title">Report title</label><input id="drb-title" type="text"></div>
+        <div class="field"><label for="drb-period">Period shown on the report</label><input id="drb-period" type="text" placeholder="e.g. 08 Nov 2026"></div>
+      </div>
+      <fieldset><legend>Which reports</legend><div id="drb-scope"></div></fieldset>
+      <fieldset><legend>What to include</legend><div id="drb-sections" class="drb-cols"></div></fieldset>
+      <fieldset><legend>Layout</legend>
+        <label class="drb-opt"><input type="radio" name="drb-layout" value="report" checked> One section per report</label>
+        <label class="drb-opt"><input type="radio" name="drb-layout" value="system"> Combined by system (best for weekly / management reports)</label>
+      </fieldset>
+      <div class="om-modal-actions"><span class="om-sub" style="flex:1">Your choices are remembered for next time.</span>
+        <button class="btn" type="button" onclick="drbExcel()">⬇ Excel</button>
+        <button class="btn primary" type="button" onclick="drbPrint()">🖨 Open printable report</button></div>
     </div>
   </div>
 </div>
@@ -1664,11 +1748,15 @@ async function fetchReportsByDate(date,force=false){
   reportsCacheDate=key;
   reportsLoadingPromise=(async()=>{
     try{
-      const selectFields='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
-      const query=date
-        ? 'qas2_daily_reports?report_date=eq.'+date+'&select='+selectFields+'&order=created_at.desc'
-        : 'qas2_daily_reports?select='+selectFields+'&order=created_at.desc';
-      const rows=await sbFetch(query)||[];
+      const baseFields='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
+      const q=f=>date
+        ? 'qas2_daily_reports?report_date=eq.'+date+'&select='+f+'&order=created_at.desc'
+        : 'qas2_daily_reports?select='+f+'&order=created_at.desc';
+      let rows;
+      if(drHasItems!==false){
+        try{rows=await sbFetch(q(baseFields+',items'))||[];drHasItems=true;}
+        catch(e){if(/items/i.test(e.message)){drHasItems=false;rows=await sbFetch(q(baseFields))||[];}else throw e;}
+      }else rows=await sbFetch(q(baseFields))||[];
       allReportsCache=rows.map(r=>({...r,__summary:true}));
       reportsLoadedAt=Date.now();
       return allReportsCache;
@@ -2943,14 +3031,15 @@ function validateDailyReportForm(){
   const achievements=document.getElementById('dr-achievements')?.value.trim()||'';
   const issues=document.getElementById('dr-issues')?.value.trim()||'';
   if(!reportDate) return {ok:false,message:'Please select the report date.',focus:'dr-date'};
-  if(!system && !activities && !achievements && !issues) return {ok:false,message:'Please fill in at least one report field.',focus:'dr-system'};
+  if(!system && !activities && !achievements && !issues && !draItems().length) return {ok:false,message:'Add at least one activity or fill in a report field.',focus:'dr-system'};
+  if(reportDate>drToday()) return {ok:false,message:'The report date cannot be in the future.',focus:'dr-date'};
   return {ok:true};
 }
 
 async function initDailyReport(mode){
   if(mode)setDRViewModeState(mode);
   const d=new Date();
-  document.getElementById('dr-date').value=d.toISOString().split('T')[0];
+  document.getElementById('dr-date').value=drToday();
   document.getElementById('dr-date-display').textContent=
     d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   if(currentUser){
@@ -2979,6 +3068,7 @@ async function initDailyReport(mode){
   if(!isRegister){
     drPendingPhotos=[];
     renderDRPhotoPreview();
+    drInitForm();
   }
   const drAllReports=document.getElementById('dr-all-reports'); if(drAllReports)drAllReports.style.display=isRegister?'block':'none';
   if(isRegister)loadTodayReports();
@@ -3048,10 +3138,12 @@ async function submitDailyReport(){
     if(focusEl)focusEl.focus();
     return;
   }
-  const activities=document.getElementById('dr-activities').value.trim();
-  const system=document.getElementById('dr-system').value.trim();
+  const drItemsList=draItems();
+  const drNotesTxt=document.getElementById('dr-activities').value.trim();
+  const activities=[draText(drItemsList),drNotesTxt].filter(Boolean).join('\n');
+  const system=document.getElementById('dr-system').value.trim()||[...new Set(drItemsList.map(x=>x.sys).filter(Boolean))].join(', ');
 
-  const btn=document.querySelector('#view-dailyreport .btn.primary:last-of-type');
+  const btn=document.getElementById('dr-submit-btn');
   if(btn){btn.disabled=true;btn.textContent='Submitting...';}
 
   try{
@@ -3079,9 +3171,10 @@ async function submitDailyReport(){
       next_plan:document.getElementById('dr-plans').value.trim()||'Continue commissioning activities',
     };
     if(drPendingPhotos.length)drData.photos=drPendingPhotos;
+    if(drItemsList.length&&drHasItems!==false)drData.items=drItemsList;
 
-    await sbFetch('qas2_daily_reports','POST',drData);
-    showToast('Report '+repNo+' submitted ✓');
+    await drPost(drData);
+    showToast('Report '+repNo+' submitted ✓','success');
     clearDRForm();
     invalidateReportsCache();
     loadTodayReports(true);
@@ -3092,6 +3185,7 @@ async function submitDailyReport(){
 function clearDRForm(){
   ['dr-system','dr-activities','dr-achievements','dr-issues','dr-plans']
     .forEach(id=>document.getElementById(id).value='');
+  draRows=[];draRender();drClearDraft();
   drPendingPhotos=[];
   renderDRPhotoPreview();
 }
@@ -3138,22 +3232,24 @@ function renderReportsList(reports, selectedDate){
           <div style="display:flex;align-items:center;gap:10px">
             <input type="checkbox" class="report-chk" data-id="${r.id}" checked style="width:15px;height:15px;cursor:pointer;flex-shrink:0">
             <div>
-              <div class="dr-report-user">${r.report_no||'–'} &nbsp;—&nbsp; ${r.prepared_by||r.submitted_by_username||'–'}</div>
-              <div class="dr-report-meta">${r.role||'–'} &nbsp;•&nbsp; Report Date: ${r.report_date||'–'} &nbsp;•&nbsp; Uploaded: ${formatDateTime(r.created_at)||'–'} &nbsp;•&nbsp; ${r.system_worked||'No system entered'}</div>
+              <div class="dr-report-user">${escapeHtml(r.report_no||'–')} &nbsp;—&nbsp; ${escapeHtml(r.prepared_by||r.submitted_by_username||'–')}</div>
+              <div class="dr-report-meta">${escapeHtml(r.role||'–')} &nbsp;•&nbsp; Report Date: ${escapeHtml(r.report_date||'–')} &nbsp;•&nbsp; Uploaded: ${formatDateTime(r.created_at)||'–'} &nbsp;•&nbsp; ${escapeHtml(r.system_worked||'No system entered')}</div>
             </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
-            <button class="btn sm" onclick="printSingleReport('${r.id}')" style="font-size:10px;padding:3px 8px">🖨 PDF</button>
+            <button class="btn sm" onclick="drOpenBuilder(['${r.id}'])" style="font-size:10px;padding:3px 8px">🖨 Print / PDF</button>
             ${canEditReport(r)?`<button class="btn sm" onclick="editReport('${r.id}')" style="font-size:10px;padding:3px 8px;background:#FFF3CD">✏️</button>`:''}
             ${canDeleteReport(r)?`<button class="btn sm danger" onclick="deleteReport('${r.id}','${r.report_no||r.id}')" style="font-size:10px;padding:3px 8px">🗑</button>`:''}
             <span style="background:#E2EFDA;color:#375623;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px">✓ Submitted</span>
           </div>
         </div>
         <div class="dr-report-body" id="rbody-${r.id}">
-          <div style="margin-bottom:5px"><span class="dr-report-label">Activities: </span>${r.content||'–'}</div>
-          ${r.achievements&&r.achievements!=='None reported'?`<div style="margin-bottom:5px;color:#375623"><span class="dr-report-label">Achievements: </span>${r.achievements}</div>`:''}
-          ${r.issues&&r.issues!=='No issues'?`<div style="margin-bottom:5px;color:#C00000"><span class="dr-report-label">Issues: </span>${r.issues}</div>`:''}
-          <div><span class="dr-report-label">Tomorrow: </span>${r.next_plan||'–'}</div>
+          ${drItemsTable(r.items)}
+          <div style="margin-bottom:5px;white-space:pre-line${Array.isArray(r.items)&&r.items.length?';display:none':''}"><span class="dr-report-label">Activities: </span>${escapeHtml(r.content||'–')}</div>
+          ${Array.isArray(r.items)&&r.items.length&&drNotes(r)?`<div style="margin-bottom:5px;white-space:pre-line"><span class="dr-report-label" style="font-weight:700">Notes: </span>${escapeHtml(drNotes(r))}</div>`:''}
+          ${r.achievements&&r.achievements!=='None reported'?`<div style="margin-bottom:5px;color:#375623;white-space:pre-line"><span class="dr-report-label">Achievements: </span>${escapeHtml(r.achievements)}</div>`:''}
+          ${!drNoIssue(r.issues)?`<div style="margin-bottom:5px;color:#C00000;white-space:pre-line"><span class="dr-report-label">Issues: </span>${escapeHtml(r.issues)}</div>`:''}
+          <div style="white-space:pre-line"><span class="dr-report-label">Tomorrow: </span>${escapeHtml(r.next_plan||'–')}</div>
         </div>
       </div>`;
   list.innerHTML=top + firstChunk.map(cardHtml).join('') + (rest.length?'<div id="dr-report-rest"></div>':'');
@@ -3179,6 +3275,10 @@ function applyReportFiltersAndRender(sourceReports, selectedDate){
       (r.achievements||'').toLowerCase().includes(search)
     );
   }
+  drFillRegFilters(sourceReports||[]);
+  reports=drApplyExtraFilters(reports);
+  drRenderSummary(reports);
+  drRenderTracker();
   if(sortMode==='uploaded_asc') reports.sort((a,b)=>new Date(a.created_at||a.report_date||0)-new Date(b.created_at||b.report_date||0));
   else if(sortMode==='ref_desc') reports.sort((a,b)=>extractRefSequence(b.report_no)-extractRefSequence(a.report_no));
   else if(sortMode==='ref_asc') reports.sort((a,b)=>extractRefSequence(a.report_no)-extractRefSequence(b.report_no));
@@ -3265,7 +3365,8 @@ async function saveEditReport(id){
       achievements:achievements||'None reported',
       issues:issues||'No issues',
       next_plan:nextPlan||'Continue commissioning activities',
-      photos:editReportPhotos
+      photos:editReportPhotos,
+      ...(Array.isArray(report&&report.items)&&report.items.length&&content!==String(report.content||'').trim()?{items:null}:{})
       // created_at NOT included — timestamp preserved
     });
     showToast('Report updated ✓');
@@ -4726,6 +4827,293 @@ async function tkAddUpdate(id){
     const tk=await fetchTicketById(id,true);if(tk)tkLoadLog(tk);
     if(document.getElementById('view-register')?.classList.contains('active'))loadTickets(false);
   }catch(e){showToast('Could not save the update: '+(/qas2_ticket_updates|responsible|last_update|42P01|42703|schema cache/i.test(e.message)?'run qas2_tracking_upgrade.sql in Supabase first.':e.message),'error');}
+}
+</script>
+<script>
+// ═════════ DAILY REPORT UPGRADE ═════════
+const DRA_STATUS=['Completed','In progress','On hold','Planned'];
+let draRows=[],drHasItems=null,drDraftTimer=null,drSysList=null;
+function drUserKey(){return 'qas2_dr_draft_'+(currentUser?.username||'anon');}
+function drToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function drAddDays(s,n){const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// ── activity rows ──
+function draRender(){
+  const box=document.getElementById('dra-rows');if(!box)return;
+  if(!draRows.length)draRows.push({sys:'',act:'',st:'Completed',kks:''});
+  box.innerHTML=`<div class="dra-head" aria-hidden="true"><span>System</span><span>Activity</span><span>Status</span><span>KKS (optional)</span><span></span></div>`+draRows.map((r,i)=>`
+    <div class="dra-row" data-i="${i}">
+      <input class="dra-sys" list="dra-systems" value="${escapeHtml(r.sys)}" placeholder="e.g. Fuel Gas System" aria-label="System for activity ${i+1}">
+      <textarea class="dra-act" rows="1" placeholder="What was done? e.g. Loop check on PT-101 to PT-108, all OK" aria-label="Activity ${i+1}">${escapeHtml(r.act)}</textarea>
+      <select class="dra-st dra-st-${DRA_STATUS.indexOf(r.st)}" aria-label="Status of activity ${i+1}">${DRA_STATUS.map(s=>`<option ${s===r.st?'selected':''}>${s}</option>`).join('')}</select>
+      <input class="dra-kks" value="${escapeHtml(r.kks)}" placeholder="10EKH10AP001" aria-label="KKS for activity ${i+1}">
+      <button class="dra-del" type="button" onclick="draRemove(${i})" aria-label="Remove activity ${i+1}" title="Remove">✕</button>
+    </div>`).join('');
+  box.querySelectorAll('.dra-act').forEach(draAutoGrow);
+}
+function draAutoGrow(t){t.style.height='auto';t.style.height=Math.min(160,t.scrollHeight+2)+'px';}
+function draSync(){
+  document.querySelectorAll('#dra-rows .dra-row').forEach(el=>{const i=+el.dataset.i;if(!draRows[i])return;
+    draRows[i]={sys:el.querySelector('.dra-sys').value,act:el.querySelector('.dra-act').value,st:el.querySelector('.dra-st').value,kks:el.querySelector('.dra-kks').value};
+    el.querySelector('.dra-st').className='dra-st dra-st-'+DRA_STATUS.indexOf(draRows[i].st);});
+}
+function draAddRow(r){draSync();draRows.push(r||{sys:draRows.length?draRows[draRows.length-1].sys:'',act:'',st:'Completed',kks:''});draRender();const a=[...document.querySelectorAll('#dra-rows .dra-act')].pop();if(a&&!r)a.focus();drSaveDraft();}
+function draRemove(i){draSync();draRows.splice(i,1);draRender();drSaveDraft();}
+function draItems(){draSync();return draRows.map(r=>({sys:r.sys.trim(),act:r.act.trim(),st:r.st,kks:r.kks.trim()})).filter(r=>r.act||r.sys);}
+function draText(items){return items.map(r=>'• '+(r.sys?r.sys+' — ':'')+r.act+' ['+r.st+']'+(r.kks?' ('+r.kks+')':'')).join('\n');}
+async function draFillSystems(){
+  const dl=document.getElementById('dra-systems');if(!dl)return;
+  if(!drSysList){
+    const set=new Set();
+    try{(omNodes&&omNodes.length?omNodes:(await sbFetch('qas2_om_nodes?select=name,node_type&node_type=neq.area&limit=2000')||[])).forEach(n=>{if(n.node_type!=='area')set.add(n.name);});}catch(e){}
+    try{(ticketsCache||[]).forEach(t=>t.system_name&&set.add(String(t.system_name).trim()));}catch(e){}
+    drSysList=[...set].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  }
+  dl.innerHTML=drSysList.map(s=>`<option value="${escapeHtml(s)}"></option>`).join('');
+}
+// ── draft ──
+function drCollect(){return {date:document.getElementById('dr-date')?.value,system:document.getElementById('dr-system')?.value,rows:(draSync(),draRows),notes:document.getElementById('dr-activities')?.value,ach:document.getElementById('dr-achievements')?.value,issues:document.getElementById('dr-issues')?.value,plans:document.getElementById('dr-plans')?.value,savedAt:Date.now()};}
+function drIsEmpty(d){return !d||(!d.system&&!d.notes&&!d.ach&&!d.issues&&!d.plans&&!(d.rows||[]).some(r=>r.act||r.sys));}
+function drSaveDraft(){clearTimeout(drDraftTimer);drDraftTimer=setTimeout(()=>{const d=drCollect();try{if(drIsEmpty(d))localStorage.removeItem(drUserKey());else localStorage.setItem(drUserKey(),JSON.stringify(d));}catch(e){}
+  const s=document.getElementById('dr-draft-state');if(s)s.textContent=drIsEmpty(d)?'':'Draft saved '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});},400);}
+function drClearDraft(){try{localStorage.removeItem(drUserKey());}catch(e){}const s=document.getElementById('dr-draft-state');if(s)s.textContent='';}
+function drInitForm(){
+  const di=document.getElementById('dr-date');
+  if(di){di.readOnly=false;di.max=drToday();if(!isAdmin())di.min=drAddDays(drToday(),-7);di.onchange=drDateChanged;}
+  let d=null;try{d=JSON.parse(localStorage.getItem(drUserKey())||'null');}catch(e){}
+  const formEmpty=!draRows.some(r=>r.act||r.sys)&&!document.getElementById('dr-activities').value&&!document.getElementById('dr-achievements').value;
+  if(d&&!drIsEmpty(d)&&formEmpty){
+    if(d.date&&d.date<=drToday())di.value=d.date;
+    const set=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.value=v;};
+    set('dr-system',d.system);set('dr-activities',d.notes);set('dr-achievements',d.ach);set('dr-issues',d.issues);set('dr-plans',d.plans);
+    draRows=(d.rows||[]).map(r=>({sys:r.sys||'',act:r.act||'',st:DRA_STATUS.includes(r.st)?r.st:'Completed',kks:r.kks||''}));
+    const s=document.getElementById('dr-draft-state');if(s)s.textContent='Draft restored from '+new Date(d.savedAt).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    drDateChanged();
+  }
+  draRender();draFillSystems();
+}
+async function drDateChanged(){
+  const di=document.getElementById('dr-date');if(!di||!di.value)return;
+  if(di.value>drToday())di.value=drToday();
+  const d=new Date(di.value+'T00:00:00');
+  const disp=document.getElementById('dr-date-display');if(disp)disp.textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})+(di.value!==drToday()?' (late report)':'');
+  try{const next=await peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no');document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);}catch(e){}
+  drSaveDraft();
+}
+async function drFromYesterday(){
+  const date=document.getElementById('dr-date')?.value||drToday();
+  try{
+    const u=encodeURIComponent(currentUser?.username||'');
+    let rows;
+    try{rows=await sbFetch(`qas2_daily_reports?submitted_by_username=eq.${u}&report_date=lt.${date}&select=report_date,next_plan,items,system_worked&order=report_date.desc,created_at.desc&limit=1`);}
+    catch(e){rows=await sbFetch(`qas2_daily_reports?submitted_by_username=eq.${u}&report_date=lt.${date}&select=report_date,next_plan,system_worked&order=report_date.desc,created_at.desc&limit=1`);}
+    const r=(rows||[])[0];if(!r){showToast('No earlier report of yours was found.','error');return;}
+    const add=[];
+    (Array.isArray(r.items)?r.items:[]).filter(x=>x.st&&x.st!=='Completed').forEach(x=>add.push({sys:x.sys||'',act:x.act||'',st:'In progress',kks:x.kks||''}));
+    const plan=String(r.next_plan||'');
+    if(plan&&!/^continue commissioning activities$/i.test(plan.trim()))plan.split(/\n|;|•|(?:^|\s)\d+[.)]\s/).map(s=>s.replace(/^[-*\s]+/,'').trim()).filter(s=>s.length>2).forEach(s=>add.push({sys:(r.system_worked&&!/,/.test(r.system_worked)&&r.system_worked!=='General')?r.system_worked:'',act:s,st:'In progress',kks:''}));
+    if(!add.length){showToast('Your last report ('+r.report_date+') had no plan to carry over.','error');return;}
+    draSync();draRows=draRows.filter(x=>x.act||x.sys).concat(add);draRender();drSaveDraft();
+    showToast(add.length+' item(s) copied from your plan of '+r.report_date+'. Update their status.','success');
+  }catch(e){showToast('Could not load your last report: '+e.message,'error');}
+}
+async function drPost(drData){
+  try{return await sbFetch('qas2_daily_reports','POST',drData);}
+  catch(e){
+    if(drData.items&&/items/i.test(e.message)){const d={...drData};delete d.items;drHasItems=false;const r=await sbFetch('qas2_daily_reports','POST',d);showToast('Saved. To keep the activity list as a table, run qas2_daily_report_upgrade.sql in Supabase.','error');return r;}
+    throw e;
+  }
+}
+document.addEventListener('input',e=>{if(e.target.closest&&e.target.closest('#dr-entry-pane')){if(e.target.classList.contains('dra-act'))draAutoGrow(e.target);drSaveDraft();}});
+document.addEventListener('change',e=>{if(e.target.closest&&e.target.closest('#dra-rows')){draSync();drSaveDraft();}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&e.target.classList&&e.target.classList.contains('dra-act')){e.preventDefault();draAddRow();}});
+
+// ── register: filters, summary, tracker ──
+function drSplitSystems(r){const s=new Set();(Array.isArray(r.items)?r.items:[]).forEach(x=>x.sys&&s.add(x.sys.trim()));if(!s.size)String(r.system_worked||'').split(/[,;/]+/).map(x=>x.trim()).filter(x=>x&&x!=='General').forEach(x=>s.add(x));return [...s];}
+function drFillRegFilters(reports){
+  const ps=document.getElementById('dr-person'),ss=document.getElementById('dr-sysf');if(!ps||!ss)return;
+  const pc=ps.value,sc=ss.value;
+  const people=[...new Set(reports.map(r=>r.prepared_by||r.submitted_by_username).filter(Boolean))].sort();
+  ps.innerHTML='<option value="">Everyone</option>'+people.map(p=>`<option ${p===pc?'selected':''}>${escapeHtml(p)}</option>`).join('');
+  const sys=[...new Set(reports.flatMap(drSplitSystems))].sort((a,b)=>a.localeCompare(b));
+  ss.innerHTML='<option value="">All systems</option>'+sys.map(s=>`<option ${s===sc?'selected':''}>${escapeHtml(s)}</option>`).join('');
+}
+function drApplyExtraFilters(reports){
+  const p=document.getElementById('dr-person')?.value||'',s=document.getElementById('dr-sysf')?.value||'',f=document.getElementById('dr-from')?.value||'',t=document.getElementById('dr-to')?.value||'';
+  return reports.filter(r=>(!p||(r.prepared_by||r.submitted_by_username)===p)&&(!s||drSplitSystems(r).includes(s))&&(!f||(r.report_date||'')>=f)&&(!t||(r.report_date||'')<=t));
+}
+function drRangeChanged(){const d=document.getElementById('dr-date-filter');if(d&&(document.getElementById('dr-from').value||document.getElementById('dr-to').value))d.value='';loadTodayReports();}
+function drClearFilters(){['dr-person','dr-sysf','dr-from','dr-to','dr-date-filter','dr-report-search'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});loadTodayReports();}
+function drNoIssue(s){return !s||/^(no issues?|none|nil|n\/?a|-|–)\.?$/i.test(String(s).trim());}
+function drRenderSummary(reports){
+  const box=document.getElementById('dr-summary');if(!box)return;
+  const items=reports.flatMap(r=>Array.isArray(r.items)?r.items:[]);
+  const people=new Set(reports.map(r=>r.prepared_by||r.submitted_by_username)).size;
+  const systems=new Set(reports.flatMap(drSplitSystems)).size;
+  const issues=reports.filter(r=>!drNoIssue(r.issues)).length;
+  const c=st=>items.filter(x=>x.st===st).length;
+  const tile=(v,l,s,cls='')=>`<div class="drs-tile ${cls}"><span class="drs-v">${v}</span><span class="drs-l">${l}</span>${s?`<span class="drs-s">${s}</span>`:''}</div>`;
+  box.innerHTML=tile(reports.length,'Reports',people+' people')+tile(systems,'Systems covered','')+
+    (items.length?tile(c('Completed'),'Activities completed',`${c('In progress')} in progress · ${c('On hold')} on hold`,'good'):tile('–','Activities completed','shown for reports with an activity list'))+
+    tile(issues,'Reports with issues',issues?'click a report to read':'none reported',issues?'bad':'');
+}
+let drCompCache=null,drCompAt=0;
+async function drRenderTracker(){
+  const box=document.getElementById('dr-comp-body');if(!box)return;
+  const days=[];for(let i=13;i>=0;i--)days.push(drAddDays(drToday(),-i));
+  try{
+    if(!drCompCache||Date.now()-drCompAt>60000){
+      const [reps,users]=await Promise.all([
+        sbFetch('qas2_daily_reports?report_date=gte.'+days[0]+'&select=report_date,submitted_by_username,prepared_by&limit=5000'),
+        sbFetch('qas2_users?select=name,username,role').catch(()=>[])]);
+      drCompCache={reps:reps||[],users:(users||[]).filter(u=>u.role!=='viewer')};drCompAt=Date.now();
+    }
+    const {reps,users}=drCompCache;
+    const people=new Map();users.forEach(u=>people.set(u.username,u.name||u.username));
+    reps.forEach(r=>{const k=r.submitted_by_username||r.prepared_by;if(k&&!people.has(k))people.set(k,r.prepared_by||k);});
+    const cnt={};reps.forEach(r=>{const k=(r.submitted_by_username||r.prepared_by)+'|'+r.report_date;cnt[k]=(cnt[k]||0)+1;});
+    const wk=d=>{const x=new Date(d+'T00:00:00').getDay();return x===5||x===6;};
+    const rows=[...people.entries()].sort((a,b)=>a[1].localeCompare(b[1]));
+    if(!rows.length){box.innerHTML='<div class="db-empty">No users yet.</div>';return;}
+    const workdays=days.filter(d=>!wk(d)&&d<=drToday());
+    box.innerHTML=`<div class="drc-wrap"><table class="drc"><thead><tr><th>Person</th>${days.map(d=>{const x=new Date(d+'T00:00:00');return `<th class="${wk(d)?'we':''}" title="${d}">${x.toLocaleDateString('en-GB',{weekday:'narrow'})}<br>${x.getDate()}</th>`;}).join('')}<th>Work days</th></tr></thead><tbody>${rows.map(([u,name])=>{
+      const done=workdays.filter(d=>cnt[u+'|'+d]).length;
+      return `<tr><th scope="row">${escapeHtml(name)}</th>${days.map(d=>{const n=cnt[u+'|'+d]||0;const cls=n?'ok':(wk(d)?'we':(d===drToday()?'today':'miss'));
+        return `<td class="${cls}"><button type="button" onclick="drTrackerGo('${escapeHtml(name).replace(/'/g,'&#39;')}','${d}')" title="${escapeHtml(name)} · ${d}: ${n?n+' report(s)':'no report'}" aria-label="${escapeHtml(name)} ${d} ${n?n+' reports':'no report'}">${n?'✓':(cls==='miss'?'•':'')}</button></td>`;}).join('')}<td class="drc-pct ${done/Math.max(1,workdays.length)>=0.8?'good':'bad'}">${done}/${workdays.length}</td></tr>`;}).join('')}</tbody></table></div>
+      <div class="drc-legend"><span class="ok">✓ submitted</span><span class="miss">• missing</span><span class="we">weekend (Fri–Sat)</span></div>`;
+  }catch(e){box.innerHTML='<div class="db-empty">Could not load the submission tracker.</div>';}
+}
+function drTrackerGo(name,date){
+  const d=document.getElementById('dr-date-filter');if(d)d.value=date;['dr-from','dr-to'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  const p=document.getElementById('dr-person');if(p){if(![...p.options].some(o=>o.value===name))p.insertAdjacentHTML('beforeend',`<option>${escapeHtml(name)}</option>`);p.value=name;}
+  loadTodayReports();document.getElementById('dr-reports-list')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function drItemsTable(items){
+  if(!Array.isArray(items)||!items.length)return '';
+  return `<table class="dri"><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${escapeHtml(x.sys||'')}</td><td>${escapeHtml(x.act||'')}</td><td><span class="dri-st dri-st-${DRA_STATUS.indexOf(x.st)}">${escapeHtml(x.st||'')}</span></td><td class="dri-kks">${escapeHtml(x.kks||'')}</td></tr>`).join('')}</tbody></table>`;
+}
+
+// ── print / save builder ──
+const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['sign','Signature block',true]];
+let drbIds=null;
+function drOpenBuilder(ids){
+  drbIds=ids||null;
+  const checked=[...document.querySelectorAll('.report-chk:checked')].map(c=>c.dataset.id);
+  const shown=[...document.querySelectorAll('.report-chk')].map(c=>c.dataset.id);
+  const one=ids&&ids.length===1;
+  document.getElementById('drb-scope').innerHTML=one?`<label class="drb-opt"><input type="radio" name="drb-scope" value="one" checked> This report only</label>`:
+    `<label class="drb-opt"><input type="radio" name="drb-scope" value="checked" ${checked.length&&checked.length<shown.length?'checked':''}> Ticked reports (${checked.length})</label>
+     <label class="drb-opt"><input type="radio" name="drb-scope" value="shown" ${!(checked.length&&checked.length<shown.length)?'checked':''}> All reports in the current list (${shown.length})</label>`;
+  let saved={};try{saved=JSON.parse(localStorage.getItem('qas2_drb')||'{}');}catch(e){}
+  document.getElementById('drb-sections').innerHTML=DRB_SECTIONS.map(([k,l,def])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(saved.s?saved.s.includes(k):def)?'checked':''}> ${l}</label>`).join('');
+  document.querySelectorAll('input[name="drb-layout"]').forEach(r=>r.checked=r.value===(saved.layout||'report'));
+  const f=document.getElementById('dr-from')?.value,t=document.getElementById('dr-to')?.value,d=document.getElementById('dr-date-filter')?.value;
+  document.getElementById('drb-title').value=one?'Daily Report':(d?'Daily Commissioning Report':'Commissioning Progress Report');
+  document.getElementById('drb-period').value=d||(f||t?`${f||'…'} to ${t||'…'}`:'');
+  document.getElementById('drb-bg').classList.add('show');
+}
+function drbChoice(){
+  const scope=document.querySelector('input[name="drb-scope"]:checked')?.value||'shown';
+  let ids=scope==='one'?drbIds:scope==='checked'?[...document.querySelectorAll('.report-chk:checked')].map(c=>c.dataset.id):[...document.querySelectorAll('.report-chk')].map(c=>c.dataset.id);
+  const s=[...document.querySelectorAll('#drb-sections input:checked')].map(i=>i.value);
+  const layout=document.querySelector('input[name="drb-layout"]:checked')?.value||'report';
+  try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout}));}catch(e){}
+  return {ids,s,layout,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
+}
+async function drbFetch(ids,withPhotos){
+  const out=[];
+  for(let i=0;i<ids.length;i+=40){const chunk=ids.slice(i,i+40);const sel=withPhotos?'*':'id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at'+(drHasItems===false?'':',items');
+    let rows;try{rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select='+sel);}catch(e){rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select=*');}
+    out.push(...(rows||[]));}
+  return out.sort((a,b)=>String(a.report_date).localeCompare(String(b.report_date))||String(a.report_no).localeCompare(String(b.report_no)));
+}
+function drNotes(r){return String(r.content||'').split('\n').filter(l=>!l.trim().startsWith('•')).join('\n').trim();}
+function drbEsc(s){return escapeHtml(s||'').replace(/\n/g,'<br>');}
+async function drbPrint(){
+  const c=drbChoice();if(!c.ids||!c.ids.length){showToast('There are no reports to include.','error');return;}
+  const w=window.open('','_blank');if(!w){showToast('Allow pop-ups for this site to open the report.','error');return;}
+  w.document.write('<p style="font-family:Arial;padding:30px">Preparing report…</p>');
+  try{
+    const reps=await drbFetch(c.ids,c.s.includes('photos'));
+    const has=k=>c.s.includes(k);
+    const items=reps.flatMap(r=>(Array.isArray(r.items)&&r.items.length?r.items:[]).map(x=>({...x,r})));
+    const dates=[...new Set(reps.map(r=>r.report_date))].sort();
+    const period=c.period||(dates.length>1?dates[0]+' to '+dates[dates.length-1]:(dates[0]||''));
+    const people=[...new Set(reps.map(r=>r.prepared_by||r.submitted_by_username))];
+    let h='';
+    if(has('summary')){
+      const cnt=st=>items.filter(x=>x.st===st).length;
+      h+=`<div class="kpis"><div><b>${reps.length}</b>Reports</div><div><b>${people.length}</b>People</div><div><b>${new Set(reps.flatMap(drSplitSystems)).size}</b>Systems</div>${items.length?`<div><b>${cnt('Completed')}</b>Activities completed</div><div><b>${cnt('In progress')+cnt('On hold')}</b>In progress / on hold</div>`:''}<div><b>${reps.filter(r=>!drNoIssue(r.issues)).length}</b>Reports with issues</div></div>`;
+    }
+    const actBlock=r=>{const it=Array.isArray(r.items)&&r.items.length?r.items:null;
+      return it?`<table class="t"><thead><tr><th style="width:24%">System</th><th>Activity</th><th style="width:13%">Status</th><th style="width:15%">KKS</th></tr></thead><tbody>${it.map(x=>`<tr><td>${drbEsc(x.sys)}</td><td>${drbEsc(x.act)}</td><td class="st st${DRA_STATUS.indexOf(x.st)}">${drbEsc(x.st)}</td><td>${drbEsc(x.kks)}</td></tr>`).join('')}</tbody></table>`
+        :`<div class="txt">${drbEsc(r.content)}</div>`;};
+    if(c.layout==='system'){
+      if(has('activities')){
+        const by={};reps.forEach(r=>{const it=Array.isArray(r.items)&&r.items.length?r.items:[{sys:drSplitSystems(r)[0]||'General',act:r.content,st:'',kks:''}];it.forEach(x=>{const k=x.sys||'General';(by[k]=by[k]||[]).push({...x,r});});});
+        h+=`<h2>Activities by system</h2>`+Object.keys(by).sort().map(k=>`<h3>${drbEsc(k)}</h3><table class="t"><thead><tr><th style="width:12%">Date</th><th>Activity</th><th style="width:12%">Status</th><th style="width:16%">By</th></tr></thead><tbody>${by[k].map(x=>`<tr><td>${drbEsc(x.r.report_date)}</td><td>${drbEsc(x.act)}${x.kks?` <span class="kks">${drbEsc(x.kks)}</span>`:''}</td><td class="st st${DRA_STATUS.indexOf(x.st)}">${drbEsc(x.st)}</td><td>${drbEsc(x.r.prepared_by)}</td></tr>`).join('')}</tbody></table>`).join('');
+      }
+      const list=(k,title,f)=>{const rows=reps.filter(r=>f(r[k]));return rows.length?`<h2>${title}</h2><table class="t"><thead><tr><th style="width:12%">Date</th><th style="width:18%">By</th><th>Details</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${drbEsc(r.report_date)}</td><td>${drbEsc(r.prepared_by)}</td><td>${drbEsc(r[k])}</td></tr>`).join('')}</tbody></table>`:'';};
+      if(has('achievements'))h+=list('achievements','Achievements & milestones',v=>v&&!/^none reported$/i.test(v));
+      if(has('issues'))h+=list('issues','Issues & challenges',v=>!drNoIssue(v));
+      if(has('plan'))h+=list('next_plan','Plan for next working day',v=>v&&!/^continue commissioning activities$/i.test(v));
+      if(has('photos')){const ph=reps.flatMap(r=>(r.photos||[]).map(p=>({p,r})));if(ph.length)h+=`<h2>Photos</h2><div class="ph">${ph.map(x=>`<figure><img src="${x.p}"><figcaption>${drbEsc(x.r.report_date)} · ${drbEsc(x.r.prepared_by)}</figcaption></figure>`).join('')}</div>`;}
+    }else{
+      h+=reps.map(r=>`<section class="rep"><div class="rh"><b>${drbEsc(r.report_no)}</b><span>${drbEsc(r.report_date)} · ${drbEsc(r.prepared_by)} · ${drbEsc(r.role)}</span><span>${drbEsc(drSplitSystems(r).join(', ')||r.system_worked)}</span></div>
+        ${has('activities')?`<h4>Activities</h4>${actBlock(r)}${Array.isArray(r.items)&&r.items.length&&drNotes(r)?`<div class="txt"><b>Notes:</b> ${drbEsc(drNotes(r))}</div>`:''}`:''}
+        ${has('achievements')&&r.achievements&&!/^none reported$/i.test(r.achievements)?`<h4>Achievements</h4><div class="txt ok">${drbEsc(r.achievements)}</div>`:''}
+        ${has('issues')&&!drNoIssue(r.issues)?`<h4>Issues & challenges</h4><div class="txt bad">${drbEsc(r.issues)}</div>`:''}
+        ${has('plan')&&r.next_plan?`<h4>Plan for next working day</h4><div class="txt">${drbEsc(r.next_plan)}</div>`:''}
+        ${has('photos')&&(r.photos||[]).length?`<h4>Photos</h4><div class="ph">${r.photos.map(p=>`<figure><img src="${p}"></figure>`).join('')}</div>`:''}
+      </section>`).join('');
+    }
+    if(has('tracker')){await drRenderTracker();const tb=document.getElementById('dr-comp-body');if(tb)h+=`<h2>Submission tracker – last 14 days</h2>`+tb.querySelector('table')?.outerHTML.replace(/<button[^>]*>/g,'').replace(/<\/button>/g,'');}
+    if(has('sign'))h+=`<div class="sign"><div><span>Prepared by</span><b>${drbEsc(currentUser?.name||'')}</b></div><div><span>Reviewed by</span><b>&nbsp;</b></div><div><span>Approved by</span><b>&nbsp;</b></div></div>`;
+    const logo=getWWMCLogoSrc();
+    w.document.open();w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(c.title)} ${escapeHtml(period)}</title><style>
+      *{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#1F2937;margin:0;background:#F4F6F9}.page{max-width:900px;margin:0 auto;background:#fff;padding:28px 34px}
+      header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1F3864;padding-bottom:12px;margin-bottom:16px}header img{height:46px}header h1{font-size:19px;margin:0;color:#1F3864}header p{margin:2px 0 0;font-size:12px;color:#6B7280}
+      .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:16px}.kpis div{border:1px solid #E5E7EB;border-radius:8px;padding:8px 10px;font-size:11px;color:#6B7280}.kpis b{display:block;font-size:20px;color:#1F3864}
+      h2{font-size:14px;color:#fff;background:#1F3864;padding:6px 10px;border-radius:4px;margin:18px 0 8px}h3{font-size:12.5px;color:#1F3864;margin:12px 0 6px;border-bottom:1px solid #D6DEEA;padding-bottom:3px}h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;margin:10px 0 4px}
+      .rep{border:1px solid #E5E7EB;border-radius:8px;padding:12px 14px;margin-bottom:12px;page-break-inside:avoid}.rh{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;border-bottom:1px solid #EEF0F3;padding-bottom:6px}.rh b{color:#1F3864}.rh span{color:#6B7280}
+      .t{width:100%;border-collapse:collapse;font-size:11.5px}.t th{background:#EEF2F8;color:#1F3864;text-align:left;padding:5px 6px;font-size:10.5px}.t td{border-bottom:1px solid #EEF0F3;padding:5px 6px;vertical-align:top}
+      .st0{color:#166534;font-weight:700}.st1{color:#1D4ED8;font-weight:700}.st2{color:#B45309;font-weight:700}.st3{color:#6B7280;font-weight:700}.kks{font-family:Consolas,monospace;font-size:10.5px;color:#6B7280}
+      .txt{font-size:12px;line-height:1.55;white-space:normal}.txt.ok{color:#166534}.txt.bad{color:#B91C1C}
+      .ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ph figure{margin:0}.ph img{width:100%;height:150px;object-fit:cover;border-radius:4px;border:1px solid #E5E7EB}.ph figcaption{font-size:10px;color:#6B7280}
+      .drc{border-collapse:collapse;font-size:10px;width:100%}.drc th,.drc td{border:1px solid #E5E7EB;padding:3px;text-align:center}.drc th[scope=row]{text-align:left;white-space:nowrap}.drc td.ok{background:#DCFCE7;color:#166534}.drc td.miss{background:#FEE2E2;color:#B91C1C}.drc .we{background:#F3F4F6}
+      .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px}.sign div{border-top:1.5px solid #1F3864;padding-top:6px;font-size:11px}.sign span{display:block;color:#6B7280}.sign b{display:block;min-height:16px}
+      footer{margin-top:24px;font-size:10px;color:#9CA3AF;border-top:1px solid #EEF0F3;padding-top:6px;display:flex;justify-content:space-between}
+      .bar{position:sticky;top:0;background:#1F3864;padding:10px;text-align:center;z-index:5}.bar button{font:inherit;font-weight:700;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;margin:0 4px}.bar .p{background:#fff;color:#1F3864}.bar .c{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+      @media print{body{background:#fff}.bar{display:none}.page{padding:0;max-width:none}h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}.t th,.drc td,.kpis div{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{margin:14mm}}
+    </style></head><body><div class="bar"><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button class="c" onclick="window.close()">Close</button></div><div class="page">
+      <header>${logo?`<img src="${logo}" alt="">`:''}<div><h1>${escapeHtml(c.title)}</h1><p>Al-Qassim 2 CCGT · Wahat Al Wusta Maintenance Company${period?' · '+escapeHtml(period):''}</p></div></header>
+      ${h||'<p>No sections selected.</p>'}
+      <footer><span>QAS2 CORE · generated ${escapeHtml(new Date().toLocaleString('en-GB'))} by ${escapeHtml(currentUser?.name||'')}</span><span>${reps.length} report(s)</span></footer>
+    </div></body></html>`);w.document.close();
+    document.getElementById('drb-bg').classList.remove('show');
+  }catch(e){try{w.close();}catch(_){}showToast('Could not build the report: '+e.message,'error');}
+}
+async function drbExcel(){
+  const c=drbChoice();if(!c.ids||!c.ids.length){showToast('There are no reports to include.','error');return;}
+  if(typeof ExcelJS==='undefined'){showToast('Excel library not loaded – check your connection.','error');return;}
+  try{
+    const reps=await drbFetch(c.ids,false);const has=k=>c.s.includes(k);
+    const wb=new ExcelJS.Workbook();wb.creator='QAS2 CORE';
+    const head=(ws)=>{const r=ws.getRow(1);r.font={bold:true,color:{argb:'FFFFFFFF'}};r.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};r.alignment={vertical:'middle',wrapText:true};r.height=24;ws.views=[{state:'frozen',ySplit:1}];};
+    if(has('activities')){
+      const ws=wb.addWorksheet('Activities');ws.columns=[{header:'Date',width:12},{header:'Report No.',width:22},{header:'Prepared by',width:20},{header:'System',width:30},{header:'Activity',width:70},{header:'Status',width:13},{header:'KKS',width:18}];head(ws);
+      const fill={Completed:'FFDCFCE7','In progress':'FFDBEAFE','On hold':'FFFEF3C7',Planned:'FFF3F4F6'};
+      reps.forEach(r=>{const it=Array.isArray(r.items)&&r.items.length?r.items:[{sys:r.system_worked,act:r.content,st:'',kks:''}];it.forEach(x=>{const row=ws.addRow([r.report_date,r.report_no,r.prepared_by,x.sys,x.act,x.st,x.kks]);row.alignment={vertical:'top',wrapText:true};if(fill[x.st])row.getCell(6).fill={type:'pattern',pattern:'solid',fgColor:{argb:fill[x.st]}};});});
+      ws.autoFilter={from:'A1',to:'G1'};
+    }
+    const ws2=wb.addWorksheet('Reports');const cols=[{header:'Date',width:12},{header:'Report No.',width:22},{header:'Prepared by',width:20},{header:'Role',width:24},{header:'Systems',width:30}];
+    if(has('achievements'))cols.push({header:'Achievements',width:50});if(has('issues'))cols.push({header:'Issues & challenges',width:50});if(has('plan'))cols.push({header:'Plan for next day',width:50});
+    ws2.columns=cols;head(ws2);
+    reps.forEach(r=>{const v=[r.report_date,r.report_no,r.prepared_by,r.role,drSplitSystems(r).join(', ')||r.system_worked];if(has('achievements'))v.push(r.achievements);if(has('issues'))v.push(drNoIssue(r.issues)?'':r.issues);if(has('plan'))v.push(r.next_plan);const row=ws2.addRow(v);row.alignment={vertical:'top',wrapText:true};});
+    ws2.autoFilter={from:'A1',to:{row:1,column:cols.length}};
+    const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    a.download=(c.title.replace(/[^\w\- ]+/g,'').replace(/\s+/g,'_')||'Daily_Report')+'_'+(c.period||drToday()).replace(/[^\w\-]+/g,'_')+'.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+    document.getElementById('drb-bg').classList.remove('show');showToast('Excel exported','success');
+  }catch(e){showToast('Excel export failed: '+e.message,'error');}
 }
 </script>
 </body>

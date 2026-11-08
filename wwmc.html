@@ -351,6 +351,79 @@ tbody tr{transition:var(--transition)}
   .topbar-sub{display:none}
 }
 
+/* ═════════ O&M LIBRARY ═════════ */
+#view-om{--omR:#166534;--omRb:#E8F5EE;--omA:#92400E;--omAb:#FEF3C7;--omN:#C2410C;--omNb:#FFEDD5;--omM:#B91C1C;--omMb:#FEE2E2;--omC:#1D4ED8;--omCb:#DBEAFE;--omT:#4B5563;--omTb:#EEF0F3;--omP:#6B7280;--omPb:#F3F4F6;--omTree:#B6C2D2}
+.om-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.om-title{font-size:16px;font-weight:700;color:var(--navy)}
+.om-sub{font-size:12px;color:var(--gray);margin-top:2px}
+.om-head-actions{display:flex;gap:6px;flex-wrap:wrap}
+.om-tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:10px}
+.om-tbox{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;box-shadow:var(--shadow-sm)}
+.om-tbox h4{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.om-tbox h4 b{color:var(--navy);font-size:13px}
+.om-chips{display:flex;flex-wrap:wrap;gap:6px}
+.om-chip{font:inherit;font-size:11.5px;font-weight:700;border:1.5px solid transparent;border-radius:6px;padding:4px 9px;cursor:pointer}
+.om-chip[aria-pressed="true"]{border-color:currentColor}
+.om-sR{background:var(--omRb);color:var(--omR)}.om-sA{background:var(--omAb);color:var(--omA)}.om-sN{background:var(--omNb);color:var(--omN)}.om-sM{background:var(--omMb);color:var(--omM)}
+.om-sC{background:var(--omCb);color:var(--omC)}.om-sT{background:var(--omTb);color:var(--omT)}.om-sP{background:var(--omPb);color:var(--omP)}
+.om-filters{margin-top:8px}
+.om-check{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray);cursor:pointer}
+.om-count{margin-left:auto;font-size:11.5px;color:var(--gray);font-variant-numeric:tabular-nums}
+.om-hint{font-size:11.5px;color:var(--gray);margin:-4px 0 10px}
+.om-empty{padding:30px;text-align:center;color:var(--gray);background:#fff;border:1px dashed var(--border);border-radius:var(--radius-md)}
+.om-area{margin-bottom:18px}
+.om-area-h{display:flex;align-items:center;gap:8px;padding:6px 4px;margin-bottom:8px;border-radius:6px}
+.om-area-h .om-area-name{font-size:13px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--navy);cursor:pointer;user-select:none}
+.om-area-h small{font-size:11px;color:var(--gray)}
+.om-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr));gap:10px;align-items:start}
+.om-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:12px 14px;min-width:0}
+.om-card-top{display:flex;align-items:flex-start;gap:8px}
+.om-tog{background:none;border:none;cursor:pointer;color:var(--gray);font-size:12px;padding:2px 4px;line-height:1.4}
+.om-sysname{font-size:14.5px;font-weight:700;color:#111827;line-height:1.3}
+.om-vendor{font-size:11.5px;color:var(--gray)}
+.om-acts{margin-left:auto;display:flex;gap:2px;flex-shrink:0}
+.om-ib{background:none;border:1px solid transparent;border-radius:5px;cursor:pointer;font-size:12px;padding:2px 6px;color:var(--gray);line-height:1.4}
+.om-ib:hover{background:var(--navy-light);color:var(--navy);border-color:var(--border)}
+.om-ib:focus-visible,.om-chip:focus-visible,.om-tog:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.om-man{margin-top:8px;padding:8px 10px;border-radius:7px;background:var(--navy-light);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center}
+.om-tag{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+.om-no{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;overflow-wrap:anywhere}
+.om-ttl{font-size:12px;color:#374151}
+.om-pill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap;justify-self:end}
+.om-note{font-size:11.5px;color:var(--gray);margin-top:6px}
+.om-ext{font-size:11px;color:var(--gray);margin-top:2px}
+.om-ext b{color:#374151;font-weight:600}
+ul.om-subs{list-style:none;margin:8px 0 0 8px;padding:0;border-left:1.5px solid var(--omTree)}
+ul.om-subs ul.om-subs{margin-left:14px}
+ul.om-subs>li{position:relative;padding:5px 0 5px 16px}
+ul.om-subs>li::before{content:"";position:absolute;left:0;top:15px;width:11px;border-top:1.5px solid var(--omTree)}
+ul.om-subs>li:last-child{border-left:1.5px solid #fff;margin-left:-1.5px}
+.om-row{display:flex;align-items:flex-start;gap:6px;border-radius:6px;padding:2px 4px}
+.om-row .om-rmain{flex:1;min-width:0}
+.om-subname{font-size:12.5px;font-weight:600;color:#111827}
+.om-subdet{font-size:11px;color:var(--gray);overflow-wrap:anywhere}
+.om-subdet .om-no{color:#374151}
+.om-row .om-acts{opacity:.35;transition:opacity .15s}
+.om-row:hover .om-acts,.om-row:focus-within .om-acts,.om-card-top:hover .om-acts,.om-card-top:focus-within .om-acts{opacity:1}
+.om-drop{outline:2px dashed var(--navy);outline-offset:2px;background:var(--navy-light)}
+[draggable="true"]{cursor:grab}
+mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
+.om-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.om-span2{grid-column:1/-1}
+.om-extra:empty{display:none}
+.om-field-hint{font-size:11px;color:var(--gray);margin-top:3px}
+.om-meta{font-size:11px;color:var(--gray);margin-top:12px}
+.om-modal-actions{display:flex;gap:8px;margin-top:16px;align-items:center;flex-wrap:wrap}
+.om-confirm{margin-top:12px;padding:12px;border:1.5px solid #FECACA;background:#FEF2F2;border-radius:8px;font-size:12.5px;color:#7F1D1D}
+.om-confirm .om-modal-actions{margin-top:10px}
+.om-fieldrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.om-fieldrow code{font-size:11px;color:var(--gray)}
+.om-hist{width:100%;border-collapse:collapse;font-size:12px}
+.om-hist th,.om-hist td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.om-hist th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--gray);background:var(--navy-light)}
+.om-histwrap{overflow-x:auto}
+@media(max-width:640px){.om-form{grid-template-columns:1fr}.om-count{margin-left:0;width:100%}.om-row .om-acts{opacity:1}}
+@media (prefers-reduced-motion:reduce){.om-row .om-acts{transition:none}}
 </style>
 </head>
 <body>
@@ -464,6 +537,7 @@ tbody tr{transition:var(--transition)}
     </button>
     <button class="tab" id="tab-dailyreport-register" onclick="switchTab('dailyreport-register')">📋 Daily Report Register</button>
     <button class="tab" id="tab-docs" onclick="switchTab('docs')">📁 Documents</button>
+    <button class="tab" id="tab-om" onclick="switchTab('om')">📚 O&amp;M Library</button>
   </div>
   <div class="content">
 
@@ -703,6 +777,33 @@ tbody tr{transition:var(--transition)}
       <div id="users-list"><div class="loading"><div class="loading-spinner"></div><br>Loading...</div></div>
     </div>
     <!-- DOCUMENTS -->
+    <!-- ═════════ O&M LIBRARY (Manuals Tree) ═════════ -->
+    <div class="view no-print" id="view-om">
+      <div class="om-head">
+        <div>
+          <div class="om-title">📚 O&amp;M Library — Manuals Tree</div>
+          <div class="om-sub">Each main system with its main O&amp;M manual and the sub-system manuals under it. Click a status to filter.</div>
+        </div>
+        <div class="om-head-actions">
+          <button class="btn sm" type="button" onclick="omOpenHistory()">🕘 History</button>
+          <button class="btn sm om-admin" type="button" onclick="omOpenFields()">⚙ Manage Fields</button>
+          <button class="btn sm" type="button" onclick="omExportExcel()">⬇ Export Excel</button>
+          <button class="btn primary sm om-edit" type="button" onclick="omOpenEdit(null,null)">+ Add Area</button>
+        </div>
+      </div>
+      <div class="om-tally" id="om-tally"></div>
+      <div class="filter-bar om-filters">
+        <input type="search" id="om-q" placeholder="Search system, sub-system, vendor, doc no.…" oninput="omDebouncedRender()" style="flex:1 1 240px;min-width:0">
+        <select id="om-area" onchange="omRender()" aria-label="Area"><option value="">All areas</option></select>
+        <label class="om-check"><input type="checkbox" id="om-gaps" onchange="omRender()"> Gaps only</label>
+        <button class="btn sm" type="button" onclick="omExpandAll(true)">Expand all</button>
+        <button class="btn sm" type="button" onclick="omExpandAll(false)">Collapse all</button>
+        <button class="btn sm" type="button" onclick="omClearFilters()">Clear</button>
+        <span class="om-count" id="om-count"></span>
+      </div>
+      <div class="om-hint om-edit">Tip: drag a sub-system onto another system to move it under it, or use ✎ to change its parent, details and status.</div>
+      <div id="om-tree"><div class="om-empty">Loading O&amp;M library…</div></div>
+    </div>
     <div class="view no-print" id="view-docs">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div style="font-size:16px;font-weight:700;color:var(--navy)">📁 Document Controller</div>
@@ -910,6 +1011,56 @@ tbody tr{transition:var(--transition)}
 </div>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()"><button class="lb-close" onclick="closeLightbox()">&times;</button><img id="lb-img" src=""></div>
+<!-- O&M Library: edit item -->
+<div class="modal-bg" id="om-modal-bg">
+  <div class="modal" role="dialog" aria-labelledby="om-modal-title">
+    <div class="modal-head"><h3 id="om-modal-title">Edit item</h3><button type="button" onclick="omCloseModal('om-modal-bg')" aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <div class="om-form">
+        <div class="field om-span2"><label for="om-f-name">Name *</label><input id="om-f-name" type="text" placeholder="e.g. Lube Oil System"></div>
+        <div class="field om-span2"><label for="om-f-parent">Belongs to (parent)</label><select id="om-f-parent"></select>
+          <div class="om-field-hint" id="om-f-typehint"></div></div>
+        <div class="field"><label for="om-f-status">Manual status</label><select id="om-f-status"></select></div>
+        <div class="field"><label for="om-f-vendor">Vendor</label><input id="om-f-vendor" type="text"></div>
+        <div class="field"><label for="om-f-doc">Manual Doc No. (CDN)</label><input id="om-f-doc" type="text" placeholder="WQA2-…"></div>
+        <div class="field"><label for="om-f-rev">Rev</label><input id="om-f-rev" type="text"></div>
+        <div class="field om-span2"><label for="om-f-title">Manual title</label><input id="om-f-title" type="text"></div>
+        <div class="field"><label for="om-f-idn">Vendor No. (IDN)</label><input id="om-f-idn" type="text"></div>
+        <div class="field"><label for="om-f-notes">Remarks</label><input id="om-f-notes" type="text"></div>
+        <div id="om-f-extra" class="om-span2 om-form om-extra"></div>
+      </div>
+      <div class="om-meta" id="om-f-meta"></div>
+      <div class="om-modal-actions">
+        <button class="btn danger om-del" type="button" id="om-f-delete" onclick="omAskDelete()">Delete</button>
+        <span style="flex:1"></span>
+        <button class="btn" type="button" onclick="omCloseModal('om-modal-bg')">Cancel</button>
+        <button class="btn primary" type="button" id="om-f-save" onclick="omSaveModal()">Save</button>
+      </div>
+      <div class="om-confirm" id="om-del-confirm" hidden></div>
+    </div>
+  </div>
+</div>
+<!-- O&M Library: custom fields -->
+<div class="modal-bg" id="om-fields-bg">
+  <div class="modal" role="dialog" aria-labelledby="om-fields-title" style="width:520px">
+    <div class="modal-head"><h3 id="om-fields-title">Manage custom fields</h3><button type="button" onclick="omCloseModal('om-fields-bg')" aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <p class="om-sub" style="margin-bottom:12px">Fields you add here appear in every item's edit form and in the Excel export.</p>
+      <div id="om-fields-list"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input id="om-newfield" type="text" placeholder="New field name, e.g. Location" style="flex:1;font:inherit;font-size:13px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm)">
+        <button class="btn primary" type="button" onclick="omAddField()">Add field</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- O&M Library: history -->
+<div class="modal-bg" id="om-hist-bg">
+  <div class="modal" role="dialog" aria-labelledby="om-hist-title" style="width:820px">
+    <div class="modal-head"><h3 id="om-hist-title">Change history</h3><button type="button" onclick="omCloseModal('om-hist-bg')" aria-label="Close">×</button></div>
+    <div class="modal-body"><div id="om-hist-list">Loading…</div></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- PRINT AREA -->
@@ -1111,6 +1262,7 @@ function showApp(){
   setDisplay('tab-dailyreport-new',isViewerRole?'none':'');
   setDisplay('tab-dailyreport-register',isViewerRole?'none':'');
   setDisplay('tab-docs','');
+  setDisplay('tab-om','');
   initForm();
   const restoredView=restoreAppViewState();
   let initialTab=(isAdmin||isViewerRole)?'dashboard':(currentUser.role==='supervisor'?'register':'new');
@@ -2437,7 +2589,7 @@ function switchTab(tab){
   if(tab==='dailyreport-new'){drMode='new';tab='dailyreport';}
   if(tab==='dailyreport-register'){drMode='register';tab='dailyreport';}
   if(tab==='dashboard'&&!canViewDashboard()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
-  if(isViewer() && !['dashboard','docs'].includes(tab)) tab='docs';
+  if(isViewer() && !['dashboard','docs','om'].includes(tab)) tab='docs';
   if((tab==='users'||tab==='approvals')&&!isAdmin()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
   const previousTab=getActiveTabState();
   const currentDrMode=getDRViewModeState();
@@ -2446,7 +2598,7 @@ function switchTab(tab){
   setActiveTabState(tab);
   if(drMode) setDRViewModeState(drMode);
   persistAppViewState();
-  const views=['dashboard','new','register','users','approvals','dailyreport','docs'];
+  const views=['dashboard','new','register','users','approvals','dailyreport','docs','om'];
   views.forEach(v=>{
     const el=document.getElementById('view-'+v);
     if(el)el.classList.toggle('active',v===tab);
@@ -2471,6 +2623,7 @@ function switchTab(tab){
   if(tab==='approvals') scheduleRender(()=>loadPLApprovals());
   if(tab==='dailyreport') scheduleRender(()=>initDailyReport(getDRViewModeState()));
   if(tab==='docs') scheduleRender(()=>loadDocs(false));
+  if(tab==='om') scheduleRender(()=>loadOM(false));
 }
 
 // ── HELPERS ──
@@ -3568,6 +3721,387 @@ function closeHandoverReport(){
   }
 }
 
+</script>
+<script>
+// ═════════ O&M LIBRARY (Manuals Tree) ═════════
+const OM_SN={R:'Received',A:'In Aconex – Not Downloaded',N:'Not Received',M:'Missing',C:'In Main Manual (verify)',T:'Not in Tracker',P:'Per Sub-system Manuals'};
+const OM_ORDER=['R','A','N','M','C','T','P'];
+const OM_GAP=new Set(['A','N','M']);
+const OM_TYPE_LABEL={area:'Area',system:'Main system',subsystem:'Sub-system'};
+const OM_COLS='id,parent_id,node_type,name,vendor,doc_no,rev,title,idn,status,notes,sort_order,extra,updated_by,updated_at';
+const OM_EDITABLE=['name','parent_id','node_type','vendor','doc_no','rev','title','idn','status','notes','sort_order','extra'];
+let omNodes=[],omFields=[],omById=new Map(),omKids=new Map(),omLoadedAt=0,omLoading=null,omEditing=null,omNewParent=null,omDragId=null,omTimer=null;
+const omState={lvl:'',s:'',collapsed:new Set(),collapsedAreas:new Set()};
+try{const c=JSON.parse(localStorage.getItem('qas2_om_collapsed')||'{}');(c.s||[]).forEach(i=>omState.collapsed.add(i));(c.a||[]).forEach(i=>omState.collapsedAreas.add(i));}catch(e){}
+function omSaveCollapsed(){try{localStorage.setItem('qas2_om_collapsed',JSON.stringify({s:[...omState.collapsed],a:[...omState.collapsedAreas]}));}catch(e){}}
+function omCanEdit(){return !!currentUser&&roleRank(currentUser.role)>=3;}
+function omCanDelete(){return !!currentUser&&isAdmin();}
+function omUser(){return currentUser?.name||currentUser?.username||'unknown';}
+function omNow(){return new Date().toISOString();}
+function omIndex(){
+  omById=new Map(omNodes.map(n=>[n.id,n]));omKids=new Map();
+  omNodes.forEach(n=>{if(n.parent_id&&!omById.has(n.parent_id))n.parent_id=null;const k=n.parent_id||0;if(!omKids.has(k))omKids.set(k,[]);omKids.get(k).push(n);});
+  omKids.forEach(a=>a.sort((x,y)=>(x.sort_order-y.sort_order)||(x.id-y.id)));
+}
+const omChildren=id=>omKids.get(id||0)||[];
+function omDesc(id){const out=[];const walk=p=>omChildren(p).forEach(c=>{out.push(c);walk(c.id);});walk(id);return out;}
+function omPath(n){const p=[];let x=n;while(x){p.unshift(x.name);x=omById.get(x.parent_id);}return p.join(' › ');}
+function omTypeFor(parentId){if(!parentId)return 'area';const p=omById.get(+parentId);return p&&p.node_type==='area'?'system':'subsystem';}
+function omAreaOf(n){let x=n;while(x&&x.parent_id)x=omById.get(x.parent_id);return x;}
+function omSystemOf(n){let x=n;while(x&&x.node_type!=='system'&&x.parent_id)x=omById.get(x.parent_id);return x&&x.node_type==='system'?x:null;}
+
+async function loadOM(force){
+  if(omLoading)return omLoading;
+  if(!force&&omNodes.length&&Date.now()-omLoadedAt<60000){omRender();return;}
+  omLoading=(async()=>{
+    try{
+      const [nodes,fields]=await Promise.all([
+        sbFetch('qas2_om_nodes?select='+OM_COLS+'&order=sort_order.asc,id.asc&limit=10000'),
+        sbFetch('qas2_om_fields?select=*&order=sort_order.asc,id.asc')]);
+      omNodes=(nodes||[]).map(n=>({...n,extra:n.extra||{}}));omFields=fields||[];omLoadedAt=Date.now();
+      omIndex();omFillAreas();omRender();
+    }catch(e){
+      const m=String(e&&e.message||'');
+      document.getElementById('om-tree').innerHTML='<div class="om-empty">'+(/qas2_om_|42P01|does not exist|schema cache/i.test(m)
+        ?'The O&amp;M library tables are not set up yet. Run <b>qas2_om_library_setup.sql</b> once in Supabase → SQL Editor, then reload.'
+        :'Could not load the O&amp;M library. Check your connection and try again.')+'</div>';
+    }finally{omLoading=null;}
+  })();
+  return omLoading;
+}
+function omFillAreas(){
+  const sel=document.getElementById('om-area');if(!sel)return;const cur=sel.value;
+  sel.innerHTML='<option value="">All areas</option>'+omChildren(0).map(a=>`<option value="${a.id}" ${String(a.id)===cur?'selected':''}>${escapeHtml(a.name)}</option>`).join('');
+}
+function omDebouncedRender(){clearTimeout(omTimer);omTimer=setTimeout(omRender,160);}
+function omClearFilters(){omState.lvl='';omState.s='';['om-q','om-area'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const g=document.getElementById('om-gaps');if(g)g.checked=false;omRender();}
+function omExpandAll(open){
+  if(open){omState.collapsed.clear();omState.collapsedAreas.clear();}
+  else{omNodes.forEach(n=>{if(n.node_type==='system'&&omChildren(n.id).length)omState.collapsed.add(n.id);});}
+  omSaveCollapsed();omRender();
+}
+function omToggle(id){omState.collapsed.has(id)?omState.collapsed.delete(id):omState.collapsed.add(id);omSaveCollapsed();omRender();}
+function omToggleArea(id){omState.collapsedAreas.has(id)?omState.collapsedAreas.delete(id):omState.collapsedAreas.add(id);omSaveCollapsed();omRender();}
+function omSetStatusFilter(lvl,s){if(omState.lvl===lvl&&omState.s===s){omState.lvl='';omState.s='';}else{omState.lvl=lvl;omState.s=s;}omRender();}
+
+function omRenderTally(){
+  const cm={},cs={};let tm=0,ts=0;
+  omNodes.forEach(n=>{if(n.node_type==='system'){cm[n.status]=(cm[n.status]||0)+1;tm++;}else if(n.node_type==='subsystem'){cs[n.status]=(cs[n.status]||0)+1;ts++;}});
+  const box=(lvl,label,c,tot)=>`<div class="om-tbox"><h4>${label}<b>${tot}</b></h4><div class="om-chips">${OM_ORDER.filter(k=>c[k]).map(k=>`<button type="button" class="om-chip om-s${k}" aria-pressed="${omState.lvl===lvl&&omState.s===k}" onclick="omSetStatusFilter('${lvl}','${k}')">${OM_SN[k]} ${c[k]}</button>`).join('')}</div></div>`;
+  document.getElementById('om-tally').innerHTML=box('main','Main system manuals',cm,tm)+box('sub','Sub-system manuals',cs,ts);
+}
+function omHl(s,q){s=escapeHtml(s||'');if(!q)return s;const i=s.toLowerCase().indexOf(escapeHtml(q).toLowerCase());if(i<0)return s;const L=escapeHtml(q).length;return s.slice(0,i)+'<mark class="om-hl">'+s.slice(i,i+L)+'</mark>'+s.slice(i+L);}
+function omText(n){return [n.name,n.vendor,n.doc_no,n.title,n.idn,n.notes,...Object.values(n.extra||{})].join(' ').toLowerCase();}
+function omExtraLine(n){
+  const parts=omFields.filter(f=>n.extra&&n.extra[f.key]).map(f=>`<b>${escapeHtml(f.label)}:</b> ${escapeHtml(n.extra[f.key])}`);
+  return parts.length?`<div class="om-ext">${parts.join(' · ')}</div>`:'';
+}
+function omActs(n){
+  if(!omCanEdit())return '';
+  const sib=omChildren(n.parent_id),i=sib.indexOf(n);
+  return `<span class="om-acts">
+    <button class="om-ib" type="button" title="Edit" aria-label="Edit ${escapeHtml(n.name)}" onclick="omOpenEdit(${n.id})">✎</button>
+    <button class="om-ib" type="button" title="Add item under this" aria-label="Add under ${escapeHtml(n.name)}" onclick="omOpenEdit(null,${n.id})">＋</button>
+    <button class="om-ib" type="button" title="Move up" aria-label="Move up" onclick="omMove(${n.id},-1)" ${i<=0?'disabled':''}>↑</button>
+    <button class="om-ib" type="button" title="Move down" aria-label="Move down" onclick="omMove(${n.id},1)" ${i>=sib.length-1?'disabled':''}>↓</button></span>`;
+}
+function omRender(){
+  const tree=document.getElementById('om-tree');if(!tree)return;
+  const canEdit=omCanEdit();
+  document.querySelectorAll('#view-om .om-edit').forEach(el=>el.style.display=canEdit?'':'none');
+  document.querySelectorAll('#view-om .om-admin').forEach(el=>el.style.display=isAdmin()?'':'none');
+  omRenderTally();
+  if(!omNodes.length){tree.innerHTML='<div class="om-empty">The library is empty.'+(canEdit?' Click <b>+ Add Area</b> to start.':'')+'</div>';document.getElementById('om-count').textContent='';return;}
+  const q=(document.getElementById('om-q')?.value||'').trim().toLowerCase();
+  const areaSel=document.getElementById('om-area')?.value||'';
+  const gaps=!!document.getElementById('om-gaps')?.checked;
+  const filtering=!!(q||omState.lvl||gaps);
+  const match=n=>{
+    if(n.node_type==='area')return !q||omText(n).includes(q)?!(omState.lvl||gaps):false;
+    if(q&&!omText(n).includes(q))return false;
+    if(omState.lvl==='main'&&!(n.node_type==='system'&&n.status===omState.s))return false;
+    if(omState.lvl==='sub'&&!(n.node_type==='subsystem'&&n.status===omState.s))return false;
+    if(gaps&&!OM_GAP.has(n.status))return false;
+    return true;
+  };
+  const vis=new Map();
+  const calc=n=>{let v=!filtering||match(n);omChildren(n.id).forEach(c=>{if(calc(c))v=true;});vis.set(n.id,v);return v;};
+  omChildren(0).forEach(calc);
+  const show=n=>vis.get(n.id);
+  const subList=(pid)=>{
+    const kids=omChildren(pid).filter(show);if(!kids.length)return '';
+    return `<ul class="om-subs">${kids.map(s=>{
+      const has=omChildren(s.id).length,col=omState.collapsed.has(s.id)&&!filtering;
+      return `<li><div class="om-row" data-drop="${s.id}" ${canEdit?`draggable="true" data-drag="${s.id}"`:''}>
+        ${has?`<button class="om-tog" type="button" aria-label="${col?'Expand':'Collapse'}" onclick="omToggle(${s.id})">${col?'▸':'▾'}</button>`:''}
+        <div class="om-rmain"><span class="om-subname">${omHl(s.name,q)}</span>
+          <div class="om-subdet">${s.doc_no?`<span class="om-no">${omHl(s.doc_no,q)}</span>${s.rev?` · Rev ${escapeHtml(s.rev)}`:''} · `:''}${omHl(s.vendor||'',q)}${s.idn?` · IDN ${omHl(s.idn,q)}`:''}${s.notes?` · ${omHl(s.notes,q)}`:''}</div>${omExtraLine(s)}</div>
+        <span class="om-pill om-s${escapeHtml(s.status)}">${OM_SN[s.status]||escapeHtml(s.status)}</span>${omActs(s)}</div>
+        ${has&&!col?subList(s.id):''}</li>`;}).join('')}</ul>`;
+  };
+  let html='',nSys=0,nTot=0;
+  omChildren(0).forEach(a=>{
+    if(areaSel&&String(a.id)!==areaSel)return;
+    if(!show(a))return;
+    const systems=omChildren(a.id).filter(show);
+    const acol=omState.collapsedAreas.has(a.id)&&!filtering;
+    nTot+=omChildren(a.id).length;
+    const cards=systems.map(t=>{
+      nSys++;
+      const col=omState.collapsed.has(t.id)&&!filtering,has=omChildren(t.id).length;
+      return `<article class="om-card">
+        <div class="om-card-top" data-drop="${t.id}" ${canEdit?`draggable="true" data-drag="${t.id}"`:''}>
+          ${has?`<button class="om-tog" type="button" aria-label="${col?'Expand':'Collapse'}" onclick="omToggle(${t.id})">${col?'▸':'▾'}</button>`:''}
+          <div style="min-width:0"><div class="om-sysname">${omHl(t.name,q)}</div><div class="om-vendor">Main vendor: ${omHl(t.vendor||'—',q)}${has?` · ${has} sub-system${has>1?'s':''}`:''}</div></div>${omActs(t)}</div>
+        <div class="om-man"><div style="min-width:0"><div class="om-tag">Main O&amp;M manual</div>
+          ${t.doc_no?`<div class="om-no">${omHl(t.doc_no,q)}${t.rev?` · Rev ${escapeHtml(t.rev)}`:''}</div><div class="om-ttl">${omHl(t.title||'',q)}</div>`:''}
+          ${t.notes?`<div class="om-ttl" style="color:${t.doc_no?'var(--omM)':'#374151'}">${omHl(t.notes,q)}</div>`:(t.doc_no?'':'<div class="om-ttl">—</div>')}</div>
+          <span class="om-pill om-s${escapeHtml(t.status)}">${OM_SN[t.status]||escapeHtml(t.status)}</span></div>
+        ${omExtraLine(t)}${t.idn?`<div class="om-ext"><b>IDN:</b> ${omHl(t.idn,q)}</div>`:''}
+        ${!col?subList(t.id):''}</article>`;
+    }).join('');
+    html+=`<section class="om-area"><div class="om-area-h" data-drop="${a.id}">
+      <span class="om-area-name" role="button" tabindex="0" onclick="omToggleArea(${a.id})" onkeydown="if(event.key==='Enter')omToggleArea(${a.id})">${acol?'▸':'▾'} ${omHl(a.name,q)}</span><small>${systems.length} system${systems.length!==1?'s':''}</small>${omActs(a)}</div>
+      ${acol?'':(cards?`<div class="om-grid">${cards}</div>`:'<div class="om-empty" style="padding:14px">No systems in this area yet.</div>')}</section>`;
+  });
+  tree.innerHTML=html||'<div class="om-empty">Nothing matches. Clear the filters to see the full tree.</div>';
+  document.getElementById('om-count').textContent=filtering||areaSel?`${nSys} of ${omNodes.filter(n=>n.node_type==='system').length} systems`:`${omNodes.filter(n=>n.node_type==='system').length} systems · ${omNodes.filter(n=>n.node_type==='subsystem').length} sub-systems`;
+}
+
+// ── history ──
+async function omLog(action,node,before,after){
+  try{await sbFetch('qas2_om_history','POST',{node_id:node?.id??null,node_name:node?.name??null,action,before:before??null,after:after??null,username:omUser()});}catch(e){console.warn('history',e);}
+}
+function omPick(n,keys){const o={};keys.forEach(k=>o[k]=n[k]);return o;}
+
+// ── type recompute after a parent change ──
+async function omFixTypes(rootId){
+  const patches=[];
+  const walk=(id)=>{const n=omById.get(id);const t=omTypeFor(n.parent_id);if(n.node_type!==t){n.node_type=t;patches.push(n);}omChildren(id).forEach(c=>walk(c.id));};
+  walk(rootId);
+  for(const n of patches) await sbFetch('qas2_om_nodes?id=eq.'+n.id,'PATCH',{node_type:n.node_type,updated_by:omUser(),updated_at:omNow()});
+}
+function omNextSort(parentId){const s=omChildren(parentId);return (s.length?Math.max(...s.map(x=>x.sort_order||0)):0)+10;}
+
+// ── move up/down ──
+async function omMove(id,dir){
+  try{requireRole('supervisor');}catch(e){return;}
+  const n=omById.get(id);const sib=omChildren(n.parent_id).slice();const i=sib.indexOf(n),j=i+dir;
+  if(j<0||j>=sib.length)return;
+  [sib[i],sib[j]]=[sib[j],sib[i]];
+  const changes=[];sib.forEach((x,k)=>{const so=(k+1)*10;if(x.sort_order!==so){x.sort_order=so;changes.push(x);}});
+  omIndex();omRender();
+  try{for(const x of changes)await sbFetch('qas2_om_nodes?id=eq.'+x.id,'PATCH',{sort_order:x.sort_order});}
+  catch(e){showToast('Could not save the new order: '+e.message,'error');loadOM(true);}
+}
+
+// ── drag & drop (re-parent) ──
+function omIsInside(id,targetId){let x=omById.get(targetId);while(x){if(x.id===id)return true;x=omById.get(x.parent_id);}return false;}
+async function omReparent(id,newParentId,silent){
+  const n=omById.get(id);if(!n)return;
+  if(newParentId&&omIsInside(id,newParentId)){showToast('You cannot move an item inside itself.','error');return;}
+  if((n.parent_id||null)===(newParentId||null))return;
+  const before=omPick(n,['parent_id','sort_order','node_type']);
+  n.parent_id=newParentId||null;n.sort_order=omNextSort(newParentId);omIndex();
+  n.node_type=omTypeFor(n.parent_id);
+  try{
+    await sbFetch('qas2_om_nodes?id=eq.'+id,'PATCH',{parent_id:n.parent_id,sort_order:n.sort_order,node_type:n.node_type,updated_by:omUser(),updated_at:omNow()});
+    await omFixTypes(id);
+    await omLog('move',n,before,omPick(n,['parent_id','sort_order','node_type']));
+    if(!silent)showToast(`Moved “${n.name}” under ${newParentId?omById.get(newParentId).name:'top level'}`,'success');
+  }catch(e){showToast('Move failed: '+e.message,'error');}
+  await loadOM(true);
+}
+(function omBindDnD(){
+  const tree=()=>document.getElementById('om-tree');
+  document.addEventListener('dragstart',e=>{const el=e.target.closest&&e.target.closest('#om-tree [data-drag]');if(!el)return;omDragId=+el.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(omDragId));}catch(_){}} );
+  document.addEventListener('dragover',e=>{if(!omDragId)return;const t=e.target.closest&&e.target.closest('#om-tree [data-drop]');if(!t)return;e.preventDefault();tree().querySelectorAll('.om-drop').forEach(x=>x!==t&&x.classList.remove('om-drop'));t.classList.add('om-drop');});
+  document.addEventListener('dragleave',e=>{const t=e.target.closest&&e.target.closest('#om-tree [data-drop]');if(t&&!t.contains(e.relatedTarget))t.classList.remove('om-drop');});
+  document.addEventListener('drop',e=>{const t=e.target.closest&&e.target.closest('#om-tree [data-drop]');if(!t||!omDragId)return;e.preventDefault();t.classList.remove('om-drop');const id=omDragId;omDragId=null;const target=+t.dataset.drop;if(target!==id)omReparent(id,target);});
+  document.addEventListener('dragend',()=>{omDragId=null;const tr=tree();if(tr)tr.querySelectorAll('.om-drop').forEach(x=>x.classList.remove('om-drop'));});
+})();
+
+// ── edit modal ──
+function omOpenModal(id){document.getElementById(id).classList.add('show');}
+function omCloseModal(id){document.getElementById(id).classList.remove('show');}
+function omParentOptions(excludeId){
+  const ex=new Set();if(excludeId){ex.add(excludeId);omDesc(excludeId).forEach(d=>ex.add(d.id));}
+  let out='<option value="">— Top level (this item becomes an Area) —</option>';
+  const walk=(pid,depth)=>omChildren(pid).forEach(n=>{if(ex.has(n.id))return;out+=`<option value="${n.id}">${'   '.repeat(depth)}${depth?'└ ':''}${escapeHtml(n.name)} (${OM_TYPE_LABEL[n.node_type]||n.node_type})</option>`;walk(n.id,depth+1);});
+  walk(0,0);return out;
+}
+function omUpdateTypeHint(){
+  const p=document.getElementById('om-f-parent').value;const t=omTypeFor(p?+p:null);
+  document.getElementById('om-f-typehint').textContent='This item will be: '+OM_TYPE_LABEL[t]+(p?' under '+omPath(omById.get(+p)):'');
+}
+function omOpenEdit(id,parentId){
+  try{requireRole('supervisor');}catch(e){return;}
+  const n=id?omById.get(id):null;omEditing=n;omNewParent=n?null:(parentId||null);
+  const pid=n?n.parent_id:omNewParent;
+  document.getElementById('om-modal-title').textContent=n?'Edit — '+n.name:(pid?'Add item under '+omById.get(pid).name:'Add new Area');
+  const g=(k,v)=>{document.getElementById('om-f-'+k).value=v??'';};
+  g('name',n?.name);g('vendor',n?n.vendor:(pid?omSystemOf(omById.get(pid))?.vendor||'':''));g('doc',n?.doc_no);g('rev',n?.rev);g('title',n?.title);g('idn',n?.idn);g('notes',n?.notes);
+  document.getElementById('om-f-status').innerHTML=OM_ORDER.map(k=>`<option value="${k}">${OM_SN[k]}</option>`).join('');
+  document.getElementById('om-f-status').value=n?n.status:(pid?'M':'P');
+  const ps=document.getElementById('om-f-parent');ps.innerHTML=omParentOptions(n?.id);ps.value=pid?String(pid):'';ps.onchange=omUpdateTypeHint;omUpdateTypeHint();
+  document.getElementById('om-f-extra').innerHTML=omFields.map(f=>`<div class="field"><label for="om-x-${escapeHtml(f.key)}">${escapeHtml(f.label)}</label><input id="om-x-${escapeHtml(f.key)}" data-key="${escapeHtml(f.key)}" type="text" value="${escapeHtml(n?.extra?.[f.key]||'')}"></div>`).join('');
+  document.getElementById('om-f-meta').textContent=n&&n.updated_by?`Last updated by ${n.updated_by} · ${new Date(n.updated_at).toLocaleString()}`:'';
+  document.getElementById('om-f-delete').style.display=n&&omCanDelete()?'':'none';
+  const cf=document.getElementById('om-del-confirm');cf.hidden=true;cf.innerHTML='';
+  omOpenModal('om-modal-bg');setTimeout(()=>document.getElementById('om-f-name').focus(),60);
+}
+async function omSaveModal(){
+  try{requireRole('supervisor');}catch(e){return;}
+  const v=k=>document.getElementById('om-f-'+k).value.trim();
+  const name=v('name');if(!name){showToast('Enter a name.','error');document.getElementById('om-f-name').focus();return;}
+  const parent=document.getElementById('om-f-parent').value;const parent_id=parent?+parent:null;
+  const extra={...(omEditing?.extra||{})};document.querySelectorAll('#om-f-extra input[data-key]').forEach(i=>{const val=i.value.trim();if(val)extra[i.dataset.key]=val;else delete extra[i.dataset.key];});
+  const data={name,parent_id,node_type:omTypeFor(parent_id),vendor:v('vendor')||null,doc_no:v('doc')||null,rev:v('rev')||null,title:v('title')||null,idn:v('idn')||null,status:document.getElementById('om-f-status').value,notes:v('notes')||null,extra};
+  const btn=document.getElementById('om-f-save');btn.disabled=true;
+  try{
+    if(!omEditing){
+      data.sort_order=omNextSort(parent_id);
+      const r=await sbFetch('qas2_om_nodes','POST',{...data,updated_by:omUser(),updated_at:omNow()});
+      const row=Array.isArray(r)?r[0]:r;await omLog('create',row,null,omPick(row,OM_EDITABLE));
+      if(parent_id){omState.collapsed.delete(parent_id);omSaveCollapsed();}
+      showToast('Added “'+name+'”','success');
+    }else{
+      const n=omEditing,before={},after={};
+      Object.keys(data).forEach(k=>{if(JSON.stringify(n[k]??null)!==JSON.stringify(data[k]??null)){before[k]=n[k]??null;after[k]=data[k];}});
+      if(!Object.keys(after).length){omCloseModal('om-modal-bg');btn.disabled=false;return;}
+      const moved='parent_id' in after;
+      if(moved){if(parent_id&&omIsInside(n.id,parent_id)){showToast('You cannot move an item inside itself.','error');btn.disabled=false;return;}after.sort_order=omNextSort(parent_id);before.sort_order=n.sort_order;}
+      await sbFetch('qas2_om_nodes?id=eq.'+n.id,'PATCH',{...after,updated_by:omUser(),updated_at:omNow()});
+      if(moved){Object.assign(n,after);omIndex();await omFixTypes(n.id);}
+      await omLog(moved?'move':'update',{id:n.id,name},before,after);
+      showToast('Saved','success');
+    }
+    omCloseModal('om-modal-bg');await loadOM(true);
+  }catch(e){showToast('Save failed: '+e.message,'error');}
+  finally{btn.disabled=false;}
+}
+function omAskDelete(){
+  const n=omEditing;if(!n)return;const kids=omChildren(n.id),all=omDesc(n.id);
+  const cf=document.getElementById('om-del-confirm');cf.hidden=false;
+  const parentName=n.parent_id?omById.get(n.parent_id).name:'top level';
+  cf.innerHTML=kids.length
+    ?`<b>“${escapeHtml(n.name)}” has ${all.length} item${all.length>1?'s':''} under it.</b> What should happen to them?
+      <div class="om-modal-actions"><button class="btn" type="button" onclick="omDoDelete(false)">Move them up to ${escapeHtml(parentName)}, then delete</button>
+      <button class="btn danger" type="button" onclick="omDoDelete(true)">Delete everything</button>
+      <button class="btn" type="button" onclick="document.getElementById('om-del-confirm').hidden=true">Cancel</button></div>`
+    :`<b>Delete “${escapeHtml(n.name)}”?</b> You can restore it later from History.
+      <div class="om-modal-actions"><button class="btn danger" type="button" onclick="omDoDelete(true)">Delete</button>
+      <button class="btn" type="button" onclick="document.getElementById('om-del-confirm').hidden=true">Cancel</button></div>`;
+}
+async function omDoDelete(withChildren){
+  try{requireRole('admin','Only an admin can delete items.');}catch(e){return;}
+  const n=omEditing;if(!n)return;
+  try{
+    if(!withChildren){
+      for(const c of omChildren(n.id).slice()){c.parent_id=n.parent_id;c.sort_order=omNextSort(n.parent_id)+1;await sbFetch('qas2_om_nodes?id=eq.'+c.id,'PATCH',{parent_id:c.parent_id,sort_order:c.sort_order,updated_by:omUser(),updated_at:omNow()});omIndex();await omFixTypes(c.id);}
+    }
+    const snap=[n,...(withChildren?omDesc(n.id):[])].map(x=>omPick(x,['id',...OM_EDITABLE,'updated_by','updated_at']));
+    await sbFetch('qas2_om_nodes?id=eq.'+n.id,'DELETE');
+    await omLog('delete',n,snap,null);
+    omCloseModal('om-modal-bg');showToast('Deleted “'+n.name+'”','success');await loadOM(true);
+  }catch(e){showToast('Delete failed: '+e.message,'error');}
+}
+
+// ── custom fields ──
+function omOpenFields(){try{requireRole('admin','Only an admin can manage fields.');}catch(e){return;}omRenderFields();omOpenModal('om-fields-bg');}
+function omRenderFields(){
+  document.getElementById('om-fields-list').innerHTML=omFields.length?omFields.map(f=>`<div class="om-fieldrow"><span style="flex:1"><b>${escapeHtml(f.label)}</b> <code>${escapeHtml(f.key)}</code></span><button class="btn sm" type="button" onclick="omDeleteField(${f.id})">Remove</button></div>`).join(''):'<div class="om-sub">No custom fields yet.</div>';
+}
+async function omAddField(){
+  try{requireRole('admin');}catch(e){return;}
+  const inp=document.getElementById('om-newfield');const label=inp.value.trim();if(!label){inp.focus();return;}
+  let key=label.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'field';let k=key,i=2;while(omFields.some(f=>f.key===k))k=key+'_'+(i++);
+  try{const r=await sbFetch('qas2_om_fields','POST',{key:k,label,sort_order:(omFields.length+1)*10});omFields.push(Array.isArray(r)?r[0]:r);inp.value='';omRenderFields();omRender();showToast('Field “'+label+'” added','success');}
+  catch(e){showToast('Could not add field: '+e.message,'error');}
+}
+async function omDeleteField(id){
+  try{requireRole('admin');}catch(e){return;}
+  try{await sbFetch('qas2_om_fields?id=eq.'+id,'DELETE');omFields=omFields.filter(f=>f.id!==id);omRenderFields();omRender();showToast('Field removed (saved values are kept)','success');}
+  catch(e){showToast('Could not remove field: '+e.message,'error');}
+}
+
+// ── history & restore ──
+let omHistRows=[];
+async function omOpenHistory(){
+  omOpenModal('om-hist-bg');const box=document.getElementById('om-hist-list');box.textContent='Loading…';
+  try{
+    omHistRows=await sbFetch('qas2_om_history?select=*&order=at.desc&limit=300')||[];
+    if(!omHistRows.length){box.innerHTML='<div class="om-sub">No changes recorded yet.</div>';return;}
+    const fmt=(o)=>o?Object.entries(Array.isArray(o)?{items:o.length+' item(s)'}:o).filter(([k,v])=>!['sort_order','extra'].includes(k)&&v!==null&&v!=='').map(([k,v])=>`${k}: ${escapeHtml(k==='status'?(OM_SN[v]||v):k==='parent_id'?(omById.get(v)?.name||v||'top level'):v??'—')}`).join('<br>'):'';
+    box.innerHTML=`<div class="om-histwrap"><table class="om-hist"><thead><tr><th>When</th><th>By</th><th>Action</th><th>Item</th><th>Before</th><th>After</th><th></th></tr></thead><tbody>${omHistRows.map((h,i)=>`<tr>
+      <td>${escapeHtml(new Date(h.at).toLocaleString())}</td><td>${escapeHtml(h.username||'')}</td><td>${escapeHtml(h.action)}</td><td>${escapeHtml(h.node_name||'')}</td>
+      <td>${fmt(h.before)}</td><td>${fmt(h.after)}</td>
+      <td>${omCanEdit()&&h.action!=='restore'?`<button class="btn sm" type="button" onclick="omRestore(${i})">Restore</button>`:''}</td></tr>`).join('')}</tbody></table></div>`;
+  }catch(e){box.innerHTML='<div class="om-sub">Could not load history: '+escapeHtml(e.message)+'</div>';}
+}
+async function omRestore(i){
+  try{requireRole('supervisor');}catch(e){return;}
+  const h=omHistRows[i];if(!h)return;
+  try{
+    if(h.action==='delete'){
+      const rows=(h.before||[]).map(r=>({...r}));if(!rows.length)return;
+      if(rows[0].parent_id&&!omById.has(rows[0].parent_id))rows[0].parent_id=null;
+      for(const r of rows){if(omById.has(r.id)){showToast('“'+r.name+'” already exists – skipped','error');continue;}await sbFetch('qas2_om_nodes','POST',{...r,updated_by:omUser(),updated_at:omNow()});omById.set(r.id,r);}
+      await omLog('restore',{id:rows[0].id,name:rows[0].name},null,{restored:rows.length+' item(s)'});
+    }else if(h.action==='create'){
+      const n=omById.get(h.node_id);if(!n){showToast('That item no longer exists.','error');return;}
+      if(omChildren(n.id).length){showToast('Cannot undo: items were added under it since.','error');return;}
+      await sbFetch('qas2_om_nodes?id=eq.'+n.id,'DELETE');await omLog('delete',n,[omPick(n,['id',...OM_EDITABLE,'updated_by','updated_at'])],null);
+    }else{
+      const n=omById.get(h.node_id);if(!n){showToast('That item no longer exists. Restore its deletion first.','error');return;}
+      const b={...(h.before||{})};if(b.parent_id&&omIsInside(n.id,b.parent_id)){showToast('Cannot restore: that would place the item inside itself.','error');return;}
+      if('parent_id' in b&&b.parent_id&&!omById.has(b.parent_id))b.parent_id=null;
+      const cur=omPick(n,Object.keys(b));
+      await sbFetch('qas2_om_nodes?id=eq.'+n.id,'PATCH',{...b,updated_by:omUser(),updated_at:omNow()});
+      if('parent_id' in b){Object.assign(n,b);omIndex();await omFixTypes(n.id);}
+      await omLog('restore',n,cur,b);
+    }
+    showToast('Restored','success');await loadOM(true);omOpenHistory();
+  }catch(e){showToast('Restore failed: '+e.message,'error');}
+}
+
+// ── Excel export ──
+async function omExportExcel(){
+  if(!omNodes.length){showToast('Nothing to export yet.','error');return;}
+  const rows=[];const walk=(pid,depth)=>omChildren(pid).forEach(n=>{rows.push({n,depth});walk(n.id,depth+1);});walk(0,0);
+  const fill={R:'C6EFCE',A:'FFEB9C',N:'FCD5B4',M:'F4B6B6',C:'DDEBF7',T:'E7E6E6',P:'EDEDED'};
+  const date=new Date().toISOString().slice(0,10);
+  if(typeof ExcelJS==='undefined'){
+    const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    const lines=[['Area','Main System','Level','Item','Vendor','Doc No.','Rev','Title','Status','IDN','Remarks',...omFields.map(f=>f.label)].map(q).join(',')];
+    rows.forEach(({n})=>{if(n.node_type==='area')return;lines.push([omAreaOf(n)?.name,omSystemOf(n)?.name,OM_TYPE_LABEL[n.node_type],n.name,n.vendor,n.doc_no,n.rev,n.title,OM_SN[n.status],n.idn,n.notes,...omFields.map(f=>n.extra?.[f.key]||'')].map(q).join(','));});
+    const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`QAS2_OM_Library_${date}.csv`;a.click();return;
+  }
+  const wb=new ExcelJS.Workbook();wb.creator='QAS2 CORE';
+  const ws=wb.addWorksheet('Manuals Tree',{views:[{state:'frozen',ySplit:1}]});
+  const cols=[['Level',12],['Item (tree)',48],['Area',20],['Main System',34],['Vendor',28],['Manual Doc No. (CDN)',32],['Rev',6],['Manual Title',52],['Status',24],['IDN',20],['Remarks',40],...omFields.map(f=>[f.label,18]),['Updated By',16],['Updated At',18]];
+  ws.columns=cols.map(([h,w])=>({header:h,width:w}));
+  const hr=ws.getRow(1);hr.font={bold:true,color:{argb:'FFFFFFFF'}};hr.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};hr.alignment={vertical:'middle',wrapText:true};hr.height=28;
+  rows.forEach(({n,depth})=>{
+    const r=ws.addRow([OM_TYPE_LABEL[n.node_type]||n.node_type,n.name,omAreaOf(n)?.name||'',omSystemOf(n)?.name||'',n.vendor||'',n.doc_no||'',n.rev||'',n.title||'',n.node_type==='area'?'':(OM_SN[n.status]||n.status),n.idn||'',n.notes||'',...omFields.map(f=>n.extra?.[f.key]||''),n.updated_by||'',n.updated_at?new Date(n.updated_at).toLocaleString():'']);
+    r.getCell(2).alignment={indent:Math.min(depth*2,15)};
+    if(n.node_type==='area'){r.font={bold:true,color:{argb:'FFFFFFFF'}};r.eachCell({includeEmpty:true},c=>c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2E4A7D'}});}
+    else if(n.node_type==='system'){r.font={bold:true};r.eachCell({includeEmpty:true},c=>c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFD9E1F2'}});}
+    if(n.node_type!=='area'&&fill[n.status])r.getCell(9).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+fill[n.status]}};
+    if(depth>0)r.outlineLevel=Math.min(depth,7);
+  });
+  ws.autoFilter={from:'A1',to:{row:1,column:cols.length}};
+  const s=wb.addWorksheet('Summary');
+  s.columns=[{header:'Area',width:28},{header:'Main systems',width:13},...OM_ORDER.map(k=>({header:'Main: '+OM_SN[k],width:15})),{header:'Sub-systems',width:13},...OM_ORDER.map(k=>({header:'Sub: '+OM_SN[k],width:15}))];
+  const sh=s.getRow(1);sh.font={bold:true,color:{argb:'FFFFFFFF'}};sh.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};sh.alignment={wrapText:true,vertical:'middle'};sh.height=42;
+  omChildren(0).forEach(a=>{const d=omDesc(a.id),m=d.filter(x=>x.node_type==='system'),sub=d.filter(x=>x.node_type==='subsystem');
+    s.addRow([a.name,m.length,...OM_ORDER.map(k=>m.filter(x=>x.status===k).length),sub.length,...OM_ORDER.map(k=>sub.filter(x=>x.status===k).length)]);});
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`QAS2_OM_Library_${date}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+  showToast('Excel exported','success');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['om-modal-bg','om-fields-bg','om-hist-bg'].forEach(id=>{const m=document.getElementById(id);if(m&&m.classList.contains('show'))omCloseModal(id);});}});
 </script>
 </body>
 </html>

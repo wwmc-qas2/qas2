@@ -351,6 +351,52 @@ tbody tr{transition:var(--transition)}
   .topbar-sub{display:none}
 }
 
+.om-seg{display:inline-flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+.om-viewbtn{font:inherit;font-size:12px;font-weight:600;border:0;background:transparent;padding:5px 10px;cursor:pointer;color:var(--gray)}
+.om-viewbtn[aria-pressed="true"]{background:var(--navy);color:#fff}
+.om-viewbtn:focus-visible,.om-clip:focus-visible,.om-arow:focus-visible,.om-gap:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.om-manr{display:inline-flex;gap:6px;align-items:center;justify-self:end}
+.om-clip{font:inherit;font-size:10.5px;font-weight:700;border:1px solid var(--border);background:#fff;border-radius:5px;padding:1px 6px;cursor:pointer;color:var(--navy);white-space:nowrap}
+.om-clip:hover{background:var(--navy-light)}
+.om-file{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.om-file-ico{font-size:20px}
+.om-file-main{flex:1;min-width:0}
+.om-file-name{font-size:13px;font-weight:600;overflow-wrap:anywhere}
+.om-file-meta{font-size:11px;color:var(--gray);overflow-wrap:anywhere}
+.om-files-add{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:10px}
+.om-up{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.om-linkrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) auto;gap:8px}
+.om-linkrow input{font:inherit;font-size:13px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);min-width:0}
+.om-pbar{height:8px;background:var(--navy-light);border-radius:4px;overflow:hidden}
+.om-pbar span{display:block;height:100%;width:0;background:var(--navy);transition:width .2s}
+.om-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px;margin-bottom:12px}
+.om-kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm)}
+.om-kpi-v{font-size:28px;font-weight:800;color:var(--navy);line-height:1.1;font-variant-numeric:tabular-nums}
+.om-kpi.good .om-kpi-v{color:#166534}.om-kpi.bad .om-kpi-v{color:#B91C1C}
+.om-kpi-l{font-size:12px;font-weight:700;color:#374151;margin-top:4px}
+.om-kpi-s{font-size:11px;color:var(--gray);margin-top:2px}
+.om-dgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;align-items:start}
+.om-span-all{grid-column:1/-1}
+.om-panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);min-width:0}
+.om-panel h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);margin-bottom:10px;display:flex;gap:8px;align-items:baseline}
+.om-panel h4 small{font-size:11px;color:var(--gray);letter-spacing:0}
+.om-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:var(--gray);margin-bottom:8px}
+.om-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.om-arow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;width:100%;text-align:left;font:inherit;background:none;border:0;border-radius:6px;padding:7px 6px;cursor:pointer}
+.om-arow:hover{background:var(--navy-light)}
+.om-aname{font-size:12.5px;font-weight:600}.om-apct{font-size:12.5px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.om-asub{grid-column:1/-1;font-size:10.5px;color:var(--gray)}
+.om-sbar{grid-column:1/-1;display:flex;height:8px;border-radius:4px;overflow:hidden;background:#F3F4F6}
+.om-sbar span{display:block;height:100%}
+.om-bR{background:#22A35A}.om-bA{background:#F2B33D}.om-bN{background:#EA7A3B}.om-bM{background:#DC2626}.om-bC{background:#6C9BE0}.om-bT{background:#AEB4BC}.om-bP{background:#D5D9DE}
+.om-gaplist{display:flex;flex-direction:column;gap:2px;max-height:330px;overflow:auto}
+.om-gap{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-size:12.5px;font-weight:600;background:none;border:0;border-bottom:1px solid var(--border);padding:7px 4px;cursor:pointer}
+.om-gap:hover{background:var(--navy-light)}
+.om-gap small{display:block;font-weight:400;font-size:10.5px;color:var(--gray)}
+.om-recent{list-style:none;margin:0;padding:0}
+.om-recent li{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.om-recent li span{color:#374151}.om-recent time{margin-left:auto;color:var(--gray);font-size:11px}
+@media(max-width:760px){.om-dgrid{grid-template-columns:minmax(0,1fr)}.om-linkrow{grid-template-columns:minmax(0,1fr)}}
 /* ═════════ O&M LIBRARY ═════════ */
 #view-om{--omR:#166534;--omRb:#E8F5EE;--omA:#92400E;--omAb:#FEF3C7;--omN:#C2410C;--omNb:#FFEDD5;--omM:#B91C1C;--omMb:#FEE2E2;--omC:#1D4ED8;--omCb:#DBEAFE;--omT:#4B5563;--omTb:#EEF0F3;--omP:#6B7280;--omPb:#F3F4F6;--omTree:#B6C2D2}
 .om-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -424,6 +470,8 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 .om-histwrap{overflow-x:auto}
 @media(max-width:640px){.om-form{grid-template-columns:1fr}.om-count{margin-left:0;width:100%}.om-row .om-acts{opacity:1}}
 @media (prefers-reduced-motion:reduce){.om-row .om-acts{transition:none}}
+.wa-offer{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,160%);background:#fff;border:1px solid var(--border);box-shadow:var(--shadow-lg);border-radius:var(--radius-md);padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:9998;font-size:13px;max-width:calc(100% - 32px);transition:transform .25s ease}
+.wa-offer.show{transform:translate(-50%,0)}
 </style>
 </head>
 <body>
@@ -785,12 +833,15 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
           <div class="om-sub">Each main system with its main O&amp;M manual and the sub-system manuals under it. Click a status to filter.</div>
         </div>
         <div class="om-head-actions">
+          <div class="om-seg" role="group" aria-label="View"><button class="om-viewbtn" type="button" data-v="tree" aria-pressed="true" onclick="omSetView('tree')">🌳 Tree</button><button class="om-viewbtn" type="button" data-v="dash" aria-pressed="false" onclick="omSetView('dash')">📊 Dashboard</button></div>
           <button class="btn sm" type="button" onclick="omOpenHistory()">🕘 History</button>
           <button class="btn sm om-admin" type="button" onclick="omOpenFields()">⚙ Manage Fields</button>
           <button class="btn sm" type="button" onclick="omExportExcel()">⬇ Export Excel</button>
           <button class="btn primary sm om-edit" type="button" onclick="omOpenEdit(null,null)">+ Add Area</button>
         </div>
       </div>
+      <div id="om-dash" hidden></div>
+      <div id="om-tree-wrap">
       <div class="om-tally" id="om-tally"></div>
       <div class="filter-bar om-filters">
         <input type="search" id="om-q" placeholder="Search system, sub-system, vendor, doc no.…" oninput="omDebouncedRender()" style="flex:1 1 240px;min-width:0">
@@ -803,6 +854,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       </div>
       <div class="om-hint om-edit">Tip: drag a sub-system onto another system to move it under it, or use ✎ to change its parent, details and status.</div>
       <div id="om-tree"><div class="om-empty">Loading O&amp;M library…</div></div>
+      </div>
     </div>
     <div class="view no-print" id="view-docs">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
@@ -1032,11 +1084,36 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div class="om-meta" id="om-f-meta"></div>
       <div class="om-modal-actions">
         <button class="btn danger om-del" type="button" id="om-f-delete" onclick="omAskDelete()">Delete</button>
+        <button class="btn" type="button" id="om-f-files" onclick="if(omEditing){omCloseModal('om-modal-bg');omOpenFiles(omEditing.id);}">📎 Attachments</button>
         <span style="flex:1"></span>
         <button class="btn" type="button" onclick="omCloseModal('om-modal-bg')">Cancel</button>
         <button class="btn primary" type="button" id="om-f-save" onclick="omSaveModal()">Save</button>
       </div>
       <div class="om-confirm" id="om-del-confirm" hidden></div>
+    </div>
+  </div>
+</div>
+<!-- O&M Library: attachments -->
+<div class="modal-bg" id="om-files-bg">
+  <div class="modal" role="dialog" aria-labelledby="om-files-title" style="width:680px">
+    <div class="modal-head"><h3 id="om-files-title">Manuals &amp; attachments</h3><button type="button" onclick="omCloseModal('om-files-bg')" aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <div class="om-sub" id="om-files-path" style="margin-bottom:10px"></div>
+      <div id="om-files-list"></div>
+      <div id="om-files-add" class="om-files-add">
+        <div class="om-up">
+          <label class="btn primary" for="om-up-input" style="cursor:pointer">⬆ Upload PDF / file</label>
+          <input id="om-up-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.zip,image/*" onchange="omUploadFile(this)" style="display:none">
+          <span class="om-sub">Up to 50 MB per file. Bigger manuals: add them as a link.</span>
+        </div>
+        <div class="om-progress" id="om-up-progress" hidden><div class="om-pbar"><span></span></div><div class="om-sub" id="om-up-label"></div></div>
+        <div class="om-linkrow">
+          <input id="om-link-title" type="text" placeholder="Link title (optional)" aria-label="Link title">
+          <input id="om-link-url" type="url" placeholder="Paste link: Aconex, OneDrive, SharePoint…" aria-label="Link address">
+          <button class="btn" type="button" onclick="omAddLink()">🔗 Add link</button>
+        </div>
+        <label class="om-check" id="om-up-mark-wrap"><input type="checkbox" id="om-up-mark" checked> Mark this item as <b>Received</b> when I attach a manual</label>
+      </div>
     </div>
   </div>
 </div>
@@ -1602,9 +1679,62 @@ async function compressImage(file){
       const q = file.size>4000000 ? 0.58 : file.size>2000000 ? 0.64 : 0.72;
       resolve(canvas.toDataURL('image/jpeg',q));
     };
-    img.onerror=()=>{URL.revokeObjectURL(objectUrl); resolve('');};
+    img.onerror=async()=>{
+      URL.revokeObjectURL(objectUrl);
+      // Fallback for formats the <img> tag cannot decode on this device
+      try{
+        if(typeof createImageBitmap==='function'){
+          const bmp=await createImageBitmap(file);
+          const MAX=1600;const s=Math.min(1,MAX/Math.max(bmp.width,bmp.height));
+          const c=document.createElement('canvas');c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);
+          const cx=c.getContext('2d',{alpha:false});cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(bmp,0,0,c.width,c.height);
+          return resolve(c.toDataURL('image/jpeg',0.7));
+        }
+      }catch(_){}
+      resolve('');
+    };
     img.src=objectUrl;
   });
+}
+
+// Compress picked files; skips files this device cannot read and tells the user why.
+async function compressFiles(files){
+  const out=await Promise.all(files.map(f=>compressImage(f).catch(()=>'')));
+  const ok=[],bad=[];
+  out.forEach((d,i)=>{ if(d && d.startsWith('data:image')) ok.push(d); else bad.push(files[i].name||'photo'); });
+  if(bad.length) showToast(bad.length+' photo(s) could not be read ('+bad.slice(0,2).join(', ')+'). Use JPG or PNG — on iPhone: Settings › Camera › Formats › Most Compatible.','error');
+  return ok;
+}
+
+// Save photos for a ticket in one request; never throws, returns how many failed.
+async function saveTicketPhotos(ticketId,photos){
+  const list=(photos||[]).filter(p=>p && p.startsWith('data:image'));
+  if(!list.length) return {saved:0,failed:0};
+  try{
+    await sbFetch('qas2_photos','POST',list.map(photo_data=>({ticket_id:ticketId,photo_data})));
+    return {saved:list.length,failed:0};
+  }catch(e){
+    let saved=0,lastErr=e;
+    for(const photo_data of list){
+      try{await sbFetch('qas2_photos','POST',{ticket_id:ticketId,photo_data});saved++;}catch(err){lastErr=err;}
+    }
+    if(saved<list.length) console.warn('Photo upload failed',lastErr);
+    return {saved,failed:list.length-saved,error:lastErr};
+  }
+}
+
+// Priority A: offer a one-tap WhatsApp share without blocking the user
+function offerWhatsApp(ticket){
+  let bar=document.getElementById('wa-offer');
+  if(!bar){bar=document.createElement('div');bar.id='wa-offer';bar.className='wa-offer no-print';bar.setAttribute('role','status');document.body.appendChild(bar);}
+  bar.innerHTML='<span>Priority A ticket <b>'+escapeHtml(ticket.no||'')+'</b> registered. Share it now?</span>'+
+    '<button class="btn sm whatsapp" type="button" id="wa-offer-send">Share on WhatsApp</button>'+
+    '<button class="btn sm" type="button" id="wa-offer-close">Not now</button>';
+  bar.classList.add('show');
+  const close=()=>bar.classList.remove('show');
+  document.getElementById('wa-offer-send').onclick=()=>{sendWhatsApp(ticket);close();};
+  document.getElementById('wa-offer-close').onclick=close;
+  clearTimeout(bar._t);bar._t=setTimeout(close,15000);
 }
 
 async function handlePhotos(e){
@@ -1615,7 +1745,7 @@ async function handlePhotos(e){
   input.disabled=true;
   input.title='Optimizing images...';
   try{
-    const compressed=await Promise.all(files.map(f=>compressImage(f)));
+    const compressed=await compressFiles(files);
     pendingPhotos.push(...compressed);
     renderPhotoPreview();
   }finally{
@@ -1637,7 +1767,7 @@ async function handleEditTicketPhotos(e){
   const input=e.target;
   input.disabled=true;
   try{
-    const compressed=await Promise.all(files.map(f=>compressImage(f)));
+    const compressed=await compressFiles(files);
     editTicketNewPhotos.push(...compressed);
     renderEditTicketPhotoPreview();
   }finally{
@@ -1709,23 +1839,19 @@ async function registerTicket(){
       status:'OPEN'
     };
     const [saved]=await sbFetch('qas2_tickets','POST',ticket);
-    // Save photos separately
-    if(pendingPhotos.length){
-      for(const photo of pendingPhotos){
-        await sbFetch('qas2_photos','POST',{ticket_id:saved.id,photo_data:photo});
-      }
-    }
-    // WhatsApp for Priority A
+    // Save photos (the ticket is kept even if photos fail)
+    const ph=await saveTicketPhotos(saved.id,pendingPhotos);
+    if(ph.failed) showToast('Ticket '+ticket.no+' saved, but '+ph.failed+' photo(s) failed to upload: '+String(ph.error&&ph.error.message||'').slice(0,120)+'. Open the ticket › Edit to add them again.','error');
+    else showToast('Ticket '+ticket.no+' registered'+(ph.saved?' with '+ph.saved+' photo(s)':''),'success');
     if(ticket.priority==='A') offerWhatsApp(ticket);
-    showToast('Ticket '+ticket.no+' registered');
     invalidateTicketsCache();
     invalidateDashboardCache();
     await initForm();
     switchTab('register');
     await loadTickets(true);
     refreshDashboard(true);
-  }catch(e){showToast('Error: '+e.message);}
-  btn.disabled=false;btn.textContent='&#10003;  Submit & Register';
+  }catch(e){showToast('Error: '+e.message,'error');}
+  btn.disabled=false;btn.innerHTML='&#10003;&nbsp; Submit &amp; Register';
 }
 
 // ── LOAD TICKETS ──
@@ -1971,10 +2097,10 @@ async function saveEditTicket(){
       await sbFetch('qas2_photos?id=eq.'+p.id,'DELETE');
     }
   }
-  for(const photo of editTicketNewPhotos){
-    await sbFetch('qas2_photos','POST',{ticket_id:id,photo_data:photo});
-  }
-  closeEditModal();showToast('Ticket updated');invalidateTicketsCache();invalidateDashboardCache();invalidateTicketDetailCache(id);await loadTickets(true);refreshDashboard(true);
+  const ph=await saveTicketPhotos(id,editTicketNewPhotos);
+  closeEditModal();
+  if(ph.failed) showToast('Ticket updated, but '+ph.failed+' photo(s) failed to upload: '+String(ph.error&&ph.error.message||'').slice(0,120),'error');
+  else showToast('Ticket updated','success');invalidateTicketsCache();invalidateDashboardCache();invalidateTicketDetailCache(id);await loadTickets(true);refreshDashboard(true);
 }
 // ── DASHBOARD ──
 let _charts={};
@@ -2723,7 +2849,7 @@ async function handleDRPhotos(e){
   input.disabled=true;
   input.title='Optimizing images...';
   try{
-    const compressed=await Promise.all(files.map(f=>compressImage(f)));
+    const compressed=await compressFiles(files);
     drPendingPhotos.push(...compressed);
     renderDRPhotoPreview();
   }finally{
@@ -2747,7 +2873,7 @@ async function handleEditReportPhotos(e){
   const input=e.target;
   input.disabled=true;
   try{
-    const compressed=await Promise.all(files.map(f=>compressImage(f)));
+    const compressed=await compressFiles(files);
     editReportPhotos.push(...compressed);
     renderEditReportPhotoPreview();
   }finally{
@@ -3752,14 +3878,15 @@ function omSystemOf(n){let x=n;while(x&&x.node_type!=='system'&&x.parent_id)x=om
 
 async function loadOM(force){
   if(omLoading)return omLoading;
-  if(!force&&omNodes.length&&Date.now()-omLoadedAt<60000){omRender();return;}
+  if(!force&&omNodes.length&&Date.now()-omLoadedAt<60000){omSetView(omView);return;}
   omLoading=(async()=>{
     try{
       const [nodes,fields]=await Promise.all([
         sbFetch('qas2_om_nodes?select='+OM_COLS+'&order=sort_order.asc,id.asc&limit=10000'),
-        sbFetch('qas2_om_fields?select=*&order=sort_order.asc,id.asc')]);
+        sbFetch('qas2_om_fields?select=*&order=sort_order.asc,id.asc'),
+        omLoadFiles()]);
       omNodes=(nodes||[]).map(n=>({...n,extra:n.extra||{}}));omFields=fields||[];omLoadedAt=Date.now();
-      omIndex();omFillAreas();omRender();
+      omIndex();omFillAreas();omSetView(omView);
     }catch(e){
       const m=String(e&&e.message||'');
       document.getElementById('om-tree').innerHTML='<div class="om-empty">'+(/qas2_om_|42P01|does not exist|schema cache/i.test(m)
@@ -3802,6 +3929,7 @@ function omActs(n){
   return `<span class="om-acts">
     <button class="om-ib" type="button" title="Edit" aria-label="Edit ${escapeHtml(n.name)}" onclick="omOpenEdit(${n.id})">✎</button>
     <button class="om-ib" type="button" title="Add item under this" aria-label="Add under ${escapeHtml(n.name)}" onclick="omOpenEdit(null,${n.id})">＋</button>
+    ${n.node_type!=='area'?`<button class="om-ib" type="button" title="Attach manual (PDF or link)" aria-label="Attach manual to ${escapeHtml(n.name)}" onclick="omOpenFiles(${n.id})">📎</button>`:''}
     <button class="om-ib" type="button" title="Move up" aria-label="Move up" onclick="omMove(${n.id},-1)" ${i<=0?'disabled':''}>↑</button>
     <button class="om-ib" type="button" title="Move down" aria-label="Move down" onclick="omMove(${n.id},1)" ${i>=sib.length-1?'disabled':''}>↓</button></span>`;
 }
@@ -3836,7 +3964,7 @@ function omRender(){
         ${has?`<button class="om-tog" type="button" aria-label="${col?'Expand':'Collapse'}" onclick="omToggle(${s.id})">${col?'▸':'▾'}</button>`:''}
         <div class="om-rmain"><span class="om-subname">${omHl(s.name,q)}</span>
           <div class="om-subdet">${s.doc_no?`<span class="om-no">${omHl(s.doc_no,q)}</span>${s.rev?` · Rev ${escapeHtml(s.rev)}`:''} · `:''}${omHl(s.vendor||'',q)}${s.idn?` · IDN ${omHl(s.idn,q)}`:''}${s.notes?` · ${omHl(s.notes,q)}`:''}</div>${omExtraLine(s)}</div>
-        <span class="om-pill om-s${escapeHtml(s.status)}">${OM_SN[s.status]||escapeHtml(s.status)}</span>${omActs(s)}</div>
+        ${omClip(s)}<span class="om-pill om-s${escapeHtml(s.status)}">${OM_SN[s.status]||escapeHtml(s.status)}</span>${omActs(s)}</div>
         ${has&&!col?subList(s.id):''}</li>`;}).join('')}</ul>`;
   };
   let html='',nSys=0,nTot=0;
@@ -3856,7 +3984,7 @@ function omRender(){
         <div class="om-man"><div style="min-width:0"><div class="om-tag">Main O&amp;M manual</div>
           ${t.doc_no?`<div class="om-no">${omHl(t.doc_no,q)}${t.rev?` · Rev ${escapeHtml(t.rev)}`:''}</div><div class="om-ttl">${omHl(t.title||'',q)}</div>`:''}
           ${t.notes?`<div class="om-ttl" style="color:${t.doc_no?'var(--omM)':'#374151'}">${omHl(t.notes,q)}</div>`:(t.doc_no?'':'<div class="om-ttl">—</div>')}</div>
-          <span class="om-pill om-s${escapeHtml(t.status)}">${OM_SN[t.status]||escapeHtml(t.status)}</span></div>
+          <span class="om-manr">${omClip(t)}<span class="om-pill om-s${escapeHtml(t.status)}">${OM_SN[t.status]||escapeHtml(t.status)}</span></span></div>
         ${omExtraLine(t)}${t.idn?`<div class="om-ext"><b>IDN:</b> ${omHl(t.idn,q)}</div>`:''}
         ${!col?subList(t.id):''}</article>`;
     }).join('');
@@ -3947,6 +4075,8 @@ function omOpenEdit(id,parentId){
   document.getElementById('om-f-extra').innerHTML=omFields.map(f=>`<div class="field"><label for="om-x-${escapeHtml(f.key)}">${escapeHtml(f.label)}</label><input id="om-x-${escapeHtml(f.key)}" data-key="${escapeHtml(f.key)}" type="text" value="${escapeHtml(n?.extra?.[f.key]||'')}"></div>`).join('');
   document.getElementById('om-f-meta').textContent=n&&n.updated_by?`Last updated by ${n.updated_by} · ${new Date(n.updated_at).toLocaleString()}`:'';
   document.getElementById('om-f-delete').style.display=n&&omCanDelete()?'':'none';
+  document.getElementById('om-f-files').style.display=n?'':'none';
+  if(n)document.getElementById('om-f-files').textContent='📎 Attachments ('+omFilesOf(n.id).length+')';
   const cf=document.getElementById('om-del-confirm');cf.hidden=true;cf.innerHTML='';
   omOpenModal('om-modal-bg');setTimeout(()=>document.getElementById('om-f-name').focus(),60);
 }
@@ -4101,7 +4231,196 @@ async function omExportExcel(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`QAS2_OM_Library_${date}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
   showToast('Excel exported','success');
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['om-modal-bg','om-fields-bg','om-hist-bg'].forEach(id=>{const m=document.getElementById(id);if(m&&m.classList.contains('show'))omCloseModal(id);});}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['om-modal-bg','om-fields-bg','om-hist-bg','om-files-bg'].forEach(id=>{const m=document.getElementById(id);if(m&&m.classList.contains('show'))omCloseModal(id);});}});
+
+// ── Attachments (manual PDFs and links) ──
+const OM_BUCKET='qas2-om-manuals';
+const OM_MAX_MB=50;
+let omFilesByNode=new Map(),omFilesNode=null,omFilesReady=false;
+async function omLoadFiles(){
+  try{
+    const rows=await sbFetch('qas2_om_files?select=*&order=created_at.asc,id.asc&limit=10000')||[];
+    omFilesByNode=new Map();rows.forEach(f=>{if(!omFilesByNode.has(f.node_id))omFilesByNode.set(f.node_id,[]);omFilesByNode.get(f.node_id).push(f);});
+    omFilesReady=true;
+  }catch(e){omFilesByNode=new Map();omFilesReady=false;}
+}
+const omFilesOf=id=>omFilesByNode.get(id)||[];
+function omClip(n){
+  const c=omFilesOf(n.id).length;
+  if(!c)return '';
+  return `<button class="om-clip" type="button" title="Open attached manuals" aria-label="${c} attachment${c>1?'s':''} for ${escapeHtml(n.name)}" onclick="omOpenFiles(${n.id})">📎 ${c}</button>`;
+}
+function omEncPath(p){return p.split('/').map(encodeURIComponent).join('/');}
+function omStorageUpload(path,file,onProgress){
+  return new Promise((resolve,reject)=>{
+    const x=new XMLHttpRequest();
+    x.open('POST',SB_URL+'/storage/v1/object/'+OM_BUCKET+'/'+omEncPath(path));
+    x.setRequestHeader('apikey',SB_KEY);x.setRequestHeader('Authorization','Bearer '+SB_KEY);
+    x.setRequestHeader('Content-Type',file.type||'application/octet-stream');x.setRequestHeader('x-upsert','false');
+    x.upload.onprogress=e=>{if(e.lengthComputable&&onProgress)onProgress(e.loaded/e.total);};
+    x.onload=()=>x.status>=200&&x.status<300?resolve():reject(new Error(omStorageError(x.status,x.responseText)));
+    x.onerror=()=>reject(new Error('Network error – check your connection and try again.'));
+    x.send(file);
+  });
+}
+function omStorageError(status,text){
+  let m=text||'';try{const j=JSON.parse(text);m=j.message||j.error||text;}catch(_){}
+  if(/bucket not found/i.test(m))return 'The file storage is not set up yet. Run qas2_site_upgrade.sql in Supabase.';
+  if(status===413||/maximum allowed size|too large/i.test(m))return 'The file is larger than your Supabase plan allows. Add it as a link instead.';
+  if(/row-level security|unauthorized|403/i.test(m))return 'Supabase refused the upload (storage permissions). Run qas2_site_upgrade.sql in Supabase.';
+  return m||('HTTP '+status);
+}
+async function omSignedUrl(path){
+  const r=await fetch(SB_URL+'/storage/v1/object/sign/'+OM_BUCKET+'/'+omEncPath(path),{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:3600})});
+  const t=await r.text();if(!r.ok)throw new Error(omStorageError(r.status,t));
+  const j=JSON.parse(t);const s=j.signedURL||j.signedUrl;if(!s)throw new Error('No link returned');
+  return /^https?:/.test(s)?s:SB_URL+'/storage/v1'+(s.startsWith('/')?s:'/'+s);
+}
+function omFmtSize(b){if(!b)return '';return b>=1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';}
+function omOpenFiles(id){
+  const n=omById.get(id);if(!n)return;omFilesNode=n;
+  document.getElementById('om-files-title').textContent='Manuals & attachments — '+n.name;
+  document.getElementById('om-files-path').textContent=omPath(n);
+  const ed=omCanEdit();
+  document.getElementById('om-files-add').style.display=ed?'':'none';
+  document.getElementById('om-up-mark').checked=n.status!=='R';
+  document.getElementById('om-up-mark-wrap').style.display=n.node_type==='area'?'none':'';
+  document.getElementById('om-up-progress').hidden=true;
+  ['om-link-title','om-link-url'].forEach(i=>document.getElementById(i).value='');
+  omRenderFilesList();omOpenModal('om-files-bg');
+}
+function omRenderFilesList(){
+  const n=omFilesNode;if(!n)return;const list=omFilesOf(n.id);const box=document.getElementById('om-files-list');
+  if(!omFilesReady){box.innerHTML='<div class="om-empty" style="padding:14px">Attachments are not set up yet. Run <b>qas2_site_upgrade.sql</b> in Supabase, then reload.</div>';return;}
+  box.innerHTML=list.length?list.map(f=>`<div class="om-file">
+      <span class="om-file-ico" aria-hidden="true">${f.kind==='link'?'🔗':(/\.pdf$/i.test(f.file_name||'')?'📕':'📄')}</span>
+      <div class="om-file-main"><div class="om-file-name">${escapeHtml(f.title||f.file_name||f.url)}</div>
+        <div class="om-file-meta">${f.kind==='link'?escapeHtml((f.url||'').replace(/^https?:\/\//,'').slice(0,70)):escapeHtml(f.file_name||'')+(f.file_size?' · '+omFmtSize(f.file_size):'')} · ${escapeHtml(f.uploaded_by||'')} · ${escapeHtml(new Date(f.created_at).toLocaleDateString())}</div></div>
+      <button class="btn sm primary" type="button" onclick="omOpenFile(${f.id})">Open</button>
+      ${omCanDelete()?`<button class="btn sm" type="button" onclick="omDeleteFile(${f.id},this)">Remove</button>`:''}
+    </div>`).join(''):'<div class="om-sub" style="padding:8px 0">No manuals attached yet.'+(omCanEdit()?' Upload the PDF or add a link below.':'')+'</div>';
+}
+async function omMarkReceivedIfAsked(n){
+  if(!document.getElementById('om-up-mark').checked||n.node_type==='area'||n.status==='R')return;
+  const before={status:n.status};
+  await sbFetch('qas2_om_nodes?id=eq.'+n.id,'PATCH',{status:'R',updated_by:omUser(),updated_at:omNow()});
+  n.status='R';await omLog('update',n,before,{status:'R'});
+}
+async function omUploadFile(input){
+  try{requireRole('supervisor');}catch(e){input.value='';return;}
+  const n=omFilesNode;const files=Array.from(input.files||[]);input.value='';if(!n||!files.length)return;
+  const prog=document.getElementById('om-up-progress'),bar=prog.querySelector('span'),lbl=document.getElementById('om-up-label');
+  let ok=0;
+  for(const file of files){
+    if(file.size>OM_MAX_MB*1048576){showToast(`“${file.name}” is ${omFmtSize(file.size)}. The limit is ${OM_MAX_MB} MB per file — add it as a link (Aconex / OneDrive / SharePoint) instead.`,'error');continue;}
+    const safe=file.name.replace(/[^\w.\-]+/g,'_').slice(-120);
+    const path=`node_${n.id}/${Date.now()}_${safe}`;
+    prog.hidden=false;bar.style.width='0%';lbl.textContent='Uploading '+file.name+'…';
+    try{
+      await omStorageUpload(path,file,p=>{bar.style.width=Math.round(p*100)+'%';lbl.textContent='Uploading '+file.name+' – '+Math.round(p*100)+'%';});
+      const r=await sbFetch('qas2_om_files','POST',{node_id:n.id,kind:'file',title:file.name.replace(/\.[^.]+$/,''),file_name:file.name,file_size:file.size,mime_type:file.type||null,storage_path:path,uploaded_by:omUser()});
+      const row=Array.isArray(r)?r[0]:r;if(!omFilesByNode.has(n.id))omFilesByNode.set(n.id,[]);omFilesByNode.get(n.id).push(row);ok++;
+    }catch(e){showToast('Upload failed: '+e.message,'error');}
+  }
+  prog.hidden=true;
+  if(ok){try{await omMarkReceivedIfAsked(n);}catch(e){}await omLog('update',n,null,{attachment:ok+' file(s) added'});showToast(ok+' file(s) attached to '+n.name,'success');}
+  omRenderFilesList();omRender();
+}
+async function omAddLink(){
+  try{requireRole('supervisor');}catch(e){return;}
+  const n=omFilesNode;if(!n)return;
+  const title=document.getElementById('om-link-title').value.trim();let url=document.getElementById('om-link-url').value.trim();
+  if(!url){showToast('Paste the link to the manual.','error');document.getElementById('om-link-url').focus();return;}
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  try{
+    const r=await sbFetch('qas2_om_files','POST',{node_id:n.id,kind:'link',title:title||url,url,uploaded_by:omUser()});
+    const row=Array.isArray(r)?r[0]:r;if(!omFilesByNode.has(n.id))omFilesByNode.set(n.id,[]);omFilesByNode.get(n.id).push(row);
+    try{await omMarkReceivedIfAsked(n);}catch(e){}
+    await omLog('update',n,null,{attachment:'link added: '+(title||url)});
+    ['om-link-title','om-link-url'].forEach(i=>document.getElementById(i).value='');
+    showToast('Link added','success');omRenderFilesList();omRender();
+  }catch(e){showToast('Could not add the link: '+(/qas2_om_files|42P01|schema cache/i.test(e.message)?'run qas2_site_upgrade.sql in Supabase first.':e.message),'error');}
+}
+async function omOpenFile(fid){
+  const f=[...omFilesByNode.values()].flat().find(x=>x.id===fid);if(!f)return;
+  if(f.kind==='link'){window.open(f.url,'_blank','noopener');return;}
+  const w=window.open('','_blank');
+  try{const url=await omSignedUrl(f.storage_path);if(w){w.location.href=url;}else{location.href=url;}}
+  catch(e){if(w)w.close();showToast('Could not open the file: '+e.message,'error');}
+}
+async function omDeleteFile(fid,btn){
+  try{requireRole('admin','Only an admin can remove attachments.');}catch(e){return;}
+  if(btn&&btn.dataset.sure!=='1'){btn.dataset.sure='1';btn.textContent='Confirm remove';btn.classList.add('danger');setTimeout(()=>{if(btn.isConnected){btn.dataset.sure='';btn.textContent='Remove';btn.classList.remove('danger');}},4000);return;}
+  const n=omFilesNode;const f=omFilesOf(n.id).find(x=>x.id===fid);if(!f)return;
+  try{
+    await sbFetch('qas2_om_files?id=eq.'+fid,'DELETE');
+    if(f.kind==='file'&&f.storage_path){fetch(SB_URL+'/storage/v1/object/'+OM_BUCKET+'/'+omEncPath(f.storage_path),{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}}).catch(()=>{});}
+    omFilesByNode.set(n.id,omFilesOf(n.id).filter(x=>x.id!==fid));
+    await omLog('update',n,{attachment:f.title||f.file_name||f.url},{attachment:'removed'});
+    showToast('Attachment removed','success');omRenderFilesList();omRender();
+  }catch(e){showToast('Could not remove: '+e.message,'error');}
+}
+
+// ── Library dashboard ──
+let omView='tree';
+function omSetView(v){
+  omView=v;try{localStorage.setItem('qas2_om_view',v);}catch(e){}
+  document.getElementById('om-tree-wrap').hidden=v!=='tree';document.getElementById('om-dash').hidden=v!=='dash';
+  document.querySelectorAll('#view-om .om-viewbtn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
+  if(v==='dash')omRenderDash();else omRender();
+}
+try{const v=localStorage.getItem('qas2_om_view');if(v==='dash'||v==='tree')omView=v;}catch(e){}
+function omJump(id){
+  const n=omById.get(id);if(!n)return;omClearFilters();
+  const q=document.getElementById('om-q');q.value=n.name;
+  let x=n;while(x){omState.collapsed.delete(x.id);omState.collapsedAreas.delete(x.id);x=omById.get(x.parent_id);}
+  omSetView('tree');
+  setTimeout(()=>{const el=[...document.querySelectorAll('#om-tree .om-sysname,#om-tree .om-subname')].find(e=>e.textContent===n.name);if(el)el.scrollIntoView({block:'center',behavior:'smooth'});},80);
+}
+async function omRenderDash(){
+  const box=document.getElementById('om-dash');if(!box)return;
+  const mains=omNodes.filter(n=>n.node_type==='system'),subs=omNodes.filter(n=>n.node_type==='subsystem');
+  if(!omNodes.length){box.innerHTML='<div class="om-empty">No data yet.</div>';return;}
+  const all=[...mains,...subs];
+  const cnt=(arr,s)=>arr.filter(n=>n.status===s).length;
+  const pct=(a,b)=>b?Math.round(a*100/b):0;
+  const tracked=arr=>arr.filter(n=>n.status!=='T'&&n.status!=='P'&&n.status!=='C');
+  const rec=cnt(all,'R'),trk=tracked(all).length;
+  const filesN=[...omFilesByNode.values()].reduce((a,b)=>a+b.length,0);
+  const withFile=all.filter(n=>omFilesOf(n.id).length).length;
+  const tile=(label,val,sub,cls='')=>`<div class="om-kpi ${cls}"><div class="om-kpi-v">${val}</div><div class="om-kpi-l">${label}</div>${sub?`<div class="om-kpi-s">${sub}</div>`:''}</div>`;
+  const bar=arr=>{const t=arr.length||1;return `<div class="om-sbar">${OM_ORDER.map(k=>{const c=cnt(arr,k);return c?`<span class="om-b${k}" style="width:${c*100/t}%" title="${OM_SN[k]}: ${c}"></span>`:'';}).join('')}</div>`;};
+  const areas=omChildren(0).map(a=>{const d=omDesc(a.id).filter(n=>n.node_type!=='area');const tr=tracked(d);return {a,d,r:cnt(d,'R'),tr:tr.length,miss:cnt(d,'M')+cnt(d,'N')};});
+  const gaps=mains.filter(n=>n.status==='M'||n.status==='N').sort((x,y)=>(x.status===y.status?0:x.status==='M'?-1:1));
+  const ready=mains.filter(n=>n.status==='A'||omChildren(n.id).some(c=>c.status==='A'));
+  box.innerHTML=`
+    <div class="om-kpis">
+      ${tile('Manuals received',pct(rec,trk)+'%',`${rec} of ${trk} tracked manuals`,'good')}
+      ${tile('Main systems with manual',`${cnt(mains,'R')}/${mains.length}`,`${cnt(mains,'A')} more waiting in Aconex`)}
+      ${tile('Missing or not received',cnt(all,'M')+cnt(all,'N'),`${cnt(mains,'M')+cnt(mains,'N')} main · ${cnt(subs,'M')+cnt(subs,'N')} sub-system`,'bad')}
+      ${tile('Files & links attached',filesN,`${withFile} items have a manual attached`)}
+    </div>
+    <div class="om-dgrid">
+      <section class="om-panel"><h4>Progress by area</h4>
+        <div class="om-legend">${OM_ORDER.map(k=>`<span><i class="om-b${k}"></i>${OM_SN[k]}</span>`).join('')}</div>
+        ${areas.map(x=>`<button class="om-arow" type="button" onclick="document.getElementById('om-area').value='${x.a.id}';omSetView('tree')">
+          <span class="om-aname">${escapeHtml(x.a.name)}</span><span class="om-apct">${x.tr?pct(x.r,x.tr)+'%':'—'}</span>${bar(x.d)}
+          <span class="om-asub">${x.r} received · ${x.miss} missing / not received · ${x.d.length} items</span></button>`).join('')}
+      </section>
+      <section class="om-panel"><h4>Main systems still missing a manual <small>${gaps.length}</small></h4>
+        <div class="om-gaplist">${gaps.length?gaps.map(n=>`<button class="om-gap" type="button" onclick="omJump(${n.id})"><span>${escapeHtml(n.name)}<small>${escapeHtml(omAreaOf(n)?.name||'')} · ${escapeHtml(n.vendor||'—')}</small></span><span class="om-pill om-s${n.status}">${OM_SN[n.status]}</span></button>`).join(''):'<div class="om-sub">None – every main system has its manual.</div>'}</div>
+        <h4 style="margin-top:14px">Ready to download from Aconex <small>${ready.length}</small></h4>
+        <div class="om-gaplist">${ready.length?ready.map(n=>`<button class="om-gap" type="button" onclick="omJump(${n.id})"><span>${escapeHtml(n.name)}<small>${[n,...omChildren(n.id)].filter(c=>c.status==='A').length} manual(s) in Aconex</small></span><span class="om-pill om-sA">In Aconex</span></button>`).join(''):'<div class="om-sub">Nothing waiting in Aconex.</div>'}</div>
+      </section>
+      <section class="om-panel om-span-all"><h4>Recent changes</h4><div id="om-dash-recent" class="om-sub">Loading…</div></section>
+    </div>`;
+  try{
+    const h=await sbFetch('qas2_om_history?select=*&order=at.desc&limit=8')||[];
+    const el=document.getElementById('om-dash-recent');if(!el)return;
+    el.innerHTML=h.length?`<ul class="om-recent">${h.map(r=>`<li><b>${escapeHtml(r.username||'')}</b> ${escapeHtml(r.action)} <span>${escapeHtml(r.node_name||'')}</span><time>${escapeHtml(new Date(r.at).toLocaleString())}</time></li>`).join('')}</ul>`:'No changes yet.';
+  }catch(e){const el=document.getElementById('om-dash-recent');if(el)el.textContent='Could not load recent changes.';}
+}
+
 </script>
 </body>
 </html>

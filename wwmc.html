@@ -451,6 +451,16 @@ tbody tr{transition:var(--transition)}
 @media(max-width:760px){.drs{grid-template-columns:repeat(2,minmax(0,1fr))}.drb-grid,.drb-cols{grid-template-columns:1fr}
   .dra-head{display:none}.dra-row{grid-template-columns:minmax(0,1fr) 118px 30px;border:1px solid var(--border);border-radius:8px;padding:8px;background:#FAFBFC}
   .dra-sys{grid-column:1/3}.dra-act{grid-column:1/-1;grid-row:2}.dra-st{grid-column:2;grid-row:3}.dra-kks{grid-column:1;grid-row:3}.dra-del{grid-column:3;grid-row:1}}
+.drb-tpls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.drb-tplc{display:flex;flex-direction:column;gap:3px;border:1.5px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;font-size:12px;position:relative}
+.drb-tplc input{position:absolute;opacity:0}.drb-tplc:has(input:checked){border-color:var(--navy);box-shadow:0 0 0 2px rgba(31,56,100,.15)}.drb-tplc:has(input:focus-visible){outline:2px solid var(--navy);outline-offset:2px}
+.drb-tplc small{color:var(--gray);font-size:10.5px;line-height:1.3}
+.drb-sw{display:flex;flex-direction:column;gap:3px;height:42px;border-radius:5px;padding:5px;border:1px solid var(--border);background:#fff}
+.drb-sw i{display:block;height:6px;border-radius:2px;background:#E5E9F0}.drb-sw i:first-child{height:12px}
+.drb-sw-corporate i:first-child{background:#fff;border:1.5px solid #244F8B}.drb-sw-modern i:first-child{background:linear-gradient(90deg,#17345E,#2F64AE)}
+.drb-sw-compact{gap:2px}.drb-sw-compact i{height:4px}.drb-sw-compact i:first-child{height:8px;background:#244F8B}
+.drb-sw-classic i:first-child{background:#fff;border:1.5px solid #111}.drb-sw-classic i{background:#D4D4D4}
+@media(max-width:760px){.drb-tpls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ═════════ DASHBOARD & TRACKING ═════════ */
 .db-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .db-title{font-size:16px;font-weight:700;color:var(--navy)}
@@ -1279,6 +1289,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
           <label class="drb-opt" style="margin-top:4px">Count <select id="drb-pl-scope" aria-label="Which tickets to count"><option value="all">all tickets</option><option value="authors">only tickets raised by the report authors</option></select></label>
         </div>
       </fieldset>
+      <fieldset><legend>Template</legend><div id="drb-tpl" class="drb-tpls"></div></fieldset>
       <fieldset><legend>Layout</legend>
         <label class="drb-opt"><input type="radio" name="drb-layout" value="report" checked> One section per report</label>
         <label class="drb-opt"><input type="radio" name="drb-layout" value="system"> Combined by system (best for weekly / management reports)</label>
@@ -5009,8 +5020,9 @@ function drItemsTable(items){
 }
 
 // ── print / save builder ──
-const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['sign','Signature block',true]];
+const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false]];
 let drbIds=null,drCurrentList=[];
+const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
 function drTickedIds(){const un=new Set([...document.querySelectorAll('.report-chk:not(:checked)')].map(c=>c.dataset.id));return drShownIds().filter(id=>!un.has(id));}
 function drOpenBuilder(ids){
@@ -5025,9 +5037,11 @@ function drOpenBuilder(ids){
   document.getElementById('drb-sections').innerHTML=DRB_SECTIONS.map(([k,l,def])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(saved.s?saved.s.includes(k):def)?'checked':''}> ${l}</label>`).join('');
   document.querySelectorAll('input[name="drb-layout"]').forEach(r=>r.checked=r.value===(saved.layout||'report'));
   const f=document.getElementById('dr-from')?.value,t=document.getElementById('dr-to')?.value,d=document.getElementById('dr-date-filter')?.value;
-  document.getElementById('drb-title').value=one?'Daily Report':(d?'Daily Commissioning Report':'Commissioning Progress Report');
+  document.getElementById('drb-title').value='Daily Report';
   document.getElementById('drb-period').value=d||(f||t?`${f||'…'} to ${t||'…'}`:'');
   drpRenderOptions();
+  let tp='corporate';try{tp=localStorage.getItem('qas2_drb_tpl')||'corporate';}catch(e){}
+  document.getElementById('drb-tpl').innerHTML=DRB_TPLS.map(([k,l,d])=>`<label class="drb-tplc"><input type="radio" name="drb-tpl" value="${k}" ${k===tp?'checked':''}><span class="drb-sw drb-sw-${k}" aria-hidden="true"><i></i><i></i><i></i></span><b>${l}</b><small>${d}</small></label>`).join('');
   document.getElementById('drb-bg').classList.add('show');
 }
 function drbChoice(){
@@ -5036,7 +5050,8 @@ function drbChoice(){
   const s=[...document.querySelectorAll('#drb-sections input:checked')].map(i=>i.value);
   const layout=document.querySelector('input[name="drb-layout"]:checked')?.value||'report';
   try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout}));}catch(e){}
-  return {ids,s,layout,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
+  const tpl=document.querySelector('input[name="drb-tpl"]:checked')?.value||'corporate';try{localStorage.setItem('qas2_drb_tpl',tpl);}catch(e){}
+  return {ids,s,layout,tpl,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){
   const out=[];const base='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
@@ -5130,8 +5145,7 @@ async function drbPrint(){
     }
     if(drpRes.html){const m=drpRes.html.match(/^<h2>([\s\S]*?)<\/h2>/);sections.push({t:'Punch List'+(m?' <small>'+m[1].replace(/^Punch List\s*—\s*/,'').replace(/<small[^>]*>|<\/small>/g,'')+'</small>':''),h:drpRes.html.replace(/^<h2>[\s\S]*?<\/h2>/,''),pl:1});}
     if(has('tracker')){await drRenderTracker();const tb=document.getElementById('dr-comp-body');const tbl=tb&&tb.querySelector('table');if(tbl)sections.push({t:'Submission tracker <small>last 14 days</small>',h:tbl.outerHTML.replace(/<button[^>]*>/g,'').replace(/<\/button>/g,'')+'<div class="tlg2"><span class="ok">✓ submitted</span><span class="miss">• missing</span><span class="we">weekend</span></div>'});}
-    if(has('sign'))sections.push({t:'Sign-off',h:`<table class="sign"><thead><tr><th></th><th>Prepared by</th><th>Reviewed by</th><th>Approved by</th></tr></thead><tbody>
-      <tr><th>Name</th><td>${E(currentUser?.name||'')}</td><td></td><td></td></tr><tr><th>Position</th><td>${E(reps.length===1?reps[0].role||'':'')}</td><td></td><td></td></tr><tr class="sig"><th>Signature</th><td></td><td></td><td></td></tr><tr><th>Date</th><td>${E(fmtD(drToday()))}</td><td></td><td></td></tr></tbody></table>`});
+    const DRB_TPL_CSS=`.bar .tsel{color:#fff;font-weight:600;display:flex;align-items:center;gap:6px;margin-right:6px}.bar .tsel select{font:inherit;font-weight:600;border-radius:6px;padding:6px 8px;border:0}\n/* ── Modern ── */\n.tpl-modern .paper{padding:0 0 40px;border-radius:4px;overflow:hidden}\n.tpl-modern .hdr{border:0;background:linear-gradient(135deg,#17345E 0%,#244F8B 60%,#2F64AE 100%)}\n.tpl-modern .hdr td{border:0;padding:24px 26px;color:#fff}\n.tpl-modern .hdr .lg img{background:#fff;border-radius:10px;padding:6px 10px}\n.tpl-modern .hdr .co{color:#fff}.tpl-modern .hdr .pl{color:rgba(255,255,255,.75)}.tpl-modern .hdr h1{color:#fff;font-size:26px}\n.tpl-modern .hdr .dc{padding:18px 22px 18px 0;width:280px}.tpl-modern .dc th,.tpl-modern .dc td{white-space:nowrap;padding:6px 10px}.tpl-modern .dc table{background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden}\n.tpl-modern .dc th{background:transparent;color:rgba(255,255,255,.7)}.tpl-modern .dc td{color:#fff}.tpl-modern .dc th,.tpl-modern .dc td{border-color:rgba(255,255,255,.15)}\n.tpl-modern .sec{margin:24px 32px 0}.tpl-modern .sec h2{border:0;text-transform:none;letter-spacing:0;font-size:18px}.tpl-modern .sec h2 .n{border-radius:7px}\n.tpl-modern .lead{border:0;border-radius:10px;background:#EEF3FA}\n.tpl-modern .kpi,.tpl-modern .plsec .kpis div{border:0!important;background:#F3F6FA;border-radius:12px;padding:10px 12px}\n.tpl-modern .rep{border:0;border-radius:14px;box-shadow:0 2px 12px rgba(15,35,70,.09);padding:14px 16px}\n.tpl-modern .t th{background:#EEF3FA;color:#244F8B}.tpl-modern .t td{border-color:#EEF1F5}\n.tpl-modern .call{border:0;border-radius:10px}.tpl-modern .photos .ph{border:0;border-radius:12px}\n.tpl-modern .sysh{border:0;border-radius:8px;background:#EEF3FA}.tpl-modern .foot{margin:28px 32px 0}\n/* ── Compact ── */\n.tpl-compact{font-size:11.5px}.tpl-compact .paper{padding:20px 24px 30px}\n.tpl-compact .hdr td{padding:6px 8px}.tpl-compact .hdr h1{font-size:16px;margin-top:2px}.tpl-compact .hdr .co{font-size:13px}.tpl-compact .hdr .lg{width:110px}.tpl-compact .hdr .lg img{max-height:42px}\n.tpl-compact .sec{margin-top:12px}.tpl-compact .sec h2{font-size:12px;margin-bottom:6px;padding-bottom:3px}.tpl-compact .sec h2 .n{width:18px;height:18px;font-size:10px}\n.tpl-compact .lead{font-size:11.5px;padding:6px 10px;margin-bottom:8px}\n.tpl-compact .kpis{gap:5px}.tpl-compact .kpi{padding:5px 7px}.tpl-compact .kpi b{font-size:16px}\n.tpl-compact .rep{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:8px 0;margin:0}\n.tpl-compact .av{display:none}.tpl-compact .rh{padding-bottom:4px}.tpl-compact .who b{font-size:12px}\n.tpl-compact h4{margin:6px 0 3px}.tpl-compact .t{font-size:10.5px}.tpl-compact .t th,.tpl-compact .t td{padding:3px 6px}\n.tpl-compact .call{background:none!important;border:0;border-left:3px solid;border-radius:0;padding:2px 8px;margin-top:4px}.tpl-compact .call .ci{display:none}\n.tpl-compact .call.ok{border-left-color:var(--ok)}.tpl-compact .call.neg{border-left-color:var(--neg)}.tpl-compact .call.info{border-left-color:var(--info)}\n.tpl-compact .call .ct{display:inline;margin-right:6px}.tpl-compact .call .cx{display:inline;font-size:11.5px}\n.tpl-compact .photos{grid-template-columns:repeat(5,1fr);gap:5px}.tpl-compact .chips span{font-size:9.5px;padding:1px 7px}\n/* ── Classic B&W ── */\n.tpl-classic{--brand:#111;--ok:#111;--neg:#111;--info:#111;--warn:#111;--okb:#fff;--negb:#fff;--infob:#fff;--warnb:#fff;--soft:#fff;--line:#BDBDBD;color:#111}\n.tpl-classic .hdr,.tpl-classic .hdr td{border-color:#111}.tpl-classic .hdr .co{color:#111}.tpl-classic .hdr h1{font-family:Georgia,"Times New Roman",serif;font-size:22px}\n.tpl-classic .dc th{background:#fff}.tpl-classic .sec h2{font-family:Georgia,"Times New Roman",serif;text-transform:none;letter-spacing:0;font-size:16px;border-bottom:1.5px solid #111}\n.tpl-classic .sec h2 .n{background:none;color:#111;border:1.5px solid #111}\n.tpl-classic .lead{border-left:3px solid #111}.tpl-classic .kpi,.tpl-classic .plsec .kpis div{border:1px solid #111!important;border-top-width:1px!important}.tpl-classic .kpi b,.tpl-classic .plsec .kpis div b{color:#111!important}\n.tpl-classic .chips span{background:none;border:1px solid #777;color:#111}.tpl-classic .av{background:none;color:#111;border:1.5px solid #111}\n.tpl-classic .t th{background:#fff;color:#111;border-bottom:1.5px solid #111;border-top:1.5px solid #111}.tpl-classic .t tbody tr:nth-child(even) td{background:#fff}\n.tpl-classic .st{background:none!important;border:1px solid #111;color:#111}.tpl-classic .call{border:1px solid #777}.tpl-classic .call .ci{background:#111}\n.tpl-classic .priA,.tpl-classic .priB,.tpl-classic .priC{color:#111}.tpl-classic .photos img{filter:none}.tpl-classic .foot .brand{color:#111}\n.tpl-classic .bars .r{background:#111}.tpl-classic .bars .c{background:#9E9E9E}.tpl-classic .drc td.ok{background:#E0E0E0;color:#111}.tpl-classic .drc td.miss{background:#fff;color:#111;outline:1px solid #999}\n.tpl-classic .sysh{border-left-color:#111}.tpl-classic .plsec h3{border-left-color:#111}\n`;
     const logo=getWWMCLogoSrc();
     const gen=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const body=sections.map((s,i)=>`<section class="sec${s.pl?' plsec':''}"><h2><span class="n">${i+1}</span>${s.t}</h2>${s.h}</section>`).join('');
@@ -5145,7 +5159,7 @@ body{margin:0;background:#E9EDF2;color:var(--ink);font:13px/1.55 "Segoe UI",Robo
 .hdr{width:100%;border-collapse:collapse;border:1.5px solid var(--brand)}.hdr td{border:1.5px solid var(--brand);vertical-align:middle;padding:10px 12px}
 .hdr .lg{width:150px;text-align:center}.hdr .lg img{max-width:128px;max-height:62px}
 .hdr .co{color:var(--brand);font-weight:800;font-size:15px;letter-spacing:.01em}.hdr .pl{font-size:11px;color:var(--mute);margin-top:1px}.hdr h1{margin:6px 0 0;font-size:20px;line-height:1.2;color:var(--ink)}
-.hdr .dc{width:236px;padding:0}.dc table{width:100%;border-collapse:collapse;font-size:10.5px}.dc th,.dc td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}.dc tr:last-child th,.dc tr:last-child td{border-bottom:0}.dc th{color:var(--mute);font-weight:600;width:42%;background:var(--soft)}.dc td{font-weight:700;color:var(--brand);white-space:nowrap}
+.hdr .dc{width:236px;padding:0}.dc table{width:100%;border-collapse:collapse;font-size:10.5px}.dc th,.dc td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}.dc tr:last-child th,.dc tr:last-child td{border-bottom:0}.dc th{color:var(--mute);font-weight:600;width:42%;background:var(--soft);white-space:nowrap}.dc td{font-weight:700;color:var(--brand);white-space:nowrap}
 .sec{margin-top:22px}.sec h2{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--brand);margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--brand);text-transform:uppercase;letter-spacing:.04em}
 .sec h2 .n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;letter-spacing:0}
 .sec h2 small{font-size:11px;color:var(--mute);text-transform:none;letter-spacing:0;font-weight:500;margin-left:auto}
@@ -5184,17 +5198,17 @@ h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--mu
 @page{size:A4;margin:14mm 12mm 16mm;@bottom-left{content:"WWMC | Internal";font:700 9px "Segoe UI",Arial,sans-serif;color:#0066CC}@bottom-center{content:"${cssStr(docNo)}";font:9px "Segoe UI",Arial,sans-serif;color:#6B7280}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:9px "Segoe UI",Arial,sans-serif;color:#6B7280}}
 @media print{body{background:#fff}.bar,.foot{display:none}.paper{box-shadow:none;margin:0;max-width:none;padding:0}.sec h2{break-after:avoid}.t thead{display:table-header-group}.t tr{break-inside:avoid}h3,h4,.sysh{break-after:avoid}.call,.kpis{break-inside:avoid}}
 @media (max-width:640px){.paper{padding:16px}.hdr .dc{width:auto}.hdr td{display:block;width:auto!important;border-width:0 0 1.5px}.photos{grid-template-columns:repeat(2,1fr)}}
-</style></head><body>
-<div class="bar"><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
+${DRB_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
+<div class="bar"><label class="tsel">Template <select onchange="document.body.className='tpl-'+this.value;try{localStorage.setItem('qas2_drb_tpl',this.value)}catch(e){}">${DRB_TPLS.map(([k,l])=>`<option value="${k}" ${k===c.tpl?'selected':''}>${l}</option>`).join('')}</select></label><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
 <div class="paper">
   <table class="hdr"><tr>
     <td class="lg">${logo?`<img src="${logo}" alt="WWMC">`:'<b>WWMC</b>'}</td>
-    <td><div class="co">Wahat Al Wusta Maintenance Company</div><div class="pl">Al-Qassim 2 CCGT IPP · 1,980 MW · Operations &amp; Commissioning</div><h1>${escapeHtml(c.title)}</h1></td>
+    <td><div class="co">Wahat Al Wusta Maintenance Company</div><div class="pl">Al-Qassim 2 CCGT IPP · 1,980 MW</div><h1>${escapeHtml(c.title)}</h1></td>
     <td class="dc"><table>
       <tr><th>Doc. No.</th><td>${escapeHtml(docNo)}</td></tr>
       <tr><th>${dates.length>1?'Period':'Date'}</th><td>${escapeHtml(period)}</td></tr>
       <tr><th>Reports</th><td>${reps.length}</td></tr>
-      <tr><th>Prepared by</th><td>${escapeHtml(reps.length===1?(reps[0].prepared_by||''):(currentUser?.name||''))}</td></tr>
+      <tr><th>Raised by</th><td>${escapeHtml(reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||'')))}</td></tr>
       <tr><th>Issued</th><td>${escapeHtml(gen)}</td></tr>
     </table></td></tr></table>
   ${body||'<p>No sections selected.</p>'}

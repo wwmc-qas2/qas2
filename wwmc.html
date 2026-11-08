@@ -413,7 +413,11 @@ tbody tr{transition:var(--transition)}
 .dr-filters2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
 .dr-filters2 label{font-size:11px;font-weight:700;color:var(--navy);display:flex;gap:6px;align-items:center}
 .dr-filters2 input,.dr-filters2 select{font:inherit;font-size:12px;padding:7px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff}
-.drs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.drs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.drs-tile.pl{border-left-color:#6B4FBB}.drs-tile.pl:empty{display:none}
+.drp-box{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12.5px;color:#374151}
+.drp-box:empty{display:none}.drp-box b{color:#4C1D95;font-size:14px}.drp-box .bad b{color:#B91C1C}
+.drp-t{font-weight:700;color:#4C1D95}.drp-note{flex-basis:100%;font-size:11px;color:#6B7280}
 .drs-tile{background:#fff;border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:var(--radius-md);padding:10px 12px;display:flex;flex-direction:column;gap:1px;box-shadow:var(--shadow-sm)}
 .drs-tile.good{border-left-color:#3BB273}.drs-tile.bad{border-left-color:#C00000}
 .drs-v{font-size:22px;font-weight:800;color:#111827;font-variant-numeric:tabular-nums}.drs-l{font-size:12px;font-weight:700;color:#374151}.drs-s{font-size:11px;color:var(--gray)}
@@ -885,6 +889,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <div class="dr-section-head">🔧 Activities Performed Today</div>
         <div class="dr-section-body">
           <div class="dra-tools"><button class="btn sm" type="button" onclick="drFromYesterday()">↺ Start from my last plan</button><span class="dra-hint">One line per activity · Ctrl+Enter adds a new line</span><span id="dr-draft-state" class="dra-draft" aria-live="polite"></span></div>
+          <div id="drp-box" class="drp-box" aria-live="polite"></div>
           <div id="dra-rows" class="dra-rows"></div>
           <button class="btn sm" type="button" onclick="draAddRow()" style="margin-top:8px">+ Add activity</button>
           <datalist id="dra-systems"></datalist>
@@ -1267,6 +1272,13 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       </div>
       <fieldset><legend>Which reports</legend><div id="drb-scope"></div></fieldset>
       <fieldset><legend>What to include</legend><div id="drb-sections" class="drb-cols"></div></fieldset>
+      <fieldset><legend>Punch List</legend>
+        <label class="drb-opt"><input type="checkbox" id="drb-pl-on" onchange="drpToggle()"> <b>Add a Punch List section</b> for the dates of these reports</label>
+        <div id="drb-pl-wrap">
+          <div id="drb-pl" class="drb-cols"></div>
+          <label class="drb-opt" style="margin-top:4px">Count <select id="drb-pl-scope" aria-label="Which tickets to count"><option value="all">all tickets</option><option value="authors">only tickets raised by the report authors</option></select></label>
+        </div>
+      </fieldset>
       <fieldset><legend>Layout</legend>
         <label class="drb-opt"><input type="radio" name="drb-layout" value="report" checked> One section per report</label>
         <label class="drb-opt"><input type="radio" name="drb-layout" value="system"> Combined by system (best for weekly / management reports)</label>
@@ -4889,7 +4901,7 @@ function drInitForm(){
     const s=document.getElementById('dr-draft-state');if(s)s.textContent='Draft restored from '+new Date(d.savedAt).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
     drDateChanged();
   }
-  draRender();draFillSystems();
+  draRender();draFillSystems();drpPreview();
 }
 async function drDateChanged(){
   const di=document.getElementById('dr-date');if(!di||!di.value)return;
@@ -4897,6 +4909,7 @@ async function drDateChanged(){
   const d=new Date(di.value+'T00:00:00');
   const disp=document.getElementById('dr-date-display');if(disp)disp.textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})+(di.value!==drToday()?' (late report)':'');
   try{const next=await peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no');document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);}catch(e){}
+  drpPreview();
   drSaveDraft();
 }
 async function drFromYesterday(){
@@ -4954,7 +4967,9 @@ function drRenderSummary(reports){
   const tile=(v,l,s,cls='')=>`<div class="drs-tile ${cls}"><span class="drs-v">${v}</span><span class="drs-l">${l}</span>${s?`<span class="drs-s">${s}</span>`:''}</div>`;
   box.innerHTML=tile(reports.length,'Reports',people+' people')+tile(systems,'Systems covered','')+
     (items.length?tile(c('Completed'),'Activities completed',`${c('In progress')} in progress · ${c('On hold')} on hold`,'good'):tile('–','Activities completed','shown for reports with an activity list'))+
-    tile(issues,'Reports with issues',issues?'click a report to read':'none reported',issues?'bad':'');
+    tile(issues,'Reports with issues',issues?'click a report to read':'none reported',issues?'bad':'')+
+    `<div class="drs-tile pl" id="drs-pl"></div>`;
+  drpRegisterTile(reports);
 }
 let drCompCache=null,drCompAt=0;
 async function drRenderTracker(){
@@ -5009,6 +5024,7 @@ function drOpenBuilder(ids){
   const f=document.getElementById('dr-from')?.value,t=document.getElementById('dr-to')?.value,d=document.getElementById('dr-date-filter')?.value;
   document.getElementById('drb-title').value=one?'Daily Report':(d?'Daily Commissioning Report':'Commissioning Progress Report');
   document.getElementById('drb-period').value=d||(f||t?`${f||'…'} to ${t||'…'}`:'');
+  drpRenderOptions();
   document.getElementById('drb-bg').classList.add('show');
 }
 function drbChoice(){
@@ -5066,6 +5082,8 @@ async function drbPrint(){
         ${has('photos')&&(r.photos||[]).length?`<h4>Photos</h4><div class="ph">${r.photos.map(p=>`<figure><img src="${p}"></figure>`).join('')}</div>`:''}
       </section>`).join('');
     }
+    const drpRes=await drpForReports(reps);
+    if(drpRes.html)h+=drpRes.html;
     if(has('tracker')){await drRenderTracker();const tb=document.getElementById('dr-comp-body');if(tb)h+=`<h2>Submission tracker – last 14 days</h2>`+tb.querySelector('table')?.outerHTML.replace(/<button[^>]*>/g,'').replace(/<\/button>/g,'');}
     if(has('sign'))h+=`<div class="sign"><div><span>Prepared by</span><b>${drbEsc(currentUser?.name||'')}</b></div><div><span>Reviewed by</span><b>&nbsp;</b></div><div><span>Approved by</span><b>&nbsp;</b></div></div>`;
     const logo=getWWMCLogoSrc();
@@ -5080,6 +5098,10 @@ async function drbPrint(){
       .txt{font-size:12px;line-height:1.55;white-space:normal}.txt.ok{color:#166534}.txt.bad{color:#B91C1C}
       .ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ph figure{margin:0}.ph img{width:100%;height:150px;object-fit:cover;border-radius:4px;border:1px solid #E5E7EB}.ph figcaption{font-size:10px;color:#6B7280}
       .drc{border-collapse:collapse;font-size:10px;width:100%}.drc th,.drc td{border:1px solid #E5E7EB;padding:3px;text-align:center}.drc th[scope=row]{text-align:left;white-space:nowrap}.drc td.ok{background:#DCFCE7;color:#166534}.drc td.miss{background:#FEE2E2;color:#B91C1C}.drc .we{background:#F3F4F6}
+      .kpis.pl div.bad b{color:#B91C1C}h2 small{font-size:11px}.priA{color:#B91C1C;font-weight:700}.priB{color:#B45309;font-weight:700}.priC{color:#166534;font-weight:700}
+      .trend{display:flex;gap:3px;align-items:flex-end;height:110px;border-bottom:1px solid #D6DEEA;padding:0 2px}.tc{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;min-width:0}.bars{flex:1;display:flex;gap:1px;align-items:flex-end;width:100%;justify-content:center}.bars i{display:block;width:45%;max-width:12px;border-radius:2px 2px 0 0;min-height:1px}.bars .r,.tlg .r::before{background:#C00000}.bars .c,.tlg .c::before{background:#3BB273}.tc span{font-size:8.5px;color:#6B7280}
+      .tlg{display:flex;gap:14px;font-size:10px;color:#6B7280;margin:4px 0 8px}.tlg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+      .trend i,.tlg span::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px}.sign div{border-top:1.5px solid #1F3864;padding-top:6px;font-size:11px}.sign span{display:block;color:#6B7280}.sign b{display:block;min-height:16px}
       footer{margin-top:24px;font-size:10px;color:#9CA3AF;border-top:1px solid #EEF0F3;padding-top:6px;display:flex;justify-content:space-between}
       .bar{position:sticky;top:0;background:#1F3864;padding:10px;text-align:center;z-index:5}.bar button{font:inherit;font-weight:700;border:0;border-radius:6px;padding:8px 18px;cursor:pointer;margin:0 4px}.bar .p{background:#fff;color:#1F3864}.bar .c{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
@@ -5105,6 +5127,12 @@ async function drbExcel(){
       reps.forEach(r=>{const it=Array.isArray(r.items)&&r.items.length?r.items:[{sys:r.system_worked,act:r.content,st:'',kks:''}];it.forEach(x=>{const row=ws.addRow([r.report_date,r.report_no,r.prepared_by,x.sys,x.act,x.st,x.kks]);row.alignment={vertical:'top',wrapText:true};if(fill[x.st])row.getCell(6).fill={type:'pattern',pattern:'solid',fgColor:{argb:fill[x.st]}};});});
       ws.autoFilter={from:'A1',to:'G1'};
     }
+    const drpX=await drpForReports(reps);
+    if(drpX.stats){const s=drpX.stats;const ws3=wb.addWorksheet('Punch List');
+      ws3.columns=[{header:'Item',width:34},{header:'Value',width:14},{header:'',width:4},{header:'Ticket',width:22},{header:'System',width:30},{header:'Priority',width:9},{header:'Description',width:60},{header:'Raised',width:12},{header:'Closed',width:12},{header:'List',width:14}];head(ws3);
+      [['Period',s.from===s.to?s.from:s.from+' to '+s.to],['Raised',s.raised.length],['Closed',s.closed.length],['Still open',s.openAt.length],['Overdue',s.overdueAt.length],['Open Priority A',s.openA.length]].forEach((r,i)=>{ws3.getCell(i+2,1).value=r[0];ws3.getCell(i+2,2).value=r[1];});
+      let rr=2;const put=(list,tag)=>list.forEach(t=>{ws3.getCell(rr,4).value=t.no;ws3.getCell(rr,5).value=t.system_name;ws3.getCell(rr,6).value=t.priority;ws3.getCell(rr,7).value=t.description;ws3.getCell(rr,8).value=drpRaised(t);ws3.getCell(rr,9).value=drpClosed(t);ws3.getCell(rr,10).value=tag;rr++;});
+      if(drpX.p.opts.includes('pl_raised'))put(s.raised,'Raised');if(drpX.p.opts.includes('pl_closed'))put(s.closed,'Closed');if(drpX.p.opts.includes('pl_opena'))put(s.openA,'Open Priority A');if(drpX.p.opts.includes('pl_overdue'))put(s.overdueAt,'Overdue');}
     const ws2=wb.addWorksheet('Reports');const cols=[{header:'Date',width:12},{header:'Report No.',width:22},{header:'Prepared by',width:20},{header:'Role',width:24},{header:'Systems',width:30}];
     if(has('achievements'))cols.push({header:'Achievements',width:50});if(has('issues'))cols.push({header:'Issues & challenges',width:50});if(has('plan'))cols.push({header:'Plan for next day',width:50});
     ws2.columns=cols;head(ws2);
@@ -5114,6 +5142,99 @@ async function drbExcel(){
     a.download=(c.title.replace(/[^\w\- ]+/g,'').replace(/\s+/g,'_')||'Daily_Report')+'_'+(c.period||drToday()).replace(/[^\w\-]+/g,'_')+'.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
     document.getElementById('drb-bg').classList.remove('show');showToast('Excel exported','success');
   }catch(e){showToast('Excel export failed: '+e.message,'error');}
+}
+</script>
+<script>
+// ═════════ DAILY REPORT × PUNCH LIST ═════════
+const DRP_OPTS=[['pl_counts','Numbers: raised, closed, still open, overdue, open Priority A',true],['pl_trend','Day-by-day raised vs closed (for periods longer than 1 day)',true],['pl_system','Breakdown by system',true],['pl_priority','Breakdown by priority',false],['pl_raised','List of tickets raised in the period',true],['pl_closed','List of tickets closed in the period',true],['pl_opena','List of all open Priority A tickets',false],['pl_overdue','List of overdue tickets',false]];
+function drpRaised(t){return String(t.date||t.created_at||'').slice(0,10);}
+function drpClosed(t){return t.date_closed?String(t.date_closed).slice(0,10):'';}
+function drpStats(tickets,from,to,people){
+  let T=tickets;
+  if(people&&people.length){const set=new Set(people.map(p=>String(p).toLowerCase()));T=T.filter(t=>set.has(String(t.raised_by||'').toLowerCase())||set.has(String(t.raised_by_username||'').toLowerCase()));}
+  const raised=T.filter(t=>{const d=drpRaised(t);return d>=from&&d<=to;});
+  const closed=T.filter(t=>{const d=drpClosed(t);return d&&d>=from&&d<=to;});
+  raised.sort((a,b)=>drpRaised(a).localeCompare(drpRaised(b))||String(a.no).localeCompare(String(b.no)));closed.sort((a,b)=>drpClosed(a).localeCompare(drpClosed(b)));
+  const openAt=T.filter(t=>{const r=drpRaised(t);if(!r||r>to)return false;const c=drpClosed(t);return t.status!=='CLOSED'||(c&&c>to);});
+  const overdueAt=openAt.filter(t=>t.deadline&&String(t.deadline).slice(0,10)<to);
+  const openA=openAt.filter(t=>t.priority==='A');
+  return {T,raised,closed,openAt,overdueAt,openA,from,to};
+}
+async function drpPreview(){
+  const box=document.getElementById('drp-box');if(!box)return;
+  const d=document.getElementById('dr-date')?.value||drToday();
+  try{
+    const all=await fetchAllTickets(false)||[];
+    const s=drpStats(all,d,d);const me=currentUser?drpStats(all,d,d,[currentUser.name,currentUser.username]):null;
+    box.innerHTML=`<span class="drp-t">Punch List on ${escapeHtml(d)}</span>
+      <span><b>${s.raised.length}</b> raised${me?` (${me.raised.length} by you)`:''}</span><span><b>${s.closed.length}</b> closed</span>
+      <span><b>${s.openAt.length}</b> open in total</span><span class="${s.overdueAt.length?'bad':''}"><b>${s.overdueAt.length}</b> overdue</span>
+      <span class="drp-note">These numbers are added automatically when you print the report — you choose what to show.</span>`;
+  }catch(e){box.innerHTML='';}
+}
+function drpTable(list,cols){
+  if(!list.length)return '<div class="txt" style="color:#6B7280">None.</div>';
+  const pr={A:'A',B:'B',C:'C'};
+  return `<table class="t"><thead><tr><th style="width:17%">Ticket</th><th style="width:20%">System</th><th style="width:6%">Pri.</th><th>Description</th>${cols.map(c=>`<th style="width:11%">${c[0]}</th>`).join('')}</tr></thead><tbody>${list.map(t=>`<tr><td>${drbEsc(t.no)}</td><td>${drbEsc(t.system_name)}</td><td class="pri${t.priority}">${pr[t.priority]||drbEsc(t.priority)}</td><td>${drbEsc(String(t.description||'').slice(0,160))}</td>${cols.map(c=>`<td>${drbEsc(c[1](t))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function drpHtml(s,opts,scopeLabel){
+  const has=k=>opts.includes(k);let h=`<h2>Punch List ${s.from===s.to?'— '+drbEsc(s.from):'— '+drbEsc(s.from)+' to '+drbEsc(s.to)}${scopeLabel?` <small style="font-weight:400;opacity:.8">(${drbEsc(scopeLabel)})</small>`:''}</h2>`;
+  if(has('pl_counts')){
+    const net=s.raised.length-s.closed.length;
+    h+=`<div class="kpis pl"><div><b>${s.raised.length}</b>Raised</div><div><b>${s.closed.length}</b>Closed</div><div><b>${net>0?'+':''}${net}</b>Net change</div><div><b>${s.openAt.length}</b>Still open</div><div class="${s.overdueAt.length?'bad':''}"><b>${s.overdueAt.length}</b>Overdue</div><div class="${s.openA.length?'bad':''}"><b>${s.openA.length}</b>Open Priority A</div></div>`;
+  }
+  if(has('pl_trend')&&s.from<s.to){
+    const days=[];for(let d=s.from;d<=s.to&&days.length<62;d=drAddDays(d,1))days.push(d);
+    const r=days.map(d=>s.raised.filter(t=>drpRaised(t)===d).length),c=days.map(d=>s.closed.filter(t=>drpClosed(t)===d).length);const mx=Math.max(1,...r,...c);
+    h+=`<h3>Raised vs closed per day</h3><div class="trend">${days.map((d,i)=>`<div class="tc" title="${d}: ${r[i]} raised, ${c[i]} closed"><div class="bars"><i class="r" style="height:${r[i]*100/mx}%"></i><i class="c" style="height:${c[i]*100/mx}%"></i></div><span>${d.slice(8)}</span></div>`).join('')}</div><div class="tlg"><span class="r">Raised</span><span class="c">Closed</span></div>`;
+  }
+  if(has('pl_system')){
+    const by={};const add=(t,k)=>{const key=(t.system_name||'Unspecified').trim();by[key]=by[key]||{r:0,c:0,o:0};by[key][k]++;};
+    s.raised.forEach(t=>add(t,'r'));s.closed.forEach(t=>add(t,'c'));s.openAt.forEach(t=>add(t,'o'));
+    const keys=Object.keys(by).sort((a,b)=>(by[b].o-by[a].o)||(by[b].r-by[a].r)).slice(0,25);
+    h+=`<h3>By system</h3><table class="t"><thead><tr><th>System</th><th style="width:12%">Raised</th><th style="width:12%">Closed</th><th style="width:12%">Still open</th></tr></thead><tbody>${keys.map(k=>`<tr><td>${drbEsc(k)}</td><td>${by[k].r}</td><td>${by[k].c}</td><td><b>${by[k].o}</b></td></tr>`).join('')||'<tr><td colspan="4">No tickets.</td></tr>'}</tbody></table>`;
+  }
+  if(has('pl_priority')){
+    const row=p=>`<tr><td class="pri${p}">${{A:'A – Safety critical',B:'B – Operational',C:'C – Minor'}[p]}</td><td>${s.raised.filter(t=>t.priority===p).length}</td><td>${s.closed.filter(t=>t.priority===p).length}</td><td><b>${s.openAt.filter(t=>t.priority===p).length}</b></td></tr>`;
+    h+=`<h3>By priority</h3><table class="t"><thead><tr><th>Priority</th><th style="width:12%">Raised</th><th style="width:12%">Closed</th><th style="width:12%">Still open</th></tr></thead><tbody>${row('A')+row('B')+row('C')}</tbody></table>`;
+  }
+  if(has('pl_raised'))h+=`<h3>Tickets raised (${s.raised.length})</h3>`+drpTable(s.raised,[['Raised',drpRaised],['Raised by',t=>t.raised_by||''],['Status',t=>t.status||'']]);
+  if(has('pl_closed'))h+=`<h3>Tickets closed (${s.closed.length})</h3>`+drpTable(s.closed,[['Raised',drpRaised],['Closed',drpClosed]]);
+  if(has('pl_opena'))h+=`<h3>Open Priority A (${s.openA.length})</h3>`+drpTable([...s.openA].sort((a,b)=>drpRaised(a).localeCompare(drpRaised(b))),[['Raised',drpRaised],['Target',t=>t.deadline||'—']]);
+  if(has('pl_overdue'))h+=`<h3>Overdue (${s.overdueAt.length})</h3>`+drpTable([...s.overdueAt].sort((a,b)=>String(a.deadline).localeCompare(String(b.deadline))),[['Target',t=>t.deadline||''],['Raised by',t=>t.raised_by||'']]);
+  return h;
+}
+function drpChoice(){
+  const opts=[...document.querySelectorAll('#drb-pl input[type=checkbox]:checked')].map(i=>i.value);
+  const on=document.getElementById('drb-pl-on')?.checked;
+  const scope=document.getElementById('drb-pl-scope')?.value||'all';
+  try{localStorage.setItem('qas2_drb_pl',JSON.stringify({on,opts,scope}));}catch(e){}
+  return {on,opts,scope};
+}
+function drpRenderOptions(){
+  const box=document.getElementById('drb-pl');if(!box)return;
+  let sv={};try{sv=JSON.parse(localStorage.getItem('qas2_drb_pl')||'{}');}catch(e){}
+  document.getElementById('drb-pl-on').checked=sv.on!==false;
+  document.getElementById('drb-pl-scope').value=sv.scope||'all';
+  box.innerHTML=DRP_OPTS.map(([k,l,def])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(sv.opts?sv.opts.includes(k):def)?'checked':''}> ${l}</label>`).join('');
+  drpToggle();
+}
+function drpToggle(){const on=document.getElementById('drb-pl-on').checked;document.getElementById('drb-pl-wrap').style.opacity=on?'1':'.45';document.querySelectorAll('#drb-pl-wrap input,#drb-pl-wrap select').forEach(i=>i.disabled=!on);}
+async function drpForReports(reps){
+  const p=drpChoice();if(!p.on||!p.opts.length)return {html:'',stats:null,p};
+  const dates=reps.map(r=>r.report_date).filter(Boolean).sort();if(!dates.length)return {html:'',stats:null,p};
+  const all=await fetchAllTickets(true)||[];
+  const people=p.scope==='authors'?[...new Set(reps.flatMap(r=>[r.prepared_by,r.submitted_by_username]).filter(Boolean))]:null;
+  const s=drpStats(all,dates[0],dates[dates.length-1],people);
+  return {html:drpHtml(s,p.opts,p.scope==='authors'?'tickets raised by the report authors':'all tickets'),stats:s,p};
+}
+async function drpRegisterTile(reports){
+  const el=document.getElementById('drs-pl');if(!el)return;
+  const dates=reports.map(r=>r.report_date).filter(Boolean).sort();
+  if(!dates.length){el.innerHTML='';return;}
+  try{const s=drpStats(await fetchAllTickets(false)||[],dates[0],dates[dates.length-1]);
+    el.innerHTML=`<span class="drs-v">${s.raised.length} / ${s.closed.length}</span><span class="drs-l">Punch raised / closed</span><span class="drs-s">${dates[0]===dates[dates.length-1]?dates[0]:dates[0]+' → '+dates[dates.length-1]} · ${s.openAt.length} still open</span>`;}
+  catch(e){el.innerHTML='';}
 }
 </script>
 </body>

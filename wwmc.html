@@ -397,6 +397,59 @@ tbody tr{transition:var(--transition)}
 .om-recent li{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
 .om-recent li span{color:#374151}.om-recent time{margin-left:auto;color:var(--gray);font-size:11px}
 @media(max-width:760px){.om-dgrid{grid-template-columns:minmax(0,1fr)}.om-linkrow{grid-template-columns:minmax(0,1fr)}}
+/* ═════════ DASHBOARD & TRACKING ═════════ */
+.db-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.db-title{font-size:16px;font-weight:700;color:var(--navy)}
+.db-sub{font-size:12px;color:var(--gray);margin-top:2px}
+.db-filters{display:flex;gap:6px;flex-wrap:wrap}
+.db-filters select{font:inherit;font-size:12px;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;max-width:240px}
+.db-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.db-kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;background:#fff;border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:var(--radius-md);padding:12px 14px;box-shadow:var(--shadow-sm);cursor:pointer;transition:var(--transition);min-width:0}
+.db-kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.db-kpi:focus-visible,.db-tk:focus-visible,.rq-chip:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.db-kpi.red{border-left-color:#C00000}.db-kpi.green{border-left-color:#3BB273}.db-kpi.amber{border-left-color:#F2B33D}
+.db-kpi-v{font-size:26px;font-weight:800;color:#111827;line-height:1.1;font-variant-numeric:tabular-nums}
+.db-kpi.red .db-kpi-v{color:#C00000}.db-kpi.green .db-kpi-v{color:#166534}
+.db-kpi-l{font-size:12px;font-weight:700;color:#374151}
+.db-kpi-s{font-size:11px;color:var(--gray)}
+.db-row{display:grid;gap:14px;margin-bottom:14px}
+.db-row-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.dash-card h4 small{font-weight:500;text-transform:none;letter-spacing:0;color:#9CA3AF;margin-left:6px}
+.db-h4n{display:inline-block;background:#FEE2E2;color:#B91C1C;border-radius:10px;padding:0 7px;margin-left:4px;letter-spacing:0}
+.db-tk{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;background:none;border:0;border-bottom:1px solid var(--border);padding:8px 4px;cursor:pointer;border-radius:4px}
+.db-tk:hover{background:var(--navy-light)}
+.db-tk-no{font-weight:700;color:var(--navy);font-size:12px;white-space:nowrap}
+.db-tk-sys{font-size:12.5px;font-weight:600;min-width:0}
+.db-tk-sys small{display:block;font-weight:400;font-size:11px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-tk-age{font-size:11px;font-weight:700;color:var(--gray);white-space:nowrap;font-variant-numeric:tabular-nums}
+.db-tk-age.od{color:#C00000}
+.db-empty{font-size:12.5px;color:var(--gray);padding:16px 4px}
+.db-list{max-height:65vh;overflow:auto}
+.reg-quick{padding:10px 16px 4px;border-bottom:1px solid #eee}
+.rq-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rq-chip{font:inherit;font-size:11.5px;font-weight:600;border:1.5px solid var(--border);background:#fff;border-radius:16px;padding:4px 10px;cursor:pointer;color:#374151;display:inline-flex;gap:6px;align-items:center}
+.rq-chip b{font-size:10.5px;background:#F3F4F6;border-radius:10px;padding:0 6px;color:#374151}
+.rq-chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.rq-chip.on b{background:rgba(255,255,255,.2);color:#fff}
+.rq-sel{font:inherit;font-size:11.5px;padding:4px 8px;border:1.5px solid var(--border);border-radius:16px;background:#fff}
+.rq-banner{display:inline-flex;gap:6px;align-items:center;margin:8px 0 4px;font-size:12px;font-weight:600;color:var(--navy);background:var(--navy-light);border-radius:6px;padding:4px 10px}
+.rq-banner button{border:0;background:none;cursor:pointer;color:var(--navy);font-weight:700}
+.tk-meta{font-size:10.5px;color:#6B7280;margin-top:4px}
+.tk-resp{display:inline-block;background:#EEF2F8;color:var(--navy);font-weight:700;border-radius:4px;padding:0 6px}
+.tk-stale{color:#B45309;font-weight:600}
+.tk-log{margin:4px 0 14px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-md);background:#FAFBFC}
+.tk-empty{font-size:12px;color:var(--gray)}
+.tk-tl{list-style:none;margin:0 0 8px;padding:0 0 0 14px;border-left:2px solid #D6DEEA;max-height:260px;overflow:auto}
+.tk-tl li{position:relative;padding:4px 0 10px}
+.tk-tl li::before{content:"";position:absolute;left:-20px;top:9px;width:9px;height:9px;border-radius:50%;background:var(--navy);border:2px solid #FAFBFC}
+.tk-tl-h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px}
+.tk-tl-h time{margin-left:auto;font-size:10.5px;color:var(--gray)}
+.tk-tl-n{font-size:12.5px;line-height:1.5;color:#1F2937;white-space:pre-wrap}
+.tk-add textarea{width:100%;font:inherit;font-size:13px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);resize:vertical}
+.tk-add-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.tk-add-row select{flex:1;min-width:160px;font:inherit;font-size:12.5px;padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm)}
+@media(max-width:900px){.db-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.db-row-2{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.db-filters{width:100%}.db-filters select{flex:1 1 45%;max-width:none}.db-kpi-v{font-size:22px}.rq-row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}.rq-chip{flex-shrink:0}}
 /* ═════════ EASE OF USE ═════════ */
 .ux-size{display:inline-flex;border:1px solid rgba(255,255,255,.3);border-radius:6px;overflow:hidden}
 .ux-size button{background:transparent;border:0;color:#fff;font:inherit;font-size:12px;font-weight:700;padding:5px 8px;cursor:pointer;opacity:.85}
@@ -419,6 +472,8 @@ tbody tr{transition:var(--transition)}
   #register-body thead{display:none}
   #register-body tr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:start;background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
   #register-body td{display:block;border:0!important;padding:0!important;min-width:0}
+  #register-body tr td{background:transparent!important}
+  #register-body tr.overdue-row{background:#FFF7F2;border-color:#FBD5BD}
   #register-body td:nth-child(1){grid-row:1;grid-column:1}
   #register-body td:nth-child(2){grid-row:1;grid-column:2;align-self:center}
   #register-body td:nth-child(7){grid-row:1;grid-column:3}
@@ -627,24 +682,32 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 
     <!-- DASHBOARD -->
     <div class="view" id="view-dashboard">
-      <div class="alert-card" id="dash-alerts" style="display:none">
-        <h4>&#9888; Priority A – Open Tickets</h4>
-        <div id="dash-alert-list"></div>
+      <div class="db-head">
+        <div><div class="db-title">Punch List Dashboard</div><div class="db-sub" id="db-sub">Click any number, bar or ticket to open the matching tickets in the Register.</div></div>
+        <div class="db-filters" role="group" aria-label="Dashboard filters">
+          <select id="db-period" onchange="renderDashboard()" aria-label="Period raised"><option value="">All time</option><option value="30">Raised last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last 12 months</option></select>
+          <select id="db-priority" onchange="renderDashboard()" aria-label="Priority"><option value="">All priorities</option><option value="A">Priority A</option><option value="B">Priority B</option><option value="C">Priority C</option></select>
+          <select id="db-system" onchange="renderDashboard()" aria-label="System"><option value="">All systems</option></select>
+          <select id="db-resp" onchange="renderDashboard()" aria-label="Responsible"><option value="">All responsible</option></select>
+          <button class="btn sm" type="button" onclick="dbReset()">Reset</button>
+        </div>
       </div>
-      <div class="dash-stat-row">
-        <div class="dash-stat"><div class="dash-stat-icon" style="background:#EEF2F8">&#128196;</div><div><div class="dash-stat-val" id="ds-total" style="color:#1F3864">–</div><div class="dash-stat-lbl">Total</div></div></div>
-        <div class="dash-stat"><div class="dash-stat-icon" style="background:#FDECEA">&#128308;</div><div><div class="dash-stat-val" id="ds-open" style="color:#C00000">–</div><div class="dash-stat-lbl">Open</div></div></div>
-        <div class="dash-stat"><div class="dash-stat-icon" style="background:#E2EFDA">&#9989;</div><div><div class="dash-stat-val" id="ds-closed" style="color:#375623">–</div><div class="dash-stat-lbl">Closed</div></div></div>
-        <div class="dash-stat"><div class="dash-stat-icon" style="background:#FFF3E0">&#9203;</div><div><div class="dash-stat-val" id="ds-overdue" style="color:#FF6600">–</div><div class="dash-stat-lbl">Overdue</div></div></div>
+      <div class="db-kpis" id="db-kpis"></div>
+      <div class="db-row db-row-2">
+        <section class="dash-card"><h4>Open Priority A <span class="db-h4n" id="db-pa-n"></span><small>oldest first</small></h4><div id="db-pa"></div></section>
+        <section class="dash-card"><h4>Age of open tickets <small>click a bar</small></h4><div class="chart-wrap"><canvas id="chart-aging" aria-label="Open tickets by age"></canvas></div></section>
       </div>
-      <div class="dash-grid">
-        <div class="dash-card"><h4>Status</h4><div class="chart-wrap"><canvas id="chart-status"></canvas></div></div>
-        <div class="dash-card"><h4>Priority</h4><div class="chart-wrap"><canvas id="chart-priority"></canvas></div></div>
-        <div class="dash-card"><h4>Category</h4><div class="chart-wrap"><canvas id="chart-category"></canvas></div></div>
+      <div class="db-row db-row-2">
+        <section class="dash-card"><h4>Opened vs closed per week <small>last 12 weeks</small></h4><div class="chart-wrap"><canvas id="chart-weekly" aria-label="Opened and closed tickets per week"></canvas></div></section>
+        <section class="dash-card"><h4>Status</h4><div class="chart-wrap"><canvas id="chart-status" aria-label="Ticket status"></canvas></div></section>
       </div>
-      <div class="dash-grid" style="grid-template-columns:2fr 1fr">
-        <div class="dash-card"><h4>By System</h4><div class="chart-wrap"><canvas id="chart-system"></canvas></div></div>
-        <div class="dash-card"><h4>Monthly</h4><div class="chart-wrap"><canvas id="chart-monthly"></canvas></div></div>
+      <div class="db-row db-row-2">
+        <section class="dash-card"><h4>Open tickets by system <small>top 10 · click a bar</small></h4><div class="chart-wrap" style="height:300px"><canvas id="chart-system" aria-label="Open tickets by system"></canvas></div></section>
+        <section class="dash-card"><h4 id="db-side-title">Open by responsible party</h4><div class="chart-wrap" style="height:300px"><canvas id="chart-resp" aria-label="Open tickets by responsible party"></canvas></div></section>
+      </div>
+      <div class="db-row db-row-2">
+        <section class="dash-card"><h4>Priority <small>open tickets</small></h4><div class="chart-wrap"><canvas id="chart-priority"></canvas></div></section>
+        <section class="dash-card"><h4>Category <small>open tickets</small></h4><div class="chart-wrap"><canvas id="chart-category"></canvas></div></section>
       </div>
     </div>
 
@@ -717,6 +780,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
             <button class="btn sm primary admin-only no-print" id="handover-report-btn" onclick="generateHandoverReport()" style="display:none">&#128196; Handover Report</button>
           </div>
         </div>
+        <div id="reg-quick" class="reg-quick no-print"></div>
         <div id="register-body"><div class="loading"><div class="loading-spinner"></div><br>Loading...</div></div>
       </div>
     </div>
@@ -1917,6 +1981,8 @@ async function loadTickets(force=false){
       (t.raised_by||'').toLowerCase().includes(search)||
       (t.pid||'').toLowerCase().includes(search)
     );
+    tickets=applyRegQuick(tickets);
+    renderRegQuick(baseTickets);
     const sortMode=(document.getElementById('filter-ticket-sort')?.value||'ref_desc');
     tickets=sortTicketsForRegister(tickets,sortMode);
     allTickets=tickets;
@@ -1987,7 +2053,7 @@ function renderRegister(tickets){
       const ph=t._photoCount?'&#128247; '+t._photoCount:'–';
       const chk=`<input type="checkbox" class="ticket-chk" data-id="${t.id}" style="width:14px;height:14px;cursor:pointer">`;
       return `<tr${od?' class="overdue-row"':''}><td style="text-align:center">${chk}</td><td style="font-weight:700;color:#1F3864;font-size:11px;white-space:nowrap">${t.no||'–'}</td>
-        <td><div style="font-weight:600;font-size:13px">${t.system_name||''}</div><div style="font-size:11px;color:#888;margin-top:2px">${t.description||''}</div></td>
+        <td><div style="font-weight:600;font-size:13px">${t.system_name||''}</div><div style="font-size:11px;color:#888;margin-top:2px">${t.description||''}</div>${tkMetaLine(t)}</td>
         <td><span class="badge pri-${(t.priority||'').toLowerCase()}">${pl[t.priority]||t.priority}</span></td>
         <td style="font-size:12px;color:#666;white-space:nowrap">${t.date||'–'}</td>
         <td style="font-size:12px;color:${od?'#FF6600':'#666'};font-weight:${od?'700':'400'};white-space:nowrap">${t.deadline||'–'}</td>
@@ -2073,6 +2139,7 @@ async function showDetail(id){
     <div style="margin-bottom:14px"><div class="detail-label" style="margin-bottom:5px">Required Corrective Action</div>
       <div style="font-size:13px;line-height:1.6;background:#F9F9F9;padding:11px;border-radius:6px;border:1px solid #eee">${ticket.action||'–'}</div></div>
     ${imgs}
+    <div id="tk-log" class="tk-log"><div class="tk-empty">Loading follow-up log…</div></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
       <button class="btn whatsapp" onclick="sendWhatsApp(${JSON.stringify(ticket).replace(/'/g,'\\&apos;')})">WA</button>
       ${canModify&&ticket.status==='OPEN'?`<button class="btn success" onclick="closeTicket('${ticket.id}');closeModal()">Mark as Closed</button>`:''}
@@ -2081,6 +2148,7 @@ async function showDetail(id){
       <button class="btn" onclick="closeModal()">Close</button>
     </div>`;
   document.getElementById('modal-bg').classList.add('show');
+  tkLoadLog(ticket);
 }
 
 function closeModal(){document.getElementById('modal-bg').classList.remove('show');}
@@ -2147,31 +2215,76 @@ async function renderDashboard(force=false){
   if(!document.getElementById('view-dashboard')?.classList.contains('active'))return;
   try{
     const hasFreshCache=Array.isArray(dashboardCacheTickets) && dashboardCacheTickets.length && (Date.now()-dashboardLoadedAt)<DASHBOARD_CACHE_MS;
-    const t=hasFreshCache && !force ? dashboardCacheTickets : [...(await fetchAllTickets(force)||[])];
-    dashboardCacheTickets=t;
-    dashboardLoadedAt=Date.now();
-    const open=t.filter(x=>x.status==='OPEN').length;
-    const closed=t.filter(x=>x.status==='CLOSED').length;
-    const overdue=t.filter(x=>isOverdue(x)).length;
-    const prioA=t.filter(x=>x.priority==='A'&&x.status==='OPEN');
-    document.getElementById('ds-total').textContent=t.length;
-    document.getElementById('ds-open').textContent=open;
-    document.getElementById('ds-closed').textContent=closed;
-    document.getElementById('ds-overdue').textContent=overdue;
-    const ab=document.getElementById('dash-alerts');
-    if(prioA.length){
-      ab.style.display='block';
-      document.getElementById('dash-alert-list').innerHTML=prioA.map(x=>`<div class="alert-row"><span style="font-weight:700;color:#1F3864;min-width:140px">${x.no}</span><span style="flex:1;margin:0 12px">${x.system_name||''}</span><span style="background:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;color:#C00000">Priority A</span></div>`).join('');
-    }else{ab.style.display='none';}
+    const all=hasFreshCache && !force ? dashboardCacheTickets : [...(await fetchAllTickets(force)||[])];
+    dashboardCacheTickets=all;dashboardLoadedAt=Date.now();
+    dbFillFilters(all);
+    const t=dbApplyFilters(all);
+    const open=t.filter(x=>x.status==='OPEN'),closed=t.filter(x=>x.status==='CLOSED');
+    const overdue=open.filter(isOverdue),noTarget=open.filter(x=>!x.deadline),stale=open.filter(x=>tkDaysSinceUpdate(x)>=TK_STALE_DAYS);
+    const ages=open.map(tkAge).filter(a=>a!=null);const avgAge=ages.length?Math.round(ages.reduce((a,b)=>a+b,0)/ages.length):0;
+    const wk=Date.now()-7*864e5;
+    const openedWk=t.filter(x=>tkTime(x.date||x.created_at)>=wk).length,closedWk=t.filter(x=>x.date_closed&&tkTime(x.date_closed)>=wk).length;
+    const rate=t.length?Math.round(closed.length*100/t.length):0;
+    const tile=(val,lbl,sub,go,cls='')=>`<button type="button" class="db-kpi ${cls}" onclick='dbGo(${JSON.stringify(go)})'><span class="db-kpi-v">${val}</span><span class="db-kpi-l">${lbl}</span>${sub?`<span class="db-kpi-s">${sub}</span>`:''}</button>`;
+    document.getElementById('db-kpis').innerHTML=
+      tile(open.length,'Open',`of ${t.length} tickets`,{status:'OPEN',label:'Open tickets'},'red')+
+      tile(closed.length,'Closed',`${closedWk} closed this week`,{status:'CLOSED',label:'Closed tickets'},'green')+
+      tile(rate+'%','Closure rate',`${openedWk} opened this week`,{label:'All tickets'},rate>=50?'green':'amber')+
+      tile(avgAge+' d','Average age of open tickets',ages.length?`oldest ${Math.max(...ages)} days`:'',{quick:'old90',label:'Open more than 90 days'})+
+      tile(overdue.length,'Overdue','past target close date',{status:'OVERDUE',label:'Overdue tickets'},overdue.length?'red':'')+
+      tile(noTarget.length,'No target close date','overdue cannot be tracked',{quick:'notarget',label:'Open with no target close date'},noTarget.length?'amber':'')+
+      tile(stale.length,`No update in ${TK_STALE_DAYS}+ days`,'open tickets needing follow-up',{quick:'stale',label:'Open with no update in '+TK_STALE_DAYS+'+ days'},stale.length?'amber':'')+
+      tile(open.filter(x=>x.priority==='A').length,'Open Priority A','safety critical',{quick:'pa',label:'Open Priority A'},'red');
+    // Priority A list (oldest first, compact)
+    const pa=open.filter(x=>x.priority==='A').sort((a,b)=>(tkAge(b)||0)-(tkAge(a)||0));
+    document.getElementById('db-pa-n').textContent=pa.length;
+    const paBox=document.getElementById('db-pa');
+    const paRow=x=>`<button type="button" class="db-tk" onclick="showDetail('${x.id}')"><span class="db-tk-no">${escapeHtml(x.no||'')}</span><span class="db-tk-sys">${escapeHtml(x.system_name||'')}<small>${escapeHtml(String(x.description||'').slice(0,90))}</small></span><span class="db-tk-age ${isOverdue(x)?'od':''}">${tkAge(x)??'–'} d</span></button>`;
+    paBox.innerHTML=pa.length?pa.slice(0,6).map(paRow).join('')+(pa.length>6?`<button type="button" class="btn sm" style="margin-top:8px" onclick='dbGo({quick:"pa"})'>Show all ${pa.length} in Register →</button>`:''):'<div class="db-empty">No open Priority A tickets 🎉</div>';
     destroyCharts();
-    _charts.status=new Chart(document.getElementById('chart-status'),{type:'doughnut',data:{labels:['Open','Closed','Overdue'],datasets:[{data:[open,closed,overdue],backgroundColor:['#C00000','#70AD47','#ED7D31'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:"bottom",labels:{font:{size:11},padding:12,boxWidth:12}}}}});
-    const sys={};t.forEach(x=>{sys[x.system_name||'Unspecified']=(sys[x.system_name||'Unspecified']||0)+1;});
-    const sk=Object.keys(sys).sort((a,b)=>sys[b]-sys[a]).slice(0,7);
-    _charts.sys=new Chart(document.getElementById('chart-system'),{type:'bar',data:{labels:sk,datasets:[{label:'Open',data:sk.map(k=>t.filter(x=>x.system_name===k&&x.status==='OPEN').length),backgroundColor:'#C00000',borderRadius:4,borderSkipped:false},{label:'Closed',data:sk.map(k=>t.filter(x=>x.system_name===k&&x.status==='CLOSED').length),backgroundColor:'#70AD47',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:12}}},indexAxis:'y',scales:{x:{beginAtZero:true,stacked:true,ticks:{stepSize:1,precision:0}},y:{stacked:true}}}});
-    const months={};t.forEach(x=>{const m=(x.date||'').substring(0,7)||'N/A';months[m]=(months[m]||0)+1;});
-    const mk=Object.keys(months).sort().slice(-6);
-    const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    _charts.monthly=new Chart(document.getElementById('chart-monthly'),{type:'line',data:{labels:mk.map(m=>{const p=m.split('-');return (mn[parseInt(p[1])-1]||p[1])+' '+p[0].slice(2);}),datasets:[{label:'Tickets',data:mk.map(k=>months[k]),borderColor:'#1F3864',backgroundColor:'rgba(31,56,100,.08)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#1F3864',pointHoverRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,precision:0}}}}});
+    const fontC='#374151',grid='#EEF0F3';
+    Chart.defaults.font.family='Inter,Segoe UI,Arial,sans-serif';Chart.defaults.color=fontC;
+    // Aging
+    const buckets=[['0–30 days',0,30],['31–60 days',31,60],['61–90 days',61,90],['91–180 days',91,180],['180+ days',181,1e9]];
+    const bc=buckets.map(b=>open.filter(x=>{const a=tkAge(x);return a!=null&&a>=b[1]&&a<=b[2];}).length);
+    _charts.aging=new Chart(document.getElementById('chart-aging'),{type:'bar',data:{labels:buckets.map(b=>b[0]),datasets:[{label:'Open tickets',data:bc,backgroundColor:['#7FB3E0','#4A8FCC','#F2B33D','#EA7A3B','#C00000'],borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0},grid:{color:grid}},x:{grid:{display:false}}},
+      onClick:(e,els)=>{if(els.length){const b=buckets[els[0].index];dbGo({status:'OPEN',ageMin:b[1],ageMax:b[2],label:'Open '+b[0]});}},onHover:dbCursor}});
+    // Weekly opened vs closed
+    const weeks=[];const now=new Date();const day=(now.getDay()+6)%7;const monday=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day);
+    for(let i=11;i>=0;i--){const s=new Date(monday.getTime()-i*7*864e5);weeks.push([s.getTime(),s.getTime()+7*864e5,s]);}
+    const inW=(d,w)=>{const x=tkTime(d);return x>=w[0]&&x<w[1];};
+    _charts.weekly=new Chart(document.getElementById('chart-weekly'),{type:'bar',data:{labels:weeks.map(w=>w[2].toLocaleDateString('en-GB',{day:'2-digit',month:'short'})),
+      datasets:[{label:'Opened',data:weeks.map(w=>t.filter(x=>inW(x.date||x.created_at,w)).length),backgroundColor:'#C00000',borderRadius:4},{label:'Closed',data:weeks.map(w=>t.filter(x=>x.date_closed&&inW(x.date_closed,w)).length),backgroundColor:'#3BB273',borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{beginAtZero:true,ticks:{precision:0},grid:{color:grid}},x:{grid:{display:false}}}}});
+    // Status (open on time / overdue / closed — no double counting)
+    const onTime=open.length-overdue.length;
+    _charts.status=new Chart(document.getElementById('chart-status'),{type:'doughnut',data:{labels:['Open – on time / no date','Open – overdue','Closed'],datasets:[{data:[onTime,overdue.length,closed.length],backgroundColor:['#4A8FCC','#C00000','#3BB273'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},onClick:(e,els)=>{if(els.length)dbGo([{status:'OPEN',quick:'ontime'},{status:'OVERDUE'},{status:'CLOSED'}][els[0].index]);},onHover:dbCursor}});
+    // By system (normalized)
+    const groups=dbSystemGroups(open);const top=groups.slice(0,10);
+    _charts.sys=new Chart(document.getElementById('chart-system'),{type:'bar',data:{labels:top.map(g=>g.label.length>34?g.label.slice(0,33)+'…':g.label),datasets:[
+      {label:'Overdue',data:top.map(g=>g.items.filter(isOverdue).length),backgroundColor:'#C00000',borderRadius:3},
+      {label:'Open',data:top.map(g=>g.items.filter(x=>!isOverdue(x)).length),backgroundColor:'#4A8FCC',borderRadius:3}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{x:{stacked:true,beginAtZero:true,ticks:{precision:0},grid:{color:grid}},y:{stacked:true,grid:{display:false}}},
+      onClick:(e,els)=>{if(els.length){const g=top[els[0].index];dbGo({status:'OPEN',sysKey:g.key,label:'Open – '+g.label});}},onHover:dbCursor}});
+    // Responsible (or raised-by when no responsible yet)
+    const hasResp=open.some(x=>x.responsible);
+    document.getElementById('db-side-title').textContent=hasResp?'Open by responsible party':'Open by raised by';
+    const rk={};open.forEach(x=>{const k=(hasResp?x.responsible:x.raised_by)||'Not assigned';rk[k]=(rk[k]||0)+1;});
+    const rks=Object.keys(rk).sort((a,b)=>rk[b]-rk[a]).slice(0,10);
+    _charts.resp=new Chart(document.getElementById('chart-resp'),{type:'bar',data:{labels:rks,datasets:[{label:'Open tickets',data:rks.map(k=>rk[k]),backgroundColor:'#1F3864',borderRadius:3}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:grid}},y:{grid:{display:false}}},
+      onClick:(e,els)=>{if(els.length){const k=rks[els[0].index];dbGo(hasResp?{status:'OPEN',resp:k==='Not assigned'?'__none':k,label:'Open – '+k}:{status:'OPEN',search:k==='Not assigned'?'':k});}},onHover:dbCursor}});
+    // Priority & category (open)
+    const pr=['A','B','C'];
+    _charts.priority=new Chart(document.getElementById('chart-priority'),{type:'doughnut',data:{labels:['A – Safety critical','B – Operational','C – Minor'],datasets:[{data:pr.map(p=>open.filter(x=>x.priority===p).length),backgroundColor:['#C00000','#F2B33D','#3BB273'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},onClick:(e,els)=>{if(els.length)dbGo({status:'OPEN',priority:pr[els[0].index]});},onHover:dbCursor}});
+    const cat={};open.forEach(x=>{const k=x.category||'Other';cat[k]=(cat[k]||0)+1;});const ck=Object.keys(cat).sort((a,b)=>cat[b]-cat[a]);
+    _charts.category=new Chart(document.getElementById('chart-category'),{type:'doughnut',data:{labels:ck,datasets:[{data:ck.map(k=>cat[k]),backgroundColor:['#1F3864','#4A8FCC','#7FB3E0','#F2B33D','#EA7A3B','#6B4FBB','#9CA3AF'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+    const f=[document.getElementById('db-period').selectedOptions[0]?.text,document.getElementById('db-priority').value&&'Priority '+document.getElementById('db-priority').value,document.getElementById('db-system').selectedOptions[0]?.value&&document.getElementById('db-system').selectedOptions[0].text,document.getElementById('db-resp').value].filter(x=>x&&x!=='All time');
+    document.getElementById('db-sub').textContent=(f.length?'Filtered: '+f.join(' · ')+' — ':'')+'Click any number, bar or ticket to open the matching tickets in the Register.';
   }catch(e){console.error('Dashboard error:',e);}
 }
 
@@ -4471,6 +4584,149 @@ function uxSetZoom(d){const app=document.getElementById('main-app');const cur=ap
 window.addEventListener('scroll',()=>{const b=document.getElementById('ux-top');if(b)b.classList.toggle('show',window.scrollY>600);},{passive:true});
 // Escape closes any open modal
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const open=[...document.querySelectorAll('.modal-bg.show')].pop();if(open)open.classList.remove('show');});
+</script>
+<script>
+// ═════════ TRACKING: dashboard helpers, Register quick filters, follow-up log ═════════
+const TK_STALE_DAYS=14;
+const TK_RESP=['EPC Contractor','Vendor / OEM','Siemens','WWMC Operations','WWMC Maintenance','Owner','Other'];
+function tkTime(d){if(!d)return NaN;const s=String(d);const t=/^\d{4}-\d{2}-\d{2}$/.test(s)?new Date(s+'T00:00:00').getTime():Date.parse(s);return isNaN(t)?NaN:t;}
+function tkDaysSince(d){const t=tkTime(d);return isNaN(t)?null:Math.max(0,Math.floor((Date.now()-t)/864e5));}
+function tkAge(x){return tkDaysSince(x.date||x.created_at);}
+function tkDaysSinceUpdate(x){return tkDaysSince(x.last_update_at||x.date||x.created_at)??0;}
+function dbNormKey(s){return String(s||'Unspecified').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').replace(/\b(the|system|systems)\b/g,' ').replace(/\s+/g,' ').trim()||'unspecified';}
+function dbNameScore(n){return (n!==n.toUpperCase()?2:0)+(/[.,;:\-\s]$/.test(n)?0:1);}
+function dbSystemGroups(list){
+  const m=new Map();list.forEach(x=>{const k=dbNormKey(x.system_name);if(!m.has(k))m.set(k,{key:k,items:[],names:{}});const g=m.get(k);g.items.push(x);const n=(x.system_name||'Unspecified').trim();g.names[n]=(g.names[n]||0)+1;});
+  return [...m.values()].map(g=>({...g,label:Object.keys(g.names).sort((a,b)=>(g.names[b]-g.names[a])||(dbNameScore(b)-dbNameScore(a)))[0]})).sort((a,b)=>b.items.length-a.items.length);
+}
+function dbFillFilters(all){
+  const sel=document.getElementById('db-system'),cur=sel.value;
+  sel.innerHTML='<option value="">All systems</option>'+dbSystemGroups(all).map(g=>`<option value="${escapeHtml(g.key)}" ${g.key===cur?'selected':''}>${escapeHtml(g.label)} (${g.items.length})</option>`).join('');
+  const rs=document.getElementById('db-resp'),rc=rs.value;const rv=[...new Set(all.map(x=>x.responsible).filter(Boolean))].sort();
+  rs.innerHTML='<option value="">All responsible</option>'+rv.map(r=>`<option ${r===rc?'selected':''}>${escapeHtml(r)}</option>`).join('');
+  rs.style.display=rv.length?'':'none';
+}
+function dbApplyFilters(all){
+  const per=+document.getElementById('db-period').value||0,pr=document.getElementById('db-priority').value,sk=document.getElementById('db-system').value,rs=document.getElementById('db-resp').value;
+  return all.filter(x=>(!per||((tkAge(x)??1e9)<=per))&&(!pr||x.priority===pr)&&(!sk||dbNormKey(x.system_name)===sk)&&(!rs||x.responsible===rs));
+}
+function dbReset(){['db-period','db-priority','db-system','db-resp'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});renderDashboard();}
+function dbCursor(e,els){const c=e?.native?.target;if(c)c.style.cursor=els&&els.length?'pointer':'default';}
+
+// Register state set from the dashboard or quick-filter chips
+let regQuick='',regPreset=null;
+const REG_QUICK=[
+  ['','All'],['pa','Open Priority A'],['overdue','Overdue'],['notarget','No target date'],['old90','Open > 90 days'],
+  ['stale','No update '+TK_STALE_DAYS+'+ days'],['mine','Raised by me'],['week','Raised this week']];
+function regQuickTest(x,q){
+  const open=x.status==='OPEN';
+  switch(q){
+    case 'pa':return open&&x.priority==='A';
+    case 'overdue':return isOverdue(x);
+    case 'notarget':return open&&!x.deadline;
+    case 'old90':return open&&(tkAge(x)||0)>90;
+    case 'stale':return open&&tkDaysSinceUpdate(x)>=TK_STALE_DAYS;
+    case 'mine':return !!currentUser&&(x.raised_by_username===currentUser.username||x.raised_by===currentUser.name);
+    case 'week':return (tkAge(x)??1e9)<=7;
+    case 'ontime':return open&&!isOverdue(x);
+    default:return true;
+  }
+}
+function applyRegQuick(list){
+  let out=list;
+  if(regQuick)out=out.filter(x=>regQuickTest(x,regQuick));
+  const rs=regRespPending!=null?regRespPending:(document.getElementById('reg-resp')?.value||'');
+  if(rs)out=out.filter(x=>rs==='__none'?!x.responsible:x.responsible===rs);
+  const p=regPreset;
+  if(p){
+    if(p.ageMin!=null)out=out.filter(x=>{const a=tkAge(x);return a!=null&&a>=p.ageMin&&a<=p.ageMax;});
+    if(p.sysKey)out=out.filter(x=>dbNormKey(x.system_name)===p.sysKey);
+  }
+  return out;
+}
+function renderRegQuick(all){
+  const box=document.getElementById('reg-quick');if(!box)return;
+  const base=(all||ticketsCache||[]);
+  const chips=REG_QUICK.map(([k,l])=>{const n=k?base.filter(x=>regQuickTest(x,k)).length:base.length;return `<button type="button" class="rq-chip${regQuick===k?' on':''}" aria-pressed="${regQuick===k}" onclick="setRegQuick('${k}')">${l}<b>${n}</b></button>`;}).join('');
+  const resp=[...new Set(base.map(x=>x.responsible).filter(Boolean))].sort();
+  const rs=regRespPending!=null?regRespPending:(document.getElementById('reg-resp')?.value||'');regRespPending=null;
+  const respSel=`<select id="reg-resp" class="rq-sel" onchange="loadTickets(false)" aria-label="Responsible"><option value="">Any responsible</option>${resp.map(r=>`<option ${r===rs?'selected':''}>${escapeHtml(r)}</option>`).join('')}<option value="__none" ${rs==='__none'?'selected':''}>Not assigned</option></select>`;
+  const banner=regPreset&&regPreset.label?`<span class="rq-banner">Showing: ${escapeHtml(regPreset.label)} <button type="button" onclick="regPreset=null;loadTickets(false)" aria-label="Clear">✕</button></span>`:'';
+  box.innerHTML=`<div class="rq-row">${chips}${respSel}</div>${banner}`;
+}
+function setRegQuick(k){
+  regQuick=k;regPreset=null;
+  if(k){const fs=document.getElementById('filter-status');if(fs)fs.value='';}
+  loadTickets(false);
+}
+let regRespPending=null;
+function dbMatch(x,p){
+  if(p.status==='OPEN'&&x.status!=='OPEN')return false;
+  if(p.status==='CLOSED'&&x.status!=='CLOSED')return false;
+  if(p.status==='OVERDUE'&&!isOverdue(x))return false;
+  if(p.priority&&x.priority!==p.priority)return false;
+  if(p.quick&&!regQuickTest(x,p.quick))return false;
+  if(p.ageMin!=null){const a=tkAge(x);if(a==null||a<p.ageMin||a>p.ageMax)return false;}
+  if(p.sysKey&&dbNormKey(x.system_name)!==p.sysKey)return false;
+  if(p.resp){if(p.resp==='__none'?!!x.responsible:x.responsible!==p.resp)return false;}
+  if(p.search&&![x.raised_by,x.system_name,x.description,x.no].join(' ').toLowerCase().includes(String(p.search).toLowerCase()))return false;
+  return true;
+}
+function dbGo(p){
+  p=p||{};
+  if(isViewer()){dbShowList(p);return;}
+  regQuick=p.quick||'';regPreset=(p.ageMin!=null||p.sysKey||p.label)?p:null;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  set('filter-status',(p.status==='OVERDUE'||p.status==='CLOSED')?p.status:(p.status==='OPEN'&&!p.quick?'OPEN':''));
+  set('filter-priority',p.priority||'');set('ticket-search',p.search||'');
+  regRespPending=p.resp||'';
+  switchTab('register');loadTickets(false);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function dbShowList(p){
+  const list=dbApplyFilters(dashboardCacheTickets||[]).filter(x=>dbMatch(x,p)).sort((a,b)=>(tkAge(b)||0)-(tkAge(a)||0));
+  document.getElementById('modal-title').textContent=(p.label||'Tickets')+' ('+list.length+')';
+  document.getElementById('modal-body').innerHTML=list.length?'<div class="db-list">'+list.map(x=>`<button type="button" class="db-tk" onclick="showDetail('${x.id}')"><span class="db-tk-no">${escapeHtml(x.no||'')}</span><span class="db-tk-sys">${escapeHtml(x.system_name||'')}<small>${escapeHtml(String(x.description||'').slice(0,90))}</small></span><span class="db-tk-age ${isOverdue(x)?'od':''}">${x.status==='OPEN'?(tkAge(x)??'–')+' d':'closed'}</span></button>`).join('')+'</div>':'<div class="db-empty">No tickets.</div>';
+  document.getElementById('modal-bg').classList.add('show');
+}
+function tkMetaLine(t){
+  const bits=[];
+  if(t.responsible)bits.push(`<span class="tk-resp">${escapeHtml(t.responsible)}</span>`);
+  if(t.status==='OPEN'){const a=tkAge(t);if(a!=null)bits.push(`open ${a} d`);}
+  if(t.last_update_at){const d=tkDaysSince(t.last_update_at);bits.push(`updated ${d===0?'today':d+' d ago'}${t.last_update_note?': '+escapeHtml(String(t.last_update_note).slice(0,70)):''}`);}
+  else if(t.status==='OPEN'&&tkDaysSinceUpdate(t)>=TK_STALE_DAYS)bits.push('<span class="tk-stale">no follow-up yet</span>');
+  return bits.length?`<div class="tk-meta">${bits.join(' · ')}</div>`:'';
+}
+
+// Follow-up log inside the ticket window
+async function tkLoadLog(ticket){
+  const box=document.getElementById('tk-log');if(!box)return;
+  let rows=[];let ready=true;
+  try{rows=await sbFetch('qas2_ticket_updates?ticket_id=eq.'+encodeURIComponent(String(ticket.id))+'&select=*&order=created_at.desc')||[];}catch(e){ready=false;}
+  const canAdd=!!currentUser&&!isViewer()&&ready;
+  const cur=ticket.responsible||'';
+  box.innerHTML=`<div class="detail-label" style="margin-bottom:6px">Follow-up log${rows.length?' ('+rows.length+')':''}${cur?` · Responsible: <b style="color:var(--navy)">${escapeHtml(cur)}</b>`:''}</div>
+    ${!ready?'<div class="tk-empty">The follow-up log is not set up yet. Run <b>qas2_tracking_upgrade.sql</b> in Supabase.</div>':''}
+    ${rows.length?`<ol class="tk-tl">${rows.map(r=>`<li><div class="tk-tl-h"><b>${escapeHtml(r.username||'')}</b>${r.responsible?` <span class="tk-resp">${escapeHtml(r.responsible)}</span>`:''}<time>${escapeHtml(new Date(r.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><div class="tk-tl-n">${escapeHtml(r.note||'')}</div></li>`).join('')}</ol>`:(ready?'<div class="tk-empty">No follow-up yet.</div>':'')}
+    ${canAdd?`<div class="tk-add">
+      <textarea id="tk-note" rows="2" placeholder="What happened? e.g. Vendor confirmed spare gasket arrives Sunday; EPC to replace on 12 Nov." aria-label="Follow-up note"></textarea>
+      <div class="tk-add-row"><select id="tk-resp" aria-label="Responsible party"><option value="">Responsible party…</option>${TK_RESP.map(r=>`<option ${r===cur?'selected':''}>${r}</option>`).join('')}${cur&&!TK_RESP.includes(cur)?`<option selected>${escapeHtml(cur)}</option>`:''}</select>
+      <button class="btn primary sm" type="button" onclick="tkAddUpdate('${String(ticket.id).replace(/'/g,'')}')">Save update</button></div></div>`:''}`;
+}
+async function tkAddUpdate(id){
+  const note=(document.getElementById('tk-note')?.value||'').trim();const resp=document.getElementById('tk-resp')?.value||'';
+  if(!note&&!resp){showToast('Write a short update or choose the responsible party.','error');return;}
+  try{
+    await sbFetch('qas2_ticket_updates','POST',{ticket_id:String(id),note:note||('Responsible set to '+resp),responsible:resp||null,username:currentUser?.name||currentUser?.username||''});
+    const patch={last_update_at:new Date().toISOString(),last_update_note:(note||('Responsible set to '+resp)).slice(0,300)};if(resp)patch.responsible=resp;
+    await sbFetch('qas2_tickets?id=eq.'+id,'PATCH',patch);
+    const c=(ticketsCache||[]).find(x=>String(x.id)===String(id));if(c)Object.assign(c,patch);
+    invalidateTicketDetailCache(id);invalidateDashboardCache();
+    showToast('Update saved','success');
+    const tk=await fetchTicketById(id,true);if(tk)tkLoadLog(tk);
+    if(document.getElementById('view-register')?.classList.contains('active'))loadTickets(false);
+  }catch(e){showToast('Could not save the update: '+(/qas2_ticket_updates|responsible|last_update|42P01|42703|schema cache/i.test(e.message)?'run qas2_tracking_upgrade.sql in Supabase first.':e.message),'error');}
+}
 </script>
 </body>
 </html>

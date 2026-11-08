@@ -3289,6 +3289,7 @@ function applyReportFiltersAndRender(sourceReports, selectedDate){
   }
   drFillRegFilters(sourceReports||[]);
   reports=drApplyExtraFilters(reports);
+  drCurrentList=reports;
   drRenderSummary(reports);
   drRenderTracker();
   if(sortMode==='uploaded_asc') reports.sort((a,b)=>new Date(a.created_at||a.report_date||0)-new Date(b.created_at||b.report_date||0));
@@ -5009,11 +5010,13 @@ function drItemsTable(items){
 
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['sign','Signature block',true]];
-let drbIds=null;
+let drbIds=null,drCurrentList=[];
+function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
+function drTickedIds(){const un=new Set([...document.querySelectorAll('.report-chk:not(:checked)')].map(c=>c.dataset.id));return drShownIds().filter(id=>!un.has(id));}
 function drOpenBuilder(ids){
   drbIds=ids||null;
-  const checked=[...document.querySelectorAll('.report-chk:checked')].map(c=>c.dataset.id);
-  const shown=[...document.querySelectorAll('.report-chk')].map(c=>c.dataset.id);
+  const checked=drTickedIds();
+  const shown=drShownIds();
   const one=ids&&ids.length===1;
   document.getElementById('drb-scope').innerHTML=one?`<label class="drb-opt"><input type="radio" name="drb-scope" value="one" checked> This report only</label>`:
     `<label class="drb-opt"><input type="radio" name="drb-scope" value="checked" ${checked.length&&checked.length<shown.length?'checked':''}> Ticked reports (${checked.length})</label>
@@ -5029,17 +5032,28 @@ function drOpenBuilder(ids){
 }
 function drbChoice(){
   const scope=document.querySelector('input[name="drb-scope"]:checked')?.value||'shown';
-  let ids=scope==='one'?drbIds:scope==='checked'?[...document.querySelectorAll('.report-chk:checked')].map(c=>c.dataset.id):[...document.querySelectorAll('.report-chk')].map(c=>c.dataset.id);
+  let ids=scope==='one'?drbIds:scope==='checked'?drTickedIds():drShownIds();
   const s=[...document.querySelectorAll('#drb-sections input:checked')].map(i=>i.value);
   const layout=document.querySelector('input[name="drb-layout"]:checked')?.value||'report';
   try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout}));}catch(e){}
   return {ids,s,layout,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
-async function drbFetch(ids,withPhotos){
-  const out=[];
-  for(let i=0;i<ids.length;i+=40){const chunk=ids.slice(i,i+40);const sel=withPhotos?'*':'id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at'+(drHasItems===false?'':',items');
-    let rows;try{rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select='+sel);}catch(e){rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select=*');}
-    out.push(...(rows||[]));}
+async function drbFetch(ids,withPhotos,onProgress){
+  const out=[];const base='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
+  for(let i=0;i<ids.length;i+=25){const chunk=ids.slice(i,i+25);
+    let rows;try{rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select='+base+(drHasItems===false?'':',items'));}
+    catch(e){if(/items/i.test(e.message)){drHasItems=false;rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&select='+base);}else throw e;}
+    out.push(...(rows||[]));if(onProgress)onProgress('Loading reports '+Math.min(i+25,ids.length)+' of '+ids.length+'…');}
+  let photoNote='';
+  if(withPhotos){
+    const byId=new Map(out.map(r=>[String(r.id),r]));let failed=0;
+    for(let i=0;i<ids.length;i+=4){const chunk=ids.slice(i,i+4);
+      try{const rows=await sbFetch('qas2_daily_reports?id=in.('+chunk.join(',')+')&photos=not.is.null&select=id,photos')||[];rows.forEach(r=>{const x=byId.get(String(r.id));if(x)x.photos=r.photos;});}
+      catch(e){failed+=chunk.length;}
+      if(onProgress)onProgress('Loading photos '+Math.min(i+4,ids.length)+' of '+ids.length+'…');}
+    if(failed)photoNote='Photos could not be loaded for '+failed+' report(s).';
+  }
+  out.photoNote=photoNote;
   return out.sort((a,b)=>String(a.report_date).localeCompare(String(b.report_date))||String(a.report_no).localeCompare(String(b.report_no)));
 }
 function drNotes(r){return String(r.content||'').split('\n').filter(l=>!l.trim().startsWith('•')).join('\n').trim();}
@@ -5047,9 +5061,12 @@ function drbEsc(s){return escapeHtml(s||'').replace(/\n/g,'<br>');}
 async function drbPrint(){
   const c=drbChoice();if(!c.ids||!c.ids.length){showToast('There are no reports to include.','error');return;}
   const w=window.open('','_blank');if(!w){showToast('Allow pop-ups for this site to open the report.','error');return;}
-  w.document.write('<p style="font-family:Arial;padding:30px">Preparing report…</p>');
+  w.document.write('<p id="prog" style="font-family:Arial;padding:30px;color:#1F3864">Preparing report…</p>');
+  const prog=m=>{try{const el=w.document.getElementById('prog');if(el)el.textContent=m;}catch(_){}};
   try{
-    const reps=await drbFetch(c.ids,c.s.includes('photos'));
+    const withPhotos=c.s.includes('photos')&&c.ids.length<=60;
+    if(c.s.includes('photos')&&!withPhotos)showToast('Photos are left out for more than 60 reports to keep the report fast. Narrow the dates to include photos.','error');
+    const reps=await drbFetch(c.ids,withPhotos,prog);
     const has=k=>c.s.includes(k);
     const items=reps.flatMap(r=>(Array.isArray(r.items)&&r.items.length?r.items:[]).map(x=>({...x,r})));
     const dates=[...new Set(reps.map(r=>r.report_date))].sort();
@@ -5109,6 +5126,7 @@ async function drbPrint(){
     </style></head><body><div class="bar"><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button class="c" onclick="window.close()">Close</button></div><div class="page">
       <header>${logo?`<img src="${logo}" alt="">`:''}<div><h1>${escapeHtml(c.title)}</h1><p>Al-Qassim 2 CCGT · Wahat Al Wusta Maintenance Company${period?' · '+escapeHtml(period):''}</p></div></header>
       ${h||'<p>No sections selected.</p>'}
+      ${reps.photoNote?`<p style="font-size:11px;color:#B45309">${escapeHtml(reps.photoNote)}</p>`:''}
       <footer><span>QAS2 CORE · generated ${escapeHtml(new Date().toLocaleString('en-GB'))} by ${escapeHtml(currentUser?.name||'')}</span><span>${reps.length} report(s)</span></footer>
     </div></body></html>`);w.document.close();
     document.getElementById('drb-bg').classList.remove('show');

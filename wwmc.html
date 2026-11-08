@@ -1371,7 +1371,7 @@ function canDeleteReport(report){return !!currentUser && isAdmin() && !!report;}
 function canUploadDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
 function canEditDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
 function canDeleteDocs(){return !!currentUser && currentUser.role==='admin';}
-function canViewDashboard(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='viewer');}
+function canViewDashboard(){return !!currentUser;}
 
 const SESSION_KEY='qas2_session';
 function saveSession(user){
@@ -1432,7 +1432,7 @@ function showApp(){
   else rb.style.display='none';
   document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
   const setDisplay=(id,val)=>{const el=document.getElementById(id); if(el) el.style.display=val;};
-  setDisplay('tab-dash',(isAdmin||isViewerRole)?'':'none');
+  setDisplay('tab-dash','');
   setDisplay('tab-new',isViewerRole?'none':'');
   setDisplay('tab-register',isViewerRole?'none':'');
   setDisplay('tab-users',isViewerRole?'none':'');
@@ -2289,7 +2289,7 @@ async function renderDashboard(force=false){
 }
 
 function refreshDashboard(force=false){
-  if(currentUser&&(currentUser.role==='admin'||currentUser.role==='viewer')&&document.getElementById('view-dashboard')?.classList.contains('active'))renderDashboard(force);
+  if(canViewDashboard()&&document.getElementById('view-dashboard')?.classList.contains('active'))renderDashboard(force);
 }
 
 // ── USERS ──

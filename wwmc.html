@@ -451,7 +451,7 @@ tbody tr{transition:var(--transition)}
 @media(max-width:760px){.drs{grid-template-columns:repeat(2,minmax(0,1fr))}.drb-grid,.drb-cols{grid-template-columns:1fr}
   .dra-head{display:none}.dra-row{grid-template-columns:minmax(0,1fr) 118px 30px;border:1px solid var(--border);border-radius:8px;padding:8px;background:#FAFBFC}
   .dra-sys{grid-column:1/3}.dra-act{grid-column:1/-1;grid-row:2}.dra-st{grid-column:2;grid-row:3}.dra-kks{grid-column:1;grid-row:3}.dra-del{grid-column:3;grid-row:1}}
-.drb-tpls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.drb-tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .drb-tplc{display:flex;flex-direction:column;gap:3px;border:1.5px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;font-size:12px;position:relative}
 .drb-tplc input{position:absolute;opacity:0}.drb-tplc:has(input:checked){border-color:var(--navy);box-shadow:0 0 0 2px rgba(31,56,100,.15)}.drb-tplc:has(input:focus-visible){outline:2px solid var(--navy);outline-offset:2px}
 .drb-tplc small{color:var(--gray);font-size:10.5px;line-height:1.3}
@@ -460,6 +460,7 @@ tbody tr{transition:var(--transition)}
 .drb-sw-corporate i:first-child{background:#fff;border:1.5px solid #244F8B}.drb-sw-modern i:first-child{background:linear-gradient(90deg,#17345E,#2F64AE)}
 .drb-sw-compact{gap:2px}.drb-sw-compact i{height:4px}.drb-sw-compact i:first-child{height:8px;background:#244F8B}
 .drb-sw-classic i:first-child{background:#fff;border:1.5px solid #111}.drb-sw-classic i{background:#D4D4D4}
+.drb-sw-plantmap{background:#FBFCFE}.drb-sw-plantmap i:first-child{background:linear-gradient(90deg,#DBEAFE 0 30%,#DCFCE7 30% 60%,#FEF3C7 60%);border:1px solid #94A3B8}.drb-sw-plantmap i:nth-child(2){background:#0F2747;width:60%}
 @media(max-width:760px){.drb-tpls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ═════════ DASHBOARD & TRACKING ═════════ */
 .db-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -5019,10 +5020,233 @@ function drItemsTable(items){
   return `<table class="dri"><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${escapeHtml(x.sys||'')}</td><td>${escapeHtml(x.act||'')}</td><td><span class="dri-st dri-st-${DRA_STATUS.indexOf(x.st)}">${escapeHtml(x.st||'')}</span></td><td class="dri-kks">${escapeHtml(x.kks||'')}</td></tr>`).join('')}</tbody></table>`;
 }
 
+
+// ═════════ DAILY REPORT × PLANT MAP TEMPLATE ═════════
+// Each block stands for one or more O&M Library systems (k) and is matched by keywords (rx).
+// u = unit-specific block: only lit when the unit is named (GT11, HRSG 12, ST-21…), otherwise the whole group lights up.
+const PM_BLOCKS=[
+ {id:'fgbc',l:'FGBC',s:'Gas booster compressors',k:['Fuel Gas Booster Compressor Station (FGBC)'],rx:/fgbc|booster comp/},
+ {id:'fgcs',l:'FGCS',s:'Gas conditioning / regulating',k:['Fuel Gas Conditioning / Regulating System (FGCS)'],rx:/fgcs|fuel gas|gas condition|gas regulat|\bfg\b|water bath heater|\bwbh\b/},
+ {id:'ado',l:'Fuel Oil (ADO)',s:'Backup fuel',k:['Fuel Oil System (ADO backup fuel)'],rx:/\bado\b|fuel oil/},
+ {id:'gt11',g:'gt',u:'11',l:'GT11',s:'SGT6-9000HL + Gen',big:1},{id:'gt12',g:'gt',u:'12',l:'GT12',s:'SGT6-9000HL + Gen',big:1},{id:'gt13',g:'gt',u:'13',l:'GT13',s:'SGT6-9000HL + Gen',big:1},
+ {id:'hr11',g:'hrsg',u:'11',l:'HRSG 11',s:'Nooter/Eriksen',big:1},{id:'hr12',g:'hrsg',u:'12',l:'HRSG 12',s:'Nooter/Eriksen',big:1},{id:'hr13',g:'hrsg',u:'13',l:'HRSG 13',s:'Nooter/Eriksen',big:1},
+ {id:'st21',g:'st',u:'21',l:'ST-21',s:'SST-5000 + Gen',big:1},{id:'st22',g:'st',u:'22',l:'ST-22',s:'SST-5000 + Gen',big:1},
+ {id:'prs',l:'Desuperheat / PRS',s:'',k:['Desuperheating & Pressure Reducing Stations'],rx:/desuperheat|pressure reduc|\bprs\b/},
+ {id:'acc',l:'ACC',s:'Air Cooled Condenser',k:['Air Cooled Condenser (ACC)'],rx:/\bacc\b|air cooled condens/,big:1},
+ {id:'gsu',l:'GSU Transformers',s:'Generator step-up',k:['Generator Step-up Transformers'],rx:/step.?up|\bgsu\b|generator transformer/},
+ {id:'uat',l:'Unit Aux Transformers',s:'',k:['Unit Auxiliary Transformers'],rx:/unit aux|\buat\b/},
+ {id:'grid',l:'380 kV Grid',s:'Cables · SAS · metering',k:['380 kV HV Cables','380 kV Cable Accessories','Grid Protection & SAS','Grid Telecommunication','Grid DC System','Tariff Metering / Settlement System'],rx:/380 ?kv|\bgis\b|\bgrid\b|\bsas\b|tariff|metering/},
+ {id:'ehouse',l:'E-House',s:'MV / LV switchgear · VFDs',k:['E-House','MV Switchgear','MV/LV Dry-type Transformers','LV Switchgear (outside E-House)','LV Miscellaneous Panels','MV Variable Frequency Drives'],rx:/e.?house|switchgear|\bmcc\b|\bvfd\b|variable frequency|dry.type/},
+ {id:'edg',l:'Emergency Diesel',s:'Generators',k:['Emergency Diesel Generators'],rx:/emergency diesel|\bedg\b|diesel gen/},
+ {id:'samp',l:'Sampling',s:'Water & steam',k:['Water & Steam Sampling'],rx:/sampling/},
+ {id:'chem',l:'Chemical Dosing',s:'',k:['Chemical Dosing System'],rx:/dosing/},
+ {id:'bfp',l:'Feedwater Pumps',s:'BFP → HRSGs',k:['Boiler Feedwater Pumps'],rx:/feed ?water|\bbfp\b/},
+ {id:'cpp',l:'Cond. Polishing',s:'',k:['Condensate Polishing Plant'],rx:/polish/},
+ {id:'cep',l:'Condensate Pumps',s:'',k:['Condensate Pumps'],rx:/condensate (extraction )?pump|\bcep\b/},
+ {id:'wtp',l:'Water Treatment',s:'Pre-treatment / Demin',k:['Water Treatment Plant (Pre-treatment / Demin)'],rx:/water treatment|demin|pre.?treat|reverse osmosis|raw water/},
+ {id:'wpump',l:'Water Pumps',s:'Common',k:['Common Water Pumps'],rx:/common water|potable|service water/},
+ {id:'ww',l:'Wastewater',s:'Sanitary & oily',k:['Sanitary & Oily Wastewater Treatment'],rx:/waste ?water|sanitary|oily water/},
+ {id:'tank',l:'Tanks',s:'Shop / field-erected',k:['Shop-fabricated Metal Tanks','Field-erected Tanks'],rx:/\btanks?\b/,weak:1},
+ {id:'cccw',l:'CCCW / ACW',s:'Closed cooling water',k:['Closed Cycle Cooling Water (CCCW) Pumps'],rx:/\bacw\b|cccw|closed cycle cooling|cooling water|pg[abc]\d\d/},
+ {id:'ffc',l:'Fin-fan Coolers',s:'Auxiliary',k:['Auxiliary Fin-fan Coolers'],rx:/fin.?fan|\bhffc\b|\blffc\b/},
+ {id:'air',l:'Compressed Air',s:'',k:['Compressed Air System'],rx:/compressed air|instrument air|service air|air compressor|\bcas\b/},
+ {id:'h2',l:'Hydrogen',s:'Generation & storage',k:['Hydrogen Generation & Gas Storage'],rx:/hydrogen|\bh2\b/},
+ {id:'n2',l:'Nitrogen / NH₃',s:'N₂ generator · ammonia',k:['Nitrogen Generator – Ammonia Storage Tanks'],rx:/nitrogen|\bn2\b|ammonia/},
+ {id:'fire',l:'Fire Protection',s:'Alarm & fighting',k:['Fire Alarm & Fire Fighting System'],rx:/fire/},
+ {id:'bld',l:'Buildings & HVAC',s:'',k:['HVAC System','Steel Structure'],rx:/hvac|building|workshop|admin|steel structure|warehouse/},
+ {id:'lab',l:'Laboratories',s:'Chemical · E&I',k:['Chemical Laboratory','Electrical & I&C Laboratory'],rx:/laborator|\blab\b/},
+ {id:'sec',l:'Security',s:'HCIS · CCTV · cyber',k:['HCIS Security System','CCTV & Plant Communication','Cyber Security'],rx:/security|cctv|hcis|cyber|telephone|paging/},
+ {id:'lift',l:'Lifting',s:'Cranes & hoists',k:['Plant Lifting Equipment'],rx:/crane|hoist|lifting/},
+ {id:'ccr',l:'CCR',s:'SPPA-T3000 · BOP DCS · O&M system',k:['Power Island Control – SPPA-T3000','BOP DCS','Plant O&M Management System','Weather Station'],rx:/\bccr\b|\bdcs\b|t3000|sppa|control room|weather station/,big:1},
+ {id:'vms',l:'VMS',s:'Vibration monitoring',k:['Vibration Monitoring System (VMS)'],rx:/vibration monitoring|\bvms\b/},
+ {id:'ic',l:'I&C',s:'Cabinets · field instruments',k:['I&C Cabinets','Field Instruments'],rx:/instrument|transmitter|calibrat|i&c|cabinet/,weak:1},
+ {id:'dc',l:'DC / UPS',s:'Batteries · protection',k:['DC System & Batteries','UPS System & Batteries','Protection & Measuring Equipment'],rx:/\bups\b|batter|\bdc system|protection relay/},
+ {id:'cab',l:'Cables',s:'Power · control',k:['MV & LV Power Cables','Control & Communication Cables'],rx:/cable/,weak:1},
+ {id:'valve',l:'Valves',s:'HP/HT · safety · general',k:['HP/HT Valves','Safety Valves (BOP)','Gate & Globe Valves','Butterfly Valves','Ball Valves'],rx:/valve/,weak:1}];
+const PM_GROUPS={gt:{k:['Gas Turbines GT11 / GT12 / GT13 (SGT6-9000HL)','Generators (Hydrogen-cooled)'],rx:/gas turbine|\bgt\b|\bgt\s*-?\s*1[123]\b|sgt6|\bgts\b/,urx:u=>new RegExp('\\bgt\\s*-?\\s*'+u+'\\b')},
+  hrsg:{k:['HRSG ×3 (Nooter/Eriksen)'],rx:/hrsg|heat recovery/,urx:u=>new RegExp('hrsg\\s*-?\\s*#?'+u+'\\b|stack\\s*-?\\s*'+u+'\\b')},
+  st:{k:['Steam Turbines ST21 / ST22 (SST-5000)'],rx:/steam turbine|\bsst\b|\bst\s*-?\s*2[12]\b/,urx:u=>new RegExp('\\bst\\s*-?\\s*'+u+'\\b')}};
+const PM_KEY2BLOCK=(()=>{const m=new Map();PM_BLOCKS.forEach(b=>(b.k||[]).forEach(k=>m.set(k.toLowerCase(),[b.id])));Object.entries(PM_GROUPS).forEach(([g,G])=>G.k.forEach(k=>m.set(k.toLowerCase(),PM_BLOCKS.filter(b=>b.g===g).map(b=>b.id))));return m;})();
+let pmLib=null;
+async function pmLoadLib(){
+  if(pmLib)return pmLib;
+  let nodes=(typeof omNodes!=='undefined'&&omNodes.length)?omNodes:null;
+  if(!nodes){try{nodes=await sbFetch('qas2_om_nodes?select=id,parent_id,node_type,name&limit=10000')||[];}catch(e){nodes=[];}}
+  const by=new Map(nodes.map(n=>[String(n.id),n]));const nameTo=new Map();const systems=[];
+  nodes.forEach(n=>{let x=n,guard=0;while(x&&x.node_type!=='system'&&x.parent_id&&guard++<20)x=by.get(String(x.parent_id));
+    const sys=x&&x.node_type==='system'?x.name:null;if(sys&&n.name)nameTo.set(String(n.name).trim().toLowerCase(),sys);if(n.node_type==='system')systems.push(n.name);});
+  pmLib={nameTo,systems};return pmLib;
+}
+// Which blocks does a piece of work belong to? sys = system field, txt = activity / KKS / notes
+function pmMatch(sys,txt){
+  const S=String(sys||'').toLowerCase().trim(),T=(S+' '+String(txt||'')).toLowerCase();
+  const out=new Set();
+  const groupHit=(g,src)=>{const G=PM_GROUPS[g];const units=PM_BLOCKS.filter(b=>b.g===g&&G.urx(b.u).test(T));(units.length?units:PM_BLOCKS.filter(b=>b.g===g)).forEach(b=>out.add(b.id));};
+  // 1) the system name as kept in the O&M Library
+  const libSys=pmLib&&S?(pmLib.nameTo.get(S)||null):null;
+  const viaLib=libSys?PM_KEY2BLOCK.get(libSys.toLowerCase()):PM_KEY2BLOCK.get(S);
+  if(viaLib){const g=PM_BLOCKS.find(b=>b.id===viaLib[0])?.g;if(g)groupHit(g);else viaLib.forEach(id=>out.add(id));return [...out];}
+  // 2) keywords — system field first, then the whole text
+  for(const src of [S,T]){if(!src)continue;
+    Object.keys(PM_GROUPS).forEach(g=>{if(PM_GROUPS[g].rx.test(src))groupHit(g);});
+    PM_BLOCKS.forEach(b=>{if(b.rx&&!b.weak&&b.rx.test(src))out.add(b.id);});
+    if(out.size)return [...out];}
+  PM_BLOCKS.forEach(b=>{if(b.weak&&b.rx.test(T))out.add(b.id);});
+  return [...out];
+}
+const PM_ST={'Completed':'done','In progress':'prog','On hold':'hold','Planned':'walk'};
+function pmWork(reps){
+  // one entry per activity (or per report system when the report has no activity rows)
+  const w=[];
+  reps.forEach(r=>{const it=Array.isArray(r.items)&&r.items.length?r.items:null;
+    if(it)it.forEach(x=>w.push({sys:x.sys,txt:[x.act,x.kks].join(' '),st:PM_ST[x.st]||'walk',r}));
+    else{const ss=drSplitSystems(r);(ss.length?ss:['']).forEach(s=>w.push({sys:s,txt:r.content,st:/walk.?down/i.test(r.content||'')?'walk':'prog',r}));}});
+  return w;
+}
+function pmBlockState(work,reps,tickets,to){
+  const RANK={hold:4,prog:3,walk:2,done:1};const B={};const other=new Set();
+  const get=id=>B[id]=B[id]||{st:'none',n:0,done:0,iss:0,pl:0};
+  work.forEach(x=>{const ids=pmMatch(x.sys,x.txt);if(!ids.length){if(x.sys)other.add(x.sys);return;}
+    ids.forEach(id=>{const b=get(id);b.n++;if(x.st==='done')b.done++;if((RANK[x.st]||0)>(RANK[b.st]||0))b.st=x.st;});});
+  // an issue goes to the block its text names; otherwise to the blocks the same report worked on
+  const weak=new Set(PM_BLOCKS.filter(b=>b.weak).map(b=>b.id));
+  reps.forEach(r=>{if(drNoIssue(r.issues))return;let ids=pmMatch('',r.issues).filter(id=>!weak.has(id));
+    const mine=work.filter(x=>x.r===r);
+    if(!ids.length){const tags=(String(r.issues).match(/[A-Za-z0-9]+[-_]?\d[\w-]*/g)||[]).filter(t=>t.length>=4).map(t=>t.toLowerCase());
+      const hit=mine.filter(x=>tags.some(t=>String(x.txt||'').toLowerCase().includes(t)));
+      ids=[...new Set((hit.length?hit:mine).flatMap(x=>pmMatch(x.sys,x.txt)))];}
+    ids.forEach(id=>{get(id).iss++;});});
+  (tickets||[]).forEach(t=>{const r=drpRaised(t);if(!r||r>to)return;const c=drpClosed(t);if(!(t.status!=='CLOSED'||(c&&c>to)))return;
+    pmMatch(t.system_name,'').forEach(id=>{if(B[id])B[id].pl++;});});
+  return {B,other:[...other]};
+}
+function pmSVG(B){
+  const C={none:['#F5F7FA','#D5DCE5','#64748B','#94A3B8'],done:['#DCFCE7','#22A55A','#14532D','#15803D'],prog:['#DBEAFE','#3B82F6','#1E3A8A','#1D4ED8'],hold:['#FEF3C7','#F59E0B','#78350F','#B45309'],walk:['#E0E7FF','#6366F1','#312E81','#4338CA']};
+  const P=Object.fromEntries(PM_BLOCKS.map(b=>[b.id,b]));
+  const box=(id,x,y,w,h)=>{const b=P[id],s=B[id]||{st:'none'},c=C[s.st]||C.none,on=s.st!=='none';
+    return `<g><title>${escapeHtml(b.l)}</title><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${c[0]}" stroke="${c[1]}" stroke-width="${on?2:1}"/>
+    <text x="${x+w/2}" y="${y+h/2+(b.s?-2:4)}" text-anchor="middle" font-size="${b.big?15:11.5}" font-weight="${on||b.big?700:600}" fill="${c[2]}">${escapeHtml(b.l)}</text>
+    ${b.s?`<text x="${x+w/2}" y="${y+h/2+12}" text-anchor="middle" font-size="9" fill="${c[3]}">${escapeHtml(b.s)}</text>`:''}
+    ${s.n?`<circle cx="${x+w-3}" cy="${y+3}" r="10" fill="${c[1]}"/><text x="${x+w-3}" y="${y+7}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${s.n}</text>`:''}
+    ${s.iss?`<circle cx="${x+3}" cy="${y+3}" r="9" fill="#DC2626"/><text x="${x+3}" y="${y+7.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">!</text>`:''}</g>`;};
+  const mk=c=>`<marker id="pa${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`;
+  const ln=(d,col,dash)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.2"${dash?' stroke-dasharray="5 4"':''} marker-end="url(#pa${col.slice(1)})"/>`;
+  const pl=(d,col,dash)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.2"${dash?' stroke-dasharray="5 4"':''}/>`;
+  const lab=(x,y,t)=>`<text x="${x}" y="${y}" font-size="9.5" font-weight="700" fill="#94A3B8" letter-spacing="1.4">${t}</text>`;
+  const GAS='#F59E0B',EXH='#94A3B8',STM='#EF4444',WTR='#3B82F6',PWR='#334155',Y=[40,140,240];
+  let s=`<svg viewBox="0 0 1000 612" role="img" aria-label="Plant schematic showing where work happened"><defs>${[GAS,EXH,STM,WTR,PWR].map(mk).join('')}</defs>`;
+  s+=lab(20,24,'FUEL')+lab(180,24,'GAS TURBINES')+lab(330,24,'HRSGs')+lab(545,24,'STEAM TURBINES')+lab(700,24,'CONDENSER')+lab(840,24,'ELECTRICAL &amp; GRID');
+  s+=ln('M85 90 V108',GAS)+ln('M150 135 H165 V70 H178',GAS)+pl('M165 135 V270',GAS)+ln('M165 170 H178',GAS)+ln('M165 270 H178',GAS)+pl('M150 205 H165',GAS,1);
+  Y.forEach(y=>{s+=ln(`M300 ${y+30} H328`,EXH)+pl(`M470 ${y+44} H520`,STM);});
+  s+=pl('M520 84 V284',STM)+ln('M520 95 H543',STM)+ln('M520 235 H543',STM)+ln('M665 95 H698',STM)+ln('M665 235 H698',STM);
+  s+=ln('M755 290 V328',WTR)+ln('M700 355 H667',WTR)+ln('M545 355 H472',WTR)+ln('M400 330 V302',WTR)+ln('M300 355 H328',WTR,1)+ln('M910 86 V98',PWR)+ln('M910 146 V158',PWR);
+  s+=box('fgbc',20,40,130,50)+box('fgcs',20,110,130,50)+box('ado',20,180,130,50);
+  ['11','12','13'].forEach((u,i)=>{const y=Y[i];s+=box('gt'+u,180,y,120,60)+box('hr'+u,330,y,140,60)+`<rect x="478" y="${y-6}" width="16" height="72" rx="3" fill="#EEF1F5" stroke="#CBD5E1"/><text x="486" y="${y+76}" text-anchor="middle" font-size="8.5" fill="#94A3B8">Stack</text>`;});
+  s+=box('st21',545,60,120,70)+box('prs',545,145,120,40)+box('st22',545,200,120,70)+box('acc',700,40,110,250);
+  s+=box('gsu',840,40,140,46)+box('uat',840,100,140,46)+box('grid',840,160,140,46)+box('ehouse',840,220,140,46)+box('edg',840,280,140,46);
+  s+=lab(20,322,'WATER–STEAM CYCLE')+box('samp',20,330,130,50)+box('chem',180,330,120,50)+box('bfp',330,330,140,50)+box('cpp',545,330,120,50)+box('cep',700,330,110,50);
+  const X=[20,158,296,434,572,710,848];
+  s+=lab(20,412,'WATER · COOLING · UTILITIES');['wtp','wpump','ww','tank','cccw','ffc','air'].forEach((id,i)=>s+=box(id,X[i],420,132,46));['h2','n2','fire','bld','lab','sec','lift'].forEach((id,i)=>s+=box(id,X[i],476,132,46));
+  s+=lab(20,544,'CONTROL · I&amp;C · ELECTRICAL SUPPORT')+box('ccr',20,552,270,50);['vms','ic','dc','cab','valve'].forEach((id,i)=>s+=box(id,X[i+2],552,132,50));
+  return s+'</svg>';
+}
+// numbers for a set of days, from all reports (not only the ones printed)
+function pmDayNums(rows,tickets,from,to){
+  const R=rows.filter(r=>r.report_date>=from&&r.report_date<=to);
+  const it=R.flatMap(r=>Array.isArray(r.items)?r.items:[]);
+  const s=drpStats(tickets,from,to);
+  return {reports:R.length,done:it.filter(x=>x.st==='Completed').length,issues:R.filter(r=>!drNoIssue(r.issues)).length,plR:s.raised.length,plC:s.closed.length,plO:s.openAt.length};
+}
+async function pmCompare(dates,tickets){
+  const first=dates[0],last=dates[dates.length-1];
+  const span=Math.round((new Date(last+'T00:00:00')-new Date(first+'T00:00:00'))/864e5)+1;
+  const pFrom=drAddDays(first,-span),pTo=drAddDays(first,-1);
+  const tFrom=span===1?drAddDays(last,-6):(span>31?drAddDays(last,-30):first);
+  const from=pFrom<tFrom?pFrom:tFrom;
+  let rows=[];
+  try{rows=await sbFetch(`qas2_daily_reports?report_date=gte.${from}&report_date=lte.${last}&select=report_date,issues${drHasItems===false?'':',items'}&limit=5000`)||[];}
+  catch(e){try{rows=await sbFetch(`qas2_daily_reports?report_date=gte.${from}&report_date=lte.${last}&select=report_date,issues&limit=5000`)||[];}catch(_){return null;}}
+  rows.forEach(r=>r.report_date=String(r.report_date||'').slice(0,10));
+  const now=pmDayNums(rows,tickets,first,last),prev=pmDayNums(rows,tickets,pFrom,pTo);
+  const days=[];for(let d=tFrom;d<=last;d=drAddDays(d,1))days.push(d);
+  const trend=days.map(d=>pmDayNums(rows,tickets,d,d));
+  return {now,prev,trend,span,label:span===1?'yesterday':'previous '+span+' days'};
+}
+function pmSpark(a,c){if(!a||a.length<2)return '';const mx=Math.max(...a),mn=Math.min(...a),r=mx-mn||1;
+  const pts=a.map((v,i)=>`${(i*100/(a.length-1)).toFixed(1)},${(20-(v-mn)*18/r).toFixed(1)}`);const [lx,ly]=pts[pts.length-1].split(',');
+  return `<svg class="sp" viewBox="-2 -2 104 24" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts.join(' ')}" fill="none" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx}" cy="${ly}" r="2.6" fill="${c}"/></svg>`;}
+function pmDelta(now,prev,goodUp,label){const d=now-prev;if(!d)return `<span class="dl n">= same as ${label}</span>`;const good=goodUp?d>0:d<0;return `<span class="dl ${good?'g':'b'}">${d>0?'▲':'▼'} ${Math.abs(d)} vs ${label}</span>`;}
+async function pmSection(reps,items,pl,dates){
+  try{
+    await pmLoadLib();
+    const tickets=await fetchAllTickets(false)||[];
+    const last=dates[dates.length-1]||drToday();
+    const work=pmWork(reps);const {B,other}=pmBlockState(work,reps,tickets,last);
+    const cmp=dates.length?await pmCompare(dates,tickets):null;
+    // day score: 40% activities completed + 25% reports without issues + 25% punch closed vs raised + 10% nothing overdue
+    const nIt=items.length,nDone=items.filter(x=>x.st==='Completed').length;
+    const issuesN=reps.filter(r=>!drNoIssue(r.issues)).length;
+    const pS=pl||drpStats(tickets,dates[0]||last,last);
+    const comp=nIt?nDone/nIt:null,noIss=reps.length?1-issuesN/reps.length:1,close=pS.raised.length?Math.min(1,pS.closed.length/pS.raised.length):1,od=pS.overdueAt.length?0:1;
+    const score=Math.round(100*((comp===null?0.5:comp)*0.4+noIss*0.25+close*0.25+od*0.1));
+    const verdict=score>=80?'Very good':score>=60?'Good':score>=40?'Fair':'Needs attention';
+    const gauge=`<svg viewBox="0 0 200 118" aria-label="Day score ${score} of 100"><defs><linearGradient id="pmgg" x1="0" x2="1"><stop offset="0" stop-color="#EF4444"/><stop offset=".5" stop-color="#F59E0B"/><stop offset="1" stop-color="#22A55A"/></linearGradient></defs>
+      <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#EEF1F6" stroke-width="16" stroke-linecap="round"/>
+      <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#pmgg)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.max(0.5,score)} 100"/>
+      <text x="100" y="92" text-anchor="middle" font-size="38" font-weight="800" fill="#0F2747">${score}</text><text x="100" y="112" text-anchor="middle" font-size="11" fill="#6B7280">out of 100 · ${verdict}</text></svg>`;
+    const scoreRows=`<li><span>Activities completed</span><b>${comp===null?'—':Math.round(comp*100)+'%'}</b></li><li><span>Reports with issues</span><b class="${issuesN?'neg':''}">${issuesN} of ${reps.length}</b></li><li><span>Punch closed vs raised</span><b>${pS.closed.length} / ${pS.raised.length}</b></li><li><span>Overdue punch</span><b class="${pS.overdueAt.length?'neg':''}">${pS.overdueAt.length}</b></li>`;
+    let cmpHtml='';
+    if(cmp){const N=cmp.now,P=cmp.prev,T=k=>cmp.trend.map(x=>x[k]);const L=cmp.label;
+      const tile=(v,l,d,sp)=>`<div><b>${v}</b><span>${l}</span>${d}${sp||''}</div>`;
+      cmpHtml=`<div class="pm-panel"><h3>${cmp.span===1?'Today vs yesterday':'This period vs '+escapeHtml(L)} <small>all reports</small></h3><div class="pm-kk">
+        ${tile(N.reports,'Reports',pmDelta(N.reports,P.reports,true,L),pmSpark(T('reports'),'#3B82F6'))}
+        ${tile(N.done,'Completed',pmDelta(N.done,P.done,true,L),pmSpark(T('done'),'#22A55A'))}
+        ${tile(N.issues,'Issues',pmDelta(N.issues,P.issues,false,L),pmSpark(T('issues'),'#DC2626'))}
+        ${tile(N.plR,'Punch raised',pmDelta(N.plR,P.plR,false,L),pmSpark(T('plR'),'#EF4444'))}
+        ${tile(N.plC,'Punch closed',pmDelta(N.plC,P.plC,true,L),pmSpark(T('plC'),'#16A34A'))}
+        ${tile(N.plO,'Punch open',pmDelta(N.plO,P.plO,false,L),pmSpark(T('plO'),'#F59E0B'))}</div></div>`;}
+    const active=PM_BLOCKS.filter(b=>B[b.id]);
+    const heat=active.length?`<div class="pm-panel"><h3>System heat map</h3><table class="pm-hm"><thead><tr><th>System</th><th>Activities</th><th>Completed</th><th>Punch open</th><th>Issues</th></tr></thead><tbody>${active.map(b=>{const x=B[b.id];
+        return `<tr><td>${escapeHtml(b.l)}</td>${[[x.n,'59,130,246'],[x.done,'34,165,90'],[x.pl,'245,158,11'],[x.iss,'220,38,38']].map(([v,c])=>`<td style="background:rgba(${c},${v?Math.min(0.75,0.15+v*0.12):0.04});color:${v?'#0F172A':'#94A3B8'}">${v}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`:'';
+    const legend=`<div class="pm-leg"><span><i style="background:#22A55A"></i>Completed</span><span><i style="background:#3B82F6"></i>In progress</span><span><i style="background:#F59E0B"></i>On hold</span><span><i style="background:#6366F1"></i>Walkdown / other</span><span><i style="background:#DC2626;border-radius:50%"></i>Issue</span><span>Number = activities</span><span class="pm-lines"><i style="background:#F59E0B"></i>Gas <i style="background:#94A3B8"></i>Exhaust <i style="background:#EF4444"></i>Steam <i style="background:#3B82F6"></i>Water</span></div>`;
+    return `<section class="pmsec"><div class="pm-top"><div class="pm-panel pm-gauge"><h3>Day score</h3>${gauge}<ul>${scoreRows}</ul><p class="pm-note">40% activities completed · 25% reports without issues · 25% punch closed vs raised · 10% nothing overdue</p></div>${cmpHtml}</div>
+      <div class="pm-panel pm-map"><h3>Where we worked${dates.length>1?'':' today'}</h3>${pmSVG(B)}${legend}${other.length?`<div class="pm-other"><b>Also worked on:</b> ${other.map(escapeHtml).join(' · ')}</div>`:''}</div>${heat}</section>`;
+  }catch(e){console.warn('plant map',e);return '';}
+}
+const PM_TPL_CSS=`.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-top:16px}
+.tpl-plantmap .paper{background:#FBFCFE}
+.tpl-plantmap .hdr,.tpl-plantmap .hdr td{border:0}.tpl-plantmap .hdr{border-bottom:1px solid #E3E8EF}.tpl-plantmap .hdr td{padding:0 0 14px}
+.tpl-plantmap .hdr .lg{width:auto;text-align:left;padding-right:16px}.tpl-plantmap .hdr .lg img{max-height:46px}
+.tpl-plantmap .hdr .co{font-size:11.5px;font-weight:600;color:#6B7280;letter-spacing:0}.tpl-plantmap .hdr h1{font-size:26px;color:#0F2747;margin:2px 0 0}.tpl-plantmap .hdr .pl{font-size:11.5px}
+.tpl-plantmap .hdr .dc{width:250px}.tpl-plantmap .dc table{background:#fff;border:1px solid #E3E8EF;border-radius:10px;overflow:hidden}.tpl-plantmap .dc th{background:#F6F8FB}.tpl-plantmap .dc td{color:#0F2747}
+.tpl-plantmap .sec h2{border:0;text-transform:none;letter-spacing:0;font-size:16px;color:#0F2747}.tpl-plantmap .sec h2 .n{background:#0F2747;border-radius:7px}
+.tpl-plantmap .sumsec .kpis,.tpl-plantmap .sumsec>.chips{display:none}
+.tpl-plantmap .lead{background:#fff;border:1px solid #E3E8EF;border-left:4px solid #3B82F6;border-radius:10px}
+.tpl-plantmap .rep{background:#fff;border-color:#E3E8EF;border-radius:14px}.tpl-plantmap .av{background:#E8EFFB;color:#0F2747;border-radius:10px}
+.tpl-plantmap .t th{background:#F1F5FB;color:#0F2747}.tpl-plantmap .t td{border-color:#EEF1F5}.tpl-plantmap .t tbody tr:nth-child(even) td{background:none}
+.tpl-plantmap .call{border:0;border-radius:10px}.tpl-plantmap .kpi,.tpl-plantmap .plsec .kpis div{border:1px solid #E3E8EF!important;border-radius:10px;background:#fff}
+.pm-top{display:grid;grid-template-columns:230px 1fr;gap:12px;margin-bottom:12px}
+.pm-panel{background:#fff;border:1px solid #E3E8EF;border-radius:14px;padding:12px 14px;margin-bottom:12px;break-inside:avoid}.pm-top .pm-panel{margin-bottom:0}
+.pm-panel h3{margin:0 0 8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6B7280;display:flex;gap:8px;align-items:baseline}.pm-panel h3 small{letter-spacing:0;text-transform:none;font-weight:500;margin-left:auto}
+.pm-gauge{text-align:center}.pm-gauge svg{width:100%;max-width:190px;display:block;margin:0 auto}
+.pm-gauge ul{list-style:none;padding:0;margin:8px 0 0;text-align:left;font-size:11px;display:grid;gap:3px}.pm-gauge li{display:flex;justify-content:space-between;gap:8px}.pm-gauge .neg{color:var(--neg)}
+.pm-note{font-size:8.5px;color:#9CA3AF;margin:8px 0 0;text-align:left;line-height:1.35}
+.pm-kk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.pm-kk div{border-radius:10px;padding:8px 10px;background:#F6F8FB}.pm-kk b{display:block;font-size:22px;color:#0F2747;line-height:1.1}.pm-kk span{font-size:10.5px;color:#6B7280;display:block}
+.dl{font-size:10px;font-weight:700;white-space:nowrap}.dl.g{color:#15803D}.dl.b{color:#B91C1C}.dl.n{color:#6B7280}
+svg.sp{display:block;width:100%;height:22px;margin-top:3px}
+.pm-map svg{width:100%;height:auto;display:block}
+.pm-leg{display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:#6B7280;margin-top:8px}.pm-leg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.pm-lines{margin-left:auto}.pm-lines i{width:12px!important;height:3px!important;border-radius:2px;margin-left:6px;vertical-align:2px!important}
+.pm-other{font-size:11px;color:#374151;margin-top:6px}
+.pm-hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:11.5px}.pm-hm th{font-size:10px;color:#6B7280;font-weight:600;padding:4px 6px;text-align:center}.pm-hm th:first-child{text-align:left}
+.pm-hm td{padding:6px;text-align:center;font-weight:700;border-radius:5px}.pm-hm td:first-child{text-align:left;font-weight:600;background:none}
+@media (max-width:640px){.pm-top{grid-template-columns:1fr}.pm-kk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{.pm-panel{break-inside:avoid}}`;
+
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false]];
 let drbIds=null,drCurrentList=[];
-const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly']];
+const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly'],['plantmap','Plant Map','Plant schematic, day score, today vs yesterday']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
 function drTickedIds(){const un=new Set([...document.querySelectorAll('.report-chk:not(:checked)')].map(c=>c.dataset.id));return drShownIds().filter(id=>!un.has(id));}
 function drOpenBuilder(ids){
@@ -5103,6 +5327,8 @@ async function drbPrint(){
     const photoGrid=list=>`<div class="photos">${list.map(x=>{fig++;return `<figure><div class="ph"><img src="${x.p}" alt=""></div><figcaption><b>Photo ${fig}</b> · ${E(x.who)} · ${E(fmtD(x.d))}</figcaption></figure>`;}).join('')}</div>`;
     const drpRes=await drpForReports(reps);
     const pl=drpRes.stats;
+    prog('Drawing the plant map…');
+    const pmHtml=await pmSection(reps,items,pl,dates);
     // 1 Executive summary
     if(has('summary')){
       const parts=[];
@@ -5111,7 +5337,7 @@ async function drbPrint(){
       parts.push(issuesN?`<b class="neg">${issuesN}</b> report${issuesN===1?'':'s'} raised issues that need attention`:'no issues were reported');
       if(pl)parts.push(`on the Punch List <b>${pl.raised.length}</b> item${pl.raised.length===1?' was':'s were'} raised and <b>${pl.closed.length}</b> closed, leaving <b>${pl.openAt.length}</b> open${pl.overdueAt.length?` (<b class="neg">${pl.overdueAt.length}</b> overdue)`:''}`);
       const k=(v,l,cls='')=>`<div class="kpi ${cls}"><b>${v}</b><span>${l}</span></div>`;
-      sections.push({t:'Executive summary',h:`<p class="lead">${parts.join('; ').replace(/^./,m=>m.toUpperCase())}.</p>
+      sections.push({t:'Executive summary',cls:'sumsec',h:`<p class="lead">${parts.join('; ').replace(/^./,m=>m.toUpperCase())}.</p>
         <div class="kpis">${k(reps.length,'Reports')}${k(people.length,'People')}${k(systems.length,'Systems')}${items.length?k(cnt('Completed'),'Completed','ok')+k(cnt('In progress')+cnt('On hold'),'In progress / on hold','info'):''}${k(issuesN,'Reports with issues',issuesN?'neg':'')}${pl?k(pl.raised.length+' / '+pl.closed.length,'Punch raised / closed','pl'):''}</div>
         ${systems.length?`<div class="chips">${systems.slice(0,24).map(s=>`<span>${E(s)}</span>`).join('')}${systems.length>24?`<span>+${systems.length-24} more</span>`:''}</div>`:''}`});
     }
@@ -5148,7 +5374,7 @@ async function drbPrint(){
     const DRB_TPL_CSS=`.bar .tsel{color:#fff;font-weight:600;display:flex;align-items:center;gap:6px;margin-right:6px}.bar .tsel select{font:inherit;font-weight:600;border-radius:6px;padding:6px 8px;border:0}\n/* ── Modern ── */\n.tpl-modern .paper{padding:0 0 40px;border-radius:4px;overflow:hidden}\n.tpl-modern .hdr{border:0;background:linear-gradient(135deg,#17345E 0%,#244F8B 60%,#2F64AE 100%)}\n.tpl-modern .hdr td{border:0;padding:24px 26px;color:#fff}\n.tpl-modern .hdr .lg img{background:#fff;border-radius:10px;padding:6px 10px}\n.tpl-modern .hdr .co{color:#fff}.tpl-modern .hdr .pl{color:rgba(255,255,255,.75)}.tpl-modern .hdr h1{color:#fff;font-size:26px}\n.tpl-modern .hdr .dc{padding:18px 22px 18px 0;width:280px}.tpl-modern .dc th,.tpl-modern .dc td{white-space:nowrap;padding:6px 10px}.tpl-modern .dc table{background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden}\n.tpl-modern .dc th{background:transparent;color:rgba(255,255,255,.7)}.tpl-modern .dc td{color:#fff}.tpl-modern .dc th,.tpl-modern .dc td{border-color:rgba(255,255,255,.15)}\n.tpl-modern .sec{margin:24px 32px 0}.tpl-modern .sec h2{border:0;text-transform:none;letter-spacing:0;font-size:18px}.tpl-modern .sec h2 .n{border-radius:7px}\n.tpl-modern .lead{border:0;border-radius:10px;background:#EEF3FA}\n.tpl-modern .kpi,.tpl-modern .plsec .kpis div{border:0!important;background:#F3F6FA;border-radius:12px;padding:10px 12px}\n.tpl-modern .rep{border:0;border-radius:14px;box-shadow:0 2px 12px rgba(15,35,70,.09);padding:14px 16px}\n.tpl-modern .t th{background:#EEF3FA;color:#244F8B}.tpl-modern .t td{border-color:#EEF1F5}\n.tpl-modern .call{border:0;border-radius:10px}.tpl-modern .photos .ph{border:0;border-radius:12px}\n.tpl-modern .sysh{border:0;border-radius:8px;background:#EEF3FA}.tpl-modern .foot{margin:28px 32px 0}\n/* ── Compact ── */\n.tpl-compact{font-size:11.5px}.tpl-compact .paper{padding:20px 24px 30px}\n.tpl-compact .hdr td{padding:6px 8px}.tpl-compact .hdr h1{font-size:16px;margin-top:2px}.tpl-compact .hdr .co{font-size:13px}.tpl-compact .hdr .lg{width:110px}.tpl-compact .hdr .lg img{max-height:42px}\n.tpl-compact .sec{margin-top:12px}.tpl-compact .sec h2{font-size:12px;margin-bottom:6px;padding-bottom:3px}.tpl-compact .sec h2 .n{width:18px;height:18px;font-size:10px}\n.tpl-compact .lead{font-size:11.5px;padding:6px 10px;margin-bottom:8px}\n.tpl-compact .kpis{gap:5px}.tpl-compact .kpi{padding:5px 7px}.tpl-compact .kpi b{font-size:16px}\n.tpl-compact .rep{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:8px 0;margin:0}\n.tpl-compact .av{display:none}.tpl-compact .rh{padding-bottom:4px}.tpl-compact .who b{font-size:12px}\n.tpl-compact h4{margin:6px 0 3px}.tpl-compact .t{font-size:10.5px}.tpl-compact .t th,.tpl-compact .t td{padding:3px 6px}\n.tpl-compact .call{background:none!important;border:0;border-left:3px solid;border-radius:0;padding:2px 8px;margin-top:4px}.tpl-compact .call .ci{display:none}\n.tpl-compact .call.ok{border-left-color:var(--ok)}.tpl-compact .call.neg{border-left-color:var(--neg)}.tpl-compact .call.info{border-left-color:var(--info)}\n.tpl-compact .call .ct{display:inline;margin-right:6px}.tpl-compact .call .cx{display:inline;font-size:11.5px}\n.tpl-compact .photos{grid-template-columns:repeat(5,1fr);gap:5px}.tpl-compact .chips span{font-size:9.5px;padding:1px 7px}\n/* ── Classic B&W ── */\n.tpl-classic{--brand:#111;--ok:#111;--neg:#111;--info:#111;--warn:#111;--okb:#fff;--negb:#fff;--infob:#fff;--warnb:#fff;--soft:#fff;--line:#BDBDBD;color:#111}\n.tpl-classic .hdr,.tpl-classic .hdr td{border-color:#111}.tpl-classic .hdr .co{color:#111}.tpl-classic .hdr h1{font-family:Georgia,"Times New Roman",serif;font-size:22px}\n.tpl-classic .dc th{background:#fff}.tpl-classic .sec h2{font-family:Georgia,"Times New Roman",serif;text-transform:none;letter-spacing:0;font-size:16px;border-bottom:1.5px solid #111}\n.tpl-classic .sec h2 .n{background:none;color:#111;border:1.5px solid #111}\n.tpl-classic .lead{border-left:3px solid #111}.tpl-classic .kpi,.tpl-classic .plsec .kpis div{border:1px solid #111!important;border-top-width:1px!important}.tpl-classic .kpi b,.tpl-classic .plsec .kpis div b{color:#111!important}\n.tpl-classic .chips span{background:none;border:1px solid #777;color:#111}.tpl-classic .av{background:none;color:#111;border:1.5px solid #111}\n.tpl-classic .t th{background:#fff;color:#111;border-bottom:1.5px solid #111;border-top:1.5px solid #111}.tpl-classic .t tbody tr:nth-child(even) td{background:#fff}\n.tpl-classic .st{background:none!important;border:1px solid #111;color:#111}.tpl-classic .call{border:1px solid #777}.tpl-classic .call .ci{background:#111}\n.tpl-classic .priA,.tpl-classic .priB,.tpl-classic .priC{color:#111}.tpl-classic .photos img{filter:none}.tpl-classic .foot .brand{color:#111}\n.tpl-classic .bars .r{background:#111}.tpl-classic .bars .c{background:#9E9E9E}.tpl-classic .drc td.ok{background:#E0E0E0;color:#111}.tpl-classic .drc td.miss{background:#fff;color:#111;outline:1px solid #999}\n.tpl-classic .sysh{border-left-color:#111}.tpl-classic .plsec h3{border-left-color:#111}\n`;
     const logo=getWWMCLogoSrc();
     const gen=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const body=sections.map((s,i)=>`<section class="sec${s.pl?' plsec':''}"><h2><span class="n">${i+1}</span>${s.t}</h2>${s.h}</section>`).join('');
+    const body=sections.map((s,i)=>`<section class="sec${s.pl?' plsec':''}${s.cls?' '+s.cls:''}"><h2><span class="n">${i+1}</span>${s.t}</h2>${s.h}</section>`).join('');
     w.document.open();w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(docNo)} – ${escapeHtml(c.title)}</title><style>
 :root{--brand:#244F8B;--brand-d:#1A3A68;--link:#0066CC;--ink:#1F2937;--mute:#6B7280;--line:#DCE3EC;--soft:#F3F6FA;--ok:#15803D;--okb:#ECFDF3;--neg:#B91C1C;--negb:#FEF2F2;--info:#1D4ED8;--infob:#EFF6FF;--warn:#B45309;--warnb:#FFFBEB}
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -5198,7 +5424,7 @@ h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--mu
 @page{size:A4;margin:14mm 12mm 16mm;@bottom-left{content:"WWMC | Internal";font:700 9px "Segoe UI",Arial,sans-serif;color:#0066CC}@bottom-center{content:"${cssStr(docNo)}";font:9px "Segoe UI",Arial,sans-serif;color:#6B7280}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:9px "Segoe UI",Arial,sans-serif;color:#6B7280}}
 @media print{body{background:#fff}.bar,.foot{display:none}.paper{box-shadow:none;margin:0;max-width:none;padding:0}.sec h2{break-after:avoid}.t thead{display:table-header-group}.t tr{break-inside:avoid}h3,h4,.sysh{break-after:avoid}.call,.kpis{break-inside:avoid}}
 @media (max-width:640px){.paper{padding:16px}.hdr .dc{width:auto}.hdr td{display:block;width:auto!important;border-width:0 0 1.5px}.photos{grid-template-columns:repeat(2,1fr)}}
-${DRB_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
+${DRB_TPL_CSS}${PM_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
 <div class="bar"><label class="tsel">Template <select onchange="document.body.className='tpl-'+this.value;try{localStorage.setItem('qas2_drb_tpl',this.value)}catch(e){}">${DRB_TPLS.map(([k,l])=>`<option value="${k}" ${k===c.tpl?'selected':''}>${l}</option>`).join('')}</select></label><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
 <div class="paper">
   <table class="hdr"><tr>
@@ -5211,6 +5437,7 @@ ${DRB_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
       <tr><th>Raised by</th><td>${escapeHtml(reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||'')))}</td></tr>
       <tr><th>Issued</th><td>${escapeHtml(gen)}</td></tr>
     </table></td></tr></table>
+  ${pmHtml}
   ${body||'<p>No sections selected.</p>'}
   ${reps.photoNote?`<p style="font-size:11px;color:#B45309;margin-top:12px">${escapeHtml(reps.photoNote)}</p>`:''}
   <div class="foot"><span class="brand">WWMC | Internal</span><span>${escapeHtml(docNo)}</span><span>Generated ${escapeHtml(gen)} · QAS2 CORE</span></div>

@@ -5210,16 +5210,16 @@ async function pmSection(reps,items,pl,dates){
     const heat=active.length?`<div class="pm-panel"><h3>System heat map</h3><table class="pm-hm"><thead><tr><th>System</th><th>Activities</th><th>Completed</th><th>Punch open</th><th>Issues</th></tr></thead><tbody>${active.map(b=>{const x=B[b.id];
         return `<tr><td>${escapeHtml(b.l)}</td>${[[x.n,'59,130,246'],[x.done,'34,165,90'],[x.pl,'245,158,11'],[x.iss,'220,38,38']].map(([v,c])=>`<td style="background:rgba(${c},${v?Math.min(0.75,0.15+v*0.12):0.04});color:${v?'#0F172A':'#94A3B8'}">${v}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`:'';
     const legend=`<div class="pm-leg"><span><i style="background:#22A55A"></i>Completed</span><span><i style="background:#3B82F6"></i>In progress</span><span><i style="background:#F59E0B"></i>On hold</span><span><i style="background:#6366F1"></i>Walkdown / other</span><span><i style="background:#DC2626;border-radius:50%"></i>Issue</span><span>Number = activities</span><span class="pm-lines"><i style="background:#F59E0B"></i>Gas <i style="background:#94A3B8"></i>Exhaust <i style="background:#EF4444"></i>Steam <i style="background:#3B82F6"></i>Water</span></div>`;
-    return `<section class="pmsec"><div class="pm-top"><div class="pm-panel pm-gauge"><h3>Day score</h3>${gauge}<ul>${scoreRows}</ul><p class="pm-note">40% activities completed · 25% reports without issues · 25% punch closed vs raised · 10% nothing overdue</p></div>${cmpHtml}</div>
+    return `<section class="pmsec"><div class="pm-top"><div class="pm-panel pm-gauge"><h3>Day score</h3>${gauge}<ul>${scoreRows}</ul></div>${cmpHtml}</div>
       <div class="pm-panel pm-map"><h3>Where we worked${dates.length>1?'':' today'}</h3>${pmSVG(B)}${legend}${other.length?`<div class="pm-other"><b>Also worked on:</b> ${other.map(escapeHtml).join(' · ')}</div>`:''}</div>${heat}</section>`;
   }catch(e){console.warn('plant map',e);return '';}
 }
 const PM_TPL_CSS=`.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-top:16px}
 .tpl-plantmap .paper{background:#FBFCFE}
-.tpl-plantmap .hdr,.tpl-plantmap .hdr td{border:0}.tpl-plantmap .hdr{border-bottom:1px solid #E3E8EF}.tpl-plantmap .hdr td{padding:0 0 14px}
+.tpl-plantmap .hdr,.tpl-plantmap .hdr>tbody>tr>td{border:0}.tpl-plantmap .hdr{border-bottom:1px solid #E3E8EF}.tpl-plantmap .hdr>tbody>tr>td{padding:0 0 14px}
 .tpl-plantmap .hdr .lg{width:auto;text-align:left;padding-right:16px}.tpl-plantmap .hdr .lg img{max-height:46px}
 .tpl-plantmap .hdr .co{font-size:11.5px;font-weight:600;color:#6B7280;letter-spacing:0}.tpl-plantmap .hdr h1{font-size:26px;color:#0F2747;margin:2px 0 0}.tpl-plantmap .hdr .pl{font-size:11.5px}
-.tpl-plantmap .hdr .dc{width:250px}.tpl-plantmap .dc table{background:#fff;border:1px solid #E3E8EF;border-radius:10px;overflow:hidden}.tpl-plantmap .dc th{background:#F6F8FB}.tpl-plantmap .dc td{color:#0F2747}
+.tpl-plantmap .hdr .dc{width:300px}.tpl-plantmap .hdr .dc td{background:#fff}.tpl-plantmap .dc table{background:#fff;border:1px solid #E3E8EF;border-radius:10px;overflow:hidden}.tpl-plantmap .dc th{background:#F6F8FB}.tpl-plantmap .dc td{color:#0F2747}
 .tpl-plantmap .sec h2{border:0;text-transform:none;letter-spacing:0;font-size:16px;color:#0F2747}.tpl-plantmap .sec h2 .n{background:#0F2747;border-radius:7px}
 .tpl-plantmap .sumsec .kpis,.tpl-plantmap .sumsec>.chips{display:none}
 .tpl-plantmap .lead{background:#fff;border:1px solid #E3E8EF;border-left:4px solid #3B82F6;border-radius:10px}
@@ -5319,7 +5319,10 @@ async function drbPrint(){
     const systems=[...new Set(reps.flatMap(drSplitSystems))];
     const cnt=st=>items.filter(x=>x.st===st).length;
     const issuesN=reps.filter(r=>!drNoIssue(r.issues)).length;
-    const docNo=reps.length===1?reps[0].report_no:('QAS2-DCR-'+(dates[dates.length-1]||drToday()).replace(/-/g,'')+(dates.length>1?'-'+dates.length+'D':''));
+    // e.g. WWMC Daily Activity Report 081126 (DDMMYY) — or 071126-091126 for a period
+    const ddmmyy=d=>String(d).slice(8,10)+String(d).slice(5,7)+String(d).slice(2,4);
+    const dFirst=dates[0]||drToday(),dLast=dates[dates.length-1]||dFirst;
+    const docNo='WWMC Daily Activity Report '+ddmmyy(dFirst)+(dFirst!==dLast?'-'+ddmmyy(dLast):'');
     const cssStr=s=>String(s||'').replace(/[\\"]/g,'').replace(/[\n\r<>]/g,' ');
     const stCls=st=>'s'+Math.max(0,DRA_STATUS.indexOf(st));
     const initials=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
@@ -5378,7 +5381,7 @@ async function drbPrint(){
     const logo=getWWMCLogoSrc();
     const gen=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const body=sections.map((s,i)=>`<section class="sec${s.pl?' plsec':''}${s.cls?' '+s.cls:''}"><h2><span class="n">${i+1}</span>${s.t}</h2>${s.h}</section>`).join('');
-    w.document.open();w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(docNo)} – ${escapeHtml(c.title)}</title><style>
+    w.document.open();w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(docNo)}</title><style>
 :root{--brand:#244F8B;--brand-d:#1A3A68;--link:#0066CC;--ink:#1F2937;--mute:#6B7280;--line:#DCE3EC;--soft:#F3F6FA;--ok:#15803D;--okb:#ECFDF3;--neg:#B91C1C;--negb:#FEF2F2;--info:#1D4ED8;--infob:#EFF6FF;--warn:#B45309;--warnb:#FFFBEB}
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{margin:0;background:#E9EDF2;color:var(--ink);font:13px/1.55 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
@@ -5388,7 +5391,7 @@ body{margin:0;background:#E9EDF2;color:var(--ink);font:13px/1.55 "Segoe UI",Robo
 .hdr{width:100%;border-collapse:collapse;border:1.5px solid var(--brand)}.hdr td{border:1.5px solid var(--brand);vertical-align:middle;padding:10px 12px}
 .hdr .lg{width:150px;text-align:center}.hdr .lg img{max-width:128px;max-height:62px}
 .hdr .co{color:var(--brand);font-weight:800;font-size:15px;letter-spacing:.01em}.hdr .pl{font-size:11px;color:var(--mute);margin-top:1px}.hdr h1{margin:6px 0 0;font-size:20px;line-height:1.2;color:var(--ink)}
-.hdr .dc{width:236px;padding:0}.dc table{width:100%;border-collapse:collapse;font-size:10.5px}.dc th,.dc td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}.dc tr:last-child th,.dc tr:last-child td{border-bottom:0}.dc th{color:var(--mute);font-weight:600;width:42%;background:var(--soft);white-space:nowrap}.dc td{font-weight:700;color:var(--brand);white-space:nowrap}
+.hdr .dc{width:300px;padding:0}.dc table{width:100%;border-collapse:collapse;font-size:10.5px}.dc th,.dc td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}.dc tr:last-child th,.dc tr:last-child td{border-bottom:0}.dc th{color:var(--mute);font-weight:600;width:42%;background:var(--soft);white-space:nowrap}.dc td{font-weight:700;color:var(--brand);white-space:nowrap}
 .sec{margin-top:22px}.sec h2{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--brand);margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--brand);text-transform:uppercase;letter-spacing:.04em}
 .sec h2 .n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;letter-spacing:0}
 .sec h2 small{font-size:11px;color:var(--mute);text-transform:none;letter-spacing:0;font-weight:500;margin-left:auto}

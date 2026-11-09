@@ -5496,9 +5496,9 @@ async function smCounts(){
   try{const r=await sbFetch('rpc/qas2_files_in_db','POST',{});if(r&&typeof r==='object'&&!Array.isArray(r))return r;}catch(e){}
   const docs=(await sbFetch('qas2_documents?file_data=like.data:*&select=id')||[]).length;
   const photos=(await sbFetch('qas2_photos?photo_data=like.data:*&select=id')||[]).length;
-  let reports=0,cur=0;
-  for(;;){const rows=await sbFetch(`qas2_daily_reports?id=gt.${cur}&photos=not.is.null&select=id,photos&order=id.asc&limit=40`)||[];if(!rows.length)break;
-    rows.forEach(r=>{if((r.photos||[]).some(isDataUrl))reports++;});cur=rows[rows.length-1].id;}
+  let reports=0;
+  for(let off=0;;off+=40){const rows=await sbFetch(`qas2_daily_reports?photos=not.is.null&select=id,photos&order=id.asc&limit=40&offset=${off}`)||[];
+    rows.forEach(r=>{if((r.photos||[]).some(isDataUrl))reports++;});if(rows.length<40)break;}
   return {docs,photos,reports};
 }
 async function smStatus(){
@@ -5534,7 +5534,7 @@ async function smRun(){
     smLog('Started.');
     // 1) documents
     for(;;){if(smStop)break;
-      const skip=bad.docs.length?`&id=not.in.(${bad.docs.join(',')})`:'';
+      const skip=bad.docs.length?`&id=not.in.(${bad.docs.map(x=>'"'+x+'"').join(',')})`:'';
       const rows=await sbFetch(`qas2_documents?file_data=like.data:*${skip}&select=id,title,file_name,file_data&limit=1`)||[];if(!rows.length)break;
       const d=rows[0];
       try{const ref=await smUpload(d.file_data,'docs',d.file_name||'document');
@@ -5544,7 +5544,7 @@ async function smRun(){
     }
     // 2) ticket photos
     for(;;){if(smStop)break;
-      const skip=bad.photos.length?`&id=not.in.(${bad.photos.join(',')})`:'';
+      const skip=bad.photos.length?`&id=not.in.(${bad.photos.map(x=>'"'+x+'"').join(',')})`:'';
       const rows=await sbFetch(`qas2_photos?photo_data=like.data:*${skip}&select=id,ticket_id,photo_data&limit=5`)||[];if(!rows.length)break;
       for(const ph of rows){if(smStop)break;
         try{const ref=await smUpload(ph.photo_data,'tickets/'+ph.ticket_id);
@@ -5554,10 +5554,9 @@ async function smRun(){
     }
     if(!smStop&&done)smLog('Ticket photos done.','ok');
     // 3) daily report photos
-    let cur=0;
-    for(;;){if(smStop)break;
-      const rows=await sbFetch(`qas2_daily_reports?id=gt.${cur}&photos=not.is.null&select=id,report_no,report_date,photos&order=id.asc&limit=2`)||[];if(!rows.length)break;
-      for(const r of rows){cur=r.id;if(smStop)break;const list=r.photos||[];if(!list.some(isDataUrl))continue;
+    for(let off=0;;off+=2){if(smStop)break;
+      const rows=await sbFetch(`qas2_daily_reports?photos=not.is.null&select=id,report_no,report_date,photos&order=id.asc&limit=2&offset=${off}`)||[];if(!rows.length)break;
+      for(const r of rows){if(smStop)break;const list=r.photos||[];if(!list.some(isDataUrl))continue;
         try{const out=[];for(const p of list)out.push(isDataUrl(p)?await smUpload(p,'reports/'+String(r.report_date||'').slice(0,7)):p);
           await sbFetch(`qas2_daily_reports?id=eq.${r.id}`,'PATCH',{photos:out});done+=list.filter(isDataUrl).length;smLog('Report '+(r.report_no||r.id)+': '+list.length+' photo(s)','ok');}
         catch(e){failed++;smLog('Report '+(r.report_no||r.id)+' — '+e.message,'bad');}
@@ -5604,7 +5603,7 @@ async function smDownload(){
         nFiles++;return path;
       }catch(e){nMissing++;log.push('Could not read '+path+': '+e.message);return null;}
     };
-    const pageAll=async(tb,select,size)=>{const rows=[];for(let off=0;;off+=size){const part=await sbFetch(`${tb}?select=${select}&order=id.asc&limit=${size}&offset=${off}`)||[];rows.push(...part);if(part.length<size)break;}return rows;};
+    const pageAll=async(tb,select,size)=>{const rows=[];let ord='&order=id.asc';for(let off=0;;off+=size){let part;try{part=await sbFetch(`${tb}?select=${select}${ord}&limit=${size}&offset=${off}`)||[];}catch(e){if(ord&&off===0){ord='';off-=size;continue;}throw e;}rows.push(...part);if(part.length<size)break;}return rows;};
     const data={};
     // plain tables
     for(const tb of QAS2_TABLES.filter(x=>!['qas2_documents','qas2_photos','qas2_daily_reports'].includes(x))){

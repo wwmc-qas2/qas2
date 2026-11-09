@@ -1036,8 +1036,10 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         </div>
         <div class="sm-card">
           <div class="sm-h">🛟 Backups</div>
-          <p class="sm-p">An automatic backup of all QAS2 tables runs every night at 02:30 (Riyadh) and the last 14 days are kept inside Supabase. You can also take one now, or download a full copy to keep on your computer (the file includes user accounts — store it safely).</p>
-          <div class="sm-actions"><button class="btn primary" id="sm-bk-now" onclick="smBackupNow()">Back up now</button><button class="btn" id="sm-dl" onclick="smDownload()">⬇ Download backup file</button></div>
+          <p class="sm-p"><b>Full backup</b> — one ZIP with everything: all data plus every photo and document as normal files you can open. Nothing is changed or deleted. Keep it on your computer or a drive (it includes user accounts — store it safely).</p>
+          <div class="sm-actions"><button class="btn primary" id="sm-dl" onclick="smDownload()">⬇ Download full backup (data + photos + files)</button><span id="sm-last" class="sm-muted"></span></div>
+          <p class="sm-p" style="margin-top:14px"><b>Automatic copy</b> — every night at 02:30 (Riyadh) all QAS2 data is copied inside Supabase. Copies are kept, never deleted.</p>
+          <div class="sm-actions"><button class="btn" id="sm-bk-now" onclick="smBackupNow()">Copy data now</button></div>
           <div id="sm-bk" class="sm-bk"></div>
         </div>
       </div>
@@ -5521,7 +5523,9 @@ async function smUpload(dataUrl,folder,fileName){
 }
 async function smRun(){
   if(smRunning)return;
-  if(!confirm('Move all documents and photos from the database to Storage?\n\nEach file is uploaded and checked first; the database is only changed after the check passes. You can stop at any time and continue later.'))return;
+  let last='';try{last=localStorage.getItem('qas2_last_full_backup')||'';}catch(e){}
+  if(last!==drToday()&&!confirm('Recommended first: download a full backup (button below) so you have a copy of every file.\n\nContinue without a backup from today?'))return;
+  if(!confirm('Move all documents and photos from the database to Storage?\n\nNothing is deleted: each file is copied to Storage and checked first; only then the database keeps a link to it. You can stop at any time and continue later.'))return;
   smRunning=true;smStop=false;sbStorageBroken=false;
   smEl('sm-run').disabled=true;smEl('sm-stop').disabled=false;
   const prog=smEl('sm-prog');let done=0,failed=0;const bad={docs:[],photos:[]};
@@ -5569,29 +5573,87 @@ async function smBackups(){
   const box=smEl('sm-bk');if(!box)return;
   try{const rows=await sbFetch('qas2_backup_log?select=*&order=created_at.desc&limit=20')||[];
     box.innerHTML=rows.length?`<table class="sm-t"><thead><tr><th>Backup</th><th>Taken</th><th>Tables</th><th>Rows</th><th>By</th></tr></thead><tbody>${rows.map(r=>`<tr><td><code>${escapeHtml(r.schema_name)}</code></td><td>${escapeHtml(formatDateTime(r.created_at))}</td><td>${r.tables??''}</td><td>${r.total_rows??''}</td><td>${escapeHtml(r.made_by||'')}</td></tr>`).join('')}</tbody></table>`
-      :'<span class="sm-muted">No automatic backups yet — the first one runs tonight at 02:30 (Riyadh), or press “Back up now”.</span>';}
+      :'<span class="sm-muted">No automatic copies yet — the first one runs tonight at 02:30 (Riyadh), or press “Copy data now”.</span>';}
   catch(e){box.innerHTML='<span class="sm-bad">Automatic backups are not set up yet — run the setup SQL in Supabase.</span>';}
 }
 async function smBackupNow(){
   const b=smEl('sm-bk-now');b.disabled=true;b.textContent='Backing up…';
-  try{const r=await sbFetch('rpc/qas2_auto_backup','POST',{made_by:currentUser?.name||'admin'});showToast('Backup done ✓ '+(typeof r==='string'?r:''));smBackups();}
+  try{const r=await sbFetch('rpc/qas2_backup_now','POST',{made_by:currentUser?.name||'admin'});showToast('Backup done ✓ '+(typeof r==='string'?r:''));smBackups();}
   catch(e){showToast('Backup failed: '+e.message,'error');}
-  finally{b.disabled=false;b.textContent='Back up now';}
+  finally{b.disabled=false;b.textContent='Copy data now';}
 }
+async function smLoadZip(){
+  if(window.JSZip)return window.JSZip;
+  await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=res;s.onerror=()=>rej(new Error('Could not load the ZIP tool — check the internet connection'));document.head.appendChild(s);});
+  return window.JSZip;
+}
+// Full backup: every table + every photo and document (from the database or from Storage) in one ZIP
 async function smDownload(){
-  const b=smEl('sm-dl');b.disabled=true;
-  try{const out={exported_at:new Date().toISOString(),site:'QAS2',tables:{}};
-    for(const tb of QAS2_TABLES){b.textContent='Downloading '+tb.replace('qas2_','')+'…';const rows=[];
-      try{for(let off=0;;off+=1000){const part=await sbFetch(`${tb}?select=*&order=id.asc&limit=1000&offset=${off}`)||[];rows.push(...part);if(part.length<1000)break;}}
-      catch(e){out.tables[tb]={error:e.message};continue;}
-      out.tables[tb]=rows;}
-    const blob=new Blob([JSON.stringify(out)],{type:'application/json'});const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download='QAS2_Backup_'+drToday()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
-    showToast('Backup file downloaded ✓');
-  }catch(e){showToast('Download failed: '+e.message,'error');}
-  finally{b.disabled=false;b.textContent='⬇ Download backup file';}
+  const b=smEl('sm-dl');if(b.disabled)return;b.disabled=true;
+  const say=t=>{b.textContent=t;};
+  const log=[];let nFiles=0,nMissing=0,bytes=0;
+  try{
+    const JSZip=await smLoadZip();const zip=new JSZip();
+    const ext=(v,def)=>{const m=String(v).match(/^data:([^;,]+)/);const t=m?m[1]:'';return sbExtFor(t,def);};
+    // put one file in the zip; returns the path inside the zip (or null if it could not be read)
+    const addFile=async(v,path)=>{
+      try{
+        if(isDataUrl(v)){const i=v.indexOf(',');const b64=v.slice(i+1);zip.file(path,b64,{base64:true,compression:'STORE'});bytes+=b64.length*0.75;}
+        else if(isSbRef(v)){const url=await sbFileUrl(v);if(!url)throw new Error('no link');const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);const blob=await r.blob();zip.file(path,blob,{compression:'STORE'});bytes+=blob.size;}
+        else return null;
+        nFiles++;return path;
+      }catch(e){nMissing++;log.push('Could not read '+path+': '+e.message);return null;}
+    };
+    const pageAll=async(tb,select,size)=>{const rows=[];for(let off=0;;off+=size){const part=await sbFetch(`${tb}?select=${select}&order=id.asc&limit=${size}&offset=${off}`)||[];rows.push(...part);if(part.length<size)break;}return rows;};
+    const data={};
+    // plain tables
+    for(const tb of QAS2_TABLES.filter(x=>!['qas2_documents','qas2_photos','qas2_daily_reports'].includes(x))){
+      say('Backing up '+tb.replace('qas2_','')+'…');
+      try{data[tb]=await pageAll(tb,'*',1000);}catch(e){data[tb]={error:e.message};}
+    }
+    // documents — list first, then each file
+    say('Backing up documents…');
+    try{const docs=await pageAll('qas2_documents',DOC_LIST_FIELDS,1000);
+      for(let i=0;i<docs.length;i++){const d=docs[i];say(`Documents ${i+1}/${docs.length}…`);
+        const r=(await sbFetch(`qas2_documents?id=eq.${d.id}&select=file_data`)||[])[0]||{};const v=r.file_data;
+        d.file_data=isSbRef(v)?v:'';d.backup_file=await addFile(v,`files/documents/${d.id}_${sbSafeName(d.file_name||('document.'+ext(v,'pdf')))}`);}
+      data.qas2_documents=docs;}catch(e){data.qas2_documents={error:e.message};}
+    // ticket photos
+    try{const ticketNo=new Map((Array.isArray(data.qas2_tickets)?data.qas2_tickets:[]).map(t=>[String(t.id),t.no]));const out=[];
+      for(let off=0;;off+=20){const part=await sbFetch(`qas2_photos?select=*&order=id.asc&limit=20&offset=${off}`)||[];
+        for(const ph of part){say(`Ticket photos ${out.length+1}…`);const v=ph.photo_data;
+          ph.backup_file=await addFile(v,`files/ticket_photos/${sbSafeName(ticketNo.get(String(ph.ticket_id))||('ticket_'+ph.ticket_id))}/${ph.id}.${ext(v,'jpg')}`);
+          ph.photo_data=isSbRef(v)?v:'';out.push(ph);}
+        if(part.length<20)break;}
+      data.qas2_photos=out;}catch(e){data.qas2_photos={error:e.message};}
+    // daily reports (+ their photos)
+    try{const out=[];
+      for(let off=0;;off+=10){const part=await sbFetch(`qas2_daily_reports?select=*&order=id.asc&limit=10&offset=${off}`)||[];
+        for(const r of part){say(`Daily reports ${out.length+1}…`);const list=Array.isArray(r.photos)?r.photos:[];r.backup_files=[];
+          for(let k=0;k<list.length;k++){r.backup_files.push(await addFile(list[k],`files/report_photos/${sbSafeName(r.report_no||('report_'+r.id))}/${k+1}.${ext(list[k],'jpg')}`));}
+          r.photos=list.map(v=>isSbRef(v)?v:'');out.push(r);}
+        if(part.length<10)break;}
+      data.qas2_daily_reports=out;}catch(e){data.qas2_daily_reports={error:e.message};}
+    for(const [tb,rows] of Object.entries(data))zip.file(`data/${tb}.json`,JSON.stringify(rows,null,1),{compression:'DEFLATE'});
+    const stamp=new Date().toISOString();
+    zip.file('README.txt',[`QAS2 full backup — ${stamp}`,'',
+      'data/      one JSON file per table (all rows, all columns)',
+      'files/     every document and photo as a normal file you can open',
+      '           documents/<id>_<name>   ticket_photos/<ticket no>/   report_photos/<report no>/',
+      '',`Files: ${nFiles}   Could not read: ${nMissing}`,
+      'In the JSON, "backup_file" / "backup_files" give the path of each file inside this ZIP.',
+      'User accounts are included — keep this file somewhere safe.',...(log.length?['','Problems:',...log]:[])].join('\r\n'));
+    say('Packing the ZIP…');
+    const blob=await zip.generateAsync({type:'blob',compression:'STORE'},m=>say('Packing… '+Math.round(m.percent)+'%'));
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='QAS2_Full_Backup_'+drToday()+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),120000);
+    try{localStorage.setItem('qas2_last_full_backup',drToday());}catch(e){}
+    {const el=smEl('sm-last');if(el)el.textContent='Last full backup from this computer: '+drToday();}
+    smLog(`Full backup downloaded: ${nFiles} files, ${(blob.size/1048576).toFixed(1)} MB`+(nMissing?` — ${nMissing} file(s) could not be read`:''),nMissing?'bad':'ok');
+    showToast('Full backup downloaded ✓');
+  }catch(e){showToast('Backup failed: '+e.message,'error');smLog('Backup failed: '+e.message,'bad');}
+  finally{b.disabled=false;b.textContent='⬇ Download full backup (data + photos + files)';}
 }
-function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();}
+function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();let l='';try{l=localStorage.getItem('qas2_last_full_backup')||'';}catch(e){}const el=smEl('sm-last');if(el)el.textContent=l?'Last full backup from this computer: '+l:'No full backup downloaded from this computer yet';}
 
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];

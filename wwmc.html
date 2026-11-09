@@ -5492,14 +5492,10 @@ let smStop=false,smRunning=false;
 const smEl=id=>document.getElementById(id);
 function smLog(msg,kind){const el=smEl('sm-log');if(!el)return;el.insertAdjacentHTML('afterbegin',`<div class="sm-line ${kind||''}">${escapeHtml(new Date().toLocaleTimeString('en-GB'))} · ${escapeHtml(msg)}</div>`);}
 async function smCounts(){
-  // server-side count when the setup SQL is installed, otherwise count here
-  try{const r=await sbFetch('rpc/qas2_files_in_db','POST',{});if(r&&typeof r==='object'&&!Array.isArray(r))return r;}catch(e){}
-  const docs=(await sbFetch('qas2_documents?file_data=like.data:*&select=id')||[]).length;
-  const photos=(await sbFetch('qas2_photos?photo_data=like.data:*&select=id')||[]).length;
-  let reports=0;
-  for(let off=0;;off+=40){const rows=await sbFetch(`qas2_daily_reports?photos=not.is.null&select=id,photos&order=id.asc&limit=40&offset=${off}`)||[];
-    rows.forEach(r=>{if((r.photos||[]).some(isDataUrl))reports++;});if(rows.length<40)break;}
-  return {docs,photos,reports};
+  // counted inside the database by the setup SQL (scanning here would be too slow with big files)
+  const r=await sbFetch('rpc/qas2_files_in_db','POST',{});
+  if(r&&typeof r==='object'&&!Array.isArray(r))return r;
+  throw new Error('unexpected answer');
 }
 async function smStatus(){
   const box=smEl('sm-status');if(!box)return;
@@ -5509,7 +5505,14 @@ async function smStatus(){
     box.innerHTML=total?`<b>${total}</b> item(s) still stored inside the database: <b>${c.docs||0}</b> documents · <b>${c.photos||0}</b> ticket photos · <b>${c.reports||0}</b> daily reports with photos${c.mb?` · about <b>${c.mb} MB</b>`:''}`
       :'<span class="sm-ok">✓ All documents and photos are in Storage.</span>';
     smEl('sm-run').disabled=!total;
-  }catch(e){box.innerHTML='<span class="sm-bad">Could not check: '+escapeHtml(e.message)+'</span>';}
+  }catch(e){
+    const m=String(e.message||'');
+    box.innerHTML=/PGRST202|qas2_files_in_db|404|Could not find the function/i.test(m)
+      ?'<span class="sm-bad">⚠ Storage is not set up yet — run <b>qas2_storage_backup_setup.sql</b> in Supabase → SQL Editor, then press “Check again”.</span>'
+      :/57014|timeout/i.test(m)?'<span class="sm-muted">The database took too long to count the files — run the latest setup SQL, then press “Check again”. You can still press “Move files to Storage”.</span>'
+      :'<span class="sm-bad">Could not check: '+escapeHtml(m)+'</span>';
+    smEl('sm-run').disabled=false;
+  }
 }
 // strict upload: throws if anything goes wrong, and checks the stored size
 async function smUpload(dataUrl,folder,fileName){

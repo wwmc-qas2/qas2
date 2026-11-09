@@ -5310,7 +5310,7 @@ function pmSpark(a,c){if(!a||a.length<2)return '';const mx=Math.max(...a),mn=Mat
   const pts=a.map((v,i)=>`${(i*100/(a.length-1)).toFixed(1)},${(20-(v-mn)*18/r).toFixed(1)}`);const [lx,ly]=pts[pts.length-1].split(',');
   return `<svg class="sp" viewBox="-2 -2 104 24" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts.join(' ')}" fill="none" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx}" cy="${ly}" r="2.6" fill="${c}"/></svg>`;}
 function pmDelta(now,prev,goodUp,label){const d=now-prev;if(!d)return `<span class="dl n">= same as ${label}</span>`;const good=goodUp?d>0:d<0;return `<span class="dl ${good?'g':'b'}">${d>0?'▲':'▼'} ${Math.abs(d)} vs ${label}</span>`;}
-async function pmSection(reps,items,pl,dates){
+async function pmSection(reps,items,pl,dates,showHeat=true){
   try{
     await pmLoadLib();
     const tickets=await fetchAllTickets(false)||[];
@@ -5340,7 +5340,7 @@ async function pmSection(reps,items,pl,dates){
         ${tile(N.plC,'Punch closed',pmDelta(N.plC,P.plC,true,L),pmSpark(T('plC'),'#16A34A'))}
         ${tile(N.plO,'Punch open',pmDelta(N.plO,P.plO,false,L),pmSpark(T('plO'),'#F59E0B'))}</div></div>`;}
     const active=PM_BLOCKS.filter(b=>B[b.id]);
-    const heat=active.length?`<div class="pm-panel"><h3>System heat map</h3><table class="pm-hm"><thead><tr><th>System</th><th>Activities</th><th>Completed</th><th>Punch open</th><th>Issues</th></tr></thead><tbody>${active.map(b=>{const x=B[b.id];
+    const heat=showHeat&&active.length?`<div class="pm-panel"><h3>System heat map</h3><table class="pm-hm"><thead><tr><th>System</th><th>Activities</th><th>Completed</th><th>Punch open</th><th>Issues</th></tr></thead><tbody>${active.map(b=>{const x=B[b.id];
         return `<tr><td>${escapeHtml(b.l)}</td>${[[x.n,'59,130,246'],[x.done,'34,165,90'],[x.pl,'245,158,11'],[x.iss,'220,38,38']].map(([v,c])=>`<td style="background:rgba(${c},${v?Math.min(0.75,0.15+v*0.12):0.04});color:${v?'#0F172A':'#94A3B8'}">${v}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`:'';
     const legend=`<div class="pm-leg"><span><i style="background:#22A55A"></i>Completed</span><span><i style="background:#3B82F6"></i>In progress</span><span><i style="background:#F59E0B"></i>On hold</span><span><i style="background:#6366F1"></i>Walkdown / other</span><span><i style="background:#DC2626;border-radius:50%"></i>Issue</span><span>Number = activities</span><span class="pm-lines"><i style="background:#F59E0B"></i>Gas <i style="background:#94A3B8"></i>Exhaust <i style="background:#EF4444"></i>Steam <i style="background:#3B82F6"></i>Water</span></div>`;
     const mapHtml=`<div class="pm-panel pm-map"><h3>Where we worked${dates.length>1?'':' today'}</h3>${pmSVG(B)}${legend}${other.length?`<div class="pm-other"><b>Also worked on:</b> ${other.map(escapeHtml).join(' · ')}</div>`:''}</div>`;
@@ -5379,7 +5379,7 @@ svg.sp{display:block;width:100%;height:22px;margin-top:3px}
 @media print{.pm-panel{break-inside:avoid}.tpl-plantmap .paper{background:#fff}.pm-map svg{width:88%;margin:0 auto}.tpl-plantmap .lhdr{padding:12px 16px 12px}.lh-row img{height:42px}.lh-row{padding-bottom:9px}.lh-tt{margin:10px 0 8px}.lh-tt h1{font-size:26px}.pm-gauge svg{max-width:160px}.pm-kk b{font-size:19px}}`;
 
 // ── print / save builder ──
-const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false]];
+const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
 let drbIds=null,drCurrentList=[];
 const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly'],['plantmap','Plant Map','Plant schematic, day score, today vs yesterday']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
@@ -5393,7 +5393,8 @@ function drOpenBuilder(ids){
     `<label class="drb-opt"><input type="radio" name="drb-scope" value="checked" ${checked.length&&checked.length<shown.length?'checked':''}> Ticked reports (${checked.length})</label>
      <label class="drb-opt"><input type="radio" name="drb-scope" value="shown" ${!(checked.length&&checked.length<shown.length)?'checked':''}> All reports in the current list (${shown.length})</label>`;
   let saved={};try{saved=JSON.parse(localStorage.getItem('qas2_drb')||'{}');}catch(e){}
-  document.getElementById('drb-sections').innerHTML=DRB_SECTIONS.map(([k,l,def])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(saved.s?saved.s.includes(k):def)?'checked':''}> ${l}</label>`).join('');
+  const known=saved.k||DRB_SECTIONS.filter(x=>x[0]!=='heatmap').map(x=>x[0]);
+  document.getElementById('drb-sections').innerHTML=DRB_SECTIONS.map(([k,l,def])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(saved.s&&known.includes(k)?saved.s.includes(k):def)?'checked':''}> ${l}</label>`).join('');
   document.querySelectorAll('input[name="drb-layout"]').forEach(r=>r.checked=r.value===(saved.layout||'report'));
   const f=document.getElementById('dr-from')?.value,t=document.getElementById('dr-to')?.value,d=document.getElementById('dr-date-filter')?.value;
   document.getElementById('drb-title').value='Daily Report';
@@ -5409,7 +5410,7 @@ function drbChoice(){
   let ids=scope==='one'?drbIds:scope==='checked'?drTickedIds():drShownIds();
   const s=[...document.querySelectorAll('#drb-sections input:checked')].map(i=>i.value);
   const layout=document.querySelector('input[name="drb-layout"]:checked')?.value||'report';
-  try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout}));}catch(e){}
+  try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout,k:DRB_SECTIONS.map(x=>x[0])}));}catch(e){}
   const tpl=document.querySelector('input[name="drb-tpl"]:checked')?.value||'corporate';try{localStorage.setItem('qas2_drb_tpl',tpl);}catch(e){}
   const rb=document.getElementById('drb-raisedby')?.value??'';try{localStorage.setItem('qas2_drb_raisedby',rb);}catch(e){}
   return {ids,s,layout,tpl,raisedBy:rb,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
@@ -5470,7 +5471,7 @@ async function drbPrint(){
     const drpRes=await drpForReports(reps);
     const pl=drpRes.stats;
     prog('Drawing the plant map…');
-    const pmHtml=await pmSection(reps,items,pl,dates);
+    const pmHtml=await pmSection(reps,items,pl,dates,c.s.includes('heatmap'));
     // 1 Executive summary
     if(has('summary')){
       const parts=[];

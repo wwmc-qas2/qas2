@@ -402,6 +402,7 @@ tbody tr{transition:var(--transition)}
 .dra-hint{font-size:11px;color:var(--gray)}.dra-draft{margin-left:auto;font-size:11px;color:#166534;font-weight:600}
 .dra-head,.dra-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2.4fr) 128px minmax(0,.9fr) 30px;gap:6px;align-items:start}
 .dra-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;padding:0 2px 4px}
+.ed-form{display:flex;flex-direction:column;gap:10px}.ed-grid{display:grid;grid-template-columns:200px 1fr;gap:10px}@media (max-width:640px){.ed-grid{grid-template-columns:1fr}}
 .dra-row{margin-bottom:6px}
 .dra-row input,.dra-row select,.dra-row textarea{font:inherit;font-size:13px;padding:7px 9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;min-width:0;width:100%}
 .dra-row textarea{resize:vertical;line-height:1.4;min-height:36px}
@@ -3337,31 +3338,64 @@ function toggleAllReports(checked){
   document.querySelectorAll('.report-chk').forEach(cb=>cb.checked=checked);
 }
 
+// ── edit a submitted report: same structured form as a new report ──
+let edraRows=[],edraId=null;
+function edraParse(report){
+  // structured rows if saved; otherwise rebuild them from the text ("• System — activity [Status] (KKS)")
+  if(Array.isArray(report.items)&&report.items.length)return report.items.map(r=>({sys:r.sys||'',act:r.act||'',st:DRA_STATUS.includes(r.st)?r.st:'Completed',kks:r.kks||''}));
+  const txt=String(report.content||'').trim();if(!txt||txt==='–')return [];
+  const lines=txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const rx=/^(?:[•\-*]\s*)?(?:(.+?)\s+—\s+)?([\s\S]+?)\s*\[(Completed|In progress|On hold|Planned)\]\s*(?:\(([^()]*)\))?$/;
+  const parsed=lines.map(l=>{const m=l.match(rx);return m?{sys:(m[1]||'').trim(),act:m[2].trim(),st:m[3],kks:(m[4]||'').trim()}:null;});
+  if(parsed.length&&parsed.every(Boolean))return parsed;
+  const sys=String(report.system_worked||'').split(/[,;]+/)[0].trim();
+  return [{sys:sys==='General'?'':sys,act:txt,st:'Completed',kks:''}];
+}
+function edraRender(){
+  const box=document.getElementById('edra-rows');if(!box)return;
+  if(!edraRows.length)edraRows.push({sys:'',act:'',st:'Completed',kks:''});
+  box.innerHTML=`<div class="dra-head" aria-hidden="true"><span>System</span><span>Activity</span><span>Status</span><span>KKS (optional)</span><span></span></div>`+edraRows.map((r,i)=>`
+    <div class="dra-row" data-i="${i}">
+      <input class="dra-sys" list="dra-systems" value="${escapeHtml(r.sys)}" placeholder="e.g. Fuel Gas System" aria-label="System for activity ${i+1}">
+      <textarea class="dra-act" rows="1" placeholder="What was done?" aria-label="Activity ${i+1}">${escapeHtml(r.act)}</textarea>
+      <select class="dra-st dra-st-${DRA_STATUS.indexOf(r.st)}" aria-label="Status of activity ${i+1}" onchange="this.className='dra-st dra-st-'+DRA_STATUS.indexOf(this.value)">${DRA_STATUS.map(s=>`<option ${s===r.st?'selected':''}>${s}</option>`).join('')}</select>
+      <input class="dra-kks" value="${escapeHtml(r.kks)}" placeholder="10EKH10AP001" aria-label="KKS for activity ${i+1}">
+      <button class="dra-del" type="button" onclick="edraRemove(${i})" aria-label="Remove activity ${i+1}" title="Remove">✕</button>
+    </div>`).join('');
+  box.querySelectorAll('.dra-act').forEach(a=>{draAutoGrow(a);a.addEventListener('input',()=>draAutoGrow(a));});
+}
+function edraSync(){document.querySelectorAll('#edra-rows .dra-row').forEach(el=>{const i=+el.dataset.i;if(!edraRows[i])return;
+  edraRows[i]={sys:el.querySelector('.dra-sys').value,act:el.querySelector('.dra-act').value,st:el.querySelector('.dra-st').value,kks:el.querySelector('.dra-kks').value};});}
+function edraAdd(){edraSync();edraRows.push({sys:edraRows.length?edraRows[edraRows.length-1].sys:'',act:'',st:'Completed',kks:''});edraRender();const a=[...document.querySelectorAll('#edra-rows .dra-act')].pop();if(a)a.focus();}
+function edraRemove(i){edraSync();edraRows.splice(i,1);edraRender();}
+function edraItems(){edraSync();return edraRows.map(r=>({sys:r.sys.trim(),act:r.act.trim(),st:r.st,kks:r.kks.trim()})).filter(r=>r.act||r.sys);}
+const edClean=(v,def)=>{v=String(v||'').trim();return v===def||v==='–'?'':v;};
+
 async function editReport(id){
   const report=await fetchReportById(id,false);
   if(!canEditReport(report)){showToast('You do not have permission to edit this report.','error');return;}
-  const card=document.getElementById('rcard-'+id);
-  const body=document.getElementById('rbody-'+id);
-  // Get current values
-  const labels=body.querySelectorAll('.dr-report-label');
-  let content='',achievements='',issues='',nextPlan='';
-  labels.forEach(l=>{
-    const text=l.parentElement.textContent.replace(l.textContent,'').trim();
-    if(l.textContent==='Activities: ')content=text;
-    if(l.textContent==='Achievements: ')achievements=text;
-    if(l.textContent==='Issues: ')issues=text;
-    if(l.textContent==='Tomorrow: ')nextPlan=text;
-  });
+  // only one report can be in edit mode at a time
+  if(edraId&&edraId!==String(id)&&document.getElementById('edra-rows')&&Array.isArray(allReportsCache)){try{applyReportFiltersAndRender(allReportsCache,getReportFilterDate());}catch(e){}}
+  const body=document.getElementById('rbody-'+id);if(!body)return;
+  edraId=String(id);edraRows=edraParse(report||{});
   editReportOriginalPhotos=Array.isArray(report?.photos)?[...report.photos]:[];
   editReportPhotos=[...editReportOriginalPhotos];
+  const d=String(report.report_date||'').slice(0,10);
+  const isAdm=typeof isAdmin==='function'&&isAdmin();
+  const minD=isAdm?'':drAddDays(drToday(),-7);
   body.innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div class="field"><label for="edit-content-${id}">Activities</label><textarea id="edit-content-${id}" style="min-height:60px">${content}</textarea></div>
-      <div class="field"><label for="edit-ach-${id}">Achievements</label><textarea id="edit-ach-${id}" style="min-height:50px">${achievements}</textarea></div>
-      <div class="field"><label for="edit-issues-${id}">Issues</label><textarea id="edit-issues-${id}" style="min-height:50px">${issues}</textarea></div>
-      <div class="field"><label for="edit-plan-${id}">Plan for Tomorrow</label><textarea id="edit-plan-${id}" style="min-height:50px">${nextPlan}</textarea></div>
+    <div class="ed-form">
+      <div class="ed-grid">
+        <div class="field"><label for="edit-date-${id}">Report date</label><input id="edit-date-${id}" type="date" value="${escapeHtml(d)}" max="${drToday()}" ${minD?`min="${minD}"`:''}></div>
+        <div class="field"><label for="edit-sys-${id}">System(s) worked on</label><input id="edit-sys-${id}" value="${escapeHtml(edClean(report.system_worked,'General'))}" placeholder="Filled from the activities if left empty"></div>
+      </div>
+      <div class="field"><label>Activities</label><div id="edra-rows" class="dra-rows"></div>
+        <button class="btn" type="button" onclick="edraAdd()" style="font-size:11px;margin-top:6px;align-self:flex-start">+ Add activity</button></div>
+      <div class="field"><label for="edit-ach-${id}">Achievements</label><textarea id="edit-ach-${id}" rows="2" placeholder="Anything finished or signed off today">${escapeHtml(edClean(report.achievements,'None reported'))}</textarea></div>
+      <div class="field"><label for="edit-issues-${id}">Issues &amp; challenges</label><textarea id="edit-issues-${id}" rows="2" placeholder="Leave empty if there were no issues">${escapeHtml(edClean(report.issues,'No issues'))}</textarea></div>
+      <div class="field"><label for="edit-plan-${id}">Plan for next working day</label><textarea id="edit-plan-${id}" rows="2">${escapeHtml(edClean(report.next_plan,''))}</textarea></div>
       <div class="field">
-        <label>Report Photos</label>
+        <label>Report photos</label>
         <div class="photo-area" onclick="document.getElementById('edit-report-photo-input').click()" style="padding:14px">
           <input type="file" id="edit-report-photo-input" accept="image/*" multiple onchange="handleEditReportPhotos(event)" style="display:none">
           <div class="ico">&#128247;</div>
@@ -3371,34 +3405,44 @@ async function editReport(id){
         <div class="photo-grid" id="edit-report-photo-preview"></div>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn" onclick="loadTodayReports()" style="font-size:11px">Cancel</button>
-        <button class="btn primary" onclick="saveEditReport('${id}')" style="font-size:11px">✓ Save Changes</button>
+        <button class="btn" onclick="edraId=null;loadTodayReports()" style="font-size:11px">Cancel</button>
+        <button class="btn primary" id="edit-save-${id}" onclick="saveEditReport('${id}')" style="font-size:11px">✓ Save changes</button>
       </div>
     </div>`;
+  draFillSystems();
+  edraRender();
   renderEditReportPhotoPreview();
 }
 
 async function saveEditReport(id){
-  const report=allReportsCache.find(r=>String(r.id)===String(id));
+  const report=allReportsCache.find(r=>String(r.id)===String(id))||await fetchReportById(id,false);
   if(!canEditReport(report)){showToast('You do not have permission to update this report.','error');return;}
-  const content=document.getElementById('edit-content-'+id).value.trim();
-  const achievements=document.getElementById('edit-ach-'+id).value.trim();
-  const issues=document.getElementById('edit-issues-'+id).value.trim();
-  const nextPlan=document.getElementById('edit-plan-'+id).value.trim();
+  const items=edraItems();
+  if(!items.length){showToast('Add at least one activity.','error');return;}
+  if(items.some(x=>!x.act)){showToast('Each activity needs a description.','error');return;}
+  const date=document.getElementById('edit-date-'+id).value;
+  const isAdm=typeof isAdmin==='function'&&isAdmin();
+  if(!date||date>drToday()){showToast('Pick a valid report date (not in the future).','error');return;}
+  if(!isAdm&&date<drAddDays(drToday(),-7)&&date!==String(report.report_date||'').slice(0,10)){showToast('Only admins can move a report more than 7 days back.','error');return;}
+  const sysIn=document.getElementById('edit-sys-'+id).value.trim();
+  const sys=sysIn||[...new Set(items.map(x=>x.sys).filter(Boolean))].join(', ')||'General';
+  const data={report_date:date,system_worked:sys,content:draText(items),
+    achievements:document.getElementById('edit-ach-'+id).value.trim()||'None reported',
+    issues:document.getElementById('edit-issues-'+id).value.trim()||'No issues',
+    next_plan:document.getElementById('edit-plan-'+id).value.trim()||'Continue commissioning activities',
+    photos:editReportPhotos,items};
+  // created_at is not sent, so the upload time stays as it was
+  const btn=document.getElementById('edit-save-'+id);if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
-    await sbFetch('qas2_daily_reports?id=eq.'+id,'PATCH',{
-      content:content||'–',
-      achievements:achievements||'None reported',
-      issues:issues||'No issues',
-      next_plan:nextPlan||'Continue commissioning activities',
-      photos:editReportPhotos,
-      ...(Array.isArray(report&&report.items)&&report.items.length&&content!==String(report.content||'').trim()?{items:null}:{})
-      // created_at NOT included — timestamp preserved
-    });
+    if(drHasItems===false){delete data.items;}
+    try{await sbFetch('qas2_daily_reports?id=eq.'+id,'PATCH',data);}
+    catch(e){if(data.items&&/items/i.test(e.message)){delete data.items;drHasItems=false;await sbFetch('qas2_daily_reports?id=eq.'+id,'PATCH',data);}else throw e;}
     showToast('Report updated ✓');
+    edraId=null;
     invalidateReportsCache();
+    if(typeof invalidateReportDetailCache==='function')invalidateReportDetailCache(id);
     loadTodayReports(true);
-  }catch(e){showToast('Error: '+e.message);}
+  }catch(e){showToast('Error: '+e.message,'error');if(btn){btn.disabled=false;btn.textContent='✓ Save changes';}}
 }
 
 

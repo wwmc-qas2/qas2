@@ -210,6 +210,23 @@ img[src^="sbs:"]{opacity:0}
 .sm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .sm-log{max-height:180px;overflow:auto;font-size:11px;font-family:Consolas,Menlo,monospace;margin-top:10px}.sm-line{padding:2px 0;border-bottom:1px dashed #EEF1F5}.sm-line.ok{color:#15803D}.sm-line.bad{color:#B91C1C}
 .sm-bk{margin-top:10px;overflow-x:auto}.sm-t{width:100%;border-collapse:collapse;font-size:12px}.sm-t th{text-align:left;color:#6B7280;font-weight:600;padding:5px 8px;border-bottom:1px solid #E3E8EF;background:none}.sm-t td{padding:5px 8px;border-bottom:1px solid #F1F3F7}
+.um-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}.um-sub{font-size:12px;color:var(--muted,#6B7280)}
+.um-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.um-tools input{flex:1 1 220px;max-width:340px;padding:8px 10px;border:1px solid var(--border,#D6DCE5);border-radius:8px;font:inherit}
+.um-chips{display:flex;gap:6px;flex-wrap:wrap}.um-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border,#D6DCE5);background:var(--card,#fff);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+.um-chip i{width:8px;height:8px;border-radius:50%;background:var(--c,#888)}.um-chip b{font-weight:700}.um-chip.on{border-color:#1F3864;box-shadow:0 0 0 2px rgba(31,56,100,.15);font-weight:600}
+.um-table-wrap{overflow-x:auto;background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:12px}
+.um-table{width:100%;border-collapse:collapse;font-size:13px}.um-table th{background:none!important;color:#6B7280!important;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:10px 12px;border-bottom:1px solid var(--border,#E3E8EF)}
+.um-table td{padding:10px 12px;border-bottom:1px solid #F1F3F7;vertical-align:middle}.um-table tr:last-child td{border-bottom:0}
+.um-name{display:flex;align-items:center;gap:9px}.um-av{width:30px;height:30px;border-radius:9px;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.um-me{font-size:10px;background:#EEF3FB;color:#1F3864;border-radius:6px;padding:1px 6px;font-weight:700}.um-can{color:#4B5563;font-size:12px}
+.um-act{white-space:nowrap;text-align:right}.um-act .btn{margin-left:6px}.um-prot{font-size:11px;color:#9CA3AF;margin-left:8px}
+.um-perms{margin-top:16px}.um-perms summary{cursor:pointer;font-weight:700;color:#1F3864;margin-bottom:8px}
+.um-ptable{width:100%;border-collapse:collapse;font-size:12.5px}.um-ptable th{background:none!important;color:#374151;font-size:11.5px;text-align:center;padding:9px 10px;border-bottom:1px solid var(--border,#E3E8EF)}.um-ptable th:nth-child(-n+2){text-align:left;color:#6B7280!important}
+.um-ptable td{padding:7px 10px;border-bottom:1px solid #F4F6F9}.um-ptable tr.um-first td{border-top:1px solid #E3E8EF}.um-ptable td:first-child{font-weight:700;color:#1F3864;white-space:nowrap}
+.um-ptable small{display:block;color:#9CA3AF;font-size:10.5px}.um-y{text-align:center}.um-ok{color:#15803D;font-weight:800}.um-no{color:#CBD2DC}
+.um-note{font-size:11.5px;color:#6B7280;margin:8px 2px 0}
+@media (max-width:700px){.um-table thead{display:none}.um-table,.um-table tbody,.um-table tr,.um-table td{display:block;width:100%}.um-table tr{padding:10px 12px;border-bottom:1px solid #EEF1F5}.um-table td{border:0;padding:3px 0}
+ .um-table td[data-l]:not(:first-child)::before{content:attr(data-l)': ';color:#9CA3AF;font-size:11px}.um-act{text-align:left;padding-top:6px!important}.um-act .btn{margin:0 6px 0 0}}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -1021,9 +1038,13 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 
     <!-- MANAGE USERS -->
     <div class="view" id="view-users">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:16px;font-weight:700;color:#1F3864">Manage Users</div>
+      <div class="um-head">
+        <div><div style="font-size:16px;font-weight:700;color:#1F3864">Manage Users</div><div class="um-sub">Who can sign in, and what each person is allowed to do.</div></div>
         <button class="btn primary" onclick="showAddUser()">+ Add User</button>
+      </div>
+      <div class="um-tools">
+        <input id="um-q" type="search" placeholder="Search name or username…" oninput="umRender()" aria-label="Search users">
+        <div id="um-chips" class="um-chips" role="group" aria-label="Filter by role"></div>
       </div>
       <div id="users-list"><div class="loading"><div class="loading-spinner"></div><br>Loading...</div></div>
       <div id="sm-panel" class="sm-panel">
@@ -1269,9 +1290,9 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="field"><label for="u-name">Full Name</label><input id="u-name" placeholder="e.g. Ahmed Al-Rashidi"></div>
         <div class="field"><label for="u-user">Username</label><input id="u-user" placeholder="e.g. ahmed.rashidi"></div>
-        <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password"></div>
+        <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password" autocomplete="new-password"><small id="u-pass-hint" style="color:#6B7280"></small></div>
         <div class="field"><label for="u-role">Role</label>
-          <select id="u-role"><option value="user">User – Submit tickets only</option><option value="viewer">Viewer – Dashboard &amp; Documents download only</option><option value="supervisor">Supervisor – Edit &amp; close tickets</option><option value="admin">Admin – Full access</option></select>
+          <select id="u-role"><option value="admin">Admin – Full access to everything</option><option value="supervisor">Supervisor – Edit &amp; close tickets, reports, documents, O&amp;M</option><option value="user">User – Raise tickets &amp; submit daily reports</option><option value="viewer">Viewer – View dashboard, documents &amp; O&amp;M only</option></select>
         </div>
       </div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
@@ -1661,8 +1682,8 @@ function showApp(){
   setDisplay('tab-dash','');
   setDisplay('tab-new',isViewerRole?'none':'');
   setDisplay('tab-register',isViewerRole?'none':'');
-  setDisplay('tab-users',isViewerRole?'none':'');
-  setDisplay('tab-approvals',isViewerRole?'none':'');
+  setDisplay('tab-users',isAdmin?'':'none');
+  setDisplay('tab-pl-approvals',isAdmin?'':'none');
   setDisplay('tab-dailyreport-new',isViewerRole?'none':'');
   setDisplay('tab-dailyreport-register',isViewerRole?'none':'');
   setDisplay('tab-docs','');
@@ -2565,40 +2586,99 @@ function refreshDashboard(force=false){
 }
 
 // ── USERS ──
+const UM_ROLES=[['admin','Admin','#C00000','Full access to everything'],['supervisor','Supervisor','#375623','Edit & close tickets, daily reports, documents, O&M'],['user','User','#6B7280','Raise tickets & submit daily reports'],['viewer','Viewer','#555','View dashboard, documents & O&M only']];
+// what each role can do (admin = everything) — kept in one place so the table always matches the site
+const UM_PERMS=[
+  ['Dashboard','View dashboard & charts',['admin','supervisor','user','viewer']],
+  ['Punch List','Raise new tickets',['admin','supervisor','user']],
+  ['Punch List','See the register',['admin','supervisor','user']],
+  ['Punch List','Edit, close & reopen tickets',['admin','supervisor']],
+  ['Punch List','Approve / reject tickets (Approvals)',['admin']],
+  ['Punch List','Delete tickets',['admin']],
+  ['Daily Report','Submit daily reports',['admin','supervisor','user']],
+  ['Daily Report','Edit reports',['admin','supervisor'],'Supervisor: own reports · Admin: all'],
+  ['Daily Report','Delete reports',['admin']],
+  ['Daily Report','Print / PDF / Excel',['admin','supervisor','user']],
+  ['Documents','View & download',['admin','supervisor','user','viewer']],
+  ['Documents','Upload & edit',['admin','supervisor']],
+  ['Documents','Delete',['admin']],
+  ['O&M Library','View',['admin','supervisor','user','viewer']],
+  ['O&M Library','Add, edit, move & attach files',['admin','supervisor']],
+  ['O&M Library','Delete',['admin']],
+  ['Admin','Manage users & roles',['admin']],
+  ['Admin','File storage & backups',['admin']]];
+let umUsers=[],umRole='';
 async function loadUsers(){
   try{smInit();}catch(e){}
   try{requireRole('admin','Only admins can access user management.');}catch(e){return;}
-  document.getElementById('users-list').innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
-  const users=await sbFetch('qas2_users?select=*&order=created_at.asc');
-  const roleColors={admin:'#C00000',supervisor:'#375623',viewer:'#555',user:'#888'};
-  const roleLabels={admin:'ADMIN',supervisor:'SUPERVISOR',viewer:'VIEWER',user:'USER'};
-  document.getElementById('users-list').innerHTML=users.map(u=>`
-    <div class="user-card">
-      <div><div class="uname">${u.name} <span class="role-badge" style="background:${roleColors[u.role]||'#888'};display:inline-block">${roleLabels[u.role]||u.role}</span></div><div class="urole">@${u.username}</div></div>
-      <div style="display:flex;gap:6px">
-        <button class="btn sm" onclick="editUser('${u.id}','${u.name}','${u.username}','${u.role}')">Edit</button>
-        ${u.username!=='admin'?`<button class="btn sm danger" onclick="deleteUser('${u.id}','${u.name}')">Delete</button>`:'<span style="font-size:11px;color:#aaa">Protected</span>'}
-      </div>
-    </div>`).join('');
+  const box=document.getElementById('users-list');
+  if(!umUsers.length)box.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
+  try{umUsers=await sbFetch('qas2_users?select=id,name,username,role,created_at&order=created_at.asc')||[];}
+  catch(e){box.innerHTML='<div class="empty">Error loading users: '+escapeHtml(e.message)+'</div>';return;}
+  umRender();
+}
+function umSetRole(r){umRole=umRole===r?'':r;umRender();}
+function umRender(){
+  const box=document.getElementById('users-list');if(!box)return;
+  const q=(document.getElementById('um-q')?.value||'').trim().toLowerCase();
+  const count=r=>umUsers.filter(u=>u.role===r).length;
+  const chips=document.getElementById('um-chips');
+  if(chips)chips.innerHTML=`<button type="button" class="um-chip ${umRole?'':'on'}" onclick="umSetRole('')">All <b>${umUsers.length}</b></button>`+
+    UM_ROLES.map(([k,l,c])=>`<button type="button" class="um-chip ${umRole===k?'on':''}" style="--c:${c}" onclick="umSetRole('${k}')"><i></i>${l} <b>${count(k)}</b></button>`).join('');
+  const list=umUsers.filter(u=>(!umRole||u.role===umRole)&&(!q||String(u.name||'').toLowerCase().includes(q)||String(u.username||'').toLowerCase().includes(q)));
+  const admins=count('admin');
+  const R=Object.fromEntries(UM_ROLES.map(x=>[x[0],x]));
+  box.innerHTML=(list.length?`<div class="um-table-wrap"><table class="um-table"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Can do</th><th>Added</th><th></th></tr></thead><tbody>${list.map(u=>{
+      const r=R[u.role]||[u.role,u.role,'#888',''];const me=currentUser&&String(currentUser.id)===String(u.id);
+      const lastAdmin=u.role==='admin'&&admins<=1;
+      const noDel=u.username==='admin'||me||lastAdmin;
+      const why=u.username==='admin'?'Main admin account':me?'You are signed in as this user':lastAdmin?'At least one admin must remain':'';
+      return `<tr>
+        <td data-l="Name"><div class="um-name"><span class="um-av" style="background:${r[2]}">${escapeHtml(String(u.name||'?').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase())}</span><b>${escapeHtml(u.name||'')}</b>${me?'<span class="um-me">You</span>':''}</div></td>
+        <td data-l="Username"><code>@${escapeHtml(u.username||'')}</code></td>
+        <td data-l="Role"><span class="role-badge" style="background:${r[2]};display:inline-block">${escapeHtml(String(r[1]).toUpperCase())}</span></td>
+        <td data-l="Can do" class="um-can">${escapeHtml(r[3])}</td>
+        <td data-l="Added">${u.created_at?escapeHtml(formatDateTime(u.created_at).split(',')[0]):'—'}</td>
+        <td class="um-act"><button class="btn sm" type="button" onclick="editUser('${escapeHtml(String(u.id))}')">Edit</button>${noDel?`<span class="um-prot" title="${escapeHtml(why)}">🔒 Protected</span>`:`<button class="btn sm danger" type="button" onclick="deleteUser('${escapeHtml(String(u.id))}')">Delete</button>`}</td></tr>`;}).join('')}</tbody></table></div>`
+    :'<div class="empty">No users match.</div>')+umPermTable();
+}
+function umPermTable(){
+  const roles=UM_ROLES;let last='';
+  return `<details class="um-perms" open><summary>What each role can do</summary><div class="um-table-wrap"><table class="um-ptable"><thead><tr><th>Area</th><th>Permission</th>${roles.map(([k,l,c])=>`<th style="color:${c}">${l}</th>`).join('')}</tr></thead><tbody>${UM_PERMS.map(([a,p,who,note])=>{const first=a!==last;last=a;
+      return `<tr class="${first?'um-first':''}"><td>${first?escapeHtml(a):''}</td><td>${escapeHtml(p)}${note?`<small>${escapeHtml(note)}</small>`:''}</td>${roles.map(([k])=>`<td class="um-y">${who.includes(k)?'<span class="um-ok" aria-label="yes">✓</span>':'<span class="um-no" aria-label="no">–</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>
+    <p class="um-note">Admins always have every permission and can open every tab.</p></details>`;
 }
 
 function showAddUser(){
-  try{requireRole('admin','Only admins can add users.');}catch(e){return;}editingUserId=null;document.getElementById('user-modal-title').textContent='Add New User';['u-name','u-user','u-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('u-role').value='user';document.getElementById('user-modal-bg').classList.add('show');}
-function editUser(id,name,username,role){
-  try{requireRole('admin','Only admins can edit users.');}catch(e){return;}editingUserId=id;document.getElementById('user-modal-title').textContent='Edit User';document.getElementById('u-name').value=name;document.getElementById('u-user').value=username;document.getElementById('u-pass').value='';document.getElementById('u-role').value=role;document.getElementById('user-modal-bg').classList.add('show');}
+  try{requireRole('admin','Only admins can add users.');}catch(e){return;}editingUserId=null;document.getElementById('user-modal-title').textContent='Add New User';['u-name','u-user','u-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('u-role').value='user';const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='';document.getElementById('user-modal-bg').classList.add('show');}
+function editUser(id){
+  try{requireRole('admin','Only admins can edit users.');}catch(e){return;}
+  const u=umUsers.find(x=>String(x.id)===String(id));if(!u)return;
+  editingUserId=id;document.getElementById('user-modal-title').textContent='Edit User — '+(u.name||'');
+  document.getElementById('u-name').value=u.name||'';document.getElementById('u-user').value=u.username||'';document.getElementById('u-pass').value='';document.getElementById('u-role').value=u.role||'user';
+  const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='Leave empty to keep the current password.';
+  document.getElementById('user-modal-bg').classList.add('show');}
 async function saveUser(){
   try{requireRole('admin','Only admins can save user changes.');}catch(e){return;}
   const name=document.getElementById('u-name').value.trim(),username=document.getElementById('u-user').value.trim(),pass=document.getElementById('u-pass').value,role=document.getElementById('u-role').value;
-  if(!name||!username){alert('Name and username required.');return;}
-  if(!editingUserId&&!pass){alert('Password required.');return;}
+  if(!name||!username){showToast('Name and username are required.','error');return;}
+  if(!editingUserId&&!pass){showToast('Password is required for a new user.','error');return;}
+  if(umUsers.some(u=>String(u.username).toLowerCase()===username.toLowerCase()&&String(u.id)!==String(editingUserId))){showToast('That username is already used.','error');return;}
+  const before=umUsers.find(u=>String(u.id)===String(editingUserId));
+  if(before&&before.role==='admin'&&role!=='admin'&&umUsers.filter(u=>u.role==='admin').length<=1){showToast('At least one admin must remain.','error');return;}
+  if(before&&currentUser&&String(before.id)===String(currentUser.id)&&role!=='admin'&&!confirm('You are removing your own admin rights. You will lose access to this page. Continue?'))return;
   try{
     if(editingUserId){const update={name,username,role};if(pass)update.password=pass;await sbFetch('qas2_users?id=eq.'+editingUserId,'PATCH',update);showToast('User updated');}
     else{await sbFetch('qas2_users','POST',{name,username,password:pass,role});showToast('User added: '+name);}
     closeUserModal();loadUsers();
   }catch(e){alert('Error: '+e.message);}
 }
-async function deleteUser(id,name){
-  try{requireRole('admin','Only admins can delete users.');}catch(e){return;}if(!confirm('Delete user '+name+'?'))return;await sbFetch('qas2_users?id=eq.'+id,'DELETE');showToast('User deleted');loadUsers();}
+async function deleteUser(id){
+  try{requireRole('admin','Only admins can delete users.');}catch(e){return;}
+  const u=umUsers.find(x=>String(x.id)===String(id));if(!u)return;
+  if(u.username==='admin'||(currentUser&&String(currentUser.id)===String(u.id))||(u.role==='admin'&&umUsers.filter(x=>x.role==='admin').length<=1)){showToast('This account is protected.','error');return;}
+  if(!confirm('Delete user '+(u.name||u.username)+'?\n\nThey will not be able to sign in. Their tickets and reports stay.'))return;
+  try{await sbFetch('qas2_users?id=eq.'+id,'DELETE');showToast('User deleted');loadUsers();}catch(e){showToast('Error: '+e.message,'error');}}
 function closeUserModal(){document.getElementById('user-modal-bg').classList.remove('show');}
 
 // ── APPROVALS ──

@@ -202,6 +202,7 @@ tbody tr{transition:var(--transition)}
 /* ── MODALS ── */
 .modal-bg{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .modal-bg.show{display:flex;animation:fadeIn .18s ease}
+.lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -1658,13 +1659,15 @@ function restoreAppViewState(){
   return null;
 }
 let appWarmupStarted=false;
+// the list never needs the file itself (file_data) — it is fetched only when a document is opened, downloaded or edited
+const DOC_LIST_FIELDS='id,title,doc_no,system_name,category,revision,file_name,file_type,uploaded_by,upload_date,created_at';
 function prefetchDocsCache(force=false){
   const hasFresh=Array.isArray(allDocs) && allDocs.length && (Date.now()-docsLoadedAt)<DOCS_CACHE_MS;
   if(!force && hasFresh) return Promise.resolve(allDocs);
   if(docsLoadingPromise && !force) return docsLoadingPromise;
   docsLoadingPromise=(async()=>{
     try{
-      allDocs=await sbFetch('qas2_documents?select=*&order=upload_date.desc,created_at.desc')||[];
+      allDocs=await sbFetch('qas2_documents?select='+DOC_LIST_FIELDS+'&order=upload_date.desc,created_at.desc')||[];
       docsLoadedAt=Date.now();
       return allDocs;
     }finally{
@@ -1681,6 +1684,7 @@ function warmCoreCaches(){
     requestIdleTask(()=>{ fetchReportsByDate('',false).catch(()=>{}); },1200);
   }
   requestIdleTask(()=>{ prefetchDocsCache(false).catch(()=>{}); },1600);
+  requestIdleTask(()=>{ try{ if(!omNodes.length) loadOM(false); }catch(e){} },2400);
 }
 
 function restoreSessionIfAny(){
@@ -1696,9 +1700,9 @@ if(document.readyState === 'loading'){
   restoreSessionIfAny();
 }
 
-const TICKETS_CACHE_MS=15000;
-const REPORTS_CACHE_MS=15000;
-const DASHBOARD_CACHE_MS=15000;
+const TICKETS_CACHE_MS=60000;
+const REPORTS_CACHE_MS=60000;
+const DASHBOARD_CACHE_MS=60000;
 
 function invalidateTicketsCache(){
   ticketsCache=[];
@@ -1825,7 +1829,9 @@ async function getExistingMaxSequence(endpoint,field){
   }
 }
 
-async function peekNextCounter(counterKey,endpoint,field){
+async function peekNextCounter(counterKey,endpoint,field,quick=false){
+  // quick = preview only (one small request); the real number is reserved with a full check on submit
+  if(quick){try{const rows=await sbFetch(`qas2_counters?month_key=eq.${counterKey}&select=counter`)||[];if(rows.length)return Number(rows[0].counter||0)+1;}catch(e){}}
   const existingMax=await getExistingMaxSequence(endpoint,field);
   try{
     const rows=await sbFetch(`qas2_counters?month_key=eq.${counterKey}&select=counter`)||[];
@@ -1869,7 +1875,7 @@ function formatMasterReportRef(seq,dateStr){
 
 // ── TICKET NUMBERING ──
 async function getNextNo(refDate=new Date()){
-  const next=await peekNextCounter('PL_GLOBAL','qas2_tickets','no');
+  const next=await peekNextCounter('PL_GLOBAL','qas2_tickets','no',true);
   return formatTicketRef(next,refDate);
 }
 
@@ -2084,17 +2090,32 @@ async function registerTicket(){
 }
 
 // ── LOAD TICKETS ──
+function dataSig(rows){try{return (rows||[]).length+':'+JSON.stringify(rows).length+':'+JSON.stringify(rows);}catch(e){return String(Math.random());}}
+let regRenderedSig='';
 async function loadTickets(force=false){
   const bodyEl=document.getElementById('register-body');
   if(!bodyEl)return;
-  const hasFreshCache=Array.isArray(ticketsCache) && ticketsCache.length && (Date.now()-ticketsLoadedAt)<TICKETS_CACHE_MS;
-  if(!hasFreshCache || force){
+  const hasCache=Array.isArray(ticketsCache) && ticketsCache.length;
+  const hasFreshCache=hasCache && (Date.now()-ticketsLoadedAt)<TICKETS_CACHE_MS;
+  if(!force && hasCache && !hasFreshCache){
+    // stale: show what we have now, then refresh in the background
+    const before=dataSig(ticketsCache);
+    loadTicketsFrom(ticketsCache);
+    fetchAllTickets(true).then(rows=>{if(dataSig(rows)!==before&&document.getElementById('view-register')?.classList.contains('active'))loadTicketsFrom(rows);}).catch(()=>{});
+    return;
+  }
+  if(!hasCache || force){
     bodyEl.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
   }
+  try{loadTicketsFrom(await fetchAllTickets(force)||[]);}
+  catch(e){bodyEl.innerHTML='<div class="empty">Error loading tickets: '+e.message+'</div>';}
+}
+function loadTicketsFrom(rows){
+  const bodyEl=document.getElementById('register-body');
   const fs=document.getElementById('filter-status')?.value||'';
   const fp=document.getElementById('filter-priority')?.value||'';
   try{
-    const baseTickets=[...(await fetchAllTickets(force)||[])];
+    const baseTickets=[...(rows||[])];
     let tickets=baseTickets;
     if(fp) tickets=tickets.filter(t=>String(t.priority||'')===fp);
     if(fs==='OPEN') tickets=tickets.filter(t=>t.status==='OPEN');
@@ -2170,8 +2191,7 @@ function renderRegister(tickets){
     </div>
     <div style="font-size:10px;color:#6B7280">Tip: selected tickets export to Excel; Master Report includes open selected tickets only.</div>
   </div>`:'';
-  body.innerHTML=selectBar+`<table><thead><tr><th style="width:32px"></th><th>Ticket No.</th><th>System / Description</th><th>Priority</th><th>Date Raised</th><th>Deadline</th><th>Status</th><th>Photos</th><th>Actions</th></tr></thead><tbody>`+
-    sorted.map(t=>{
+  const rowHtml=t=>{
       const od=isOverdue(t);
       const statusTxt=t.status==='PRE-COMMISSIONING'?'PRE-COMMISSIONING':t.status; const statusCls=t.status==='OPEN'?'open':(t.status==='CLOSED'?'closed':'overdue');
       const sb=od?'<span class="badge overdue">OVERDUE</span>':`<span class="badge ${statusCls}">${statusTxt}</span>`;
@@ -2190,7 +2210,20 @@ function renderRegister(tickets){
           <button class="btn sm" onclick="printTicket('${t.id}')">PDF</button>
           <button class="btn sm whatsapp" onclick="sendWhatsApp(${JSON.stringify(t).replace(/"/g,'&quot;')})">WA</button>
           ${eb}${cb}${db}</div></td></tr>`;
-    }).join('')+'</tbody></table>';
+    };
+  const FIRST=120,CHUNK=250;
+  const token=(renderRegister._tok=(renderRegister._tok||0)+1);
+  body.innerHTML=selectBar+`<table><thead><tr><th style="width:32px"></th><th>Ticket No.</th><th>System / Description</th><th>Priority</th><th>Date Raised</th><th>Deadline</th><th>Status</th><th>Photos</th><th>Actions</th></tr></thead><tbody id="register-tbody">`+
+    sorted.slice(0,FIRST).map(rowHtml).join('')+'</tbody></table>';
+  let i=FIRST;
+  if(i<sorted.length)body.insertAdjacentHTML('beforeend','<div id="register-more" class="lazy-more">Loading more tickets…</div>');
+  const more=()=>{if(token!==renderRegister._tok||i>=sorted.length)return;const tb=document.getElementById('register-tbody');if(!tb)return;
+    const allChk=document.getElementById('chk-tickets-all')?.checked;
+    tb.insertAdjacentHTML('beforeend',sorted.slice(i,i+CHUNK).map(rowHtml).join(''));
+    if(allChk)tb.querySelectorAll('.ticket-chk').forEach(c=>c.checked=true);
+    i+=CHUNK;const s=document.getElementById('register-more');
+    if(i<sorted.length){s.textContent='Loading more tickets… ('+i+' of '+sorted.length+')';lazyMore(s,more);}else if(s)s.remove();};
+  if(i<sorted.length)lazyMore(document.getElementById('register-more'),more);
 }
 
 function toggleAllTickets(checked){
@@ -2198,7 +2231,10 @@ function toggleAllTickets(checked){
 }
 
 function getSelectedRegisterTicketIds(){
-  return [...document.querySelectorAll('.ticket-chk:checked')].map(cb=>cb.dataset.id).filter(Boolean);
+  // rows further down may not be drawn yet: they follow the "select all" box
+  const seen=new Map([...document.querySelectorAll('.ticket-chk')].map(c=>[c.dataset.id,c.checked]));
+  const all=document.getElementById('chk-tickets-all')?.checked;
+  return (allTickets||[]).map(t=>String(t.id)).filter(id=>seen.has(id)?seen.get(id):!!all);
 }
 
 async function closeTicket(id){
@@ -2343,7 +2379,13 @@ async function renderDashboard(force=false){
   if(!document.getElementById('view-dashboard')?.classList.contains('active'))return;
   try{
     const hasFreshCache=Array.isArray(dashboardCacheTickets) && dashboardCacheTickets.length && (Date.now()-dashboardLoadedAt)<DASHBOARD_CACHE_MS;
-    const all=hasFreshCache && !force ? dashboardCacheTickets : [...(await fetchAllTickets(force)||[])];
+    const cached=!force&&Array.isArray(ticketsCache)&&ticketsCache.length?ticketsCache:null;
+    if(!hasFreshCache&&!force&&cached&&!renderDashboard._bg){
+      // draw now from the tickets we already have, then refresh in the background
+      const before=dataSig(cached);renderDashboard._bg=true;
+      fetchAllTickets(true).then(rows=>{renderDashboard._bg=false;if(dataSig(rows)!==before){dashboardCacheTickets=null;renderDashboard();}}).catch(()=>{renderDashboard._bg=false;});
+    }
+    const all=hasFreshCache && !force ? dashboardCacheTickets : (cached&&!force?[...cached]:[...(await fetchAllTickets(force)||[])]);
     dashboardCacheTickets=all;dashboardLoadedAt=Date.now();
     dbFillFilters(all);
     const t=dbApplyFilters(all);
@@ -3053,6 +3095,12 @@ function debounceByKey(key,fn,wait=180){
 function debouncedLoadTickets(force=false){debounceByKey('tickets',()=>loadTickets(force),180);}
 function debouncedLoadTodayReports(force=false){debounceByKey('reports',()=>loadTodayReports(force),180);}
 function debouncedFilterDocs(){debounceByKey('docs',()=>filterDocs(),160);}
+// draws the next batch when a sentinel element scrolls into view (falls back to idle time)
+function lazyMore(sentinel,next){
+  if(!sentinel)return;
+  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();next();}},{rootMargin:'900px 0px'});io.observe(sentinel);}
+  else requestIdleTask(next,200);
+}
 function scheduleRender(fn){
   if(window.requestAnimationFrame){requestAnimationFrame(fn);}else{setTimeout(fn,0);}
 }
@@ -3061,7 +3109,7 @@ let pendingDocFileType='';
 let pendingDocFileReady=false;
 let docsLoadedAt=0;
 let docsLoadingPromise=null;
-const DOCS_CACHE_MS=20000;
+const DOCS_CACHE_MS=120000;
 const DATA_URL_WARNING_MB=6;
 
 function validateDailyReportForm(){
@@ -3088,13 +3136,11 @@ async function initDailyReport(mode){
       currentUser.role==='admin'?'SCE – Senior Commissioning Engineer':
       currentUser.role==='supervisor'?'Commissioning Engineer':'Field Operator';
   }
-  try{
-    const next=await peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no');
-    document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);
-  }catch(e){
-    document.getElementById('dr-rep-no').value=formatDailyReportRef(1,d);
-  }
   const isRegister=getDRViewModeState()==='register';
+  // report number preview loads in the background so the page shows at once
+  if(!isRegister)peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no',true)
+    .then(next=>{document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);})
+    .catch(()=>{document.getElementById('dr-rep-no').value=formatDailyReportRef(1,d);});
   const entryPane=document.getElementById('dr-entry-pane');
   const registerPane=document.getElementById('dr-register-pane');
   const headerNew=document.getElementById('dr-header-new');
@@ -3235,7 +3281,8 @@ function formatDateTime(v){
   if(!v) return '–';
   const d=new Date(v);
   if(Number.isNaN(d.getTime())) return v;
-  return d.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+  formatDateTime._f=formatDateTime._f||new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+  return formatDateTime._f.format(d);
 }
 
 function getReportFilterDate(){
@@ -3291,12 +3338,17 @@ function renderReportsList(reports, selectedDate){
           <div class="drc-call info"><span class="ic" aria-hidden="true">➜</span><div><b>Plan for next working day</b>${escapeHtml(r.next_plan||'–')}</div></div>
         </div>
       </div>`;
-  list.innerHTML=top + firstChunk.map(cardHtml).join('') + (rest.length?'<div id="dr-report-rest"></div>':'');
+  list.innerHTML=top + firstChunk.map(cardHtml).join('') + (rest.length?'<div id="dr-report-rest"></div><div id="dr-report-more" class="lazy-more">Loading more reports…</div>':'');
+  if(!drSelAll)list.querySelectorAll('.report-chk').forEach(c=>c.checked=false);
+  const chkAll=document.getElementById('chk-all');if(chkAll)chkAll.checked=drSelAll;
   if(rest.length){
-    requestIdleTask(()=>{
-      const holder=document.getElementById('dr-report-rest');
-      if(holder) holder.innerHTML=rest.map(cardHtml).join('');
-    },120);
+    const tok=(renderReportsList._tok=(renderReportsList._tok||0)+1);let i=0;
+    const next=()=>{if(tok!==renderReportsList._tok)return;const holder=document.getElementById('dr-report-rest');if(!holder)return;
+      holder.insertAdjacentHTML('beforeend',rest.slice(i,i+25).map(cardHtml).join(''));
+      if(!drSelAll)holder.querySelectorAll('.report-chk').forEach(c=>c.checked=false);
+      i+=25;const s=document.getElementById('dr-report-more');
+      if(i<rest.length){s.textContent='Loading more reports… ('+(12+i)+' of '+reports.length+')';lazyMore(s,next);}else if(s)s.remove();};
+    lazyMore(document.getElementById('dr-report-more'),next);
   }
 }
 function applyReportFiltersAndRender(sourceReports, selectedDate){
@@ -3331,10 +3383,14 @@ async function loadTodayReports(force=false){
   const list=document.getElementById('dr-reports-list');
   if(!list)return;
   const cacheKey=selectedDate||'ALL';
-  const hasFreshCache=Array.isArray(allReportsCache) && reportsCacheDate===cacheKey && allReportsCache.length && (Date.now()-reportsLoadedAt)<REPORTS_CACHE_MS;
-  if(hasFreshCache && !force){
+  const hasCache=Array.isArray(allReportsCache) && reportsCacheDate===cacheKey && allReportsCache.length;
+  if(hasCache && !force){
+    const before=dataSig(allReportsCache);
     applyReportFiltersAndRender(allReportsCache, selectedDate);
-    requestIdleTask(()=>fetchReportsByDate(selectedDate,true).then(rows=>applyReportFiltersAndRender(rows, selectedDate)).catch(()=>{}),80);
+    if((Date.now()-reportsLoadedAt)>=REPORTS_CACHE_MS)
+      requestIdleTask(()=>fetchReportsByDate(selectedDate,true).then(rows=>{
+        // don't redraw while someone is editing a report, or when nothing changed
+        if(edraId||dataSig(rows)===before)return;applyReportFiltersAndRender(rows, selectedDate);}).catch(()=>{}),80);
     return;
   }
   list.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading recent reports...</div>';
@@ -3347,7 +3403,9 @@ async function loadTodayReports(force=false){
   }
 }
 
+let drSelAll=true;
 function toggleAllReports(checked){
+  drSelAll=!!checked;
   document.querySelectorAll('.report-chk').forEach(cb=>cb.checked=checked);
 }
 
@@ -3478,13 +3536,11 @@ async function compileMasterReport(){
   const allReports=await fetchReportsByDate(selectedDate,false)||[];
   if(!allReports.length){alert('No reports found for the selected date.');return;}
   // Get selected report IDs from checkboxes
-  const checkedBoxes=[...document.querySelectorAll('.report-chk:checked')];
-  const selectedIds=checkedBoxes.map(cb=>cb.dataset.id);
+  const selectedIds=drTickedIds();
   const reports=selectedIds.length?allReports.filter(r=>selectedIds.includes(String(r.id))):allReports;
   if(!reports.length){alert('Please select at least one report.');return;}
   const allPunches=(await fetchAllTickets(false)||[]).filter(t=>t.status==='OPEN').map(({no,id,system_name,priority,description})=>({no,id,system_name,priority,description}));
-  const checkedTickets=[...document.querySelectorAll('.ticket-chk:checked')];
-  const selectedTicketIds=checkedTickets.map(cb=>cb.dataset.id);
+  const selectedTicketIds=document.querySelector('.ticket-chk')?getSelectedRegisterTicketIds():[];
   const punches=selectedTicketIds.length?allPunches.filter(p=>selectedTicketIds.includes(String(p.id))):allPunches;
   const priA=punches.filter(p=>p.priority==='A').length;
   const priB=punches.filter(p=>p.priority==='B').length;
@@ -3957,10 +4013,12 @@ async function loadDocs(force=false){
   syncDocsUI();
   const list=document.getElementById('doc-list');
   const stats=document.getElementById('doc-stats');
-  const hasFreshCache=Array.isArray(allDocs) && allDocs.length && (Date.now()-docsLoadedAt)<DOCS_CACHE_MS;
-  if(!force && hasFreshCache){
+  const hasCache=Array.isArray(allDocs) && allDocs.length;
+  const hasFreshCache=hasCache && (Date.now()-docsLoadedAt)<DOCS_CACHE_MS;
+  if(!force && hasCache){
     renderDocStats(allDocs);
     scheduleRender(()=>renderDocs(allDocs));
+    if(!hasFreshCache){const before=dataSig(allDocs);prefetchDocsCache(true).then(rows=>{if(dataSig(rows)!==before&&document.getElementById('view-docs')?.classList.contains('active')){renderDocStats(rows);renderDocs(rows);}}).catch(()=>{});}
     return allDocs;
   }
   if(docsLoadingPromise && !force)return docsLoadingPromise;
@@ -3968,7 +4026,7 @@ async function loadDocs(force=false){
   if(stats)stats.innerHTML='';
   docsLoadingPromise=(async()=>{
     try{
-      allDocs=await sbFetch('qas2_documents?select=*&order=upload_date.desc,created_at.desc')||[];
+      allDocs=await sbFetch('qas2_documents?select='+DOC_LIST_FIELDS+'&order=upload_date.desc,created_at.desc')||[];
       docsLoadedAt=Date.now();
     }catch(e){
       allDocs=[];
@@ -4213,6 +4271,15 @@ function omSystemOf(n){let x=n;while(x&&x.node_type!=='system'&&x.parent_id)x=om
 async function loadOM(force){
   if(omLoading)return omLoading;
   if(!force&&omNodes.length&&Date.now()-omLoadedAt<60000){omSetView(omView);return;}
+  if(!force&&omNodes.length&&!omLoading){
+    // show the library we already have, refresh it quietly (skip the redraw while a form is open)
+    omSetView(omView);const before=dataSig(omNodes);
+    omLoading=(async()=>{try{const [nodes,fields]=await Promise.all([sbFetch('qas2_om_nodes?select='+OM_COLS+'&order=sort_order.asc,id.asc&limit=10000'),sbFetch('qas2_om_fields?select=*&order=sort_order.asc,id.asc'),omLoadFiles()]);
+      const nn=(nodes||[]).map(n=>({...n,extra:n.extra||{}}));omLoadedAt=Date.now();
+      if(dataSig(nn)!==before){omNodes=nn;omFields=fields||[];omIndex();omFillAreas();if(!document.querySelector('.modal-bg.show'))omSetView(omView);}
+    }catch(e){}finally{omLoading=null;}})();
+    return;
+  }
   omLoading=(async()=>{
     try{
       const [nodes,fields]=await Promise.all([
@@ -4979,7 +5046,7 @@ async function drDateChanged(){
   if(di.value>drToday())di.value=drToday();
   const d=new Date(di.value+'T00:00:00');
   const disp=document.getElementById('dr-date-display');if(disp)disp.textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})+(di.value!==drToday()?' (late report)':'');
-  try{const next=await peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no');document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);}catch(e){}
+  peekNextCounter('DAR_GLOBAL','qas2_daily_reports','report_no',true).then(next=>{document.getElementById('dr-rep-no').value=formatDailyReportRef(next,d);}).catch(()=>{});
   drpPreview();
   drSaveDraft();
 }
@@ -5316,7 +5383,7 @@ const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities
 let drbIds=null,drCurrentList=[];
 const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly'],['plantmap','Plant Map','Plant schematic, day score, today vs yesterday']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
-function drTickedIds(){const un=new Set([...document.querySelectorAll('.report-chk:not(:checked)')].map(c=>c.dataset.id));return drShownIds().filter(id=>!un.has(id));}
+function drTickedIds(){const seen=new Map([...document.querySelectorAll('.report-chk')].map(c=>[c.dataset.id,c.checked]));return drShownIds().filter(id=>seen.has(id)?seen.get(id):drSelAll);}
 function drOpenBuilder(ids){
   drbIds=ids||null;
   const checked=drTickedIds();

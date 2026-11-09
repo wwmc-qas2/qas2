@@ -232,6 +232,10 @@ img[src^="sbs:"]{opacity:0}
 .al-table td{font-size:12px;vertical-align:top}.al-role{display:block;color:#9CA3AF;font-size:10.5px;text-transform:capitalize}
 .al-act{display:inline-block;font-weight:700;font-size:11px;border-radius:6px;padding:2px 8px;background:#EEF3FB;color:#1F3864;white-space:nowrap}.al-act.ok{background:#ECFDF3;color:#15803D}.al-act.bad{background:#FEF2F2;color:#B91C1C}
 .al-det{max-width:360px}.al-kv{display:inline-block;margin:0 8px 2px 0;color:#374151}.al-kv i{font-style:normal;color:#9CA3AF}
+.pw-top{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:7px;padding:3px 7px;cursor:pointer;font-size:13px;margin-left:4px}.pw-top:hover{background:rgba(255,255,255,.12)}
+.pw-msg{font-size:12.5px;color:#374151;margin:0 0 12px;line-height:1.5}.pw-msg:empty{display:none}
+.pw-rules{list-style:none;margin:0;padding:0;font-size:12px;color:#6B7280;display:grid;gap:3px}.pw-rules li.ok{color:#15803D;font-weight:600}
+.pw-show{display:flex;align-items:center;gap:6px;font-size:12px;color:#4B5563;font-weight:400;cursor:pointer}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -766,6 +770,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     <div class="topbar-right">
       <span class="role-badge" id="role-badge" style="display:none;background:#C00000"></span>
       <span class="topbar-user" id="topbar-username"></span>
+      <button type="button" class="pw-top" onclick="pwOpen(false)" title="Change my password" aria-label="Change my password">🔑</button>
       <div id="pl-approval-bell" style="display:none;position:relative;cursor:pointer" onclick="switchTab('approvals')">
         <span style="font-size:18px">&#128276;</span>
         <span id="pl-approval-count" style="position:absolute;top:-4px;right:-6px;background:#C00000;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;display:none">0</span>
@@ -1299,6 +1304,25 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 </div>
 
 <!-- ADD USER MODAL -->
+<div class="modal-bg" id="pw-modal-bg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head"><h3 id="pw-title">Change password</h3><button id="pw-x" onclick="pwClose()" aria-label="Close">&times;</button></div>
+    <div class="modal-body">
+      <p id="pw-msg" class="pw-msg"></p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="field" id="pw-cur-wrap"><label for="pw-cur">Current password</label><input type="password" id="pw-cur" autocomplete="current-password"></div>
+        <div class="field"><label for="pw-new">New password</label><input type="password" id="pw-new" autocomplete="new-password" oninput="pwCheck()"></div>
+        <div class="field"><label for="pw-new2">Repeat new password</label><input type="password" id="pw-new2" autocomplete="new-password" oninput="pwCheck()"></div>
+        <ul class="pw-rules" id="pw-rules"></ul>
+        <label class="pw-show"><input type="checkbox" onchange="['pw-cur','pw-new','pw-new2'].forEach(i=>document.getElementById(i).type=this.checked?'text':'password')"> Show passwords</label>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+        <button class="btn" id="pw-cancel" onclick="pwClose()">Cancel</button>
+        <button class="btn primary" id="pw-save" onclick="pwSave()">Save new password</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal-bg" id="user-modal-bg">
   <div class="modal" style="max-width:420px">
     <div class="modal-head"><h3 id="user-modal-title">Add New User</h3><button onclick="closeUserModal()">&times;</button></div>
@@ -1306,7 +1330,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="field"><label for="u-name">Full Name</label><input id="u-name" placeholder="e.g. Ahmed Al-Rashidi"></div>
         <div class="field"><label for="u-user">Username</label><input id="u-user" placeholder="e.g. ahmed.rashidi"></div>
-        <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password" autocomplete="new-password"><small id="u-pass-hint" style="color:#6B7280"></small></div>
+        <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password" autocomplete="new-password"><small id="u-pass-hint" style="color:#6B7280"></small><label class="pw-show" style="margin-top:6px"><input type="checkbox" id="u-mustchange" checked> Ask the user to choose their own password at next sign-in</label></div>
         <div class="field"><label for="u-role">Role</label>
           <select id="u-role"><option value="admin">Admin – Full access to everything</option><option value="supervisor">Supervisor – Everything except managing users &amp; deleting</option><option value="user">User – Raise tickets &amp; submit daily reports</option><option value="viewer">Viewer – View dashboard, documents &amp; O&amp;M only</option></select>
         </div>
@@ -1573,7 +1597,8 @@ function auditFromFetch(path,method,body,result){
     if(!label&&id)label=auditLabelCached(table,id);
     if(!label&&(table==='qas2_ticket_updates'||table==='qas2_photos')){const b=Array.isArray(body)?body[0]:body;if(b&&b.ticket_id)label=auditLabelCached('qas2_tickets',b.ticket_id)||('ticket '+b.ticket_id);}
     if(table==='qas2_approvals'&&Array.isArray(result)&&result[0])label=result[0].ticket_no||result[0].title||label;
-    const action=auditAction(table,method,body);if(/moved to Storage/.test(action))return;   // the file move itself is not a user change
+    let action=auditAction(table,method,body);
+    if(table==='qas2_users'&&method==='PATCH'&&currentUser&&String(id)===String(currentUser.id)&&body&&body.password)action='Changed own password';if(/moved to Storage/.test(action))return;   // the file move itself is not a user change
     auditWrite({area,action,entity_id:id||null,entity_label:label||null,details:auditClean(body)});
   }catch(e){}
 }
@@ -1615,6 +1640,41 @@ function alInit(){
   const sel=document.getElementById('al-user');
   if(sel&&umUsers.length){const v=sel.value;sel.innerHTML='<option value="">Everyone</option>'+umUsers.map(u=>`<option value="${escapeHtml(u.username)}">${escapeHtml(u.name||u.username)}</option>`).join('');sel.value=v;}
   alLoad(false);
+}
+
+
+// ═════════ PASSWORDS ═════════
+let pwHasCol=true,pwForced=false,pwOldKnown='';
+function pwRules(){const a=document.getElementById('pw-new')?.value||'',b=document.getElementById('pw-new2')?.value||'';
+  return [[a.length>=8,'At least 8 characters'],[/[A-Za-z]/.test(a)&&/\d/.test(a),'Letters and numbers'],[!!a&&a===b,'Both new passwords match'],[!!a&&a!==(pwOldKnown||document.getElementById('pw-cur')?.value||''),'Different from the current password']];}
+function pwCheck(){const ul=document.getElementById('pw-rules');if(!ul)return;const r=pwRules();ul.innerHTML=r.map(([ok,l])=>`<li class="${ok?'ok':''}">${ok?'✓':'•'} ${l}</li>`).join('');document.getElementById('pw-save').disabled=!r.every(x=>x[0]);}
+function pwOpen(forced,oldPass){
+  if(!currentUser)return;
+  pwForced=!!forced;pwOldKnown=forced?(oldPass||''):'';
+  ['pw-cur','pw-new','pw-new2'].forEach(i=>{const el=document.getElementById(i);el.value='';el.type='password';});
+  document.querySelector('#pw-modal-bg .pw-show input').checked=false;
+  document.getElementById('pw-title').textContent=forced?'Choose your own password':'Change password';
+  document.getElementById('pw-msg').textContent=forced?'Welcome '+(currentUser.name||'')+'. Your password was set by the admin — please choose your own password to continue.':'';
+  document.getElementById('pw-cur-wrap').style.display=forced?'none':'';
+  document.getElementById('pw-x').style.display=forced?'none':'';document.getElementById('pw-cancel').style.display=forced?'none':'';
+  pwCheck();document.getElementById('pw-modal-bg').classList.add('show');
+  setTimeout(()=>document.getElementById(forced?'pw-new':'pw-cur').focus(),50);
+}
+function pwClose(){if(pwForced)return;document.getElementById('pw-modal-bg').classList.remove('show');}
+async function pwSave(){
+  if(!currentUser)return;if(!pwRules().every(x=>x[0])){pwCheck();return;}
+  const btn=document.getElementById('pw-save');btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const cur=pwForced?pwOldKnown:document.getElementById('pw-cur').value;
+    const ok=await sbFetch('qas2_users?id=eq.'+encodeURIComponent(currentUser.id)+'&password=eq.'+encodeURIComponent(cur)+'&select=id');
+    if(!ok||!ok.length){showToast('Current password is not correct.','error');return;}
+    const upd={password:document.getElementById('pw-new').value};if(pwHasCol)upd.must_change_password=false;
+    try{await sbFetch('qas2_users?id=eq.'+encodeURIComponent(currentUser.id),'PATCH',upd);}
+    catch(e){if(/must_change_password/.test(e.message)){pwHasCol=false;delete upd.must_change_password;await sbFetch('qas2_users?id=eq.'+encodeURIComponent(currentUser.id),'PATCH',upd);}else throw e;}
+    currentUser.must_change_password=false;saveSession(currentUser);
+    pwForced=false;document.getElementById('pw-modal-bg').classList.remove('show');showToast('Password changed ✓');
+  }catch(e){showToast('Error: '+e.message,'error');}
+  finally{btn.textContent='Save new password';pwCheck();}
 }
 
 // ═════════ FILE STORAGE (Supabase Storage) ═════════
@@ -1774,6 +1834,7 @@ async function doLogin(){
     saveSession(currentUser);
     auditWrite({area:'Account',action:'Signed in'});
     showApp();
+    if(currentUser.must_change_password===true)pwOpen(true,pass);
   }catch(e){document.getElementById('login-error').textContent='Connection error. Check internet.';}
 }
 
@@ -1946,6 +2007,7 @@ function restoreSessionIfAny(){
         if(!u||u.active===false){currentUser=null;clearSession();document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex';
           document.getElementById('login-error').textContent=u?'This account is disabled. Please contact the admin.':'This account no longer exists.';return;}
         if(u.role!==currentUser.role||u.name!==currentUser.name){currentUser=u;saveSession(u);showApp();}
+        if(u.must_change_password===true){currentUser.must_change_password=true;pwOpen(true,u.password||'');}
       }).catch(()=>{});}
   }
 }
@@ -2795,13 +2857,13 @@ function umPermTable(){
 }
 
 function showAddUser(){
-  try{requireRole('admin','Only admins can add users.');}catch(e){return;}editingUserId=null;document.getElementById('user-modal-title').textContent='Add New User';['u-name','u-user','u-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('u-role').value='user';const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='';document.getElementById('user-modal-bg').classList.add('show');}
+  try{requireRole('admin','Only admins can add users.');}catch(e){return;}editingUserId=null;document.getElementById('user-modal-title').textContent='Add New User';['u-name','u-user','u-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('u-role').value='user';const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='';const mc=document.getElementById('u-mustchange');if(mc)mc.checked=true;document.getElementById('user-modal-bg').classList.add('show');}
 function editUser(id){
   try{requireRole('admin','Only admins can edit users.');}catch(e){return;}
   const u=umUsers.find(x=>String(x.id)===String(id));if(!u)return;
   editingUserId=id;document.getElementById('user-modal-title').textContent='Edit User — '+(u.name||'');
   document.getElementById('u-name').value=u.name||'';document.getElementById('u-user').value=u.username||'';document.getElementById('u-pass').value='';document.getElementById('u-role').value=u.role||'user';
-  const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='Leave empty to keep the current password.';
+  const hint=document.getElementById('u-pass-hint');if(hint)hint.textContent='Leave empty to keep the current password.';const mc=document.getElementById('u-mustchange');if(mc)mc.checked=true;
   document.getElementById('user-modal-bg').classList.add('show');}
 async function saveUser(){
   try{requireRole('admin','Only admins can save user changes.');}catch(e){return;}
@@ -2813,8 +2875,11 @@ async function saveUser(){
   if(before&&before.role==='admin'&&role!=='admin'&&umUsers.filter(u=>u.role==='admin').length<=1){showToast('At least one admin must remain.','error');return;}
   if(before&&currentUser&&String(before.id)===String(currentUser.id)&&role!=='admin'&&!confirm('You are removing your own admin rights. You will lose access to this page. Continue?'))return;
   try{
-    if(editingUserId){const update={name,username,role};if(pass)update.password=pass;await sbFetch('qas2_users?id=eq.'+editingUserId,'PATCH',update);showToast('User updated');}
-    else{await sbFetch('qas2_users','POST',{name,username,password:pass,role});showToast('User added: '+name);}
+    const must=!!document.getElementById('u-mustchange')?.checked;
+    const withMust=o=>pwHasCol?{...o,must_change_password:must}:o;
+    const send=async(path,method,o)=>{try{return await sbFetch(path,method,o);}catch(e){if(/must_change_password/.test(e.message)){pwHasCol=false;const c={...o};delete c.must_change_password;return await sbFetch(path,method,c);}throw e;}};
+    if(editingUserId){const update={name,username,role};if(pass)Object.assign(update,withMust({password:pass}));await send('qas2_users?id=eq.'+editingUserId,'PATCH',update);showToast('User updated');}
+    else{await send('qas2_users','POST',withMust({name,username,password:pass,role}));showToast('User added: '+name);}
     closeUserModal();loadUsers();
   }catch(e){alert('Error: '+e.message);}
 }
@@ -5166,7 +5231,7 @@ function uxSetZoom(d){const app=document.getElementById('main-app');const cur=ap
 // back-to-top button
 window.addEventListener('scroll',()=>{const b=document.getElementById('ux-top');if(b)b.classList.toggle('show',window.scrollY>600);},{passive:true});
 // Escape closes any open modal
-document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const open=[...document.querySelectorAll('.modal-bg.show')].pop();if(open)open.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const open=[...document.querySelectorAll('.modal-bg.show')].pop();if(open&&!(open.id==='pw-modal-bg'&&pwForced))open.classList.remove('show');});
 </script>
 <script>
 // ═════════ TRACKING: dashboard helpers, Register quick filters, follow-up log ═════════

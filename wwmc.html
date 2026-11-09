@@ -202,6 +202,14 @@ tbody tr{transition:var(--transition)}
 /* ── MODALS ── */
 .modal-bg{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .modal-bg.show{display:flex;animation:fadeIn .18s ease}
+img[src^="sbs:"]{opacity:0}
+.sm-panel{display:grid;gap:14px;margin-top:22px}
+.sm-card{background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:12px;padding:16px 18px}
+.sm-h{font-size:14px;font-weight:700;color:#1F3864;margin-bottom:4px}.sm-p{font-size:12px;color:var(--muted,#6B7280);margin:0 0 10px;line-height:1.5}
+.sm-status{font-size:12.5px;margin-bottom:10px}.sm-ok{color:#15803D;font-weight:600}.sm-bad{color:#B91C1C}.sm-muted{color:var(--muted,#6B7280);font-size:12px}
+.sm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sm-log{max-height:180px;overflow:auto;font-size:11px;font-family:Consolas,Menlo,monospace;margin-top:10px}.sm-line{padding:2px 0;border-bottom:1px dashed #EEF1F5}.sm-line.ok{color:#15803D}.sm-line.bad{color:#B91C1C}
+.sm-bk{margin-top:10px;overflow-x:auto}.sm-t{width:100%;border-collapse:collapse;font-size:12px}.sm-t th{text-align:left;color:#6B7280;font-weight:600;padding:5px 8px;border-bottom:1px solid #E3E8EF;background:none}.sm-t td{padding:5px 8px;border-bottom:1px solid #F1F3F7}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -1018,6 +1026,21 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <button class="btn primary" onclick="showAddUser()">+ Add User</button>
       </div>
       <div id="users-list"><div class="loading"><div class="loading-spinner"></div><br>Loading...</div></div>
+      <div id="sm-panel" class="sm-panel">
+        <div class="sm-card">
+          <div class="sm-h">🗂 File storage</div>
+          <p class="sm-p">Documents and photos are now saved in Supabase Storage, which keeps the database small and the site fast. Older files may still be inside the database — move them here. Each file is uploaded and checked before anything in the database changes; you can stop and continue later.</p>
+          <div id="sm-status" class="sm-status"></div>
+          <div class="sm-actions"><button class="btn primary" id="sm-run" onclick="smRun()">Move files to Storage</button><button class="btn" id="sm-stop" onclick="smStop=true" disabled>Stop</button><button class="btn" onclick="smStatus()">Check again</button><span id="sm-prog" class="sm-muted"></span></div>
+          <div id="sm-log" class="sm-log"></div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-h">🛟 Backups</div>
+          <p class="sm-p">An automatic backup of all QAS2 tables runs every night at 02:30 (Riyadh) and the last 14 days are kept inside Supabase. You can also take one now, or download a full copy to keep on your computer (the file includes user accounts — store it safely).</p>
+          <div class="sm-actions"><button class="btn primary" id="sm-bk-now" onclick="smBackupNow()">Back up now</button><button class="btn" id="sm-dl" onclick="smDownload()">⬇ Download backup file</button></div>
+          <div id="sm-bk" class="sm-bk"></div>
+        </div>
+      </div>
     </div>
     <!-- DOCUMENTS -->
     <!-- ═════════ O&M LIBRARY (Manuals Tree) ═════════ -->
@@ -1446,6 +1469,82 @@ async function sbFetch(path, method='GET', body=null){
   const t=r.status===204?null:await r.json();
   return t;
 }
+
+// ═════════ FILE STORAGE (Supabase Storage) ═════════
+// Photos and documents are kept in the private bucket below. The database keeps only a short
+// reference "sbs:<bucket>/<path>". Old rows that still hold the file itself (data:…) keep working.
+const FILES_BUCKET='qas2-files';
+const SB_REF='sbs:';
+const isSbRef=v=>typeof v==='string'&&v.startsWith(SB_REF);
+const isDataUrl=v=>typeof v==='string'&&v.startsWith('data:');
+function sbRefSplit(ref){const s=ref.slice(SB_REF.length);const i=s.indexOf('/');return {bucket:s.slice(0,i),path:s.slice(i+1)};}
+function sbEncPath(p){return String(p).split('/').map(encodeURIComponent).join('/');}
+function sbNewName(ext){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)+(ext?'.'+ext:'');}
+function sbSafeName(n){return String(n||'file').replace(/[^\w.\-]+/g,'_').replace(/_+/g,'_').slice(-90)||'file';}
+async function dataUrlToBlob(u){const r=await fetch(u);return await r.blob();}
+function sbExtFor(type,fallback){const m={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','application/pdf':'pdf'};return m[type]||fallback||'bin';}
+let sbStorageBroken=false;   // set when the bucket is not there yet (setup SQL not run)
+function sbUploadBlob(bucket,path,blob,onProgress){
+  return new Promise((res,rej)=>{
+    const x=new XMLHttpRequest();
+    x.open('POST',SB_URL+'/storage/v1/object/'+bucket+'/'+sbEncPath(path));
+    x.setRequestHeader('apikey',SB_KEY);x.setRequestHeader('Authorization','Bearer '+SB_KEY);
+    x.setRequestHeader('Content-Type',blob.type||'application/octet-stream');x.setRequestHeader('x-upsert','false');x.setRequestHeader('cache-control','max-age=31536000');
+    if(onProgress&&x.upload)x.upload.onprogress=e=>{if(e.lengthComputable)onProgress(e.loaded/e.total);};
+    x.onload=()=>x.status>=200&&x.status<300?res(SB_REF+bucket+'/'+path):rej(new Error('Storage upload failed ('+x.status+'): '+(x.responseText||'').slice(0,160)));
+    x.onerror=()=>rej(new Error('Network error while uploading'));
+    x.send(blob);
+  });
+}
+// Store one data URL (photo / file). Returns the reference; if Storage is not ready it returns the
+// data URL unchanged so nothing is lost (it is saved in the database like before).
+async function sbStoreDataUrl(v,folder,fileName){
+  if(!isDataUrl(v))return v;
+  if(sbStorageBroken)return v;
+  try{
+    const blob=await dataUrlToBlob(v);
+    const name=fileName?sbNewName('')+'/'+sbSafeName(fileName):sbNewName(sbExtFor(blob.type,'jpg'));
+    return await sbUploadBlob(FILES_BUCKET,folder+'/'+name,blob);
+  }catch(e){
+    if(/\((400|404)\)|bucket/i.test(e.message)){sbStorageBroken=true;console.warn('Storage not ready — keeping files in the database for now',e);}
+    else console.warn('Storage upload failed — keeping file in the database',e);
+    return v;
+  }
+}
+async function sbStoreList(list,folder){const out=[];for(const v of (list||[]))out.push(await sbStoreDataUrl(v,folder));return out;}
+// signed links (private bucket) — cached, asked for in batches
+const sbUrlCache=new Map();const SB_URL_TTL=6*3600;
+async function sbSignRefs(refs){
+  const now=Date.now();const need=[...new Set(refs.filter(r=>isSbRef(r)&&!(sbUrlCache.get(r)?.exp>now+600000)))];
+  const byB={};need.forEach(r=>{const {bucket,path}=sbRefSplit(r);(byB[bucket]=byB[bucket]||[]).push(path);});
+  await Promise.all(Object.entries(byB).map(async([bucket,paths])=>{
+    for(let i=0;i<paths.length;i+=100){const part=paths.slice(i,i+100);
+      try{const r=await fetch(SB_URL+'/storage/v1/object/sign/'+bucket,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:SB_URL_TTL,paths:part})});
+        const j=await r.json();(Array.isArray(j)?j:[]).forEach(o=>{if(!o||!o.signedURL)return;const s=o.signedURL;const url=/^https?:/.test(s)?s:SB_URL+'/storage/v1'+(s.startsWith('/')?s:'/'+s);
+          sbUrlCache.set(SB_REF+bucket+'/'+o.path,{url,exp:Date.now()+SB_URL_TTL*1000});});}catch(e){console.warn('sign failed',e);}}
+  }));
+  return refs.map(r=>isSbRef(r)?(sbUrlCache.get(r)?.url||''):r);
+}
+async function sbFileUrl(v){if(!isSbRef(v))return v;return (await sbSignRefs([v]))[0];}
+// replace every reference inside a piece of HTML (used before writing print / PDF windows)
+async function sbResolveHtml(html){
+  const refs=[...new Set((String(html).match(/sbs:[^"'\s)<>]+/g)||[]))];if(!refs.length)return html;
+  const urls=await sbSignRefs(refs);const map=new Map(refs.map((r,i)=>[r,urls[i]]));
+  return String(html).replace(/sbs:[^"'\s)<>]+/g,m=>map.get(m)||m);
+}
+// any <img src="sbs:…"> that appears in the page gets its real link automatically
+(function(){
+  const pending=new Set();let timer=null;
+  const flush=async()=>{timer=null;const imgs=[...pending];pending.clear();
+    const refs=imgs.map(i=>i.getAttribute('src'));const urls=await sbSignRefs(refs);
+    imgs.forEach((im,k)=>{if(urls[k]&&im.getAttribute('src')===refs[k]){im.dataset.ref=refs[k];im.src=urls[k];}});};
+  const take=el=>{if(el.tagName==='IMG'&&isSbRef(el.getAttribute('src'))){pending.add(el);}
+    else if(el.querySelectorAll)el.querySelectorAll('img[src^="sbs:"]').forEach(i=>pending.add(i));};
+  const mo=new MutationObserver(ms=>{ms.forEach(m=>{if(m.type==='attributes')take(m.target);else m.addedNodes.forEach(n=>n.nodeType===1&&take(n));});
+    if(pending.size&&!timer)timer=setTimeout(flush,15);});
+  const start=()=>{mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['src']});take(document.body);if(pending.size)flush();};
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();
 
 // ── State ──
 
@@ -1943,8 +2042,9 @@ async function compressFiles(files){
 
 // Save photos for a ticket in one request; never throws, returns how many failed.
 async function saveTicketPhotos(ticketId,photos){
-  const list=(photos||[]).filter(p=>p && p.startsWith('data:image'));
-  if(!list.length) return {saved:0,failed:0};
+  const raw=(photos||[]).filter(p=>p && p.startsWith('data:image'));
+  if(!raw.length) return {saved:0,failed:0};
+  const list=await sbStoreList(raw,'tickets/'+ticketId);
   try{
     await sbFetch('qas2_photos','POST',list.map(photo_data=>({ticket_id:ticketId,photo_data})));
     return {saved:list.length,failed:0};
@@ -2464,6 +2564,7 @@ function refreshDashboard(force=false){
 
 // ── USERS ──
 async function loadUsers(){
+  try{smInit();}catch(e){}
   try{requireRole('admin','Only admins can access user management.');}catch(e){return;}
   document.getElementById('users-list').innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
   const users=await sbFetch('qas2_users?select=*&order=created_at.asc');
@@ -2751,7 +2852,7 @@ async function generateHandoverReport(){
     const win2=window.open('','_blank','width=900,height=700');
     if(!win2){showToast('Allow popups to generate PDF');return;}
     win2.document.open();
-    win2.document.write(printHtml2);
+    win2.document.write(await sbResolveHtml(printHtml2));
     win2.document.close();
     win2.focus();
     setTimeout(function(){
@@ -3256,7 +3357,7 @@ async function submitDailyReport(){
       issues:document.getElementById('dr-issues').value.trim()||'No issues',
       next_plan:document.getElementById('dr-plans').value.trim()||'Continue commissioning activities',
     };
-    if(drPendingPhotos.length)drData.photos=drPendingPhotos;
+    if(drPendingPhotos.length)drData.photos=await sbStoreList(drPendingPhotos,'reports/'+String(drData.report_date||drToday()).slice(0,7));
     if(drItemsList.length&&drHasItems!==false)drData.items=drItemsList;
 
     await drPost(drData);
@@ -3501,7 +3602,7 @@ async function saveEditReport(id){
     achievements:document.getElementById('edit-ach-'+id).value.trim()||'None reported',
     issues:document.getElementById('edit-issues-'+id).value.trim()||'No issues',
     next_plan:document.getElementById('edit-plan-'+id).value.trim()||'Continue commissioning activities',
-    photos:editReportPhotos,items};
+    photos:await sbStoreList(editReportPhotos,'reports/'+String(date).slice(0,7)),items};
   // created_at is not sent, so the upload time stays as it was
   const btn=document.getElementById('edit-save-'+id);if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
@@ -3773,7 +3874,7 @@ async function compileMasterReport(){
     const win=window.open('','_blank','width=900,height=700');
     if(!win){showToast('Allow popups to generate PDF');if(btn){btn.disabled=false;btn.textContent='📄 Compile Master Report';}return;}
     win.document.open();
-    win.document.write(printHtml);
+    win.document.write(await sbResolveHtml(printHtml));
     win.document.close();
     win.focus();
     setTimeout(function(){
@@ -3862,7 +3963,7 @@ async function printSingleReport(id){
   html+='</table>';
   html+='<div class="footer">QAS2 CORE | Wahat Al Wusta Maintenance Co.</div>';
   html+='</body></html>';
-  win.document.write(html);
+  win.document.write(await sbResolveHtml(html));
   win.document.close();
   setTimeout(()=>{try{win.print();}catch(e){}},500);
 }
@@ -3976,7 +4077,7 @@ async function submitDoc(){
       revision:document.getElementById('doc-rev').value.trim()||'Rev.0',
       file_name:hasPreparedFile ? (pendingDocFileName||'document') : ((window.editingDocExistingData&&window.editingDocExistingData.file_name)||'document'),
       file_type:hasPreparedFile ? (pendingDocFileType||'application/octet-stream') : ((window.editingDocExistingData&&window.editingDocExistingData.file_type)||'application/octet-stream'),
-      file_data:hasPreparedFile ? pendingDocFileData : ((window.editingDocExistingData&&window.editingDocExistingData.file_data)||''),
+      file_data:hasPreparedFile ? await sbStoreDataUrl(pendingDocFileData,'docs',pendingDocFileName||'document') : ((window.editingDocExistingData&&window.editingDocExistingData.file_data)||''),
       uploaded_by:(currentUser&&currentUser.name)||'System User',
       upload_date:new Date().toISOString().split('T')[0]
     };
@@ -4136,12 +4237,15 @@ async function downloadDoc(id,fileName){
     const rows=await sbFetch('qas2_documents?id=eq.'+id+'&select=*');
     if(!rows||!rows.length){showToast('Document not found','error');return;}
     const d=rows[0];
+    let href=d.file_data,tmp=null;
+    if(isSbRef(href)){const blob=await (await fetch(await sbFileUrl(href))).blob();href=tmp=URL.createObjectURL(blob);}
     const a=document.createElement('a');
-    a.href=d.file_data;
+    a.href=href;
     a.download=d.file_name||fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    if(tmp)setTimeout(()=>URL.revokeObjectURL(tmp),60000);
     showToast('Download started ✓','success');
   }catch(e){showToast('Error: '+e.message,'error');}
 }
@@ -4155,6 +4259,7 @@ async function viewDoc(id){
     const rows=await sbFetch('qas2_documents?id=eq.'+id+'&select=*');
     if(!rows||!rows.length){showToast('Document not found','error');return;}
     const d=rows[0];
+    if(isSbRef(d.file_data))d.file_data=await sbFileUrl(d.file_data);
     document.getElementById('doc-view-title').textContent=d.title||'Document';
     let preview='';
     if((d.file_type||'').includes('pdf')){
@@ -5378,6 +5483,116 @@ svg.sp{display:block;width:100%;height:22px;margin-top:3px}
 @media (max-width:640px){.pm-top{grid-template-columns:1fr}.pm-kk{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{.pm-panel{break-inside:avoid}.tpl-plantmap .paper{background:#fff}.pm-map svg{width:88%;margin:0 auto}.tpl-plantmap .lhdr{padding:12px 16px 12px}.lh-row img{height:42px}.lh-row{padding-bottom:9px}.lh-tt{margin:10px 0 8px}.lh-tt h1{font-size:26px}.pm-gauge svg{max-width:160px}.pm-kk b{font-size:19px}}`;
 
+
+// ═════════ ADMIN: STORAGE MOVE + BACKUPS ═════════
+const QAS2_TABLES=['qas2_tickets','qas2_photos','qas2_ticket_updates','qas2_daily_reports','qas2_documents','qas2_users','qas2_counters','qas2_approvals','qas2_om_nodes','qas2_om_fields','qas2_om_history','qas2_om_files'];
+let smStop=false,smRunning=false;
+const smEl=id=>document.getElementById(id);
+function smLog(msg,kind){const el=smEl('sm-log');if(!el)return;el.insertAdjacentHTML('afterbegin',`<div class="sm-line ${kind||''}">${escapeHtml(new Date().toLocaleTimeString('en-GB'))} · ${escapeHtml(msg)}</div>`);}
+async function smCounts(){
+  // server-side count when the setup SQL is installed, otherwise count here
+  try{const r=await sbFetch('rpc/qas2_files_in_db','POST',{});if(r&&typeof r==='object'&&!Array.isArray(r))return r;}catch(e){}
+  const docs=(await sbFetch('qas2_documents?file_data=like.data:*&select=id')||[]).length;
+  const photos=(await sbFetch('qas2_photos?photo_data=like.data:*&select=id')||[]).length;
+  let reports=0,cur=0;
+  for(;;){const rows=await sbFetch(`qas2_daily_reports?id=gt.${cur}&photos=not.is.null&select=id,photos&order=id.asc&limit=40`)||[];if(!rows.length)break;
+    rows.forEach(r=>{if((r.photos||[]).some(isDataUrl))reports++;});cur=rows[rows.length-1].id;}
+  return {docs,photos,reports};
+}
+async function smStatus(){
+  const box=smEl('sm-status');if(!box)return;
+  box.innerHTML='<span class="sm-muted">Checking…</span>';
+  try{
+    const c=await smCounts();const total=(+c.docs||0)+(+c.photos||0)+(+c.reports||0);
+    box.innerHTML=total?`<b>${total}</b> item(s) still stored inside the database: <b>${c.docs||0}</b> documents · <b>${c.photos||0}</b> ticket photos · <b>${c.reports||0}</b> daily reports with photos${c.mb?` · about <b>${c.mb} MB</b>`:''}`
+      :'<span class="sm-ok">✓ All documents and photos are in Storage.</span>';
+    smEl('sm-run').disabled=!total;
+  }catch(e){box.innerHTML='<span class="sm-bad">Could not check: '+escapeHtml(e.message)+'</span>';}
+}
+// strict upload: throws if anything goes wrong, and checks the stored size
+async function smUpload(dataUrl,folder,fileName){
+  const blob=await dataUrlToBlob(dataUrl);
+  const name=fileName?sbNewName('')+'/'+sbSafeName(fileName):sbNewName(sbExtFor(blob.type,'jpg'));
+  const ref=await sbUploadBlob(FILES_BUCKET,folder+'/'+name,blob);
+  const url=await sbFileUrl(ref);if(!url)throw new Error('Uploaded but no link returned');
+  const back=await (await fetch(url)).blob();
+  if(back.size!==blob.size)throw new Error('Size check failed ('+back.size+' vs '+blob.size+')');
+  return ref;
+}
+async function smRun(){
+  if(smRunning)return;
+  if(!confirm('Move all documents and photos from the database to Storage?\n\nEach file is uploaded and checked first; the database is only changed after the check passes. You can stop at any time and continue later.'))return;
+  smRunning=true;smStop=false;sbStorageBroken=false;
+  smEl('sm-run').disabled=true;smEl('sm-stop').disabled=false;
+  const prog=smEl('sm-prog');let done=0,failed=0;const bad={docs:[],photos:[]};
+  const tick=()=>{prog.textContent=`Moved ${done} · failed ${failed}`;};
+  try{
+    smLog('Started.');
+    // 1) documents
+    for(;;){if(smStop)break;
+      const skip=bad.docs.length?`&id=not.in.(${bad.docs.join(',')})`:'';
+      const rows=await sbFetch(`qas2_documents?file_data=like.data:*${skip}&select=id,title,file_name,file_data&limit=1`)||[];if(!rows.length)break;
+      const d=rows[0];
+      try{const ref=await smUpload(d.file_data,'docs',d.file_name||'document');
+        await sbFetch(`qas2_documents?id=eq.${d.id}&file_data=like.data:*`,'PATCH',{file_data:ref});done++;smLog('Document: '+(d.title||d.file_name||d.id),'ok');}
+      catch(e){failed++;bad.docs.push(d.id);smLog('Document '+(d.title||d.id)+' — '+e.message,'bad');if(/\((400|404)\)/.test(e.message))throw new Error('Storage bucket not ready — run the setup SQL first.');}
+      tick();
+    }
+    // 2) ticket photos
+    for(;;){if(smStop)break;
+      const skip=bad.photos.length?`&id=not.in.(${bad.photos.join(',')})`:'';
+      const rows=await sbFetch(`qas2_photos?photo_data=like.data:*${skip}&select=id,ticket_id,photo_data&limit=5`)||[];if(!rows.length)break;
+      for(const ph of rows){if(smStop)break;
+        try{const ref=await smUpload(ph.photo_data,'tickets/'+ph.ticket_id);
+          await sbFetch(`qas2_photos?id=eq.${ph.id}&photo_data=like.data:*`,'PATCH',{photo_data:ref});done++;}
+        catch(e){failed++;bad.photos.push(ph.id);smLog('Ticket photo '+ph.id+' — '+e.message,'bad');}
+        tick();}
+    }
+    if(!smStop&&done)smLog('Ticket photos done.','ok');
+    // 3) daily report photos
+    let cur=0;
+    for(;;){if(smStop)break;
+      const rows=await sbFetch(`qas2_daily_reports?id=gt.${cur}&photos=not.is.null&select=id,report_no,report_date,photos&order=id.asc&limit=2`)||[];if(!rows.length)break;
+      for(const r of rows){cur=r.id;if(smStop)break;const list=r.photos||[];if(!list.some(isDataUrl))continue;
+        try{const out=[];for(const p of list)out.push(isDataUrl(p)?await smUpload(p,'reports/'+String(r.report_date||'').slice(0,7)):p);
+          await sbFetch(`qas2_daily_reports?id=eq.${r.id}`,'PATCH',{photos:out});done+=list.filter(isDataUrl).length;smLog('Report '+(r.report_no||r.id)+': '+list.length+' photo(s)','ok');}
+        catch(e){failed++;smLog('Report '+(r.report_no||r.id)+' — '+e.message,'bad');}
+        tick();}
+    }
+    smLog(smStop?'Stopped — press the button again to continue.':'Finished.',smStop?'':'ok');
+    invalidateReportsCache&&invalidateReportsCache();ticketPhotosCache&&ticketPhotosCache.clear();allDocs=[];docsLoadedAt=0;
+  }catch(e){smLog(e.message,'bad');showToast(e.message,'error');}
+  finally{smRunning=false;smEl('sm-stop').disabled=true;tick();smStatus();}
+}
+// ── backups
+async function smBackups(){
+  const box=smEl('sm-bk');if(!box)return;
+  try{const rows=await sbFetch('qas2_backup_log?select=*&order=created_at.desc&limit=20')||[];
+    box.innerHTML=rows.length?`<table class="sm-t"><thead><tr><th>Backup</th><th>Taken</th><th>Tables</th><th>Rows</th><th>By</th></tr></thead><tbody>${rows.map(r=>`<tr><td><code>${escapeHtml(r.schema_name)}</code></td><td>${escapeHtml(formatDateTime(r.created_at))}</td><td>${r.tables??''}</td><td>${r.total_rows??''}</td><td>${escapeHtml(r.made_by||'')}</td></tr>`).join('')}</tbody></table>`
+      :'<span class="sm-muted">No automatic backups yet — the first one runs tonight at 02:30 (Riyadh), or press “Back up now”.</span>';}
+  catch(e){box.innerHTML='<span class="sm-bad">Automatic backups are not set up yet — run the setup SQL in Supabase.</span>';}
+}
+async function smBackupNow(){
+  const b=smEl('sm-bk-now');b.disabled=true;b.textContent='Backing up…';
+  try{const r=await sbFetch('rpc/qas2_auto_backup','POST',{made_by:currentUser?.name||'admin'});showToast('Backup done ✓ '+(typeof r==='string'?r:''));smBackups();}
+  catch(e){showToast('Backup failed: '+e.message,'error');}
+  finally{b.disabled=false;b.textContent='Back up now';}
+}
+async function smDownload(){
+  const b=smEl('sm-dl');b.disabled=true;
+  try{const out={exported_at:new Date().toISOString(),site:'QAS2',tables:{}};
+    for(const tb of QAS2_TABLES){b.textContent='Downloading '+tb.replace('qas2_','')+'…';const rows=[];
+      try{for(let off=0;;off+=1000){const part=await sbFetch(`${tb}?select=*&order=id.asc&limit=1000&offset=${off}`)||[];rows.push(...part);if(part.length<1000)break;}}
+      catch(e){out.tables[tb]={error:e.message};continue;}
+      out.tables[tb]=rows;}
+    const blob=new Blob([JSON.stringify(out)],{type:'application/json'});const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='QAS2_Backup_'+drToday()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+    showToast('Backup file downloaded ✓');
+  }catch(e){showToast('Download failed: '+e.message,'error');}
+  finally{b.disabled=false;b.textContent='⬇ Download backup file';}
+}
+function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();}
+
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
 let drbIds=null,drCurrentList=[];
@@ -5519,7 +5734,7 @@ async function drbPrint(){
     const logo=getWWMCLogoSrc();
     const gen=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const body=sections.map((s,i)=>`<section class="sec${s.pl?' plsec':''}${s.cls?' '+s.cls:''}"><h2><span class="n"></span>${s.t}</h2>${s.h}</section>`).join('');
-    w.document.open();w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(docNo)}</title><style>
+    const __html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(docNo)}</title><style>
 :root{--brand:#244F8B;--brand-d:#1A3A68;--link:#0066CC;--ink:#1F2937;--mute:#6B7280;--line:#DCE3EC;--soft:#F3F6FA;--ok:#15803D;--okb:#ECFDF3;--neg:#B91C1C;--negb:#FEF2F2;--info:#1D4ED8;--infob:#EFF6FF;--warn:#B45309;--warnb:#FFFBEB}
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{margin:0;background:#E9EDF2;color:var(--ink);font:13px/1.55 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
@@ -5590,7 +5805,8 @@ ${DRB_TPL_CSS}${PM_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
   ${reps.photoNote?`<p style="font-size:11px;color:#B45309;margin-top:12px">${escapeHtml(reps.photoNote)}</p>`:''}
   <div class="foot"><span class="brand">WWMC | Internal</span><span>${escapeHtml(docNo)}</span><span>Generated ${escapeHtml(gen)} · QAS2 CORE</span></div>
 </div>
-</body></html>`);w.document.close();
+</body></html>`;
+    w.document.open();w.document.write(await sbResolveHtml(__html));w.document.close();
     document.getElementById('drb-bg').classList.remove('show');
   }catch(e){try{w.close();}catch(_){}showToast('Could not build the report: '+e.message,'error');}
 }

@@ -5216,10 +5216,10 @@ async function pmSection(reps,items,pl,dates){
 }
 const PM_TPL_CSS=`.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-top:16px}
 .tpl-plantmap .paper{background:#FBFCFE}
-.tpl-plantmap .hdr,.tpl-plantmap .hdr>tbody>tr>td{border:0}.tpl-plantmap .hdr{border-bottom:1px solid #E3E8EF}.tpl-plantmap .hdr>tbody>tr>td{padding:0 0 14px}
-.tpl-plantmap .hdr .lg{width:auto;text-align:left;padding-right:16px}.tpl-plantmap .hdr .lg img{max-height:46px}
+
+.tpl-plantmap .hdr{background:#fff;border:1px solid #E3E8EF!important;border-top:4px solid #0F2747!important;border-radius:14px;border-collapse:separate;border-spacing:0;overflow:hidden}.tpl-plantmap .hdr>tbody>tr>td{border:0!important;padding:16px 18px;vertical-align:middle;background:none}.tpl-plantmap .hdr .dc{width:310px;padding:12px 14px 12px 0}.tpl-plantmap .dc table{display:block;background:#F7F9FC;border:0;border-radius:10px;padding:10px 12px}.tpl-plantmap .dc tbody{display:grid;grid-template-columns:1.25fr 1fr;gap:8px 14px}.tpl-plantmap .dc tr{display:flex;flex-direction:column;gap:1px}.tpl-plantmap .dc tr:first-child{grid-column:1/-1;padding-bottom:7px;border-bottom:1px solid #E3E8EF}.tpl-plantmap .dc th,.tpl-plantmap .dc td{display:block;border:0!important;padding:0;background:none!important;text-align:left;white-space:nowrap}.tpl-plantmap .dc th{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A94A6}.tpl-plantmap .dc td{font-size:11.5px;font-weight:700;color:#0F2747}.tpl-plantmap .dc tr:first-child td{font-size:13px}.tpl-plantmap .hdr .lg{width:auto;text-align:left;padding-right:16px}.tpl-plantmap .hdr .lg img{max-height:46px}
 .tpl-plantmap .hdr .co{font-size:11.5px;font-weight:600;color:#6B7280;letter-spacing:0}.tpl-plantmap .hdr h1{font-size:26px;color:#0F2747;margin:2px 0 0}.tpl-plantmap .hdr .pl{font-size:11.5px}
-.tpl-plantmap .hdr .dc{width:300px}.tpl-plantmap .hdr .dc td{background:#fff}.tpl-plantmap .dc table{background:#fff;border:1px solid #E3E8EF;border-radius:10px;overflow:hidden}.tpl-plantmap .dc th{background:#F6F8FB}.tpl-plantmap .dc td{color:#0F2747}
+
 .tpl-plantmap .sec h2{border:0;text-transform:none;letter-spacing:0;font-size:16px;color:#0F2747}.tpl-plantmap .sec h2 .n{background:#0F2747;border-radius:7px}
 .tpl-plantmap .sumsec .kpis,.tpl-plantmap .sumsec>.chips{display:none}
 .tpl-plantmap .lead{background:#fff;border:1px solid #E3E8EF;border-left:4px solid #3B82F6;border-radius:10px}
@@ -5314,7 +5314,7 @@ async function drbPrint(){
     const items=reps.flatMap(r=>(Array.isArray(r.items)&&r.items.length?r.items:[]).map(x=>({...x,r})));
     const dates=[...new Set(reps.map(r=>r.report_date).filter(Boolean))].sort();
     const fmtD=d=>{if(!d)return '';const x=new Date(String(d).slice(0,10)+'T00:00:00');return isNaN(x)?String(d):x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});};
-    const period=c.period||(dates.length>1?fmtD(dates[0])+' – '+fmtD(dates[dates.length-1]):fmtD(dates[0]));
+    const period=(c.period?c.period.replace(/\d{4}-\d{2}-\d{2}/g,fmtD):'')||(dates.length>1?fmtD(dates[0])+' – '+fmtD(dates[dates.length-1]):fmtD(dates[0]));
     const people=[...new Set(reps.map(r=>r.prepared_by||r.submitted_by_username).filter(Boolean))];
     const systems=[...new Set(reps.flatMap(drSplitSystems))];
     const cnt=st=>items.filter(x=>x.st===st).length;

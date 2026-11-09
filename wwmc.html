@@ -227,6 +227,11 @@ img[src^="sbs:"]{opacity:0}
 .um-note{font-size:11.5px;color:#6B7280;margin:8px 2px 0}
 @media (max-width:700px){.um-table thead{display:none}.um-table,.um-table tbody,.um-table tr,.um-table td{display:block;width:100%}.um-table tr{padding:10px 12px;border-bottom:1px solid #EEF1F5}.um-table td{border:0;padding:3px 0}
  .um-table td[data-l]:not(:first-child)::before{content:attr(data-l)': ';color:#9CA3AF;font-size:11px}.um-act{text-align:left;padding-top:6px!important}.um-act .btn{margin:0 6px 0 0}}
+.um-off td{opacity:.55}.um-off td.um-act{opacity:1}.um-dis{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;background:#E5E7EB;color:#374151;border-radius:4px;padding:1px 6px}
+.al-card{margin-top:22px}.al-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:12px}.al-filters select,.al-filters input{padding:6px 8px;border:1px solid var(--border,#D6DCE5);border-radius:7px;font:inherit;font-size:12px}
+.al-table td{font-size:12px;vertical-align:top}.al-role{display:block;color:#9CA3AF;font-size:10.5px;text-transform:capitalize}
+.al-act{display:inline-block;font-weight:700;font-size:11px;border-radius:6px;padding:2px 8px;background:#EEF3FB;color:#1F3864;white-space:nowrap}.al-act.ok{background:#ECFDF3;color:#15803D}.al-act.bad{background:#FEF2F2;color:#B91C1C}
+.al-det{max-width:360px}.al-kv{display:inline-block;margin:0 8px 2px 0;color:#374151}.al-kv i{font-style:normal;color:#9CA3AF}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -1047,6 +1052,17 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <div id="um-chips" class="um-chips" role="group" aria-label="Filter by role"></div>
       </div>
       <div id="users-list"><div class="loading"><div class="loading-spinner"></div><br>Loading...</div></div>
+      <div class="sm-card al-card">
+        <div class="sm-h">🕘 Activity log</div>
+        <p class="sm-p">Every change on the site — who did it and when: tickets, daily reports, documents, users, approvals and the O&amp;M Library. Entries can't be edited.</p>
+        <div class="al-filters">
+          <select id="al-user" onchange="alLoad(false)" aria-label="User"><option value="">Everyone</option></select>
+          <select id="al-area" onchange="alLoad(false)" aria-label="Area"><option value="">All areas</option><option>Punch List</option><option>Daily Report</option><option>Documents</option><option>Users</option><option>Approvals</option><option>O&amp;M Library</option><option>Account</option></select>
+          <label>From <input type="date" id="al-from" onchange="alLoad(false)"></label><label>To <input type="date" id="al-to" onchange="alLoad(false)"></label>
+          <button class="btn sm" type="button" onclick="alLoad(false)">Refresh</button>
+        </div>
+        <div id="al-body"></div>
+      </div>
       <div id="sm-panel" class="sm-panel">
         <div class="sm-card">
           <div class="sm-h">🗂 File storage</div>
@@ -1490,7 +1506,115 @@ async function sbFetch(path, method='GET', body=null){
   const r=await fetch(SB_URL+'/rest/v1/'+path,opts);
   if(!r.ok){const e=await r.text();throw new Error(e);}
   const t=r.status===204?null:await r.json();
+  if(method!=='GET')auditFromFetch(path,method,body,t);
   return t;
+}
+
+
+// ═════════ ACTIVITY LOG (who did what, when) ═════════
+// Every change saved through sbFetch is written to qas2_audit_log automatically.
+let auditOff=false;
+const AUDIT_AREAS={qas2_tickets:'Punch List',qas2_ticket_updates:'Punch List',qas2_photos:'Punch List',qas2_daily_reports:'Daily Report',qas2_documents:'Documents',qas2_users:'Users',qas2_approvals:'Approvals',qas2_om_nodes:'O&M Library',qas2_om_fields:'O&M Library',qas2_om_files:'O&M Library'};
+const AUDIT_SKIP_KEYS=new Set(['photos','photo_data','file_data','password','extra']);
+function auditClean(body){
+  if(!body||typeof body!=='object')return null;
+  const one=Array.isArray(body)?body[0]:body;if(!one||typeof one!=='object')return null;
+  const out={};
+  Object.entries(one).forEach(([k,v])=>{
+    if(k==='password'){out.password_changed=true;return;}
+    if(AUDIT_SKIP_KEYS.has(k)){if(Array.isArray(v))out[k+'_count']=v.length;return;}
+    if(k==='items'&&Array.isArray(v)){out.activities=v.length;return;}
+    if(v===null||['string','number','boolean'].includes(typeof v))out[k]=typeof v==='string'&&v.length>160?v.slice(0,157)+'…':v;
+  });
+  if(Array.isArray(body)&&body.length>1)out.count=body.length;
+  return out;
+}
+function auditLabelFrom(table,row){
+  if(!row)return '';
+  return row.no||row.report_no||row.title||row.name||row.username||row.ticket_no||row.file_name||'';
+}
+function auditLabelCached(table,id){
+  const f=(list)=>(list||[]).find(x=>String(x.id)===String(id));
+  try{
+    if(table==='qas2_tickets')return auditLabelFrom(table,f(typeof allTickets!=='undefined'?allTickets:[])||f(ticketsCache));
+    if(table==='qas2_daily_reports')return auditLabelFrom(table,f(allReportsCache));
+    if(table==='qas2_documents')return auditLabelFrom(table,f(allDocs));
+    if(table==='qas2_users')return auditLabelFrom(table,f(umUsers));
+    if(table==='qas2_om_nodes')return auditLabelFrom(table,f(omNodes));
+  }catch(e){}
+  return '';
+}
+function auditAction(table,method,body){
+  const b=Array.isArray(body)?body[0]||{}:body||{};
+  if(method==='DELETE')return table==='qas2_users'?'User deleted':table==='qas2_photos'?'Photo removed':'Deleted';
+  if(method==='POST'){
+    return {qas2_tickets:'Created',qas2_ticket_updates:'Follow-up added',qas2_photos:'Photos added',qas2_daily_reports:'Submitted',qas2_documents:'Uploaded',qas2_users:'User added',qas2_om_files:'File attached'}[table]||'Added';
+  }
+  if(table==='qas2_tickets'){if(b.status==='CLOSED')return 'Closed';if(b.status==='OPEN'&&'date_closed' in b)return 'Reopened';}
+  if(table==='qas2_approvals'){if(b.status==='Approved')return 'Approved';if(b.status==='Rejected')return 'Rejected';}
+  if(table==='qas2_users'){if(b.active===false)return 'User disabled';if(b.active===true&&Object.keys(b).length===1)return 'User enabled';return b.password?'User edited (password changed)':'User edited';}
+  if(table==='qas2_documents'&&Object.keys(b).length===1&&'file_data' in b)return 'File moved to Storage';
+  if(table==='qas2_daily_reports'&&Object.keys(b).length===1&&'photos' in b)return 'Photos moved to Storage';
+  return 'Edited';
+}
+function auditWrite(entry){
+  if(auditOff||!currentUser)return;
+  const row={username:currentUser.username||'',user_name:currentUser.name||'',role:currentUser.role||'',...entry};
+  fetch(SB_URL+'/rest/v1/qas2_audit_log',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)})
+    .then(r=>{if(r.status===404||r.status===400){auditOff=true;console.warn('Activity log table not set up yet');}}).catch(()=>{});
+}
+function auditFromFetch(path,method,body,result){
+  try{
+    if(method==='GET')return;
+    const table=String(path).split('?')[0];const area=AUDIT_AREAS[table];if(!area)return;
+    const q=new URLSearchParams(String(path).split('?')[1]||'');
+    const idf=q.get('id');const id=idf&&idf.startsWith('eq.')?idf.slice(3):(Array.isArray(result)&&result[0]?.id!=null?String(result[0].id):'');
+    let label=Array.isArray(result)&&result[0]?auditLabelFrom(table,result[0]):'';
+    if(!label&&id)label=auditLabelCached(table,id);
+    if(!label&&(table==='qas2_ticket_updates'||table==='qas2_photos')){const b=Array.isArray(body)?body[0]:body;if(b&&b.ticket_id)label=auditLabelCached('qas2_tickets',b.ticket_id)||('ticket '+b.ticket_id);}
+    if(table==='qas2_approvals'&&Array.isArray(result)&&result[0])label=result[0].ticket_no||result[0].title||label;
+    const action=auditAction(table,method,body);if(/moved to Storage/.test(action))return;   // the file move itself is not a user change
+    auditWrite({area,action,entity_id:id||null,entity_label:label||null,details:auditClean(body)});
+  }catch(e){}
+}
+
+// ── activity log viewer (Manage Users page)
+let alRows=[],alOff=0;const AL_PAGE=60;
+async function alLoad(more){
+  const box=document.getElementById('al-body');if(!box)return;
+  if(!more){alOff=0;alRows=[];box.innerHTML='<div class="sm-muted">Loading…</div>';}
+  const who=document.getElementById('al-user')?.value||'',area=document.getElementById('al-area')?.value||'',from=document.getElementById('al-from')?.value||'',to=document.getElementById('al-to')?.value||'';
+  let q=`qas2_audit_log?select=*&order=at.desc&limit=${AL_PAGE}&offset=${alOff}`;
+  if(who)q+='&username=eq.'+encodeURIComponent(who);
+  if(area)q+='&area=eq.'+encodeURIComponent(area);
+  if(from)q+='&at=gte.'+from+'T00:00:00';
+  if(to)q+='&at=lte.'+to+'T23:59:59';
+  try{const rows=await sbFetch(q)||[];alRows.push(...rows);alOff+=rows.length;alRender(rows.length===AL_PAGE);}
+  catch(e){box.innerHTML=/qas2_audit_log|404|PGRST/.test(e.message)?'<span class="sm-bad">The activity log is not set up yet — run <b>qas2_audit_users_setup.sql</b> in Supabase → SQL Editor.</span>':'<span class="sm-bad">Could not load: '+escapeHtml(e.message)+'</span>';}
+}
+function alDetails(d){
+  if(!d||typeof d!=='object')return '';
+  const nice={status:'Status',priority:'Priority',system_name:'System',description:'Description',deadline:'Target date',responsible:'Responsible',role:'Role',name:'Name',username:'Username',title:'Title',report_date:'Date',activities:'Activities',photos_count:'Photos',count:'Items',active:'Active',password_changed:'Password changed',note:'Note',last_update_note:'Note'};
+  return Object.entries(d).filter(([k])=>!/^(id|created_at|updated_at|last_update_at|reviewed_at|ticket_id|submitted_by_username|raised_by_username)$/.test(k)).slice(0,6)
+    .map(([k,v])=>`<span class="al-kv"><i>${escapeHtml(nice[k]||k.replace(/_/g,' '))}</i> ${escapeHtml(v===true?'yes':v===false?'no':v==null?'—':String(v))}</span>`).join('');
+}
+function alRender(hasMore){
+  const box=document.getElementById('al-body');if(!box)return;
+  if(!alRows.length){box.innerHTML='<div class="sm-muted">No activity for this filter yet.</div>';return;}
+  const cls=a=>/Deleted|removed|disabled|Rejected/i.test(a)?'bad':/Created|Submitted|Uploaded|added|Approved|enabled|Closed/i.test(a)?'ok':'';
+  box.innerHTML=`<div class="um-table-wrap"><table class="um-table al-table"><thead><tr><th>When</th><th>Who</th><th>Area</th><th>Action</th><th>Item</th><th>Details</th></tr></thead><tbody>${alRows.map(r=>`<tr>
+    <td data-l="When" style="white-space:nowrap">${escapeHtml(formatDateTime(r.at))}</td>
+    <td data-l="Who"><b>${escapeHtml(r.user_name||r.username||'')}</b><small class="al-role">${escapeHtml(r.role||'')}</small></td>
+    <td data-l="Area">${escapeHtml(r.area||'')}</td>
+    <td data-l="Action"><span class="al-act ${cls(r.action||'')}">${escapeHtml(r.action||'')}</span></td>
+    <td data-l="Item">${escapeHtml(r.entity_label||'')}</td>
+    <td data-l="Details" class="al-det">${alDetails(r.details)}</td></tr>`).join('')}</tbody></table></div>
+    ${hasMore?'<div style="text-align:center;margin-top:8px"><button class="btn sm" type="button" onclick="alLoad(true)">Show more</button></div>':''}`;
+}
+function alInit(){
+  const sel=document.getElementById('al-user');
+  if(sel&&umUsers.length){const v=sel.value;sel.innerHTML='<option value="">Everyone</option>'+umUsers.map(u=>`<option value="${escapeHtml(u.username)}">${escapeHtml(u.name||u.username)}</option>`).join('');sel.value=v;}
+  alLoad(false);
 }
 
 // ═════════ FILE STORAGE (Supabase Storage) ═════════
@@ -1645,8 +1769,10 @@ async function doLogin(){
   try{
     const users=await sbFetch('qas2_users?username=eq.'+encodeURIComponent(uname)+'&password=eq.'+encodeURIComponent(pass)+'&select=*');
     if(!users||!users.length){document.getElementById('login-error').textContent='Incorrect username or password.';document.getElementById('login-pass').value='';setTimeout(()=>document.getElementById('login-error').textContent='',2500);return;}
+    if(users[0].active===false){document.getElementById('login-error').textContent='This account is disabled. Please contact the admin.';document.getElementById('login-pass').value='';return;}
     currentUser=users[0];
     saveSession(currentUser);
+    auditWrite({area:'Account',action:'Signed in'});
     showApp();
   }catch(e){document.getElementById('login-error').textContent='Connection error. Check internet.';}
 }
@@ -1814,7 +1940,13 @@ function restoreSessionIfAny(){
   const saved=loadSession();
   if(saved){
     currentUser=saved;
-    if(currentUser)showApp();
+    if(currentUser){showApp();
+      sbFetch('qas2_users?id=eq.'+encodeURIComponent(currentUser.id)+'&select=*').then(rows=>{
+        const u=(rows||[])[0];
+        if(!u||u.active===false){currentUser=null;clearSession();document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex';
+          document.getElementById('login-error').textContent=u?'This account is disabled. Please contact the admin.':'This account no longer exists.';return;}
+        if(u.role!==currentUser.role||u.name!==currentUser.name){currentUser=u;saveSession(u);showApp();}
+      }).catch(()=>{});}
   }
 }
 if(document.readyState === 'loading'){
@@ -2607,7 +2739,8 @@ const UM_PERMS=[
   ['O&M Library','View',['admin','supervisor','user','viewer']],
   ['O&M Library','Add, edit, move & attach files',['admin','supervisor']],
   ['O&M Library','Delete',['admin']],
-  ['Admin','Manage users & roles',['admin']],
+  ['Admin','Manage users & roles (add, disable, delete)',['admin']],
+  ['Admin','Activity log',['admin']],
   ['Admin','File storage & backups',['admin']]];
 let umUsers=[],umRole='';
 async function loadUsers(){
@@ -2615,11 +2748,21 @@ async function loadUsers(){
   try{requireRole('admin','Only admins can access user management.');}catch(e){return;}
   const box=document.getElementById('users-list');
   if(!umUsers.length)box.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading...</div>';
-  try{umUsers=await sbFetch('qas2_users?select=id,name,username,role,created_at&order=created_at.asc')||[];}
+  try{umUsers=await sbFetch('qas2_users?select=*&order=created_at.asc')||[];umUsers.forEach(u=>{delete u.password;});}
   catch(e){box.innerHTML='<div class="empty">Error loading users: '+escapeHtml(e.message)+'</div>';return;}
   umRender();
+  try{alInit();}catch(e){}
 }
 function umSetRole(r){umRole=umRole===r?'':r;umRender();}
+async function umToggleActive(id){
+  try{requireRole('admin','Only admins can change accounts.');}catch(e){return;}
+  const u=umUsers.find(x=>String(x.id)===String(id));if(!u)return;
+  const off=u.active===false;
+  if(!off&&(u.username==='admin'||(currentUser&&String(currentUser.id)===String(u.id))||(u.role==='admin'&&umUsers.filter(x=>x.role==='admin'&&x.active!==false).length<=1))){showToast('This account is protected.','error');return;}
+  if(!off&&!confirm('Disable '+(u.name||u.username)+'?\n\nThey will not be able to sign in. Their tickets and reports stay. You can enable the account again at any time.'))return;
+  try{await sbFetch('qas2_users?id=eq.'+id,'PATCH',{active:off});showToast(off?'Account enabled':'Account disabled');loadUsers();}
+  catch(e){showToast(/active/.test(e.message)?'Run qas2_audit_users_setup.sql in Supabase first (adds the "active" column).':'Error: '+e.message,'error');}
+}
 function umRender(){
   const box=document.getElementById('users-list');if(!box)return;
   const q=(document.getElementById('um-q')?.value||'').trim().toLowerCase();
@@ -2628,25 +2771,25 @@ function umRender(){
   if(chips)chips.innerHTML=`<button type="button" class="um-chip ${umRole?'':'on'}" onclick="umSetRole('')">All <b>${umUsers.length}</b></button>`+
     UM_ROLES.map(([k,l,c])=>`<button type="button" class="um-chip ${umRole===k?'on':''}" style="--c:${c}" onclick="umSetRole('${k}')"><i></i>${l} <b>${count(k)}</b></button>`).join('');
   const list=umUsers.filter(u=>(!umRole||u.role===umRole)&&(!q||String(u.name||'').toLowerCase().includes(q)||String(u.username||'').toLowerCase().includes(q)));
-  const admins=count('admin');
+  const admins=umUsers.filter(u=>u.role==='admin'&&u.active!==false).length;
   const R=Object.fromEntries(UM_ROLES.map(x=>[x[0],x]));
   box.innerHTML=(list.length?`<div class="um-table-wrap"><table class="um-table"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Can do</th><th>Added</th><th></th></tr></thead><tbody>${list.map(u=>{
       const r=R[u.role]||[u.role,u.role,'#888',''];const me=currentUser&&String(currentUser.id)===String(u.id);
-      const lastAdmin=u.role==='admin'&&admins<=1;
-      const noDel=u.username==='admin'||me||lastAdmin;
+      const lastAdmin=u.role==='admin'&&u.active!==false&&admins<=1;
+      const noDel=u.username==='admin'||me||lastAdmin;const off=u.active===false;
       const why=u.username==='admin'?'Main admin account':me?'You are signed in as this user':lastAdmin?'At least one admin must remain':'';
-      return `<tr>
+      return `<tr class="${off?'um-off':''}">
         <td data-l="Name"><div class="um-name"><span class="um-av" style="background:${r[2]}">${escapeHtml(String(u.name||'?').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase())}</span><b>${escapeHtml(u.name||'')}</b>${me?'<span class="um-me">You</span>':''}</div></td>
         <td data-l="Username"><code>@${escapeHtml(u.username||'')}</code></td>
-        <td data-l="Role"><span class="role-badge" style="background:${r[2]};display:inline-block">${escapeHtml(String(r[1]).toUpperCase())}</span></td>
+        <td data-l="Role"><span class="role-badge" style="background:${r[2]};display:inline-block">${escapeHtml(String(r[1]).toUpperCase())}</span>${off?'<span class="um-dis">DISABLED</span>':''}</td>
         <td data-l="Can do" class="um-can">${escapeHtml(r[3])}</td>
         <td data-l="Added">${u.created_at?escapeHtml(formatDateTime(u.created_at).split(',')[0]):'—'}</td>
-        <td class="um-act"><button class="btn sm" type="button" onclick="editUser('${escapeHtml(String(u.id))}')">Edit</button>${noDel?`<span class="um-prot" title="${escapeHtml(why)}">🔒 Protected</span>`:`<button class="btn sm danger" type="button" onclick="deleteUser('${escapeHtml(String(u.id))}')">Delete</button>`}</td></tr>`;}).join('')}</tbody></table></div>`
+        <td class="um-act"><button class="btn sm" type="button" onclick="editUser('${escapeHtml(String(u.id))}')">Edit</button>${noDel?'':`<button class="btn sm" type="button" onclick="umToggleActive('${escapeHtml(String(u.id))}')">${off?'Enable':'Disable'}</button>`}${noDel?`<span class="um-prot" title="${escapeHtml(why)}">🔒 Protected</span>`:`<button class="btn sm danger" type="button" onclick="deleteUser('${escapeHtml(String(u.id))}')">Delete</button>`}</td></tr>`;}).join('')}</tbody></table></div>`
     :'<div class="empty">No users match.</div>')+umPermTable();
 }
 function umPermTable(){
   const roles=UM_ROLES;let last='';
-  return `<details class="um-perms" open><summary>What each role can do</summary><div class="um-table-wrap"><table class="um-ptable"><thead><tr><th>Area</th><th>Permission</th>${roles.map(([k,l,c])=>`<th style="color:${c}">${l}</th>`).join('')}</tr></thead><tbody>${UM_PERMS.map(([a,p,who,note])=>{const first=a!==last;last=a;
+  return `<details class="um-perms"><summary>What each role can do (click to show)</summary><div class="um-table-wrap"><table class="um-ptable"><thead><tr><th>Area</th><th>Permission</th>${roles.map(([k,l,c])=>`<th style="color:${c}">${l}</th>`).join('')}</tr></thead><tbody>${UM_PERMS.map(([a,p,who,note])=>{const first=a!==last;last=a;
       return `<tr class="${first?'um-first':''}"><td>${first?escapeHtml(a):''}</td><td>${escapeHtml(p)}${note?`<small>${escapeHtml(note)}</small>`:''}</td>${roles.map(([k])=>`<td class="um-y">${who.includes(k)?'<span class="um-ok" aria-label="yes">✓</span>':'<span class="um-no" aria-label="no">–</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>
     <p class="um-note">Admins always have every permission and can open every tab. Supervisors see every tab except Manage Users.</p></details>`;
 }

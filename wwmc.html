@@ -5210,11 +5210,11 @@ async function pmSection(reps,items,pl,dates){
     const heat=active.length?`<div class="pm-panel"><h3>System heat map</h3><table class="pm-hm"><thead><tr><th>System</th><th>Activities</th><th>Completed</th><th>Punch open</th><th>Issues</th></tr></thead><tbody>${active.map(b=>{const x=B[b.id];
         return `<tr><td>${escapeHtml(b.l)}</td>${[[x.n,'59,130,246'],[x.done,'34,165,90'],[x.pl,'245,158,11'],[x.iss,'220,38,38']].map(([v,c])=>`<td style="background:rgba(${c},${v?Math.min(0.75,0.15+v*0.12):0.04});color:${v?'#0F172A':'#94A3B8'}">${v}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`:'';
     const legend=`<div class="pm-leg"><span><i style="background:#22A55A"></i>Completed</span><span><i style="background:#3B82F6"></i>In progress</span><span><i style="background:#F59E0B"></i>On hold</span><span><i style="background:#6366F1"></i>Walkdown / other</span><span><i style="background:#DC2626;border-radius:50%"></i>Issue</span><span>Number = activities</span><span class="pm-lines"><i style="background:#F59E0B"></i>Gas <i style="background:#94A3B8"></i>Exhaust <i style="background:#EF4444"></i>Steam <i style="background:#3B82F6"></i>Water</span></div>`;
-    return `<section class="pmsec"><div class="pm-top"><div class="pm-panel pm-gauge"><h3>Day score</h3>${gauge}<ul>${scoreRows}</ul></div>${cmpHtml}</div>
-      <div class="pm-panel pm-map"><h3>Where we worked${dates.length>1?'':' today'}</h3>${pmSVG(B)}${legend}${other.length?`<div class="pm-other"><b>Also worked on:</b> ${other.map(escapeHtml).join(' · ')}</div>`:''}</div>${heat}</section>`;
+    return `<section class="pmsec"><div class="pm-panel pm-map"><h3>Where we worked${dates.length>1?'':' today'}</h3>${pmSVG(B)}${legend}${other.length?`<div class="pm-other"><b>Also worked on:</b> ${other.map(escapeHtml).join(' · ')}</div>`:''}</div><div class="pm-top"><div class="pm-panel pm-gauge"><h3>Day score</h3>${gauge}<ul>${scoreRows}</ul></div>${cmpHtml}</div>
+      ${heat}</section>`;
   }catch(e){console.warn('plant map',e);return '';}
 }
-const PM_TPL_CSS=`.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-top:16px}
+const PM_TPL_CSS=`.lhdr{display:none}.tpl-plantmap .hdr{display:none!important}.tpl-plantmap .lhdr{display:block;background:#fff;border-radius:12px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(15,39,71,.06);break-inside:avoid}.lh-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:12px}.lh-row img{height:50px}.lh-co{text-align:right;font-size:11px;color:#6B7280}.lh-co b{display:block;color:#244F8B;font-size:13.5px}.lh-rule{height:3px;background:linear-gradient(90deg,#244F8B,#3B82F6 50%,#22A55A);border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.lh-tt{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:14px 0 10px;flex-wrap:wrap}.lh-tt h1{margin:0;font-size:30px;color:#0F2747;font-weight:800;letter-spacing:-.01em}.lh-dn{font-size:12.5px;font-weight:700;color:#244F8B}.lh-cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid #E3E8EF;border-radius:10px;overflow:hidden}.lh-cells>div{padding:8px 14px;border-right:1px solid #E3E8EF}.lh-cells>div:last-child{border:0}.lh-cells span{display:block;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A94A6}.lh-cells b{display:block;font-size:11.5px;color:#0F2747;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media (max-width:640px){.lh-cells{grid-template-columns:1fr 1fr}.lh-cells>div:nth-child(2){border-right:0}.lh-cells>div:nth-child(-n+2){border-bottom:1px solid #E3E8EF}}.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-top:16px}
 .tpl-plantmap .paper{background:#FBFCFE}
 
 .tpl-plantmap .hdr{background:#fff;border:1px solid #E3E8EF!important;border-top:4px solid #0F2747!important;border-radius:14px;border-collapse:separate;border-spacing:0;overflow:hidden}.tpl-plantmap .hdr>tbody>tr>td{border:0!important;padding:16px 18px;vertical-align:middle;background:none}.tpl-plantmap .hdr .dc{width:310px;padding:12px 14px 12px 0}.tpl-plantmap .dc table{display:block;background:#F7F9FC;border:0;border-radius:10px;padding:10px 12px}.tpl-plantmap .dc tbody{display:grid;grid-template-columns:1.25fr 1fr;gap:8px 14px}.tpl-plantmap .dc tr{display:flex;flex-direction:column;gap:1px}.tpl-plantmap .dc tr:first-child{grid-column:1/-1;padding-bottom:7px;border-bottom:1px solid #E3E8EF}.tpl-plantmap .dc th,.tpl-plantmap .dc td{display:block;border:0!important;padding:0;background:none!important;text-align:left;white-space:nowrap}.tpl-plantmap .dc th{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A94A6}.tpl-plantmap .dc td{font-size:11.5px;font-weight:700;color:#0F2747}.tpl-plantmap .dc tr:first-child td{font-size:13px}.tpl-plantmap .hdr .lg{width:auto;text-align:left;padding-right:16px}.tpl-plantmap .hdr .lg img{max-height:46px}
@@ -5226,7 +5226,7 @@ const PM_TPL_CSS=`.pmsec{display:none}.tpl-plantmap .pmsec{display:block;margin-
 .tpl-plantmap .rep{background:#fff;border-color:#E3E8EF;border-radius:14px}.tpl-plantmap .av{background:#E8EFFB;color:#0F2747;border-radius:10px}
 .tpl-plantmap .t th{background:#F1F5FB;color:#0F2747}.tpl-plantmap .t td{border-color:#EEF1F5}.tpl-plantmap .t tbody tr:nth-child(even) td{background:none}
 .tpl-plantmap .call{border:0;border-radius:10px}.tpl-plantmap .kpi,.tpl-plantmap .plsec .kpis div{border:1px solid #E3E8EF!important;border-radius:10px;background:#fff}
-.pm-top{display:grid;grid-template-columns:230px 1fr;gap:12px;margin-bottom:12px}
+.pm-top{display:grid;grid-template-columns:230px 1fr;gap:12px;margin-bottom:12px}.pmsec>.pm-map{margin-bottom:12px}
 .pm-panel{background:#fff;border:1px solid #E3E8EF;border-radius:14px;padding:12px 14px;margin-bottom:12px;break-inside:avoid}.pm-top .pm-panel{margin-bottom:0}
 .pm-panel h3{margin:0 0 8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6B7280;display:flex;gap:8px;align-items:baseline}.pm-panel h3 small{letter-spacing:0;text-transform:none;font-weight:500;margin-left:auto}
 .pm-gauge{text-align:center}.pm-gauge svg{width:100%;max-width:190px;display:block;margin:0 auto}
@@ -5242,7 +5242,7 @@ svg.sp{display:block;width:100%;height:22px;margin-top:3px}
 .pm-hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:11.5px}.pm-hm th{font-size:10px;color:#6B7280;font-weight:600;padding:4px 6px;text-align:center}.pm-hm th:first-child{text-align:left}
 .pm-hm td{padding:6px;text-align:center;font-weight:700;border-radius:5px}.pm-hm td:first-child{text-align:left;font-weight:600;background:none}
 @media (max-width:640px){.pm-top{grid-template-columns:1fr}.pm-kk{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media print{.pm-panel{break-inside:avoid}.tpl-plantmap .paper{background:#fff}}`;
+@media print{.pm-panel{break-inside:avoid}.tpl-plantmap .paper{background:#fff}.pm-map svg{width:88%;margin:0 auto}.tpl-plantmap .lhdr{padding:12px 16px 12px}.lh-row img{height:42px}.lh-row{padding-bottom:9px}.lh-tt{margin:10px 0 8px}.lh-tt h1{font-size:26px}.pm-gauge svg{max-width:160px}.pm-kk b{font-size:19px}}`;
 
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false]];
@@ -5314,6 +5314,7 @@ async function drbPrint(){
     const items=reps.flatMap(r=>(Array.isArray(r.items)&&r.items.length?r.items:[]).map(x=>({...x,r})));
     const dates=[...new Set(reps.map(r=>r.report_date).filter(Boolean))].sort();
     const fmtD=d=>{if(!d)return '';const x=new Date(String(d).slice(0,10)+'T00:00:00');return isNaN(x)?String(d):x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});};
+    const raisedBy=c.raisedBy?c.raisedBy:reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||''));
     const period=(c.period?c.period.replace(/\d{4}-\d{2}-\d{2}/g,fmtD):'')||(dates.length>1?fmtD(dates[0])+' – '+fmtD(dates[dates.length-1]):fmtD(dates[0]));
     const people=[...new Set(reps.map(r=>r.prepared_by||r.submitted_by_username).filter(Boolean))];
     const systems=[...new Set(reps.flatMap(drSplitSystems))];
@@ -5440,9 +5441,13 @@ ${DRB_TPL_CSS}${PM_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
       <tr><th>Doc. No.</th><td>${escapeHtml(docNo)}</td></tr>
       <tr><th>${dates.length>1?'Period':'Date'}</th><td>${escapeHtml(period)}</td></tr>
       <tr><th>Reports</th><td>${reps.length}</td></tr>
-      <tr><th>Raised by</th><td>${escapeHtml(c.raisedBy?c.raisedBy:reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||'')))}</td></tr>
+      <tr><th>Raised by</th><td>${escapeHtml(raisedBy)}</td></tr>
       <tr><th>Issued</th><td>${escapeHtml(gen)}</td></tr>
     </table></td></tr></table>
+  <header class="lhdr"><div class="lh-row">${logo?`<img src="${logo}" alt="WWMC">`:'<b>WWMC</b>'}<div class="lh-co"><b>Wahat Al Wusta Maintenance Company</b>Al-Qassim 2 CCGT IPP · 1,980 MW</div></div>
+    <div class="lh-rule"></div>
+    <div class="lh-tt"><h1>${escapeHtml(c.title)}</h1><span class="lh-dn">${escapeHtml(docNo)}</span></div>
+    <div class="lh-cells"><div><span>${dates.length>1?'Period':'Date'}</span><b>${escapeHtml(period)}</b></div><div><span>Reports</span><b>${reps.length}</b></div><div><span>Raised by</span><b>${escapeHtml(raisedBy)}</b></div><div><span>Issued</span><b>${escapeHtml(gen)}</b></div></div></header>
   ${pmHtml}
   ${body||'<p>No sections selected.</p>'}
   ${reps.photoNote?`<p style="font-size:11px;color:#B45309;margin-top:12px">${escapeHtml(reps.photoNote)}</p>`:''}

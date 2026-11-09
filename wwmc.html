@@ -5584,6 +5584,13 @@ async function smBackupNow(){
   catch(e){showToast('Backup failed: '+e.message,'error');}
   finally{b.disabled=false;b.textContent='Copy data now';}
 }
+// every qas2_ table the database exposes (so new tables are never missed), plus the known list
+async function smAllTables(){
+  const set=new Set(QAS2_TABLES);
+  try{const r=await fetch(SB_URL+'/rest/v1/',{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Accept:'application/openapi+json'}});
+    if(r.ok){const j=await r.json();Object.keys(j.definitions||{}).concat(Object.keys(j.paths||{}).map(x=>x.replace(/^\//,''))).forEach(n=>{if(/^qas2_[a-z0-9_]+$/.test(n))set.add(n);});}}catch(e){}
+  return [...set];
+}
 async function smLoadZip(){
   if(window.JSZip)return window.JSZip;
   await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=res;s.onerror=()=>rej(new Error('Could not load the ZIP tool — check the internet connection'));document.head.appendChild(s);});
@@ -5609,7 +5616,8 @@ async function smDownload(){
     const pageAll=async(tb,select,size)=>{const rows=[];let ord='&order=id.asc';for(let off=0;;off+=size){let part;try{part=await sbFetch(`${tb}?select=${select}${ord}&limit=${size}&offset=${off}`)||[];}catch(e){if(ord&&off===0){ord='';off-=size;continue;}throw e;}rows.push(...part);if(part.length<size)break;}return rows;};
     const data={};
     // plain tables
-    for(const tb of QAS2_TABLES.filter(x=>!['qas2_documents','qas2_photos','qas2_daily_reports'].includes(x))){
+    const allTables=await smAllTables();
+    for(const tb of allTables.filter(x=>!['qas2_documents','qas2_photos','qas2_daily_reports'].includes(x))){
       say('Backing up '+tb.replace('qas2_','')+'…');
       try{data[tb]=await pageAll(tb,'*',1000);}catch(e){data[tb]={error:e.message};}
     }
@@ -5642,7 +5650,7 @@ async function smDownload(){
       'data/      one JSON file per table (all rows, all columns)',
       'files/     every document and photo as a normal file you can open',
       '           documents/<id>_<name>   ticket_photos/<ticket no>/   report_photos/<report no>/',
-      '',`Files: ${nFiles}   Could not read: ${nMissing}`,
+      '',`Tables: ${Object.keys(data).length}   Files: ${nFiles}   Could not read: ${nMissing}`,
       'In the JSON, "backup_file" / "backup_files" give the path of each file inside this ZIP.',
       'User accounts are included — keep this file somewhere safe.',...(log.length?['','Problems:',...log]:[])].join('\r\n'));
     say('Packing the ZIP…');

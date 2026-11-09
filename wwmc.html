@@ -1279,6 +1279,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     <div class="modal-body drb">
       <div class="drb-grid">
         <div class="field"><label for="drb-title">Report title</label><input id="drb-title" type="text"></div>
+        <div class="field"><label for="drb-raisedby">Raised by</label><select id="drb-raisedby"><option value="Mohammed Alharish">Mohammed Alharish</option><option value="Riyadh Aloqayli">Riyadh Aloqayli</option><option value="">Automatic (report authors)</option></select></div>
         <div class="field"><label for="drb-period">Period shown on the report</label><input id="drb-period" type="text" placeholder="e.g. 08 Nov 2026"></div>
       </div>
       <fieldset><legend>Which reports</legend><div id="drb-scope"></div></fieldset>
@@ -5262,6 +5263,7 @@ function drOpenBuilder(ids){
   document.querySelectorAll('input[name="drb-layout"]').forEach(r=>r.checked=r.value===(saved.layout||'report'));
   const f=document.getElementById('dr-from')?.value,t=document.getElementById('dr-to')?.value,d=document.getElementById('dr-date-filter')?.value;
   document.getElementById('drb-title').value='Daily Report';
+  {let rb=null;try{rb=localStorage.getItem('qas2_drb_raisedby');}catch(e){}const sel=document.getElementById('drb-raisedby');if(sel)sel.value=rb===null?'Mohammed Alharish':rb;if(sel&&sel.selectedIndex<0)sel.value='Mohammed Alharish';}
   document.getElementById('drb-period').value=d||(f||t?`${f||'…'} to ${t||'…'}`:'');
   drpRenderOptions();
   let tp='corporate';try{tp=localStorage.getItem('qas2_drb_tpl')||'corporate';}catch(e){}
@@ -5275,7 +5277,8 @@ function drbChoice(){
   const layout=document.querySelector('input[name="drb-layout"]:checked')?.value||'report';
   try{localStorage.setItem('qas2_drb',JSON.stringify({s,layout}));}catch(e){}
   const tpl=document.querySelector('input[name="drb-tpl"]:checked')?.value||'corporate';try{localStorage.setItem('qas2_drb_tpl',tpl);}catch(e){}
-  return {ids,s,layout,tpl,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
+  const rb=document.getElementById('drb-raisedby')?.value??'';try{localStorage.setItem('qas2_drb_raisedby',rb);}catch(e){}
+  return {ids,s,layout,tpl,raisedBy:rb,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){
   const out=[];const base='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
@@ -5434,7 +5437,7 @@ ${DRB_TPL_CSS}${PM_TPL_CSS}</style></head><body class="tpl-${c.tpl}">
       <tr><th>Doc. No.</th><td>${escapeHtml(docNo)}</td></tr>
       <tr><th>${dates.length>1?'Period':'Date'}</th><td>${escapeHtml(period)}</td></tr>
       <tr><th>Reports</th><td>${reps.length}</td></tr>
-      <tr><th>Raised by</th><td>${escapeHtml(reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||'')))}</td></tr>
+      <tr><th>Raised by</th><td>${escapeHtml(c.raisedBy?c.raisedBy:reps.length===1?(reps[0].prepared_by||''):(people.length<=2?people.join(', '):(currentUser?.name||'')))}</td></tr>
       <tr><th>Issued</th><td>${escapeHtml(gen)}</td></tr>
     </table></td></tr></table>
   ${pmHtml}

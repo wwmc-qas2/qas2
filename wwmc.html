@@ -916,7 +916,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
           <button class="btn primary" onclick="switchTab('dailyreport-new')">+ Add Daily Report</button>
           <button class="btn primary" type="button" onclick="drOpenBuilder()">🖨 Print / Save report…</button>
           <button class="btn" id="dr-export-btn" onclick="exportDailyReportsCSV()">⇩ Export Reports CSV</button>
-          <button class="btn primary admin-only" id="dr-compile-btn" onclick="compileMasterReport()" style="display:none">📄 Compile Master Report</button>
+          <button class="btn primary sup-only" id="dr-compile-btn" onclick="compileMasterReport()" style="display:none">📄 Compile Master Report</button>
         </div>
       </div>
 
@@ -1292,7 +1292,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         <div class="field"><label for="u-user">Username</label><input id="u-user" placeholder="e.g. ahmed.rashidi"></div>
         <div class="field"><label for="u-pass">Password</label><input type="password" id="u-pass" placeholder="Set password" autocomplete="new-password"><small id="u-pass-hint" style="color:#6B7280"></small></div>
         <div class="field"><label for="u-role">Role</label>
-          <select id="u-role"><option value="admin">Admin – Full access to everything</option><option value="supervisor">Supervisor – Edit &amp; close tickets, reports, documents, O&amp;M</option><option value="user">User – Raise tickets &amp; submit daily reports</option><option value="viewer">Viewer – View dashboard, documents &amp; O&amp;M only</option></select>
+          <select id="u-role"><option value="admin">Admin – Full access to everything</option><option value="supervisor">Supervisor – Everything except managing users &amp; deleting</option><option value="user">User – Raise tickets &amp; submit daily reports</option><option value="viewer">Viewer – View dashboard, documents &amp; O&amp;M only</option></select>
         </div>
       </div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
@@ -1613,7 +1613,7 @@ function isViewer(){return currentUser?.role==='viewer';}
 function ensureLoggedIn(){if(!currentUser){showToast('Session expired. Please sign in again.','error');throw new Error('Not logged in');}}
 function requireRole(minRole,message='You do not have permission for this action.'){ensureLoggedIn();if(roleRank(currentUser.role)<roleRank(minRole)){showToast(message,'error');throw new Error(message);}return true;}
 function canManageTickets(){return isSupervisor();}
-function canEditReport(report){if(!currentUser||!report)return false; if(isAdmin()) return true; return currentUser.role==='supervisor' && report.submitted_by_username===currentUser.username;}
+function canEditReport(report){return !!currentUser && !!report && isSupervisor();}  // supervisors and admins can update any report
 function canDeleteReport(report){return !!currentUser && isAdmin() && !!report;}
 function canUploadDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
 function canEditDocs(){return !!currentUser && (currentUser.role==='admin' || currentUser.role==='supervisor');}
@@ -1678,12 +1678,13 @@ function showApp(){
   else if(isViewerRole){rb.style.display='inline-block';rb.style.background='#555';rb.textContent='VIEWER';}
   else rb.style.display='none';
   document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
+  document.querySelectorAll('.sup-only').forEach(el=>el.style.display=(isAdmin||isSupervisor)?'':'none');
   const setDisplay=(id,val)=>{const el=document.getElementById(id); if(el) el.style.display=val;};
   setDisplay('tab-dash','');
   setDisplay('tab-new',isViewerRole?'none':'');
   setDisplay('tab-register',isViewerRole?'none':'');
   setDisplay('tab-users',isAdmin?'':'none');
-  setDisplay('tab-pl-approvals',isAdmin?'':'none');
+  setDisplay('tab-pl-approvals',(isAdmin||isSupervisor)?'':'none');
   setDisplay('tab-dailyreport-new',isViewerRole?'none':'');
   setDisplay('tab-dailyreport-register',isViewerRole?'none':'');
   setDisplay('tab-docs','');
@@ -2586,17 +2587,18 @@ function refreshDashboard(force=false){
 }
 
 // ── USERS ──
-const UM_ROLES=[['admin','Admin','#C00000','Full access to everything'],['supervisor','Supervisor','#375623','Edit & close tickets, daily reports, documents, O&M'],['user','User','#6B7280','Raise tickets & submit daily reports'],['viewer','Viewer','#555','View dashboard, documents & O&M only']];
+const UM_ROLES=[['admin','Admin','#C00000','Full access to everything'],['supervisor','Supervisor','#375623','Everything except managing users & deleting'],['user','User','#6B7280','Raise tickets & submit daily reports'],['viewer','Viewer','#555','View dashboard, documents & O&M only']];
 // what each role can do (admin = everything) — kept in one place so the table always matches the site
 const UM_PERMS=[
   ['Dashboard','View dashboard & charts',['admin','supervisor','user','viewer']],
   ['Punch List','Raise new tickets',['admin','supervisor','user']],
   ['Punch List','See the register',['admin','supervisor','user']],
   ['Punch List','Edit, close & reopen tickets',['admin','supervisor']],
-  ['Punch List','Approve / reject tickets (Approvals)',['admin']],
+  ['Punch List','Approve / reject tickets (Approvals)',['admin','supervisor']],
   ['Punch List','Delete tickets',['admin']],
   ['Daily Report','Submit daily reports',['admin','supervisor','user']],
-  ['Daily Report','Edit reports',['admin','supervisor'],'Supervisor: own reports · Admin: all'],
+  ['Daily Report','Edit / update any report',['admin','supervisor']],
+  ['Daily Report','Compile master report',['admin','supervisor']],
   ['Daily Report','Delete reports',['admin']],
   ['Daily Report','Print / PDF / Excel',['admin','supervisor','user']],
   ['Documents','View & download',['admin','supervisor','user','viewer']],
@@ -2646,7 +2648,7 @@ function umPermTable(){
   const roles=UM_ROLES;let last='';
   return `<details class="um-perms" open><summary>What each role can do</summary><div class="um-table-wrap"><table class="um-ptable"><thead><tr><th>Area</th><th>Permission</th>${roles.map(([k,l,c])=>`<th style="color:${c}">${l}</th>`).join('')}</tr></thead><tbody>${UM_PERMS.map(([a,p,who,note])=>{const first=a!==last;last=a;
       return `<tr class="${first?'um-first':''}"><td>${first?escapeHtml(a):''}</td><td>${escapeHtml(p)}${note?`<small>${escapeHtml(note)}</small>`:''}</td>${roles.map(([k])=>`<td class="um-y">${who.includes(k)?'<span class="um-ok" aria-label="yes">✓</span>':'<span class="um-no" aria-label="no">–</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>
-    <p class="um-note">Admins always have every permission and can open every tab.</p></details>`;
+    <p class="um-note">Admins always have every permission and can open every tab. Supervisors see every tab except Manage Users.</p></details>`;
 }
 
 function showAddUser(){
@@ -2689,14 +2691,14 @@ async function loadPLApprovalCount(){
     const bell=document.getElementById('pl-approval-bell');
     const cnt=document.getElementById('pl-approval-count');
     const tabCnt=document.getElementById('pl-tab-cnt');
-    if(bell)bell.style.display=count>0?'flex':'none';
+    if(bell)bell.style.display=count>0&&isSupervisor()?'flex':'none';
     if(cnt){cnt.textContent=count;cnt.style.display=count>0?'inline-block':'none';}
     if(tabCnt){tabCnt.textContent=count;tabCnt.style.display=count>0?'inline-block':'none';}
   }catch(e){}
 }
 
 async function loadPLApprovals(){
-  try{requireRole('admin','Only admins can access approvals.');}catch(e){return;}
+  try{requireRole('supervisor','Only supervisors or admins can access approvals.');}catch(e){return;}
   const filter=document.getElementById('pl-approval-filter')?.value||'Pending';
   const body=document.getElementById('pl-approvals-body');
   if(!body)return;
@@ -2730,7 +2732,7 @@ async function loadPLApprovals(){
 }
 
 async function approvePLRequest(id){
-  try{requireRole('admin','Only admins can approve changes.');}catch(e){return;}
+  try{requireRole('supervisor','Only supervisors or admins can approve changes.');}catch(e){return;}
   const a=await sbFetch('qas2_approvals?id=eq.'+id+'&select=*');
   if(!a||!a.length)return;
   const req=a[0];
@@ -2742,7 +2744,7 @@ async function approvePLRequest(id){
 }
 
 async function rejectPLRequest(id){
-  try{requireRole('admin','Only admins can reject changes.');}catch(e){return;}
+  try{requireRole('supervisor','Only supervisors or admins can reject changes.');}catch(e){return;}
   const reason=document.getElementById('pl-reject-'+id)?.value.trim();
   if(!reason){alert('Please enter a rejection reason.');return;}
   await sbFetch('qas2_approvals?id=eq.'+id,'PATCH',{status:'Rejected',reviewed_by:currentUser.name,reviewed_at:new Date().toISOString(),rejection_reason:reason});
@@ -3219,7 +3221,7 @@ function switchTab(tab){
   if(tab==='dailyreport-register'){drMode='register';tab='dailyreport';}
   if(tab==='dashboard'&&!canViewDashboard()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
   if(isViewer() && !['dashboard','docs','om'].includes(tab)) tab='docs';
-  if((tab==='users'||tab==='approvals')&&!isAdmin()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
+  if((tab==='users'&&!isAdmin())||(tab==='approvals'&&!isSupervisor())) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
   const previousTab=getActiveTabState();
   const currentDrMode=getDRViewModeState();
   const targetDrMode=drMode || currentDrMode;
@@ -3714,7 +3716,7 @@ async function deleteReport(id, no){
 }
 
 async function compileMasterReport(){
-  try{requireRole('admin','Only admins can compile the master report.');}catch(e){return;}
+  try{requireRole('supervisor','Only supervisors or admins can compile the master report.');}catch(e){return;}
   const selectedDate=getReportFilterDate();
   const allReports=await fetchReportsByDate(selectedDate,false)||[];
   if(!allReports.length){alert('No reports found for the selected date.');return;}

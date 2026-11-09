@@ -442,7 +442,21 @@ tbody tr{transition:var(--transition)}
 .dri th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#6B7280;text-align:left;padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--border)}
 .dri td{padding:5px 6px;border-bottom:1px solid #F1F3F6;vertical-align:top}
 .dri-kks{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#6B7280}
-.dri-st{font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 6px;white-space:nowrap}
+.dri-st{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;border-radius:999px;padding:3px 10px 3px 4px;white-space:nowrap;line-height:1.2}
+.dri-st i{font-style:normal;width:17px;height:17px;border-radius:50%;display:inline-grid;place-items:center;font-size:10px;color:#fff;background:currentColor}.dri-st i{color:#fff}
+.dri-st-0 i{background:#16A34A}.dri-st-1 i{background:#2563EB}.dri-st-2 i{background:#D97706}.dri-st-3 i{background:#6B7280}
+.dri-sys{display:inline-flex;align-items:center;gap:5px;background:#EEF3FB;color:#1F3864;border:1px solid #D6E2F3;border-radius:7px;padding:3px 8px;font-size:11.5px;font-weight:600;line-height:1.3}
+.dri-sys::before{content:"⚙";font-size:11px;opacity:.7}
+.dri-kks code{font-family:Consolas,Menlo,monospace;font-size:11px;background:#F3F4F6;border-radius:5px;padding:2px 6px;color:#374151;white-space:nowrap}
+.dri td{vertical-align:top}.dri-act{line-height:1.5}
+.drc-lbl{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1F3864;margin:2px 0 4px}
+.drc-txt{white-space:pre-line;margin-bottom:8px}
+.drc-call{display:flex;gap:10px;align-items:flex-start;border-radius:9px;padding:9px 12px;margin:0 0 7px;white-space:pre-line;line-height:1.5}
+.drc-call .ic{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800;margin-top:1px}
+.drc-call b{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1px}
+.drc-call.ok{background:#ECFDF3;color:#14532D}.drc-call.ok .ic{background:#16A34A}.drc-call.ok b{color:#15803D}
+.drc-call.neg{background:#FEF2F2;color:#7F1D1D}.drc-call.neg .ic{background:#DC2626}.drc-call.neg b{color:#B91C1C}
+.drc-call.info{background:#EFF6FF;color:#1E3A8A}.drc-call.info .ic{background:#2563EB}.drc-call.info b{color:#1D4ED8}
 .dri-st-0{background:#DCFCE7;color:#166534}.dri-st-1{background:#DBEAFE;color:#1D4ED8}.dri-st-2{background:#FEF3C7;color:#B45309}.dri-st-3{background:#F3F4F6;color:#4B5563}
 .drb fieldset{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:12px 0 0}
 .drb legend{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);padding:0 4px}
@@ -3270,12 +3284,11 @@ function renderReportsList(reports, selectedDate){
           </div>
         </div>
         <div class="dr-report-body" id="rbody-${r.id}">
-          ${drItemsTable(r.items)}
-          <div style="margin-bottom:5px;white-space:pre-line${Array.isArray(r.items)&&r.items.length?';display:none':''}"><span class="dr-report-label">Activities: </span>${escapeHtml(r.content||'–')}</div>
-          ${Array.isArray(r.items)&&r.items.length&&drNotes(r)?`<div style="margin-bottom:5px;white-space:pre-line"><span class="dr-report-label" style="font-weight:700">Notes: </span>${escapeHtml(drNotes(r))}</div>`:''}
-          ${r.achievements&&r.achievements!=='None reported'?`<div style="margin-bottom:5px;color:#375623;white-space:pre-line"><span class="dr-report-label">Achievements: </span>${escapeHtml(r.achievements)}</div>`:''}
-          ${!drNoIssue(r.issues)?`<div style="margin-bottom:5px;color:#C00000;white-space:pre-line"><span class="dr-report-label">Issues: </span>${escapeHtml(r.issues)}</div>`:''}
-          <div style="white-space:pre-line"><span class="dr-report-label">Tomorrow: </span>${escapeHtml(r.next_plan||'–')}</div>
+          ${(()=>{const its=drParseItems(r);return its?`<div class="drc-lbl">Activities</div>`+drItemsTable(its):`<div class="drc-lbl">Activities</div><div class="drc-txt">${escapeHtml(r.content||'–')}</div>`;})()}
+          ${Array.isArray(r.items)&&r.items.length&&drNotes(r)?`<div class="drc-txt" style="margin-bottom:8px"><b>Notes: </b>${escapeHtml(drNotes(r))}</div>`:''}
+          ${r.achievements&&r.achievements!=='None reported'?`<div class="drc-call ok"><span class="ic" aria-hidden="true">✓</span><div><b>Achievements</b>${escapeHtml(r.achievements)}</div></div>`:''}
+          ${!drNoIssue(r.issues)?`<div class="drc-call neg"><span class="ic" aria-hidden="true">!</span><div><b>Issues &amp; challenges</b>${escapeHtml(r.issues)}</div></div>`:''}
+          <div class="drc-call info"><span class="ic" aria-hidden="true">➜</span><div><b>Plan for next working day</b>${escapeHtml(r.next_plan||'–')}</div></div>
         </div>
       </div>`;
   list.innerHTML=top + firstChunk.map(cardHtml).join('') + (rest.length?'<div id="dr-report-rest"></div>':'');
@@ -3342,7 +3355,7 @@ function toggleAllReports(checked){
 let edraRows=[],edraId=null;
 function edraParse(report){
   // structured rows if saved; otherwise rebuild them from the text ("• System — activity [Status] (KKS)")
-  if(Array.isArray(report.items)&&report.items.length)return report.items.map(r=>({sys:r.sys||'',act:r.act||'',st:DRA_STATUS.includes(r.st)?r.st:'Completed',kks:r.kks||''}));
+  const pi=drParseItems(report);if(pi)return pi.map(r=>({sys:r.sys||'',act:r.act||'',st:DRA_STATUS.includes(r.st)?r.st:'Completed',kks:r.kks||''}));
   const txt=String(report.content||'').trim();if(!txt||txt==='–')return [];
   const lines=txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   const rx=/^(?:[•\-*]\s*)?(?:(.+?)\s+—\s+)?([\s\S]+?)\s*\[(Completed|In progress|On hold|Planned)\]\s*(?:\(([^()]*)\))?$/;
@@ -5017,7 +5030,7 @@ function drClearFilters(){['dr-person','dr-sysf','dr-from','dr-to','dr-date-filt
 function drNoIssue(s){return !s||/^(no issues?|none|nil|n\/?a|-|–)\.?$/i.test(String(s).trim());}
 function drRenderSummary(reports){
   const box=document.getElementById('dr-summary');if(!box)return;
-  const items=reports.flatMap(r=>Array.isArray(r.items)?r.items:[]);
+  const items=reports.flatMap(r=>drParseItems(r)||[]);
   const people=new Set(reports.map(r=>r.prepared_by||r.submitted_by_username)).size;
   const systems=new Set(reports.flatMap(drSplitSystems)).size;
   const issues=reports.filter(r=>!drNoIssue(r.issues)).length;
@@ -5060,9 +5073,18 @@ function drTrackerGo(name,date){
   const p=document.getElementById('dr-person');if(p){if(![...p.options].some(o=>o.value===name))p.insertAdjacentHTML('beforeend',`<option>${escapeHtml(name)}</option>`);p.value=name;}
   loadTodayReports();document.getElementById('dr-reports-list')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
+function drParseItems(r){
+  if(Array.isArray(r.items)&&r.items.length)return r.items;
+  const txt=String(r.content||'').trim();if(!txt||txt==='–')return null;
+  const rx=/^(?:[•\-*]\s*)?(?:(.+?)\s+—\s+)?([\s\S]+?)\s*\[(Completed|In progress|On hold|Planned)\]\s*(?:\(([^()]*)\))?$/;
+  const lines=txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const out=lines.map(l=>{const m=l.match(rx);return m?{sys:(m[1]||'').trim(),act:m[2].trim(),st:m[3],kks:(m[4]||'').trim()}:null;});
+  return out.length&&out.every(Boolean)?out:null;
+}
+const DRI_ICON={'Completed':'✓','In progress':'↻','On hold':'‖','Planned':'◷'};
 function drItemsTable(items){
   if(!Array.isArray(items)||!items.length)return '';
-  return `<table class="dri"><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${escapeHtml(x.sys||'')}</td><td>${escapeHtml(x.act||'')}</td><td><span class="dri-st dri-st-${DRA_STATUS.indexOf(x.st)}">${escapeHtml(x.st||'')}</span></td><td class="dri-kks">${escapeHtml(x.kks||'')}</td></tr>`).join('')}</tbody></table>`;
+  return `<table class="dri"><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${x.sys?`<span class="dri-sys" title="System">${escapeHtml(x.sys)}</span>`:''}</td><td class="dri-act">${escapeHtml(x.act||'')}</td><td><span class="dri-st dri-st-${Math.max(0,DRA_STATUS.indexOf(x.st))}"><i aria-hidden="true">${DRI_ICON[x.st]||'•'}</i>${escapeHtml(x.st||'')}</span></td><td class="dri-kks">${x.kks?`<code>${escapeHtml(x.kks)}</code>`:''}</td></tr>`).join('')}</tbody></table>`;
 }
 
 
@@ -5354,6 +5376,7 @@ async function drbPrint(){
     const withPhotos=c.s.includes('photos')&&c.ids.length<=60;
     if(c.s.includes('photos')&&!withPhotos)showToast('Photos are left out for more than 60 reports to keep the report fast. Narrow the dates to include photos.','error');
     const reps=await drbFetch(c.ids,withPhotos,prog);prog('Building the report…');
+    reps.forEach(r=>{if(!(Array.isArray(r.items)&&r.items.length)){const pi=drParseItems(r);if(pi)r.items=pi;}});
     const has=k=>c.s.includes(k);
     const E=drbEsc;
     const items=reps.flatMap(r=>(Array.isArray(r.items)&&r.items.length?r.items:[]).map(x=>({...x,r})));

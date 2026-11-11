@@ -285,6 +285,16 @@ img[src^="sbs:"]{opacity:0}
 .mr-list{width:100%;border-collapse:collapse;font-size:12.5px}.mr-list td{padding:6px 8px;border-bottom:1px solid #F1F3F7}.mr-list .mr-lh td{font-weight:800;color:#1F3864;background:#F6F8FB;font-size:12px}.mr-list td.mr-no{background:none;color:#4472C4;width:50px;font-weight:700}
 .mr-list a{font-size:12px;color:#2563EB;text-decoration:none;white-space:nowrap}
 .mr-s{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}.mr-s-ok{background:#ECFDF3;color:#15803D}.mr-s-auto{background:#EEF3FB;color:#1D4ED8}.mr-s-na{background:#F3F4F6;color:#6B7280}.mr-s-empty{background:#FFFBEB;color:#B45309}
+.mr-thp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch}.mr-thl{grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4472C4}
+.mr-th{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1.5px solid var(--border,#E3E8EF);background:#fff;border-radius:12px;padding:10px;cursor:pointer;font:inherit}
+.mr-th i{display:block;width:100%;height:58px;border-radius:7px;margin-bottom:5px}.mr-th b{font-size:13px;color:#1F3864}.mr-th small{font-size:11px;color:#6B7280;line-height:1.3}
+.mr-th.on{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.15)}.mr-th:hover{border-color:#93C5FD}
+.mr-th-signature i{background:linear-gradient(180deg,rgba(11,24,48,.1),#0B1830 75%),linear-gradient(90deg,#3BAA35 0 20%,#7FC8F8 20% 40%,#F5A524 40% 60%,#E8EEF7 60%) bottom/100% 4px no-repeat,#2E5597}
+.mr-th-blueprint i{background:linear-gradient(rgba(127,200,248,.25) 1px,transparent 1px) 0 0/10px 10px,linear-gradient(90deg,rgba(127,200,248,.25) 1px,transparent 1px) 0 0/10px 10px,#0A2342}
+.mr-th-editorial i{background:linear-gradient(90deg,#12264A 0 30%,#F7F5F0 30%);position:relative}.mr-th-editorial i::after{content:"11";display:block;color:#fff;font:900 26px/58px Inter,Arial;padding-left:8px}
+.mr-th-classic i{background:linear-gradient(#fff 0 26%,#1F3864 26% 64%,#fff 64%);border:1px solid #E3E8EF}
+.mr-glc{grid-column:1/-1;font-size:12.5px;color:#374151;display:flex;gap:8px;align-items:center}
+@media (max-width:640px){.mr-thp{grid-template-columns:1fr 1fr}}
 .dro summary{cursor:pointer;list-style:none}.dro summary::-webkit-details-marker{display:none}.dro summary::after{content:"▸";float:right;color:#9CA3AF}.dro[open] summary::after{content:"▾"}
 .dro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dro-p{grid-template-columns:repeat(5,minmax(0,1fr))}
 .dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
@@ -6452,6 +6462,7 @@ function mrRenderReport(){
    <div class="mr-hero"><div><div class="mr-hl">${escapeHtml(mrMonthLabel(mrMonth,true))}</div><div class="mr-pct"><b>${pct}%</b> ready · ${ready} of ${sts.length} sections</div><div class="mr-bar2"><i style="width:${pct}%"></i></div>
      <div class="mr-meta">${mrRow.updated_at?'Last saved '+escapeHtml(formatDateTime(mrRow.updated_at))+(mrRow.updated_by?' by '+escapeHtml(mrRow.updated_by):''):'Nothing saved for this month yet.'}</div></div>
      <div class="mr-actions"><button class="btn primary" onclick="mrPrint()">🖨 Generate PDF</button>${ed&&mrPrev?'<button class="btn" onclick="mrCopyAllPrev(this)">Copy empty sections from last month</button>':''}</div></div>
+   <div class="mr-card">${mrThemePicker()}</div>
    <div class="mr-card"><div class="mr-sh"><b>Cover photos</b><span class="mr-note">Two photos for the first page (e.g. control room and plant).</span></div>
      <div class="mr-cover">${[0,1].map(i=>`<div class="mr-cv">${cover[i]?`<img src="${escapeHtml(cover[i])}" alt="Cover photo ${i+1}">`:'<span>No photo</span>'}${ed?`<label class="btn sm">Choose…<input type="file" accept="image/*" hidden onchange="mrCoverSet(${i},this)"></label>${cover[i]?`<button class="btn sm" type="button" onclick="mrCoverSet(${i},null)">Remove</button>`:''}`:''}</div>`).join('')}</div></div>
    ${ed?'':'<div class="mr-note" style="margin:8px 0">View only — supervisors and admins can edit.</div>'}
@@ -6482,10 +6493,252 @@ async function mrCopyAllPrev(btn){
 }
 
 // ───────── PDF ─────────
-async function mrPrint(){
-  const w=window.open('','_blank');
+
+// ═════════ MONTHLY REPORT — PDF DESIGNS ═════════
+const MR_THEMES=[['signature','Signature','Full-photo cover, dashboard cards'],['blueprint','Blueprint','Engineering drawing style'],['editorial','Editorial','Magazine style, large type'],['classic','Classic','Simple letterhead']];
+let mrTheme='signature',mrGlance=true;
+try{const t=localStorage.getItem('qas2_mr_theme');if(t&&MR_THEMES.some(x=>x[0]===t))mrTheme=t;mrGlance=localStorage.getItem('qas2_mr_glance')!=='0';}catch(e){}
+function mrSetTheme(t){mrTheme=t;try{localStorage.setItem('qas2_mr_theme',t);}catch(e){}document.querySelectorAll('.mr-th').forEach(b=>b.classList.toggle('on',b.dataset.t===t));}
+function mrSetGlance(v){mrGlance=!!v;try{localStorage.setItem('qas2_mr_glance',v?'1':'0');}catch(e){}}
+function mrThemePicker(){
+  return `<div class="mr-thp"><span class="mr-thl">PDF design</span>${MR_THEMES.map(t=>`<button type="button" class="mr-th mr-th-${t[0]}${mrTheme===t[0]?' on':''}" data-t="${t[0]}" onclick="mrSetTheme('${t[0]}')" title="${escapeHtml(t[2])}"><i></i><b>${t[1]}</b><small>${escapeHtml(t[2])}</small></button>`).join('')}
+    <label class="mr-glc"><input type="checkbox" ${mrGlance?'checked':''} onchange="mrSetGlance(this.checked)"> Include “Month at a Glance” page</label></div>`;
+}
+// ── small SVG charts (scale to their box)
+function mrNice(mx,n){if(!(mx>0))return 100;const raw=mx/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*mag*n;}
+function mrFmtBig(n){if(n==null||isNaN(n))return '—';if(Math.abs(n)>=1e4&&Math.abs(n)<1e6&&n%1000===0)return (n/1000)+'k';if(Math.abs(n)>=1e6)return (Math.round(n/1e4)/100).toLocaleString('en-US')+'M';return Math.round(n).toLocaleString('en-US');}
+function mrSvgBars(days,series,cols,o={}){
+  const W=o.w||640,H=o.h||200,pl=34,pb=18,pt=8,pr=6,iw=W-pl-pr,ih=H-pt-pb,N=days.length||1,F=o.mono?'JetBrains Mono,DejaVu Sans Mono,Consolas,monospace':'Inter,Segoe UI,Arial';
+  const tot=days.map((_,i)=>series.reduce((a,s)=>a+(s.v[i]||0),0));const mx=mrNice(Math.max(0,...tot),4);
+  const bw=iw/N;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" font-family="${F}" font-size="8.5" preserveAspectRatio="xMidYMid meet">`;
+  for(let g=0;g<=4;g++){const y=pt+ih-ih*g/4;s+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="${o.grid||'#EEF2F7'}" ${o.dash?'stroke-dasharray="2 3"':''}/><text x="${pl-5}" y="${y+3}" text-anchor="end" fill="#94A3B8">${mrFmtBig(mx*g/4)}</text>`;}
+  days.forEach((d,i)=>{let y=pt+ih;series.forEach((sr,k)=>{const v=sr.v[i]||0;if(!v)return;const hh=ih*v/mx;y-=hh;s+=`<rect x="${(pl+i*bw+bw*.17).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*.66).toFixed(1)}" height="${hh.toFixed(1)}" fill="${cols[k%cols.length]}"${o.round?' rx="1.4"':''}/>`;});
+    if(i===0||(i+1)%5===0)s+=`<text x="${(pl+i*bw+bw/2).toFixed(1)}" y="${H-5}" text-anchor="middle" fill="#94A3B8">${i+1}</text>`;});
+  if(!tot.some(x=>x))s+=`<text x="${pl+iw/2}" y="${pt+ih/2}" text-anchor="middle" fill="#94A3B8" font-size="11">No readings recorded this month</text>`;
+  return s+'</svg>';
+}
+function mrSvgLine(vals,col,o={}){
+  const W=o.w||640,H=o.h||170,pl=40,pb=18,pt=8,pr=o.pr2?30:8,iw=W-pl-pr,ih=H-pt-pb,N=vals.length||1,F=o.mono?'JetBrains Mono,DejaVu Sans Mono,Consolas,monospace':'Inter,Segoe UI,Arial';
+  const mx=mrNice(Math.max(0,...vals.map(v=>v||0)),4);
+  const X=i=>pl+(N>1?iw*i/(N-1):iw/2),Y=v=>pt+ih-ih*v/mx;const id='g'+Math.random().toString(36).slice(2,8);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" font-family="${F}" font-size="8.5"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".26"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`;
+  for(let g=0;g<=4;g++){const y=pt+ih-ih*g/4;s+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="${o.grid||'#EEF2F7'}" ${o.dash?'stroke-dasharray="2 3"':''}/><text x="${pl-5}" y="${y+3}" text-anchor="end" fill="#94A3B8">${mrFmtBig(mx*g/4)}</text>`;}
+  const pts=vals.map((v,i)=>v==null?null:[X(i),Y(v)]);const segs=[];let cur=[];pts.forEach(p=>{if(p)cur.push(p);else if(cur.length){segs.push(cur);cur=[];}});if(cur.length)segs.push(cur);
+  segs.forEach(sg=>{const d=sg.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L');if(sg.length>1)s+=`<path d="M${d}L${sg[sg.length-1][0].toFixed(1)},${pt+ih}L${sg[0][0].toFixed(1)},${pt+ih}Z" fill="url(#${id})"/>`;s+=`<path d="M${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;if(sg.length===1)s+=`<circle cx="${sg[0][0]}" cy="${sg[0][1]}" r="2.5" fill="${col}"/>`;});
+  if(o.pr2){const pv=o.pr2.filter(v=>v!=null);if(pv.length){let a=Math.floor(Math.min(...pv)-1),b=Math.ceil(Math.max(...pv)+1);const Y2=v=>pt+ih-ih*(v-a)/(b-a||1);const q=o.pr2.map((v,i)=>v==null?null:[X(i),Y2(v)]).filter(Boolean);
+    if(q.length>1)s+=`<path d="M${q.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L')}" fill="none" stroke="#F5A524" stroke-width="1.4" stroke-dasharray="3 2"/>`;s+=`<text x="${W-pr+4}" y="${pt+6}" fill="#D97706">${b}</text><text x="${W-pr+4}" y="${pt+ih}" fill="#D97706">${a}</text>`;}}
+  [0,9,19,N-1].filter((x,i,a)=>x<N&&a.indexOf(x)===i).forEach(i=>s+=`<text x="${X(i).toFixed(1)}" y="${H-5}" text-anchor="middle" fill="#94A3B8">${i+1}</text>`);
+  if(!pts.some(Boolean))s+=`<text x="${pl+iw/2}" y="${pt+ih/2}" text-anchor="middle" fill="#94A3B8" font-size="11">No readings recorded this month</text>`;
+  return s+'</svg>';
+}
+function mrSvgDonut(items,o={}){
+  const T=items.reduce((a,x)=>a+x[1],0);const W=260,H=150,cx=72,cy=75,R=60,r=40,F=o.mono?'JetBrains Mono,DejaVu Sans Mono,monospace':'Inter,Segoe UI,Arial';
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" font-family="${F}">`,a=-Math.PI/2;
+  if(!T)s+=`<circle cx="${cx}" cy="${cy}" r="${(R+r)/2}" fill="none" stroke="#E2E8F0" stroke-width="${R-r}"/>`;
+  items.forEach(([n,v,c])=>{if(!v)return;if(v===T){s+=`<circle cx="${cx}" cy="${cy}" r="${(R+r)/2}" fill="none" stroke="${c}" stroke-width="${R-r}"/>`;return;}const b=a+2*Math.PI*v/T,L=b-a>Math.PI?1:0,p=(rr,t)=>[(cx+rr*Math.cos(t)).toFixed(2),(cy+rr*Math.sin(t)).toFixed(2)];const[x1,y1]=p(R,a),[x2,y2]=p(R,b),[x3,y3]=p(r,b),[x4,y4]=p(r,a);s+=`<path d="M${x1},${y1}A${R},${R} 0 ${L} 1 ${x2},${y2}L${x3},${y3}A${r},${r} 0 ${L} 0 ${x4},${y4}Z" fill="${c}"/>`;a=b;});
+  s+=`<text x="${cx}" y="${cy+3}" text-anchor="middle" font-size="22" font-weight="800" fill="${o.ink||'#0B1830'}">${T}</text><text x="${cx}" y="${cy+17}" text-anchor="middle" font-size="8" letter-spacing="1" fill="#64748B">POINTS</text>`;
+  items.forEach(([n,v,c],i)=>s+=`<rect x="152" y="${30+i*24}" width="9" height="9" rx="2" fill="${c}"/><text x="166" y="${38+i*24}" font-size="10" fill="#334155">${n}</text><text x="256" y="${38+i*24}" font-size="10.5" font-weight="800" text-anchor="end" fill="${o.ink||'#0B1830'}">${v}</text>`);
+  return s+'</svg>';
+}
+function mrSpark(vals,col){const v=vals.map(x=>x||0);const mx=Math.max(...v,0)||1,W=140,H=26;if(v.length<2)return '';const p=v.map((x,i)=>[(W*i/(v.length-1)).toFixed(1),(H-2-(H-4)*x/mx).toFixed(1)]);return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="24" preserveAspectRatio="none"><path d="M${p.map(x=>x.join(',')).join('L')}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;}
+function mrPlantSchematic(c){
+  let s=`<svg viewBox="0 0 714 300" width="100%"><g fill="none" stroke="${c}" stroke-width="1.3" font-family="JetBrains Mono,DejaVu Sans Mono,monospace" font-size="9">`;
+  [0,1,2].forEach(i=>{const x=30+i*150;s+=`<rect x="${x}" y="150" width="80" height="34" rx="3"/><text x="${x+40}" y="171" text-anchor="middle" fill="${c}" stroke="none">GT1${i+1}</text><circle cx="${x}" cy="167" r="11"/><text x="${x}" y="170" text-anchor="middle" fill="${c}" stroke="none" font-size="7">G</text><path d="M${x+80},167 h20"/><rect x="${x+100}" y="80" width="40" height="104"/><text x="${x+120}" y="135" text-anchor="middle" fill="${c}" stroke="none" font-size="8" transform="rotate(-90 ${x+120} 135)">HRSG ${i+1}</text><path d="M${x+110},80 v-60 h20 v60"/><path d="M${x+120},20 v-6" stroke-dasharray="2 2"/><path d="M${x+140},100 h${480-x-140}" stroke-dasharray="4 3"/>`;});
+  [0,1].forEach(j=>{const x=510+j*100,y=120;s+=`<path d="M${x},${y+30} l56,-14 v58 l-56,-14 z"/><text x="${x+28}" y="${y+48}" text-anchor="middle" fill="${c}" stroke="none">ST2${j+1}</text><circle cx="${x+76}" cy="${y+45}" r="11"/><text x="${x+76}" y="${y+48}" text-anchor="middle" fill="${c}" stroke="none" font-size="7">G</text>`;});
+  s+=`<path d="M480,100 v20 M480,100 h130 v20"/><rect x="505" y="215" width="180" height="40" rx="3"/><text x="595" y="239" text-anchor="middle" fill="${c}" stroke="none">ACC · AIR COOLED CONDENSER</text><path d="M538,175 v40 M638,175 v40" stroke-dasharray="3 2"/><path d="M20,272 h670" stroke-dasharray="1 4"/><text x="20" y="292" fill="${c}" stroke="none" font-size="8.5">SCHEMATIC · NOT TO SCALE · 3 × GT + 3 × HRSG + 2 × ST · 1980 MW</text></g></svg>`;
+  return s;
+}
+// highlights from the "Operation Event Summary" text (or the executive summary bullets)
+function mrHighlights(d,max){
+  const out=[];const src=String(d.ops_events||'')+'\n'+String(d.exec||'');let per='';
+  src.split('\n').forEach(l=>{const t=l.trim();if(!t)return;
+    const pm=t.match(/^(\d{1,2})(?:\s*[~–-]\s*(\d{1,2}))?\s+([A-Za-z]{3})/);if(pm&&!/^[•\-\*]/.test(t)){per=pm[1].padStart(2,'0')+(pm[2]?'–'+pm[2].padStart(2,'0'):'')+' '+pm[3].toUpperCase();return;}
+    if(!/^[•\-\*]/.test(t))return;let x=t.replace(/^[•\-\*]\s*/,'');let tag='',cls='';
+    const m=x.match(/^(Achievement|Completed|Ongoing|In progress|On hold)\s*:\s*/i);if(m){const k=m[1].toLowerCase();x=x.slice(m[0].length);tag=k==='achievement'?'Achieved':k==='completed'?'Done':k==='on hold'?'On hold':'Ongoing';cls=k==='achievement'||k==='completed'?'ok':k==='on hold'?'hd':'on';}
+    if(out.some(o=>o.t===x))return;out.push({d:per,t:x,tag,cls,rank:cls==='ok'&&tag==='Achieved'?0:cls==='ok'?1:cls==='on'?2:cls==='hd'?3:1});});
+  return out.sort((a,b)=>a.rank-b.rank).slice(0,max||6);
+}
+function mrThemeBuild(theme,c){
+  const E=c.E,L=c.logo?`<img src="${c.logo}" alt="WWMC">`:'',EN=`<img src="${c.energy}" alt="Wahat Al Wusta Energy">`;
+  const k=c.k,ph=c.cover||[];const monNum=String(+c.month.slice(5,7)),yr=c.month.slice(0,4),monName=c.monthName,monShort=c.monthShort.toUpperCase();
+  const unitCols={signature:['#1F3864','#4472C4','#7FC8F8','#3BAA35','#9BD18B'],blueprint:['#0A2342','#2E7DC4','#7FC8F8','#9FB3D1','#C7D7EA'],editorial:['#12264A','#4472C4','#B08D57','#3BAA35','#9DB4D6'],classic:['#1F3864','#4472C4','#7FC8F8','#3BAA35','#9BD18B']}[theme];
+  const mono=theme==='blueprint';const series=c.units.map((u,i)=>({n:u,v:c.power[u]}));
+  const legend=c.units.map((u,i)=>`<span><i style="background:${unitCols[i]}"></i>${u}</span>`).join('');
+  const bars=(w,h,extra)=>mrSvgBars(c.days,series,unitCols,{w,h,mono,round:!mono,dash:mono,grid:mono?'#CBD5E1':theme==='editorial'?'#E7E3DA':'#EEF2F7',...(extra||{})});
+  const fgLine=(w,h)=>mrSvgLine(c.fg,mono?'#2E7DC4':'#4472C4',{w,h,mono,dash:mono,grid:mono?'#CBD5E1':'#EEF2F7',pr2:c.pr});
+  const donut=mrSvgDonut([['Closed',c.punch.closed,'#16A34A'],['Open — A',c.punch.A,'#DC2626'],['Open — B',c.punch.B,'#F5A524'],['Open — C',c.punch.C,'#7FC8F8']],{mono});
+  const hl=c.highlights;const hlList=hl.length?`<ul class="g-hl">${hl.map(h=>`<li><b>${E(h.d||monShort)}</b><span>${E(h.t)}${h.tag?` <em class="tg tg-${h.cls}">${E(h.tag)}</em>`:''}</span></li>`).join('')}</ul>`:'<p class="g-none">Add the Operation Event Summary (3.1.1) to show the month’s highlights here.</p>';
+  const meta=[['Document No.',c.docNo],['Period',c.period],['O&M Operator','Wahat Al Wusta Maintenance Company'],['Owner','Wahat Al Wusta Energy Company']];
+  const kp4=[[mrFmtBig(k.power),'MWh generated'],[mrFmtBig(k.fuel),'Sm³ fuel gas'],[String(k.open),'Open punch points'],[String(k.crOpen),'Open CR cases']];
+  const spk=[[mrFmtBig(k.power),'MWh','Power generated',k.powerNote,c.dayTotals,'#1F3864'],[mrFmtBig(k.fuel),'Sm³','Fuel gas',k.fuelNote,c.fg,'#4472C4'],[mrFmtBig(k.rhr),'h','Running hours',k.rhrNote,c.dayHours,'#3BAA35'],[String(k.open),'pts','Open punch',k.punchNote,c.openTrend,'#F5A524']];
+  const T={};
+  // ───────── SIGNATURE
+  T.signature={
+    cover:`<div class="cover cv-sig">${ph[0]?`<div class="ph" style="background-image:url('${E(ph[0])}')"></div>`:'<div class="ph ph-none"></div>'}
+      <div class="top">${L||'<span></span>'}<div class="mid">Qassim-2 IPP · Operations &amp; Maintenance</div>${EN}</div>
+      <div class="mo">${monNum}</div>
+      <div class="ttl"><div class="kick">Monthly Plant Report</div><h1>Qassim-2<br>1980 MW CCGT</h1><div class="sub">Operations &amp; Maintenance readiness · Commissioning support</div><div class="mlabel"><i></i>${E(monName)}</div></div>
+      <div class="kp">${kp4.map(x=>`<div><b>${E(x[0])}</b><span>${E(x[1])}</span></div>`).join('')}</div>
+      <div class="meta">${meta.map(m=>`<div><i>${E(m[0])}</i>${E(m[1])}</div>`).join('')}</div></div>`,
+    header:`<div class="rh">${L||'<span></span>'}<div class="c"><b>Monthly Plant Report</b><span>Qassim-2 · ${E(monName)}</span></div>${EN}</div>`,
+    glance:`<div class="sh"><div class="n">◆</div><div><h2 class="gh">Month at a Glance</h2><p>Key figures, trends and highlights for ${E(monName)}</p></div></div>
+      <div class="kpis">${spk.map(x=>`<div class="k"><i>${E(x[2])}</i><b>${E(x[0])} <u>${E(x[1])}</u></b><small>${E(x[3]||'')}</small>${mrSpark(x[4],x[5])}</div>`).join('')}</div>
+      <div class="g2"><div class="card"><h3>Daily Power Production</h3><div class="cs">MWh per day, by unit</div>${bars(420,190)}<div class="lg">${legend}</div></div>
+        <div class="card"><h3>Punch List Status</h3><div class="cs">All points at month end</div>${donut}</div></div>
+      <div class="g2"><div class="card"><h3>Fuel Gas Consumption</h3><div class="cs">Sm³/day · dashed: pressure (barg)</div>${fgLine(420,170)}</div>
+        <div class="card"><h3>Highlights</h3>${hlList}</div></div>`,
+    css:`
+      .cv-sig{background:#0B1830}.cv-sig .ph{position:absolute;inset:0 0 auto 0;height:720px;background:center/cover no-repeat}.cv-sig .ph-none{background:radial-gradient(120% 90% at 80% 10%,#2E5597 0%,#16294A 55%,#0B1830 100%)}
+      .cv-sig .ph-none::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.04) 0 2px,transparent 2px 16px)}
+      .cv-sig .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,24,48,.35) 0%,rgba(11,24,48,0) 30%,rgba(11,24,48,.55) 62%,#0B1830 100%)}
+      .cv-sig .top{position:absolute;top:0;left:0;right:0;height:96px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:space-between;padding:0 44px}.cv-sig .top img{height:54px;max-width:200px;object-fit:contain}
+      .cv-sig .top .mid{font:600 10px Inter,Segoe UI,Arial;letter-spacing:.32em;color:#1F3864;text-transform:uppercase}
+      .cv-sig .ttl{position:absolute;left:44px;right:44px;top:470px;color:#fff}.cv-sig .kick{font:700 12px Inter,Segoe UI;letter-spacing:.38em;text-transform:uppercase;color:#7FC8F8;display:flex;align-items:center;gap:12px}.cv-sig .kick::before{content:"";width:34px;height:3px;background:#3BAA35}
+      .cv-sig h1{font:800 64px/.98 Inter,Segoe UI,Arial;letter-spacing:-.025em;margin:16px 0 14px;color:#fff}.cv-sig .sub{font:500 16px Inter,Segoe UI;color:#C9D8EE}
+      .cv-sig .mo{position:absolute;right:40px;top:440px;font:900 230px/1 Inter,Segoe UI,Arial;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.35);letter-spacing:-.05em}
+      .cv-sig .mlabel{display:inline-flex;gap:10px;align-items:center;margin-top:22px;background:#fff;color:#0B1830;font:800 18px Inter,Segoe UI;padding:10px 18px;border-radius:6px}.cv-sig .mlabel i{width:10px;height:10px;border-radius:50%;background:#3BAA35}
+      .cv-sig .kp{position:absolute;left:44px;right:44px;top:780px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.cv-sig .kp div{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);border-radius:12px;padding:16px;color:#fff}
+      .cv-sig .kp b{display:block;font:800 30px Inter,Segoe UI;letter-spacing:-.01em}.cv-sig .kp span{display:block;font:600 10.5px Inter,Segoe UI;color:#9FB3D1;margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+      .cv-sig .kp div:nth-child(1){border-top:3px solid #3BAA35}.cv-sig .kp div:nth-child(2){border-top:3px solid #7FC8F8}.cv-sig .kp div:nth-child(3){border-top:3px solid #F5A524}.cv-sig .kp div:nth-child(4){border-top:3px solid #E8EEF7}
+      .cv-sig .meta{position:absolute;left:44px;right:44px;bottom:40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;border-top:1px solid rgba(255,255,255,.14);padding-top:18px}.cv-sig .meta div{font:500 11px Inter,Segoe UI;color:#E8EEF7}.cv-sig .meta i{display:block;font:700 8.5px Inter,Segoe UI;letter-spacing:.14em;color:#7A8CA8;text-transform:uppercase;font-style:normal;margin-bottom:4px}
+      .rh{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid #E2E8F0;position:relative}.rh::after{content:"";position:absolute;left:0;bottom:-1px;width:90px;height:3px;background:linear-gradient(90deg,#1F3864,#3BAA35)}.rh img{height:38px;max-width:150px;object-fit:contain}.rh .c{text-align:center}.rh .c b{display:block;font:800 13px Inter,Segoe UI;color:#0B1830}.rh .c span{font:700 9px Inter,Segoe UI;color:#4472C4;letter-spacing:.24em;text-transform:uppercase}
+      h2{display:flex;align-items:flex-end;gap:14px;margin:30px 0 14px;font:800 22px Inter,Segoe UI;color:#0B1830;letter-spacing:-.01em;break-after:avoid;page-break-after:avoid}h2 .no{font:900 46px/.8 Inter,Segoe UI;color:#E3EAF5;letter-spacing:-.04em}
+      h3{font:800 14px Inter,Segoe UI;color:#0B1830;margin:20px 0 8px;padding-left:10px;border-left:3px solid #4472C4;break-after:avoid;page-break-after:avoid}h3 .no{color:#4472C4;margin-right:8px}
+      h4{font:700 12px Inter,Segoe UI;color:#1F3864;margin:16px 0 6px;break-after:avoid;page-break-after:avoid}h4 .no{color:#4472C4;margin-right:8px}
+      table.t{border:1px solid #E2E8F0;border-radius:8px;border-collapse:separate;border-spacing:0}table.t th{background:#1F3864;color:#fff;font:700 8.4pt Inter,Segoe UI;border-right:1px solid #2F4A78}table.t thead tr:first-child th:first-child{border-top-left-radius:7px}table.t thead tr:first-child th:last-child{border-top-right-radius:7px}
+      table.t td{border-top:1px solid #EEF2F7;border-right:1px solid #EEF2F7}table.t tbody tr:nth-child(even) td{background:#F7F9FC}table.t caption{color:#1F3864}table.t tfoot th{background:#EEF3FB;color:#1F3864}
+      .toc h2{margin-top:0}.toc a .tn{color:#4472C4}.toc-2 a{background:#F2F6FB;border-left:4px solid #1F3864}
+      .glance .sh{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px}.glance .sh .n{font:900 40px/1 Inter,Segoe UI;color:#3BAA35}.glance .gh{margin:0;font:800 28px Inter,Segoe UI;display:block}.glance .sh p{font:500 12px Inter,Segoe UI;color:#64748B;margin-top:4px}
+      .glance .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.glance .k{border:1px solid #E6EBF2;border-radius:12px;padding:12px 13px 8px}.glance .k i{font:700 8.5pt Inter,Segoe UI;letter-spacing:.1em;color:#64748B;text-transform:uppercase;font-style:normal}.glance .k b{display:block;font:800 22px Inter,Segoe UI;color:#0B1830;margin:5px 0 1px}.glance .k b u{text-decoration:none;font-size:11px;color:#94A3B8;font-weight:600}.glance .k small{display:block;font:600 9.5px Inter,Segoe UI;color:#16A34A;min-height:13px}
+      .glance .g2{display:grid;grid-template-columns:1.55fr 1fr;gap:12px;margin-top:12px}.glance .card{border:1px solid #E6EBF2;border-radius:12px;padding:14px;break-inside:avoid}.glance .card h3{border:0;padding:0;margin:0;font:800 12.5px Inter,Segoe UI}.glance .cs{font:500 10px Inter,Segoe UI;color:#64748B;margin:2px 0 8px}`
+  };
+  // ───────── BLUEPRINT
+  T.blueprint={
+    cover:`<div class="cover cv-bp"><div class="bgrid"></div><div class="frame"></div>
+      <div class="logos"><div class="lb">${L}</div><div class="lb">${EN}</div></div>
+      <div class="ttl"><div class="k">// MONTHLY PLANT REPORT</div><h1>Qassim-2<br>1980 MW CCGT</h1><div class="s">3 × SGT6-9000HL · 3 × HRSG · 2 × SST-5000</div><div class="mo">${E(monShort)} · ${E(yr)}</div></div>
+      <div class="plant">${mrPlantSchematic('#7FC8F8')}</div>
+      <div class="kp">${[['POWER',mrFmtBig(k.power)+' MWh'],['FUEL GAS',mrFmtBig(k.fuel)+' Sm³'],['OPEN PUNCH',String(k.open)],['OPEN CR',String(k.crOpen)]].map(x=>`<div><span>${x[0]}</span><b>${E(x[1])}</b></div>`).join('')}</div>
+      <div class="tb"><div class="w3"><i>Title</i>Monthly O&amp;M Report — ${E(monName)}</div><div><i>Doc No.</i>${E(c.docNo)}</div><div><i>Rev</i>00</div><div><i>Date</i>${E(c.issue)}</div><div><i>Prepared</i>${E(c.prepared)}</div><div><i>Checked</i>—</div><div><i>Approved</i>—</div></div></div>`,
+    header:`<div class="rh"><div class="l">${L}</div><div class="c"><b>MONTHLY PLANT REPORT</b><span>QASSIM-2 · ${E(monShort)} ${E(yr)}</span></div><div class="r">${EN}</div></div>`,
+    glance:`<div class="st"><span class="n">◆</span><span class="gh">Month at a Glance</span><span class="ln"></span></div>
+      <div class="kpis">${[['Power',mrFmtBig(k.power),'MWh · Σ month'],['Fuel gas',mrFmtBig(k.fuel),'Sm³ · Σ month'],['Open punch',String(k.open).padStart(3,'0'),`A:${c.punch.A} B:${c.punch.B} C:${c.punch.C}`],['Running hours',mrFmtBig(k.rhr),'h · Σ month']].map(x=>`<div><i>${E(x[0])}</i><b>${E(x[1])}</b><small>${E(x[2])}</small></div>`).join('')}</div>
+      <div class="box"><div class="bh"><span>FIG. 1 — DAILY POWER PRODUCTION [MWh]</span><span>${c.units.join(' · ')}</span></div><div class="bb">${bars(690,190)}</div></div>
+      <div class="two"><div class="box"><div class="bh"><span>FIG. 2 — FUEL GAS [Sm³/d]</span></div><div class="bb">${fgLine(340,170)}</div></div>
+        <div class="box"><div class="bh"><span>FIG. 3 — PUNCH LIST</span></div><div class="bb">${donut}</div></div></div>
+      <div class="box"><div class="bh"><span>TAB. 1 — HIGHLIGHTS</span></div><div class="bb">${hlList}</div></div>`,
+    css:`
+      .cv-bp{background:#0A2342;color:#CFE6FF}.cv-bp .bgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(127,200,248,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(127,200,248,.09) 1px,transparent 1px),linear-gradient(rgba(127,200,248,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(127,200,248,.04) 1px,transparent 1px);background-size:80px 80px,80px 80px,16px 16px,16px 16px}
+      .cv-bp .frame{position:absolute;inset:22px;border:1.5px solid rgba(127,200,248,.55)}.cv-bp .frame::after{content:"";position:absolute;inset:6px;border:.6px solid rgba(127,200,248,.3)}
+      .cv-bp .logos{position:absolute;top:48px;left:52px;right:52px;display:flex;justify-content:space-between}.cv-bp .lb{background:#fff;border-radius:6px;padding:8px 12px}.cv-bp .lb img{height:44px;max-width:170px;object-fit:contain;display:block}
+      .cv-bp .ttl{position:absolute;left:52px;top:170px}.cv-bp .k{font:600 12px "JetBrains Mono","DejaVu Sans Mono",Consolas,monospace;letter-spacing:.3em;color:#7FC8F8}.cv-bp h1{font:800 58px/1 Inter,Segoe UI,Arial;color:#fff;margin:14px 0 10px;letter-spacing:-.015em}.cv-bp .s{font:500 15px Inter,Segoe UI;color:#9DC4EA}
+      .cv-bp .mo{display:inline-block;margin-top:20px;border:1.5px solid #7FC8F8;color:#fff;font:700 20px "JetBrains Mono","DejaVu Sans Mono",Consolas,monospace;padding:8px 16px;letter-spacing:.1em}
+      .cv-bp .plant{position:absolute;left:40px;right:40px;top:440px}
+      .cv-bp .kp{position:absolute;left:52px;bottom:56px;width:250px}.cv-bp .kp div{display:flex;justify-content:space-between;border-bottom:.6px dashed rgba(127,200,248,.35);padding:7px 0;font:600 11px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#9DC4EA}.cv-bp .kp b{color:#fff}
+      .cv-bp .tb{position:absolute;right:22px;bottom:22px;width:440px;border-left:1.5px solid rgba(127,200,248,.55);border-top:1.5px solid rgba(127,200,248,.55);background:rgba(10,35,66,.92);display:grid;grid-template-columns:1fr 1fr 1fr}
+      .cv-bp .tb div{border-right:.6px solid rgba(127,200,248,.3);border-bottom:.6px solid rgba(127,200,248,.3);padding:7px 10px;font:600 11px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#fff}.cv-bp .tb i{display:block;font:600 7.5px Inter,Segoe UI;letter-spacing:.16em;color:#7FC8F8;font-style:normal;text-transform:uppercase;margin-bottom:3px}.cv-bp .tb .w3{grid-column:span 3;font:800 14px Inter,Segoe UI}
+      body{font-size:10pt}.rh{display:grid;grid-template-columns:150px 1fr 150px;border:1.2px solid #1F3864;height:58px}.rh>div{display:flex;align-items:center;justify-content:center;border-right:1.2px solid #1F3864}.rh>div:last-child{border:0}.rh img{max-height:38px;max-width:130px;object-fit:contain}.rh .c{flex-direction:column}.rh b{font:800 13px Inter,Segoe UI;color:#1F3864;letter-spacing:.04em}.rh span{font:600 9px "JetBrains Mono","DejaVu Sans Mono",monospace;letter-spacing:.2em;color:#2E7DC4}
+      h2{display:flex;align-items:center;gap:10px;font:800 17px Inter,Segoe UI;color:#1F3864;margin:24px 0 12px;break-after:avoid;page-break-after:avoid}h2 .no{font:700 12px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#fff;background:#1F3864;padding:5px 9px}h2::after{content:"";flex:1;height:1.2px;background:#1F3864}
+      h3,h4{font:700 12.5px Inter,Segoe UI;color:#0A2342;margin:16px 0 6px;break-after:avoid;page-break-after:avoid}h4{font-size:11.5px}h3 .no,h4 .no{font:700 10.5px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#2E7DC4;margin-right:8px;border:1px solid #2E7DC4;padding:1px 5px}
+      p.na{font-family:"JetBrains Mono","DejaVu Sans Mono",monospace;font-style:normal;color:#94A3B8}
+      table.t{border:1.2px solid #1F3864;border-collapse:collapse}table.t th{background:#1F3864;color:#fff;font:700 7.8pt "JetBrains Mono","DejaVu Sans Mono",monospace;letter-spacing:.06em;text-transform:uppercase;border:1px solid #1F3864}table.t td{border:.6px solid #9FB3D1;font-variant-numeric:tabular-nums}table.t caption{font:700 8.4pt "JetBrains Mono","DejaVu Sans Mono",monospace;letter-spacing:.08em;color:#1F3864;text-transform:uppercase}table.t tfoot th{background:#DCE7F5;color:#0A2342}
+      .toc h2::after{display:none}.toc a .tn{font-family:"JetBrains Mono","DejaVu Sans Mono",monospace;color:#2E7DC4}.toc-2 a{background:none;border:1.2px solid #1F3864;border-left:6px solid #1F3864}
+      .glance .st{display:flex;gap:12px;align-items:center;margin-bottom:14px}.glance .st .n{font:700 13px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#fff;background:#1F3864;padding:6px 10px}.glance .gh{font:800 21px Inter,Segoe UI;color:#1F3864}.glance .st .ln{flex:1;height:1.2px;background:#1F3864}
+      .glance .kpis{display:grid;grid-template-columns:repeat(4,1fr);border:1.2px solid #1F3864}.glance .kpis div{padding:10px 12px;border-right:.6px solid #9FB3D1}.glance .kpis div:last-child{border:0}.glance .kpis i{font:700 8px Inter,Segoe UI;letter-spacing:.16em;color:#2E7DC4;font-style:normal;text-transform:uppercase}.glance .kpis b{display:block;font:700 21px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#0A2342;margin-top:3px;letter-spacing:-.03em}.glance .kpis small{font:500 9px "JetBrains Mono","DejaVu Sans Mono",monospace;color:#64748B}
+      .glance .box{border:1.2px solid #1F3864;margin-top:12px;break-inside:avoid}.glance .bh{background:#1F3864;color:#fff;font:700 9px "JetBrains Mono","DejaVu Sans Mono",monospace;letter-spacing:.12em;padding:5px 10px;display:flex;justify-content:space-between}.glance .bb{padding:10px}.glance .two{display:grid;grid-template-columns:1.25fr 1fr;gap:12px}
+      .glance .g-hl li b{font-family:"JetBrains Mono","DejaVu Sans Mono",monospace;color:#2E7DC4}`
+  };
+  // ───────── EDITORIAL
+  const hero=hl.find(h=>h.tag==='Achieved')||hl[0];
+  T.editorial={
+    cover:`<div class="cover cv-ed"><div class="strip"><div class="num">${monNum}</div><div class="yr">${E(yr)}</div><div class="gb"></div><div class="v">Wahat Al Wusta · Qassim-2 IPP</div></div>
+      <div class="logos">${L||'<span></span>'}${EN}</div>
+      <div class="ttl"><div class="k">Monthly Plant Report</div><h1>The <b>Qassim-2</b><br>1980 MW CCGT<br><b>${E(c.monthOnly)}</b> review</h1><p>Operations &amp; maintenance readiness, plant performance and commissioning support for the month.</p></div>
+      ${ph[0]?`<div class="photo" style="background-image:url('${E(ph[0])}')"></div>`:'<div class="photo ph-none"></div>'}${ph[1]?`<div class="photo2" style="background-image:url('${E(ph[1])}')"></div>`:''}
+      <div class="kp">${kp4.map(x=>`<div><b>${E(x[0])}</b><span>${E(x[1])}</span></div>`).join('')}</div></div>`,
+    header:`<div class="rh">${L||'<span></span>'}<div class="c">Monthly Plant Report · ${E(monName)}</div>${EN}</div>`,
+    glance:`<div class="k">At a glance</div><h2 class="gh">${E(c.monthOnly)}, <b>in numbers</b>.</h2>
+      <div class="big"><div><b>${E(mrFmtBig(k.power))}<small>MWh</small></b><span>Power generated</span></div><div><b>${E(mrFmtBig(k.fuel))}<small>Sm³</small></b><span>Fuel gas</span></div><div><b>${k.open}</b><span>Open punch points</span></div></div>
+      ${hero?`<div class="q">${E(hero.t)}<small>Highlight of the month${hero.d?' · '+E(hero.d):''}</small></div>`:''}
+      <div class="cols"><div><h3>Power by day</h3>${bars(400,190)}<div class="lg">${legend}</div><h3 style="margin-top:18px">Fuel gas by day</h3>${fgLine(400,150)}</div><div><h3>Events</h3>${hlList}<h3 style="margin-top:18px">Punch list</h3>${donut}</div></div>`,
+    css:`
+      .cv-ed{background:#F7F5F0}.cv-ed .strip{position:absolute;left:0;top:0;bottom:0;width:250px;background:#12264A}.cv-ed .num{position:absolute;left:28px;top:120px;font:900 200px/.8 Inter,Segoe UI,Arial;color:#fff;letter-spacing:-.07em}.cv-ed .yr{position:absolute;left:36px;top:300px;font:300 54px Inter,Segoe UI;color:#7FC8F8}
+      .cv-ed .v{position:absolute;left:36px;bottom:60px;font:700 10px Inter,Segoe UI;letter-spacing:.36em;color:#7A8CA8;writing-mode:vertical-rl;transform:rotate(180deg);text-transform:uppercase}.cv-ed .gb{position:absolute;left:36px;top:390px;width:60px;height:5px;background:#3BAA35}
+      .cv-ed .logos{position:absolute;top:44px;left:290px;right:44px;display:flex;justify-content:space-between;align-items:center}.cv-ed .logos img{height:50px;max-width:200px;object-fit:contain}
+      .cv-ed .ttl{position:absolute;left:290px;right:44px;top:150px}.cv-ed .k{font:700 11px Inter,Segoe UI;letter-spacing:.4em;color:#B08D57;text-transform:uppercase}.cv-ed h1{font:300 56px/1.03 Inter,Segoe UI,Arial;color:#12264A;letter-spacing:-.03em;margin-top:18px}.cv-ed h1 b{font-weight:800}.cv-ed .ttl p{font:400 15px/1.6 Inter,Segoe UI;color:#4B5563;margin-top:18px;max-width:420px}
+      .cv-ed .photo{position:absolute;left:290px;right:0;top:480px;height:370px;background:center/cover no-repeat;border-radius:185px 0 0 185px}.cv-ed .ph-none{background:linear-gradient(120deg,#12264A,#2E5597 60%,#7FC8F8)}
+      .cv-ed .photo2{position:absolute;left:250px;top:780px;width:200px;height:140px;background:center/cover no-repeat;border:6px solid #F7F5F0;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+      .cv-ed .kp{position:absolute;left:480px;right:44px;bottom:56px;display:grid;grid-template-columns:1fr 1fr;gap:18px 26px}.cv-ed .kp b{display:block;font:300 34px Inter,Segoe UI;color:#12264A;letter-spacing:-.02em}.cv-ed .kp span{font:600 9.5px Inter,Segoe UI;letter-spacing:.14em;color:#8A8F98;text-transform:uppercase}
+      .rh{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #12264A}.rh img{height:32px;max-width:140px;object-fit:contain}.rh .c{font:600 9.5px Inter,Segoe UI;letter-spacing:.3em;color:#12264A;text-transform:uppercase}
+      h2{font:300 30px/1.1 Inter,Segoe UI;color:#12264A;letter-spacing:-.02em;margin:34px 0 14px;break-after:avoid;page-break-after:avoid}h2 .no{display:block;font:700 10px Inter,Segoe UI;letter-spacing:.4em;color:#B08D57;margin-bottom:8px}h2 .no::after{content:" — Section"}
+      h3{font:700 10.5px Inter,Segoe UI;letter-spacing:.2em;text-transform:uppercase;color:#12264A;margin:20px 0 8px;padding-bottom:5px;border-bottom:1px solid #D6D3CB;break-after:avoid;page-break-after:avoid}h3 .no,h4 .no{color:#B08D57;margin-right:8px}
+      h4{font:600 12px Inter,Segoe UI;color:#12264A;margin:14px 0 6px;break-after:avoid;page-break-after:avoid}
+      section>p,section>ul{font-size:10.3pt;line-height:1.65;color:#374151}
+      table.t{border:0;border-collapse:collapse;border-top:2px solid #12264A;border-bottom:1px solid #12264A}table.t th{background:none;color:#12264A;font:700 7.8pt Inter,Segoe UI;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid #12264A}table.t td{border-bottom:1px solid #E7E3DA}table.t caption{font:700 8pt Inter,Segoe UI;letter-spacing:.16em;text-transform:uppercase;color:#B08D57}table.t tfoot th{background:#F4F1EA}
+      .toc h2 .no{display:none}.toc a .tn{color:#B08D57}.toc-2 a{background:none;border-left:0;border-bottom:1px solid #12264A;font-weight:800}
+      .glance .k{font:700 11px Inter,Segoe UI;letter-spacing:.4em;color:#B08D57;text-transform:uppercase}.glance .gh{display:block;font:300 40px/1.05 Inter,Segoe UI;color:#12264A;letter-spacing:-.025em;margin:10px 0 22px}.glance .gh b{font-weight:800}
+      .glance .big{display:grid;grid-template-columns:1.2fr 1fr 1fr;border-top:1px solid #D6D3CB;border-bottom:1px solid #D6D3CB}.glance .big div{padding:16px 16px 14px 0}.glance .big div+div{padding-left:16px;border-left:1px solid #D6D3CB}.glance .big b{display:block;font:200 44px/1 Inter,Segoe UI;color:#12264A;letter-spacing:-.03em}.glance .big small{font-size:14px;font-weight:500;color:#8A8F98;margin-left:4px}.glance .big span{font:600 9.5px Inter,Segoe UI;letter-spacing:.14em;color:#8A8F98;text-transform:uppercase}
+      .glance .q{margin:22px 0;padding:4px 0 4px 22px;border-left:5px solid #3BAA35;font:300 22px/1.35 Inter,Segoe UI;color:#12264A}.glance .q small{display:block;font:600 9.5px Inter,Segoe UI;letter-spacing:.2em;color:#8A8F98;margin-top:8px;text-transform:uppercase}
+      .glance .cols{display:grid;grid-template-columns:1.3fr 1fr;gap:26px}.glance .cols h3{margin-top:0}`
+  };
+  // ───────── CLASSIC
+  T.classic={
+    cover:`<div class="cover cv-cl"><div class="logos">${L||'<span></span>'}${EN}</div><div class="band"><div class="kk">Monthly O&amp;M Report</div><div class="tt">Qassim-2<br>1980 MW CCGT</div><div class="mm">${E(monName)}</div><div class="rule"><i></i><i></i></div><div class="ss">Independent Power Plant · Qassim Region, Kingdom of Saudi Arabia</div></div>
+      ${ph.length?`<div class="photos n${ph.length}">${ph.map(u=>`<img src="${E(u)}" alt="">`).join('')}</div>`:''}
+      <div class="kp">${kp4.map(x=>`<div><b>${E(x[0])}</b><span>${E(x[1])}</span></div>`).join('')}</div>
+      <table class="cmeta"><tr><th>Document No.</th><td>${E(c.docNo)}</td><th>Reporting period</th><td>${E(c.period)}</td></tr><tr><th>O&amp;M Operator</th><td>Wahat Al Wusta Maintenance Company</td><th>Owner</th><td>Wahat Al Wusta Energy Company</td></tr><tr><th>Prepared by</th><td>${E(c.prepared)}</td><th>Issue date</th><td>${E(c.issue)}</td></tr></table></div>`,
+    header:`<div class="rh"><div class="rh-l">${L}</div><div class="rh-m"><div class="rh-t">Monthly Plant Report</div><div class="rh-s">Qassim-2 CCGT &nbsp;·&nbsp; ${E(monName)}</div></div><div class="rh-r">${EN}</div></div>`,
+    glance:T.signature.glance,
+    css:`
+      .cv-cl{padding:60px 60px 52px;display:flex;flex-direction:column;background:#fff}.cv-cl .logos{display:flex;justify-content:space-between;align-items:center}.cv-cl .logos img{height:74px;max-width:260px;object-fit:contain}
+      .cv-cl .band{margin:60px -60px 0;padding:52px 60px 44px;background:linear-gradient(120deg,#16294A 0%,#1F3864 55%,#2E5597 100%);color:#fff}.cv-cl .kk{font:700 11pt Inter,Segoe UI;letter-spacing:.32em;text-transform:uppercase;color:#9CC3F0}.cv-cl .tt{font:700 34pt/1.05 Inter,Segoe UI;margin:18px 0 14px}.cv-cl .mm{display:inline-block;font:700 15pt Inter,Segoe UI;background:#fff;color:#1F3864;padding:8px 22px;border-radius:7px}
+      .cv-cl .rule{display:flex;gap:8px;margin:26px 0 10px}.cv-cl .rule i{height:4px;width:84px;background:#3BAA35;border-radius:4px}.cv-cl .rule i+i{width:38px;background:#7FC8F8}.cv-cl .ss{font-size:10pt;color:#C9D8EE}
+      .cv-cl .photos{display:grid;gap:14px;margin-top:32px}.cv-cl .photos.n2{grid-template-columns:1fr 1fr}.cv-cl .photos img{width:100%;height:230px;object-fit:cover;border-radius:9px;display:block}
+      .cv-cl .kp{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:auto;padding-top:30px}.cv-cl .kp div{border:1px solid #B8C4D6;border-top:4px solid #4472C4;border-radius:7px;padding:11px 13px}.cv-cl .kp div:first-child{border-top-color:#3BAA35}.cv-cl .kp b{display:block;font:700 17pt Inter,Segoe UI;color:#1F3864}.cv-cl .kp span{font:700 8.6pt Inter,Segoe UI;color:#334155}
+      .cv-cl .cmeta{width:100%;border-collapse:collapse;margin-top:22px;font-size:8.8pt}.cv-cl .cmeta th{text-align:left;color:#7A8699;font-weight:700;text-transform:uppercase;font-size:7.4pt;letter-spacing:.06em;padding:7px 7px 7px 0;width:17%;border-top:1px solid #E2E8F0}.cv-cl .cmeta td{padding:7px 14px 7px 0;border-top:1px solid #E2E8F0;font-weight:600}
+      .rh{display:flex;align-items:center;gap:4mm;padding-bottom:2.5mm;border-bottom:.6mm solid #1F3864;position:relative}.rh::after{content:"";position:absolute;left:0;bottom:-1.6mm;width:28mm;height:.6mm;background:#3BAA35}.rh-l,.rh-r{width:42mm}.rh-r{text-align:right}.rh img{max-height:12mm;max-width:42mm;object-fit:contain}.rh-m{flex:1;text-align:center}.rh-t{font-size:13.5pt;font-weight:700;color:#1F3864}.rh-s{font-size:8.6pt;color:#4472C4;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+      h2{display:flex;align-items:center;gap:3mm;font-size:15pt;color:#1F3864;margin:9mm 0 4mm;padding-bottom:2mm;border-bottom:.5mm solid #B8C4D6;break-after:avoid;page-break-after:avoid}h2 .no{display:inline-flex;align-items:center;justify-content:center;min-width:9mm;height:9mm;padding:0 2mm;background:#1F3864;color:#fff;border-radius:1.5mm;font-size:12pt}
+      h3{font-size:12pt;color:#1F3864;margin:6mm 0 2.5mm;padding-left:3mm;border-left:1mm solid #4472C4;break-after:avoid;page-break-after:avoid}h3 .no{color:#4472C4;margin-right:2mm}h4{font-size:10.8pt;color:#2B3A55;margin:5mm 0 2mm;break-after:avoid;page-break-after:avoid}h4 .no{color:#4472C4;margin-right:2mm}
+      table.t{border:1px solid #B8C4D6;border-radius:1.5mm;border-collapse:separate;border-spacing:0}table.t th{background:#1F3864;color:#fff;border-right:1px solid #2F4A78}table.t td{border-top:1px solid #E1E7EF;border-right:1px solid #E1E7EF}table.t tbody tr:nth-child(even) td{background:#F7F9FC}table.t tfoot th{background:#DEEAF6;color:#1F3864}
+      .toc-2 a{background:#F2F6FB;border-left:1.2mm solid #1F3864}.toc a .tn{color:#4472C4}
+      ${T.signature.css.split('\n').filter(l=>/^\s*\.glance/.test(l)).join('\n')}`
+  };
+  const t=T[theme]||T.signature;
+  const foot={signature:['#94A3B8','#1F3864','Inter,Segoe UI,Arial'],blueprint:['#2E7DC4','#0A2342','JetBrains Mono,DejaVu Sans Mono,Consolas,monospace'],editorial:['#8A8F98','#12264A','Inter,Segoe UI,Arial'],classic:['#6B7A90','#1F3864','Calibri,Inter,Arial']}[theme]||['#94A3B8','#1F3864','Inter'];
+  t.page=`@page{size:A4;margin:11mm 13mm 15mm;@bottom-left{content:"${E(c.docNo)}";font:8pt ${foot[2]};color:${foot[0]}}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt ${foot[2]};color:${foot[1]}}}@page:first{margin:0;@bottom-left{content:none}@bottom-right{content:none}}`;
+  return t;
+}
+// common CSS for every design (layout, lists, tables base, glance basics)
+const MR_PDF_BASE=`
+  *{box-sizing:border-box}html{background:#E9EDF3}body{margin:0;font:10.5pt/1.5 Inter,"Segoe UI",Calibri,Arial,sans-serif;color:#1A2333;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bar{position:sticky;top:0;background:#0F2747;color:#fff;padding:9px 18px;display:flex;gap:12px;align-items:center;font:13px "Segoe UI",Inter,Arial;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.2);flex-wrap:wrap}.bar button{background:#7FC8F8;color:#0F2747;border:0;border-radius:7px;padding:7px 16px;font-weight:700;cursor:pointer}
+  .bar select{border-radius:7px;border:0;padding:6px 10px;font:600 13px "Segoe UI",Inter,Arial}
+  .sheet{width:210mm;margin:18px auto;background:#fff;box-shadow:0 6px 24px rgba(15,39,71,.14);padding:11mm 13mm 15mm}
+  .cover{position:relative;width:210mm;height:297mm;margin:18px auto;overflow:hidden;box-shadow:0 6px 24px rgba(15,39,71,.14);page-break-after:always;break-after:page}
+  @media print{html{background:#fff}.bar{display:none}.sheet{width:auto;margin:0;box-shadow:none;padding:0}.cover{margin:0;box-shadow:none;height:296.5mm}}
+  table.wrap{width:100%;border-collapse:collapse}table.wrap>thead>tr>td{padding:0 0 6mm}table.wrap>tbody>tr>td{padding:0}
+  .toc{page-break-after:always;break-after:page}.toc h2{margin:0 0 5mm}.toc h2 .no{display:none}
+  .toc a{display:flex;align-items:baseline;gap:3mm;color:#1A2333;text-decoration:none;padding:1.15mm 0}.toc a .tn{min-width:13mm;font-weight:700}.toc a .tt{flex:1;border-bottom:1px dotted #C3CCD9}
+  .toc-2 a{margin-top:2.5mm;padding:1.8mm 3mm;font-weight:700;font-size:11pt}.toc-2 a .tt{border:0}.toc-3 a{padding-left:5mm;font-size:10pt}.toc-4 a{padding-left:12mm;font-size:9.2pt;color:#475569}
+  .glance{page-break-after:always;break-after:page}
+  section>p,section>ul{margin:1.5mm 0 3mm 4mm;text-align:justify}ul{padding-left:6mm}li{margin:1mm 0}
+  p.na{display:inline-block;margin:0 0 2mm 4mm;font-size:9pt;color:#94A3B8;font-style:italic;letter-spacing:.04em}
+  p.per{font-weight:700;margin:4mm 0 1mm 4mm;padding:1mm 3mm;background:#F2F6FB;border-radius:1mm;display:inline-block}
+  table.t{width:calc(100% - 4mm);margin:2mm 0 5mm 4mm;font-size:9.2pt;page-break-inside:auto}table.t tr{page-break-inside:avoid}section.keep{break-inside:avoid;page-break-inside:avoid}
+  table.t caption{caption-side:top;text-align:left;font-weight:700;font-size:9.4pt;padding:0 0 1.5mm 1mm}table.t th{padding:2mm;text-align:center;font-weight:700}table.t td{padding:1.5mm 2.2mm;vertical-align:top}table.t td.c{text-align:center}
+  table.t th:last-child,table.t td:last-child{border-right:0}
+  table.t.dense{font-size:8.6pt}table.t.dense td{padding:.75mm 2mm}table.t.dense th{padding:1.3mm 2mm}
+  .lg{display:flex;gap:12px;flex-wrap:wrap;font:600 9.5px Inter,Segoe UI,Arial;color:#475569;margin-top:6px}.lg span{display:flex;align-items:center;gap:5px}.lg i{width:9px;height:9px;border-radius:2px;display:inline-block}
+  .g-hl{list-style:none;padding:0;margin:0}.g-hl li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:7px 0;border-top:1px solid #F0F3F8;font:500 10.5px/1.4 Inter,Segoe UI,Arial;color:#1E293B;margin:0}.g-hl li:first-child{border:0}.g-hl li b{font:800 9.5px Inter,Segoe UI;color:#4472C4;letter-spacing:.04em}
+  .tg{display:inline-block;font:700 8.5px Inter,Segoe UI;font-style:normal;padding:1px 7px;border-radius:20px;margin-left:4px;white-space:nowrap}.tg-ok{background:#DCFCE7;color:#15803D}.tg-on{background:#DBEAFE;color:#1D4ED8}.tg-hd{background:#FEF3C7;color:#B45309}
+  .g-none{font:italic 10px Inter,Segoe UI;color:#94A3B8}
+`;
+
+async function mrPrint(theme,win,glance){
+  if(theme)mrSetTheme(theme);if(glance!=null)mrSetGlance(glance);
+  const w=win&&!win.closed?win:window.open('','_blank');
   if(!w){showToast('Allow pop-ups to generate the PDF.','error');return;}
-  w.document.write('<p style="font:14px Segoe UI,Arial;padding:30px">Preparing the monthly report…</p>');
+  w.document.open();w.document.write('<p style="font:14px Segoe UI,Arial;padding:30px">Preparing the monthly report…</p>');
   try{
     await mrLoad();
     const d=mrRow.data,M=mrMonthLabel(mrMonth),ML=mrMonthLabel(mrMonth,true),{from,to,days}=mrRange(mrMonth);
@@ -6495,7 +6748,7 @@ async function mrPrint(){
         const head=ls.length>1&&!/^\s*[•\-\*]/.test(ls[0])&&/^\d{1,2}(\s*[~–-]\s*\d{1,2})?\s+\w+/.test(ls[0])?'<p class="per">'+E(ls[0])+'</p>':'';const rest=head?ls.slice(1):ls;
         return head+(rest.every(l=>/^\s*[•\-\*]/.test(l))?'<ul>'+rest.map(l=>'<li>'+E(l.replace(/^\s*[•\-\*]\s*/,''))+'</li>').join('')+'</ul>':'<p>'+rest.map(E).join('<br>')+'</p>');}).join('');};
     const tbl=(cols,rows,opts={})=>{if(!rows.length)return '<p class="na">NA</p>';return `<table class="t${opts.dense?' dense':''}">${opts.cap?`<caption>${E(opts.cap)}</caption>`:''}<thead><tr>${opts.num?'<th style="width:6%">Sr. No.</th>':''}${cols.map(c=>`<th style="width:${c[2]}%">${E(c[1])}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${opts.num?`<td class="c">${i+1}.</td>`:''}${cols.map(c=>`<td class="${c[3]||''}">${E(r[c[0]]??(opts.dash?'-':''))}</td>`).join('')}</tr>`).join('')}</tbody>${opts.foot||''}</table>`;};
-    const H=(no,t,lvl)=>`<h${lvl} id="s${E(no).replace(/\./g,'_')}">${no?'<span class="no">'+E(no)+'</span>':''}${E(t)}</h${lvl}>`;
+    const H=(no,t,lvl)=>`<h${lvl} id="s${E(no).replace(/\./g,'_')}">${no?'<span class="no">'+E(lvl===2&&/^\d$/.test(no)?'0'+no:no)+'</span>':''}<span class="tx">${E(t)}</span></h${lvl}>`;
     const lvl=s=>!s.no||!s.no.includes('.')?2:s.no.split('.').length===2?3:4;
     // auto data
     const staffRows=mrStaff.filter(s=>s.status!=='Removed'&&!(s.status==='Left'&&s.leave_date&&String(s.leave_date).slice(0,10)<from)&&!(s.join_date&&String(s.join_date).slice(0,10)>to&&s.status==='Joined'))
@@ -6545,80 +6798,38 @@ async function mrPrint(){
     const logo=getWWMCLogoSrc();
     const crOpen=crRows.filter(c=>!/^Closed/.test(c.st)).length;
     const fgTot=fgC.reduce((a,b)=>a+b,0);
-    const kpi=[[pAll?mrFmt(pAll):'—','MWh generated','GTGs power production'],[fgTot?mrFmt(fgTot,0):'—','Sm³ fuel gas','Total consumption'],[String(ps.openAt.length),'Open punch points','At month end'],[String(crOpen),'Open CR cases','Engineering clarifications']];
     const fmtLong=x=>new Date(x+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
     const docNo='WWMC Monthly Plant Report '+mrMonth.slice(5,7)+mrMonth.slice(2,4);
-    const hdr=`<div class="rh"><div class="rh-l">${logo?`<img src="${logo}" alt="WWMC">`:''}</div><div class="rh-m"><div class="rh-t">Monthly Plant Report</div><div class="rh-s">Qassim-2 CCGT &nbsp;·&nbsp; ${E(M)}</div></div><div class="rh-r"><img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></div></div>`;
-    const coverHtml=`<div class="sheet cover">
-      <div class="cv-logos">${logo?`<img src="${logo}" alt="WWMC">`:'<span></span>'}<img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></div>
-      <div class="cv-band">
-        <div class="cv-kick">Monthly O&amp;M Report</div>
-        <div class="cv-title">Qassim-2<br>1980 MW CCGT</div>
-        <div class="cv-month">${E(mrMonthLabel(mrMonth,true))}</div>
-        <div class="cv-rule"><i></i><i></i></div>
-        <div class="cv-sub">Independent Power Plant · Qassim Region, Kingdom of Saudi Arabia</div>
-      </div>
-      ${cover.filter(Boolean).length?`<div class="cv-photos n${cover.filter(Boolean).length}">${cover.filter(Boolean).map(u=>`<img src="${E(u)}" alt="">`).join('')}</div>`:''}
-      <div class="cv-kpis">${kpi.map(k=>`<div><b>${E(k[0])}</b><span>${E(k[1])}</span><small>${E(k[2])}</small></div>`).join('')}</div>
-      <table class="cv-meta"><tr><th>Document No.</th><td>${E(docNo)}</td><th>Reporting period</th><td>${E(fmtLong(from))} – ${E(fmtLong(to))}</td></tr>
-        <tr><th>O&amp;M Operator</th><td>Wahat Al Wusta Maintenance Company</td><th>Owner</th><td>Wahat Al Wusta Energy Company</td></tr>
-        <tr><th>Prepared by</th><td>${E(currentUser?.name||'WWMC O&M Team')}</td><th>Issue date</th><td>${E(fmtLong(new Date().toISOString().slice(0,10)))}</td></tr></table>
-    </div>`;
-    const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Q2- Monthly Plant Report (${E(M)})</title><style>
-      @page{size:A4;margin:11mm 13mm 15mm;@bottom-left{content:"${E(docNo)}";font:8pt Calibri,Arial;color:#6B7A90}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt Calibri,Arial;color:#1F3864}}
-      @page:first{margin:0;@bottom-left{content:none}@bottom-right{content:none}}
-      :root{--navy:#1F3864;--blue:#2E5597;--acc:#4472C4;--sky:#DEEAF6;--line:#B8C4D6;--green:#3BAA35}
-      *{box-sizing:border-box}html{background:#E9EDF3}body{margin:0;font:10.5pt/1.5 Calibri,"Segoe UI",Arial,sans-serif;color:#1A2333;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .bar{position:sticky;top:0;background:var(--navy);color:#fff;padding:9px 18px;display:flex;gap:12px;align-items:center;font:13px "Segoe UI",Arial;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.2)}.bar button{background:#7FC8F8;color:#0F2747;border:0;border-radius:7px;padding:7px 16px;font-weight:700;cursor:pointer}
-      .sheet{width:210mm;margin:18px auto;background:#fff;box-shadow:0 6px 24px rgba(15,39,71,.14);padding:11mm 13mm 15mm}
-      @media print{html{background:#fff}.bar{display:none}.sheet{width:auto;margin:0;box-shadow:none;padding:0}}
-      /* cover */
-      .cover{position:relative;min-height:297mm;padding:16mm 16mm 14mm;display:flex;flex-direction:column;page-break-after:always;overflow:hidden}
-      @media print{.cover{height:296mm;min-height:0;padding:16mm 16mm 14mm}}
-      .cv-logos{display:flex;justify-content:space-between;align-items:center}.cv-logos img{height:20mm;max-width:70mm;object-fit:contain}
-      .cv-band{margin:16mm -16mm 0;padding:14mm 16mm 12mm;background:linear-gradient(120deg,#16294A 0%,#1F3864 55%,#2E5597 100%);color:#fff;position:relative}
-      .cv-band::after{content:"";position:absolute;right:0;top:0;bottom:0;width:38%;background:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 2px,transparent 2px 14px)}
-      .cv-kick{font-size:11pt;letter-spacing:.32em;text-transform:uppercase;color:#9CC3F0;font-weight:700}
-      .cv-title{font-size:34pt;line-height:1.05;font-weight:700;margin:5mm 0 4mm;position:relative;z-index:1}
-      .cv-month{display:inline-block;font-size:15pt;font-weight:700;background:#fff;color:var(--navy);padding:2mm 6mm;border-radius:2mm;position:relative;z-index:1}
-      .cv-rule{display:flex;gap:2mm;margin:7mm 0 3mm}.cv-rule i{height:1.2mm;width:22mm;background:var(--green);border-radius:1mm}.cv-rule i+i{width:10mm;background:#7FC8F8}
-      .cv-sub{font-size:10pt;color:#C9D8EE;position:relative;z-index:1}
-      .cv-photos{display:grid;gap:4mm;margin-top:9mm}.cv-photos.n2{grid-template-columns:1fr 1fr}.cv-photos img{width:100%;height:62mm;object-fit:cover;border-radius:2.5mm;display:block}.cv-photos.n1 img{height:78mm}
-      .cv-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:auto;padding-top:9mm}
-      .cv-kpis div{border:1px solid var(--line);border-top:1.2mm solid var(--acc);border-radius:2mm;padding:3mm 3.5mm}.cv-kpis div:nth-child(1){border-top-color:var(--green)}
-      .cv-kpis b{display:block;font-size:17pt;color:var(--navy);line-height:1.1}.cv-kpis span{display:block;font-size:8.6pt;font-weight:700;color:#334155;margin-top:1mm}.cv-kpis small{display:block;font-size:7.6pt;color:#7A8699}
-      .cv-meta{width:100%;border-collapse:collapse;margin-top:6mm;font-size:8.8pt}.cv-meta th{text-align:left;color:#7A8699;font-weight:700;text-transform:uppercase;font-size:7.4pt;letter-spacing:.06em;padding:2mm 2mm 2mm 0;width:17%;border-top:1px solid #E2E8F0}.cv-meta td{padding:2mm 4mm 2mm 0;border-top:1px solid #E2E8F0;color:#1A2333;font-weight:600}
-      /* running header */
-      table.wrap{width:100%;border-collapse:collapse}table.wrap>thead>tr>td{padding:0 0 6mm}table.wrap>tbody>tr>td{padding:0}
-      .rh{display:flex;align-items:center;gap:4mm;padding-bottom:2.5mm;border-bottom:.6mm solid var(--navy);position:relative}.rh::after{content:"";position:absolute;left:0;bottom:-1.6mm;width:28mm;height:.6mm;background:var(--green)}
-      .rh-l,.rh-r{width:42mm}.rh-r{text-align:right}.rh img{max-height:12mm;max-width:42mm;object-fit:contain}.rh-m{flex:1;text-align:center}.rh-t{font-size:13.5pt;font-weight:700;color:var(--navy);letter-spacing:.02em}.rh-s{font-size:8.6pt;color:var(--acc);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-      /* contents */
-      .toc{page-break-after:always}.toc h2{border:0;margin:0 0 5mm;padding:0;font-size:20pt;color:var(--navy)}.toc h2::before{display:none}
-      .toc a{display:flex;align-items:baseline;gap:3mm;color:#1A2333;text-decoration:none;padding:1.15mm 0}.toc a span.tn{min-width:13mm;color:var(--acc);font-weight:700}.toc a span.tt{flex:1;border-bottom:1px dotted #C3CCD9}
-      .toc-2 a{margin-top:2.5mm;padding:1.8mm 3mm;background:#F2F6FB;border-left:1.2mm solid var(--navy);font-weight:700;font-size:11pt}.toc-2 a span.tn{color:var(--navy)}.toc-2 a span.tt{border:0}
-      .toc-3 a{padding-left:5mm;font-size:10pt}.toc-4 a{padding-left:12mm;font-size:9.2pt;color:#475569}
-      /* headings */
-      h2{display:flex;align-items:center;gap:3mm;font-size:15pt;color:var(--navy);margin:9mm 0 4mm;padding-bottom:2mm;border-bottom:.5mm solid var(--line);page-break-after:avoid;break-after:avoid}
-      h2 .no{display:inline-flex;align-items:center;justify-content:center;min-width:9mm;height:9mm;padding:0 2mm;background:var(--navy);color:#fff;border-radius:1.5mm;font-size:12pt}
-      h3{font-size:12pt;color:var(--navy);margin:6mm 0 2.5mm;padding-left:3mm;border-left:1mm solid var(--acc);page-break-after:avoid;break-after:avoid}h3 .no{color:var(--acc);margin-right:2mm}
-      h4{font-size:10.8pt;color:#2B3A55;margin:5mm 0 2mm;page-break-after:avoid;break-after:avoid}h4 .no{color:var(--acc);margin-right:2mm;font-weight:700}
-      section>p,section>ul{margin:1.5mm 0 3mm 4mm;text-align:justify}ul{padding-left:6mm}li{margin:1mm 0}li::marker{color:var(--acc)}
-      p.na{display:inline-block;margin:0 0 2mm 4mm;font-size:9pt;color:#94A3B8;font-style:italic;letter-spacing:.04em}
-      p.per{font-weight:700;color:var(--navy);margin:4mm 0 1mm 4mm;padding:1mm 3mm;background:#F2F6FB;border-radius:1mm;display:inline-block}
-      /* tables */
-      table.t{width:calc(100% - 4mm);margin:2mm 0 5mm 4mm;border-collapse:separate;border-spacing:0;font-size:9.2pt;border:1px solid var(--line);border-radius:1.5mm;page-break-inside:auto}table.t thead tr:first-child th:first-child{border-top-left-radius:1.2mm}table.t thead tr:first-child th:last-child{border-top-right-radius:1.2mm}
-      table.t.dense{font-size:8.6pt}table.t.dense td{padding:.75mm 2mm}table.t.dense th{padding:1.3mm 2mm}
-      table.t tr{page-break-inside:avoid}section.keep{break-inside:avoid;page-break-inside:avoid}
-      table.t caption{caption-side:top;text-align:left;font-weight:700;color:var(--navy);font-size:9.6pt;padding:0 0 1.5mm 1mm}
-      table.t th{background:var(--navy);color:#fff;padding:2mm 2mm;font-weight:700;text-align:center;font-size:8.6pt;border-right:1px solid #2F4A78}table.t th:last-child{border-right:0}
-      table.t td{padding:1.5mm 2.2mm;vertical-align:top;border-top:1px solid #E1E7EF;border-right:1px solid #E1E7EF}table.t td:last-child{border-right:0}
-      table.t tbody tr:nth-child(even) td{background:#F7F9FC}table.t td.c{text-align:center}
-      table.t tfoot th{background:var(--sky);color:var(--navy);border-top:1px solid var(--line);border-right:1px solid var(--line)}
-    </style></head><body>
-    <div class="bar"><b>Monthly Plant Report — ${E(ML)}</b><span style="opacity:.75">Click Print, then choose “Save as PDF”.</span><span style="flex:1"></span><button onclick="window.print()">Print / Save PDF</button></div>
-    ${coverHtml}
-    <div class="sheet"><table class="wrap"><thead><tr><td>${hdr}</td></tr></thead><tbody><tr><td>
-      <div class="toc"><h2>Table of Contents</h2>${toc}</div>
+    const num=v=>{const n=mrNum(v);return n==null?null:n;};
+    const powerBy={};MR_UNITS.forEach(u=>powerBy[u]=dates.map(dd=>num(((opsBy[dd]||{}).power||{})[u])||0));
+    const dayTotals=dates.map((_,i)=>MR_UNITS.reduce((a,u)=>a+powerBy[u][i],0));
+    const fgArr=dates.map(dd=>num((opsBy[dd]||{}).fg_consumption));const prArr=dates.map(dd=>num((opsBy[dd]||{}).fg_pressure));
+    const dayHours=dates.map(dd=>Object.values((opsBy[dd]||{}).counters||{}).reduce((a,v)=>a+(mrNum(v&&v.h)||0),0));
+    const rhr=counters.reduce((a,c)=>a+(mrNum(c.h)||0),0);const topU=counters.filter(c=>mrNum(c.h)).sort((a,b)=>mrNum(b.h)-mrNum(a.h))[0];
+    const today=new Date().toISOString().slice(0,10);
+    const openTrend=dates.filter(dd=>dd<=today).map(dd=>drpStats(T,'0000-01-01',dd).openAt.length);
+    const pri=x=>String(x.priority||'').trim().charAt(0).toUpperCase();
+    const unitsOn=MR_UNITS.filter(u=>powerBy[u].some(Boolean));
+    const used=MR_UNITS.filter((u,i)=>i<3||powerBy[u].some(Boolean));
+    const ctx={E,logo,energy:MR_ENERGY_LOGO,month:mrMonth,monthName:ML,monthOnly:ML.split(' ')[0],monthShort:M.split(' ')[0],docNo,
+      period:fmtLong(from)+' – '+fmtLong(to),issue:fmtLong(today),prepared:currentUser?.name||'WWMC O&M Team',cover:cover.filter(Boolean),
+      days:dates,units:used,power:powerBy,dayTotals,fg:fgArr,pr:prArr,dayHours,openTrend:openTrend.length>1?openTrend:[ps.openAt.length,ps.openAt.length],
+      punch:{A:ps.openAt.filter(x=>pri(x)==='A').length,B:ps.openAt.filter(x=>pri(x)==='B').length,C:ps.openAt.filter(x=>!['A','B'].includes(pri(x))).length,closed:ps.closed.length},
+      highlights:mrHighlights(d,6),
+      k:{power:pAll,fuel:fgTot,rhr,open:ps.openAt.length,crOpen,
+        powerNote:unitsOn.length?unitsOn.join(' · ')+' online':'No production recorded',fuelNote:prArr.some(v=>v!=null)?'avg '+mrFmt(fgP.reduce((a,b)=>a+b,0)/fgP.length,1)+' barg':'',
+        rhrNote:topU?topU.code+' · '+mrFmt(mrNum(topU.h))+' h':'',punchNote:pm.closed.length+' closed · '+pm.raised.length+' raised'}};
+    const th=mrThemeBuild(mrTheme,ctx);
+    const toc2=(mrGlance?`<div class="toc-2"><a href="#glance"><span class="tn">◆</span><span class="tt">Month at a Glance</span></a></div>`:'')+toc;
+    const opts=MR_THEMES.map(t=>`<option value="${t[0]}"${t[0]===mrTheme?' selected':''}>${t[1]}</option>`).join('');
+    const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Q2- Monthly Plant Report (${E(M)})</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+      <style>${th.page}${MR_PDF_BASE}${th.css}</style></head><body class="th-${mrTheme}">
+    <div class="bar"><b>Monthly Plant Report — ${E(ML)}</b><label>Design <select onchange="opener&&opener.mrPrint(this.value,window)">${opts}</select></label><label><input type="checkbox" ${mrGlance?'checked':''} onchange="opener&&opener.mrPrint(null,window,this.checked)"> Month at a Glance</label><span style="flex:1"></span><span style="opacity:.75">Print → “Save as PDF”</span><button onclick="window.print()">Print / Save PDF</button></div>
+    ${th.cover}
+    <div class="sheet"><table class="wrap"><thead><tr><td>${th.header}</td></tr></thead><tbody><tr><td>
+      <div class="toc"><h2><span class="tx">Table of Contents</span></h2>${toc2}</div>
+      ${mrGlance?`<div class="glance" id="glance">${th.glance}</div>`:''}
       ${body}
     </td></tr></tbody></table></div></body></html>`;
     w.document.open();w.document.write(await sbResolveHtml(html));w.document.close();

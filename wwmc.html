@@ -6494,8 +6494,8 @@ async function mrPrint(){
       return t.split(/\n{2,}/).map(b=>{const ls=b.split('\n');if(ls.every(l=>/^\s*[•\-\*]/.test(l)||!l.trim()))return '<ul>'+ls.filter(l=>l.trim()).map(l=>'<li>'+E(l.replace(/^\s*[•\-\*]\s*/,''))+'</li>').join('')+'</ul>';
         const head=ls.length>1&&!/^\s*[•\-\*]/.test(ls[0])&&/^\d{1,2}(\s*[~–-]\s*\d{1,2})?\s+\w+/.test(ls[0])?'<p class="per">'+E(ls[0])+'</p>':'';const rest=head?ls.slice(1):ls;
         return head+(rest.every(l=>/^\s*[•\-\*]/.test(l))?'<ul>'+rest.map(l=>'<li>'+E(l.replace(/^\s*[•\-\*]\s*/,''))+'</li>').join('')+'</ul>':'<p>'+rest.map(E).join('<br>')+'</p>');}).join('');};
-    const tbl=(cols,rows,opts={})=>{if(!rows.length)return '<p class="na">NA</p>';return `<table class="t">${opts.cap?`<caption>${E(opts.cap)}</caption>`:''}<thead><tr>${opts.num?'<th style="width:6%">Sr. No.</th>':''}${cols.map(c=>`<th style="width:${c[2]}%">${E(c[1])}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${opts.num?`<td class="c">${i+1}.</td>`:''}${cols.map(c=>`<td class="${c[3]||''}">${E(r[c[0]]??(opts.dash?'-':''))}</td>`).join('')}</tr>`).join('')}</tbody>${opts.foot||''}</table>`;};
-    const H=(no,t,lvl)=>`<h${lvl} id="s${E(no).replace(/\./g,'_')}">${no?E(no)+' ':''}${E(t)}</h${lvl}>`;
+    const tbl=(cols,rows,opts={})=>{if(!rows.length)return '<p class="na">NA</p>';return `<table class="t${opts.dense?' dense':''}">${opts.cap?`<caption>${E(opts.cap)}</caption>`:''}<thead><tr>${opts.num?'<th style="width:6%">Sr. No.</th>':''}${cols.map(c=>`<th style="width:${c[2]}%">${E(c[1])}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${opts.num?`<td class="c">${i+1}.</td>`:''}${cols.map(c=>`<td class="${c[3]||''}">${E(r[c[0]]??(opts.dash?'-':''))}</td>`).join('')}</tr>`).join('')}</tbody>${opts.foot||''}</table>`;};
+    const H=(no,t,lvl)=>`<h${lvl} id="s${E(no).replace(/\./g,'_')}">${no?'<span class="no">'+E(no)+'</span>':''}${E(t)}</h${lvl}>`;
     const lvl=s=>!s.no||!s.no.includes('.')?2:s.no.split('.').length===2?3:4;
     // auto data
     const staffRows=mrStaff.filter(s=>s.status!=='Removed'&&!(s.status==='Left'&&s.leave_date&&String(s.leave_date).slice(0,10)<from)&&!(s.join_date&&String(s.join_date).slice(0,10)>to&&s.status==='Joined'))
@@ -6525,9 +6525,9 @@ async function mrPrint(){
         case 'hse_stats':inner=tbl(s.cols,Array.isArray(d[s.k])?d[s.k]:s.rows,{cap:'HSE Statistics for the Month of '+mrMonthLabel(mrMonth,true).replace(' ','-')});return `<section>${inner}</section>`;
         case 'hr_recruit':inner=intro+tbl([['pos','Position',30],['emp','Employee',28],['status','Status',18],['exp','Expected Joining',24]],staffRows);break;
         case 'hr_onboard':inner=intro+tbl(s.cols,onboard);break;
-        case 'ops_power':inner=tbl([['date','Dates',20],...MR_UNITS.map(u=>[u,u,16,'c'])],powerRows,{cap:ML+' - GTGs Power Production (MWh)',foot:`<tfoot><tr><th colspan="3">GTGs Total Power Generated:</th><th colspan="3" class="c">${pAll?mrFmt(pAll)+' MWh':'-'}</th></tr></tfoot>`});break;
+        case 'ops_power':inner=tbl([['date','Dates',20],...MR_UNITS.map(u=>[u,u,16,'c'])],powerRows,{dense:true,cap:ML+' - GTGs Power Production (MWh)',foot:`<tfoot><tr><th colspan="3">GTGs Total Power Generated:</th><th colspan="3" class="c">${pAll?mrFmt(pAll)+' MWh':'-'}</th></tr></tfoot>`});break;
         case 'ops_counters':inner=tbl([['code','Unit/Equipment',26,'c'],['s','No. Start',14,'c'],['t','No. Trip',14,'c'],['h','Monthly RHR',18,'c'],['tot','Total RHR on '+new Date(to+'T12:00:00').getDate()+' '+M,28,'c']],counters.map(c=>({code:c.code,s:c.s||'-',t:c.t||'-',h:c.h?mrFmt(c.h):'-',tot:c.tot?mrFmt(c.tot):'-'})),{cap:ML+' - Monthly Equipment Counters'});break;
-        case 'ops_fg':inner=tbl([['date','DATE',22,'c'],['p','Fuel Gas Pressure (barg)',24,'c'],['f','Daily Flow (SCFM)',22,'c'],['c','Daily Consumption (Sm³/day)',32,'c']],fgRows,{cap:ML+' - Fuel Gas Consumption',foot:`<tfoot><tr><th>Total / Average</th><th class="c">${fgP.length?'avg '+mrFmt(fgP.reduce((a,b)=>a+b,0)/fgP.length,2):'-'}</th><th class="c">${fgF.length?'avg '+mrFmt(fgF.reduce((a,b)=>a+b,0)/fgF.length,0):'-'}</th><th class="c">${fgC.length?mrFmt(fgC.reduce((a,b)=>a+b,0),0):'-'}</th></tr></tfoot>`});break;
+        case 'ops_fg':inner=tbl([['date','DATE',22,'c'],['p','Fuel Gas Pressure (barg)',24,'c'],['f','Daily Flow (SCFM)',22,'c'],['c','Daily Consumption (Sm³/day)',32,'c']],fgRows,{dense:true,cap:ML+' - Fuel Gas Consumption',foot:`<tfoot><tr><th>Total / Average</th><th class="c">${fgP.length?'avg '+mrFmt(fgP.reduce((a,b)=>a+b,0)/fgP.length,2):'-'}</th><th class="c">${fgF.length?'avg '+mrFmt(fgF.reduce((a,b)=>a+b,0)/fgF.length,0):'-'}</th><th class="c">${fgC.length?mrFmt(fgC.reduce((a,b)=>a+b,0),0):'-'}</th></tr></tfoot>`});break;
         case 'ops_fo':inner=tbl(s.cols,fo,{dash:true});break;
         case 'doc_sop':inner=intro+tbl(s.cols,withTotal(Array.isArray(d[s.k])?d[s.k]:[],['prog','prep']),{dash:true,cap:'Standard Operating Procedures (SOPs)'});break;
         case 'doc_wi':inner=intro+tbl(s.cols,withTotal(Array.isArray(d[s.k])?d[s.k]:[],['prog','prep']),{dash:true,cap:'Work Instructions (WIs)'});break;
@@ -6540,31 +6540,84 @@ async function mrPrint(){
       const keep=/<table/.test(inner)&&(inner.match(/<tr/g)||[]).length<=36;
       return `<section${keep?' class="keep"':''}>${H(s.no,s.t,lvl(s))}${inner}</section>`;
     }).join('');
-    const toc=MR_SECTIONS.filter(s=>s.no&&s.k!=='hse_stats').map(s=>`<div class="toc-${lvl(s)}"><a href="#s${E(s.no).replace(/\./g,'_')}">${E(s.no)} ${E(s.t)}</a></div>`).join('');
+    const toc=MR_SECTIONS.filter(s=>s.no&&s.k!=='hse_stats').map(s=>`<div class="toc-${lvl(s)}"><a href="#s${E(s.no).replace(/\./g,'_')}"><span class="tn">${E(s.no)}</span><span class="tt">${E(s.t)}</span></a></div>`).join('');
     const cover=await sbSignRefs((d.cover||[]).filter(Boolean));
     const logo=getWWMCLogoSrc();
-    const hdr=`<table class="hdr"><tr><td class="l">${logo?`<img src="${logo}" alt="WWMC">`:''}</td><td class="m"><div class="t1">Monthly Plant Report</div><div class="t2">${E(M)}</div></td><td class="r"><img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></td></tr></table>`;
+    const crOpen=crRows.filter(c=>!/^Closed/.test(c.st)).length;
+    const fgTot=fgC.reduce((a,b)=>a+b,0);
+    const kpi=[[pAll?mrFmt(pAll):'—','MWh generated','GTGs power production'],[fgTot?mrFmt(fgTot,0):'—','Sm³ fuel gas','Total consumption'],[String(ps.openAt.length),'Open punch points','At month end'],[String(crOpen),'Open CR cases','Engineering clarifications']];
+    const fmtLong=x=>new Date(x+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    const docNo='WWMC Monthly Plant Report '+mrMonth.slice(5,7)+mrMonth.slice(2,4);
+    const hdr=`<div class="rh"><div class="rh-l">${logo?`<img src="${logo}" alt="WWMC">`:''}</div><div class="rh-m"><div class="rh-t">Monthly Plant Report</div><div class="rh-s">Qassim-2 CCGT &nbsp;·&nbsp; ${E(M)}</div></div><div class="rh-r"><img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></div></div>`;
+    const coverHtml=`<div class="sheet cover">
+      <div class="cv-logos">${logo?`<img src="${logo}" alt="WWMC">`:'<span></span>'}<img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></div>
+      <div class="cv-band">
+        <div class="cv-kick">Monthly O&amp;M Report</div>
+        <div class="cv-title">Qassim-2<br>1980 MW CCGT</div>
+        <div class="cv-month">${E(mrMonthLabel(mrMonth,true))}</div>
+        <div class="cv-rule"><i></i><i></i></div>
+        <div class="cv-sub">Independent Power Plant · Qassim Region, Kingdom of Saudi Arabia</div>
+      </div>
+      ${cover.filter(Boolean).length?`<div class="cv-photos n${cover.filter(Boolean).length}">${cover.filter(Boolean).map(u=>`<img src="${E(u)}" alt="">`).join('')}</div>`:''}
+      <div class="cv-kpis">${kpi.map(k=>`<div><b>${E(k[0])}</b><span>${E(k[1])}</span><small>${E(k[2])}</small></div>`).join('')}</div>
+      <table class="cv-meta"><tr><th>Document No.</th><td>${E(docNo)}</td><th>Reporting period</th><td>${E(fmtLong(from))} – ${E(fmtLong(to))}</td></tr>
+        <tr><th>O&amp;M Operator</th><td>Wahat Al Wusta Maintenance Company</td><th>Owner</th><td>Wahat Al Wusta Energy Company</td></tr>
+        <tr><th>Prepared by</th><td>${E(currentUser?.name||'WWMC O&M Team')}</td><th>Issue date</th><td>${E(fmtLong(new Date().toISOString().slice(0,10)))}</td></tr></table>
+    </div>`;
     const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Q2- Monthly Plant Report (${E(M)})</title><style>
-      @page{size:A4;margin:12mm 14mm 16mm;@bottom-left{content:"${E(M)}";font:9px Calibri,Arial;color:#333}@bottom-center{content:counter(page) " | Page";font:9px Calibri,Arial;color:#333}}
-      *{box-sizing:border-box}body{margin:0;font:11pt/1.45 Calibri,"Segoe UI",Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .bar{position:sticky;top:0;background:#1F3864;color:#fff;padding:8px 14px;display:flex;gap:10px;align-items:center;font:13px Segoe UI,Arial;z-index:5}.bar button{background:#fff;color:#1F3864;border:0;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer}
-      @media print{.bar{display:none}}
-      .page{max-width:182mm;margin:0 auto}
-      table.wrap{width:100%;border-collapse:collapse}table.wrap>thead>tr>td{padding:0 0 10px}table.wrap>tbody>tr>td{padding:0}
-      .hdr{width:100%;border-collapse:collapse}.hdr td{border:1px solid #000;padding:6px 8px;vertical-align:middle}.hdr .l{width:25%}.hdr .r{width:25%;text-align:center}.hdr img{max-height:52px;max-width:100%}
-      .hdr .m{text-align:center}.hdr .t1{color:#4472C4;font-size:17pt;font-weight:700;line-height:1.1}.hdr .t2{color:#4472C4;font-size:11pt;font-weight:700}
-      .cover{text-align:center;page-break-after:always}.cover h1{font-size:18pt;margin:22px 0 60px}.cover .big{font-size:24pt;font-weight:700;margin:0 0 70px}.cover img{width:150mm;max-height:95mm;object-fit:cover;display:block;margin:0 auto 14px}
-      .toc{page-break-after:always}.toc h2{color:#1F3864;font-size:13pt}.toc div{border-bottom:1px dotted #999;padding:3px 0;font-size:10.5pt}.toc a{color:#111;text-decoration:none}.toc-2{font-weight:700;margin-top:4px}.toc-3{padding-left:16px!important}.toc-4{padding-left:34px!important;font-size:10pt!important}
-      h2{font-size:14pt;margin:16px 0 8px;page-break-after:avoid}h3{font-size:12.5pt;margin:14px 0 6px;page-break-after:avoid}h4{font-size:11pt;margin:12px 0 6px;page-break-after:avoid}
-      section{margin-left:0}section>p,section>ul{margin:4px 0 8px 22px}p.na{margin-left:22px}p.per{font-weight:700;margin:12px 0 4px 22px}ul{padding-left:22px}li{margin:3px 0}
-      table.t{width:calc(100% - 22px);margin:6px 0 12px 22px;border-collapse:collapse;font-size:9.8pt;page-break-inside:auto}table.t tr{page-break-inside:avoid}section.keep{break-inside:avoid;page-break-inside:avoid}
-      table.t caption{background:#DEEAF6;border:1px solid #000;border-bottom:0;font-weight:700;padding:4px}table.t th{background:#DEEAF6;border:1px solid #000;padding:4px 5px;font-weight:700;text-align:center}
-      table.t td{border:1px solid #000;padding:3px 6px;vertical-align:top}table.t td.c{text-align:center}table.t tfoot th{background:#DEEAF6}
-      .sec{page-break-before:auto}
+      @page{size:A4;margin:11mm 13mm 15mm;@bottom-left{content:"${E(docNo)}";font:8pt Calibri,Arial;color:#6B7A90}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt Calibri,Arial;color:#1F3864}}
+      @page:first{margin:0;@bottom-left{content:none}@bottom-right{content:none}}
+      :root{--navy:#1F3864;--blue:#2E5597;--acc:#4472C4;--sky:#DEEAF6;--line:#B8C4D6;--green:#3BAA35}
+      *{box-sizing:border-box}html{background:#E9EDF3}body{margin:0;font:10.5pt/1.5 Calibri,"Segoe UI",Arial,sans-serif;color:#1A2333;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .bar{position:sticky;top:0;background:var(--navy);color:#fff;padding:9px 18px;display:flex;gap:12px;align-items:center;font:13px "Segoe UI",Arial;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.2)}.bar button{background:#7FC8F8;color:#0F2747;border:0;border-radius:7px;padding:7px 16px;font-weight:700;cursor:pointer}
+      .sheet{width:210mm;margin:18px auto;background:#fff;box-shadow:0 6px 24px rgba(15,39,71,.14);padding:11mm 13mm 15mm}
+      @media print{html{background:#fff}.bar{display:none}.sheet{width:auto;margin:0;box-shadow:none;padding:0}}
+      /* cover */
+      .cover{position:relative;min-height:297mm;padding:16mm 16mm 14mm;display:flex;flex-direction:column;page-break-after:always;overflow:hidden}
+      @media print{.cover{height:296mm;min-height:0;padding:16mm 16mm 14mm}}
+      .cv-logos{display:flex;justify-content:space-between;align-items:center}.cv-logos img{height:20mm;max-width:70mm;object-fit:contain}
+      .cv-band{margin:16mm -16mm 0;padding:14mm 16mm 12mm;background:linear-gradient(120deg,#16294A 0%,#1F3864 55%,#2E5597 100%);color:#fff;position:relative}
+      .cv-band::after{content:"";position:absolute;right:0;top:0;bottom:0;width:38%;background:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 2px,transparent 2px 14px)}
+      .cv-kick{font-size:11pt;letter-spacing:.32em;text-transform:uppercase;color:#9CC3F0;font-weight:700}
+      .cv-title{font-size:34pt;line-height:1.05;font-weight:700;margin:5mm 0 4mm;position:relative;z-index:1}
+      .cv-month{display:inline-block;font-size:15pt;font-weight:700;background:#fff;color:var(--navy);padding:2mm 6mm;border-radius:2mm;position:relative;z-index:1}
+      .cv-rule{display:flex;gap:2mm;margin:7mm 0 3mm}.cv-rule i{height:1.2mm;width:22mm;background:var(--green);border-radius:1mm}.cv-rule i+i{width:10mm;background:#7FC8F8}
+      .cv-sub{font-size:10pt;color:#C9D8EE;position:relative;z-index:1}
+      .cv-photos{display:grid;gap:4mm;margin-top:9mm}.cv-photos.n2{grid-template-columns:1fr 1fr}.cv-photos img{width:100%;height:62mm;object-fit:cover;border-radius:2.5mm;display:block}.cv-photos.n1 img{height:78mm}
+      .cv-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:auto;padding-top:9mm}
+      .cv-kpis div{border:1px solid var(--line);border-top:1.2mm solid var(--acc);border-radius:2mm;padding:3mm 3.5mm}.cv-kpis div:nth-child(1){border-top-color:var(--green)}
+      .cv-kpis b{display:block;font-size:17pt;color:var(--navy);line-height:1.1}.cv-kpis span{display:block;font-size:8.6pt;font-weight:700;color:#334155;margin-top:1mm}.cv-kpis small{display:block;font-size:7.6pt;color:#7A8699}
+      .cv-meta{width:100%;border-collapse:collapse;margin-top:6mm;font-size:8.8pt}.cv-meta th{text-align:left;color:#7A8699;font-weight:700;text-transform:uppercase;font-size:7.4pt;letter-spacing:.06em;padding:2mm 2mm 2mm 0;width:17%;border-top:1px solid #E2E8F0}.cv-meta td{padding:2mm 4mm 2mm 0;border-top:1px solid #E2E8F0;color:#1A2333;font-weight:600}
+      /* running header */
+      table.wrap{width:100%;border-collapse:collapse}table.wrap>thead>tr>td{padding:0 0 6mm}table.wrap>tbody>tr>td{padding:0}
+      .rh{display:flex;align-items:center;gap:4mm;padding-bottom:2.5mm;border-bottom:.6mm solid var(--navy);position:relative}.rh::after{content:"";position:absolute;left:0;bottom:-1.6mm;width:28mm;height:.6mm;background:var(--green)}
+      .rh-l,.rh-r{width:42mm}.rh-r{text-align:right}.rh img{max-height:12mm;max-width:42mm;object-fit:contain}.rh-m{flex:1;text-align:center}.rh-t{font-size:13.5pt;font-weight:700;color:var(--navy);letter-spacing:.02em}.rh-s{font-size:8.6pt;color:var(--acc);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+      /* contents */
+      .toc{page-break-after:always}.toc h2{border:0;margin:0 0 5mm;padding:0;font-size:20pt;color:var(--navy)}.toc h2::before{display:none}
+      .toc a{display:flex;align-items:baseline;gap:3mm;color:#1A2333;text-decoration:none;padding:1.15mm 0}.toc a span.tn{min-width:13mm;color:var(--acc);font-weight:700}.toc a span.tt{flex:1;border-bottom:1px dotted #C3CCD9}
+      .toc-2 a{margin-top:2.5mm;padding:1.8mm 3mm;background:#F2F6FB;border-left:1.2mm solid var(--navy);font-weight:700;font-size:11pt}.toc-2 a span.tn{color:var(--navy)}.toc-2 a span.tt{border:0}
+      .toc-3 a{padding-left:5mm;font-size:10pt}.toc-4 a{padding-left:12mm;font-size:9.2pt;color:#475569}
+      /* headings */
+      h2{display:flex;align-items:center;gap:3mm;font-size:15pt;color:var(--navy);margin:9mm 0 4mm;padding-bottom:2mm;border-bottom:.5mm solid var(--line);page-break-after:avoid;break-after:avoid}
+      h2 .no{display:inline-flex;align-items:center;justify-content:center;min-width:9mm;height:9mm;padding:0 2mm;background:var(--navy);color:#fff;border-radius:1.5mm;font-size:12pt}
+      h3{font-size:12pt;color:var(--navy);margin:6mm 0 2.5mm;padding-left:3mm;border-left:1mm solid var(--acc);page-break-after:avoid;break-after:avoid}h3 .no{color:var(--acc);margin-right:2mm}
+      h4{font-size:10.8pt;color:#2B3A55;margin:5mm 0 2mm;page-break-after:avoid;break-after:avoid}h4 .no{color:var(--acc);margin-right:2mm;font-weight:700}
+      section>p,section>ul{margin:1.5mm 0 3mm 4mm;text-align:justify}ul{padding-left:6mm}li{margin:1mm 0}li::marker{color:var(--acc)}
+      p.na{display:inline-block;margin:0 0 2mm 4mm;font-size:9pt;color:#94A3B8;font-style:italic;letter-spacing:.04em}
+      p.per{font-weight:700;color:var(--navy);margin:4mm 0 1mm 4mm;padding:1mm 3mm;background:#F2F6FB;border-radius:1mm;display:inline-block}
+      /* tables */
+      table.t{width:calc(100% - 4mm);margin:2mm 0 5mm 4mm;border-collapse:separate;border-spacing:0;font-size:9.2pt;border:1px solid var(--line);border-radius:1.5mm;page-break-inside:auto}table.t thead tr:first-child th:first-child{border-top-left-radius:1.2mm}table.t thead tr:first-child th:last-child{border-top-right-radius:1.2mm}
+      table.t.dense{font-size:8.6pt}table.t.dense td{padding:.75mm 2mm}table.t.dense th{padding:1.3mm 2mm}
+      table.t tr{page-break-inside:avoid}section.keep{break-inside:avoid;page-break-inside:avoid}
+      table.t caption{caption-side:top;text-align:left;font-weight:700;color:var(--navy);font-size:9.6pt;padding:0 0 1.5mm 1mm}
+      table.t th{background:var(--navy);color:#fff;padding:2mm 2mm;font-weight:700;text-align:center;font-size:8.6pt;border-right:1px solid #2F4A78}table.t th:last-child{border-right:0}
+      table.t td{padding:1.5mm 2.2mm;vertical-align:top;border-top:1px solid #E1E7EF;border-right:1px solid #E1E7EF}table.t td:last-child{border-right:0}
+      table.t tbody tr:nth-child(even) td{background:#F7F9FC}table.t td.c{text-align:center}
+      table.t tfoot th{background:var(--sky);color:var(--navy);border-top:1px solid var(--line);border-right:1px solid var(--line)}
     </style></head><body>
-    <div class="bar"><b>Monthly Plant Report — ${E(ML)}</b><span style="opacity:.8">Use “Save as PDF” in the print window.</span><span style="flex:1"></span><button onclick="window.print()">Print / Save PDF</button></div>
-    <div class="page"><table class="wrap"><thead><tr><td>${hdr}</td></tr></thead><tbody><tr><td>
-      <div class="cover"><h1>Monthly O&amp;M Report (${E(M)})</h1><div class="big">Qassim-2 1980 MW CCGT</div>${cover.filter(Boolean).map(u=>`<img src="${E(u)}" alt="">`).join('')}</div>
+    <div class="bar"><b>Monthly Plant Report — ${E(ML)}</b><span style="opacity:.75">Click Print, then choose “Save as PDF”.</span><span style="flex:1"></span><button onclick="window.print()">Print / Save PDF</button></div>
+    ${coverHtml}
+    <div class="sheet"><table class="wrap"><thead><tr><td>${hdr}</td></tr></thead><tbody><tr><td>
       <div class="toc"><h2>Table of Contents</h2>${toc}</div>
       ${body}
     </td></tr></tbody></table></div></body></html>`;

@@ -6165,12 +6165,12 @@ function mrSetupMsg(e){
 async function mrLoad(force){
   const {from,to}=mrRange(mrMonth);
   const [row,prev,ops,eq,st,cr]=await Promise.all([
-    sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'),
-    sbFetch('qas2_monthly?month=eq.'+mrPrevMonth(mrMonth)+'&select=*'),
-    sbFetch('qas2_ops_daily?select=*&report_date=gte.'+from+'&report_date=lte.'+to+'&order=report_date.asc'),
-    sbFetch('qas2_equipment?select=*&order=sort_order.asc,code.asc'),
-    sbFetch('qas2_staff?select=*&order=created_at.asc'),
-    sbFetch('qas2_cr_cases?select=*&order=cr_no.asc')]);
+    sbFetch('qas2_mr_monthly?month=eq.'+mrMonth+'&select=*'),
+    sbFetch('qas2_mr_monthly?month=eq.'+mrPrevMonth(mrMonth)+'&select=*'),
+    sbFetch('qas2_mr_ops_daily?select=*&report_date=gte.'+from+'&report_date=lte.'+to+'&order=report_date.asc'),
+    sbFetch('qas2_mr_equipment?select=*&order=sort_order.asc,code.asc'),
+    sbFetch('qas2_mr_staff?select=*&order=created_at.asc'),
+    sbFetch('qas2_mr_cr_cases?select=*&order=cr_no.asc')]);
   mrRow=(row||[])[0]||{month:mrMonth,data:{}};mrRow.data=mrRow.data||{};
   mrPrev=(prev||[])[0]||null;mrOps=ops||[];mrEquip=eq||[];mrStaff=(st||[]).filter(s=>s.status!=='Removed');mrCR=(cr||[]).filter(c=>c.status!=='Removed');
 }
@@ -6223,9 +6223,9 @@ async function mrSaveSections(btn){
   if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
     // merge into the latest saved version so two people editing different pages don't overwrite each other
-    const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];
+    const cur=((await sbFetch('qas2_mr_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];
     const data={...(cur&&cur.data||{}),...changes};
-    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');
+    await sbUpsert('qas2_mr_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');
     mrRow={month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};mrDirty=false;showToast('Saved ✓');
     if(mrPage==='report'){const y=window.scrollY;mrRender();requestAnimationFrame(()=>window.scrollTo(0,y));}
   }catch(e){showToast(mrSetupMissing?'Run qas2_monthly_setup.sql first.':'Save failed: '+e.message,'error');}
@@ -6281,7 +6281,7 @@ async function mrSaveOps(btn){
     const out=rows.map(tr=>{const d=tr.dataset.d;const old=mrOpsRow(d);const power={...(old.power||{})};const o={report_date:d,counters:old.counters||{},updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
       tr.querySelectorAll('input[data-f]').forEach(x=>{const f=x.dataset.f;if(f.startsWith('p_')){const n=mrNum(x.value);if(n==null)delete power[f.slice(2)];else power[f.slice(2)]=n;}else if(f==='remarks')o.remarks=x.value.trim()||null;else o[f]=mrNum(x.value);});
       o.power=power;return o;});
-    await sbUpsert('qas2_ops_daily',out,'report_date');showToast('Saved ✓');mrDirty=false;mrRender();
+    await sbUpsert('qas2_mr_ops_daily',out,'report_date');showToast('Saved ✓');mrDirty=false;mrRender();
   }catch(e){showToast('Save failed: '+e.message,'error');btn.disabled=false;btn.textContent='Save changes';}
 }
 function mrCountersOpen(d){
@@ -6296,14 +6296,14 @@ function mrCountersOpen(d){
 async function mrCountersSave(d){
   const c={};document.querySelectorAll('#mr-cnt-body tr[data-code]').forEach(tr=>{const v={};tr.querySelectorAll('input').forEach(x=>{const n=mrNum(x.value);if(n!=null&&n!==0)v[x.dataset.x]=n;});if(Object.keys(v).length)c[tr.dataset.code]=v;});
   const old=mrOpsRow(d);
-  try{await sbUpsert('qas2_ops_daily',[{report_date:d,fg_pressure:old.fg_pressure??null,fg_flow:old.fg_flow??null,fg_consumption:old.fg_consumption??null,power:old.power||{},remarks:old.remarks??null,counters:c,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
+  try{await sbUpsert('qas2_mr_ops_daily',[{report_date:d,fg_pressure:old.fg_pressure??null,fg_flow:old.fg_flow??null,fg_consumption:old.fg_consumption??null,power:old.power||{},remarks:old.remarks??null,counters:c,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
     mrEl('mr-cnt-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
   catch(e){showToast('Save failed: '+e.message,'error');}
 }
 // counters summary for a month: per equipment starts, trips, monthly hours, total hours at month end
 async function mrCounterSummary(month){
   const {from,to}=mrRange(month);
-  const all=await sbFetch('qas2_ops_daily?select=report_date,counters&report_date=lte.'+to+'&order=report_date.asc&limit=5000')||[];
+  const all=await sbFetch('qas2_mr_ops_daily?select=report_date,counters&report_date=lte.'+to+'&order=report_date.asc&limit=5000')||[];
   return mrEquip.filter(e=>e.active!==false).map(e=>{let s=0,t=0,h=0,tot=Number(e.baseline_rhr||0);const base=String(e.baseline_date||'2026-10-31').slice(0,10);
     all.forEach(r=>{const d=String(r.report_date).slice(0,10);const v=(r.counters||{})[e.code];if(!v)return;
       if(d>base)tot+=Number(v.h||0);if(d>=from&&d<=to){s+=Number(v.s||0);t+=Number(v.t||0);h+=Number(v.h||0);}});
@@ -6321,7 +6321,7 @@ function mrEqRow(e,ad){const dis=ad?'':'disabled';return `<tr data-id="${e.id??'
 function mrAddEquip(){document.querySelector('.mr-eq tbody').insertAdjacentHTML('beforeend',mrEqRow({active:true,sort_order:(mrEquip.length+1)*10},true));}
 async function mrSaveEquip(btn){
   const rows=[...document.querySelectorAll('.mr-eq tbody tr')].map(tr=>{const o={};tr.querySelectorAll('[data-f]').forEach(x=>{const f=x.dataset.f;o[f]=x.type==='checkbox'?x.checked:['baseline_rhr','baseline_starts','sort_order'].includes(f)?(mrNum(x.value)||0):x.value.trim();});return o;}).filter(o=>o.code);
-  btn.disabled=true;try{await sbUpsert('qas2_equipment',rows,'code');showToast('Saved ✓');mrRender();}catch(e){showToast('Save failed: '+e.message,'error');}finally{btn.disabled=false;}
+  btn.disabled=true;try{await sbUpsert('qas2_mr_equipment',rows,'code');showToast('Saved ✓');mrRender();}catch(e){showToast('Save failed: '+e.message,'error');}finally{btn.disabled=false;}
 }
 
 // ───────── Staff Register ─────────
@@ -6357,7 +6357,7 @@ async function mrStaffSave(id){
   if(!o.name){showToast('Name is required.','error');return;}
   if(o.status==='Left'&&!o.leave_date)o.leave_date=drToday();
   if(o.status==='Removed'&&!confirm('Hide '+o.name+' from the register? (Use this only for entries made by mistake.)'))return;
-  try{if(id)await sbFetch('qas2_staff?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_staff','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
+  try{if(id)await sbFetch('qas2_mr_staff?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_mr_staff','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
   catch(e){showToast('Save failed: '+e.message,'error');}
 }
 
@@ -6387,7 +6387,7 @@ async function mrCrSave(id){
   if(!o.cr_no){showToast('CR No is required.','error');return;}
   if(o.status==='Closed'&&!o.closed_date)o.closed_date=drToday();
   if(mrCR.some(x=>x.cr_no===o.cr_no&&String(x.id)!==String(id))){showToast('That CR No already exists.','error');return;}
-  try{if(id)await sbFetch('qas2_cr_cases?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_cr_cases','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
+  try{if(id)await sbFetch('qas2_mr_cr_cases?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_mr_cr_cases','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
   catch(e){showToast('Save failed: '+e.message,'error');}
 }
 
@@ -6467,17 +6467,17 @@ async function mrCoverSet(i,input){
   try{
     let v=null;
     if(input&&input.files&&input.files[0]){const [small]=await compressFiles([input.files[0]]);v=await sbStoreDataUrl(small,'monthly/'+mrMonth);}
-    const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};const cv=[...(data.cover||[])];cv[i]=v;data.cover=cv.filter((x,k)=>k<2);
-    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');mrRender();
+    const cur=((await sbFetch('qas2_mr_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};const cv=[...(data.cover||[])];cv[i]=v;data.cover=cv.filter((x,k)=>k<2);
+    await sbUpsert('qas2_mr_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');mrRender();
   }catch(e){showToast('Could not save the photo: '+e.message,'error');}
 }
 async function mrCopyAllPrev(btn){
   if(!mrPrev){return;}
   if(!confirm('Copy from '+mrMonthLabel(mrPrevMonth(mrMonth),true)+' every section that is still empty this month?\n\nSections you already filled are not touched.'))return;
   btn.disabled=true;
-  try{const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};let n=0;
+  try{const cur=((await sbFetch('qas2_mr_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};let n=0;
     MR_SECTIONS.forEach(s=>{if(!s.carry)return;[s.k,mrIntroKey(s.k)].forEach(k=>{if(data[k]==null&&mrPrev.data[k]!=null){data[k]=mrPrev.data[k];n++;}});});
-    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');showToast(n+' section(s) copied ✓');mrRender();}
+    await sbUpsert('qas2_mr_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');showToast(n+' section(s) copied ✓');mrRender();}
   catch(e){showToast('Failed: '+e.message,'error');btn.disabled=false;}
 }
 
@@ -6577,8 +6577,8 @@ async function drOpsLoad(){
   const box=mrEl('dro-box');if(!box)return;
   const d=document.getElementById('dr-date')?.value||drToday();
   try{
-    if(!mrEquip.length)mrEquip=await sbFetch('qas2_equipment?select=*&order=sort_order.asc,code.asc')||[];
-    const r=((await sbFetch('qas2_ops_daily?report_date=eq.'+d+'&select=*'))||[])[0];
+    if(!mrEquip.length)mrEquip=await sbFetch('qas2_mr_equipment?select=*&order=sort_order.asc,code.asc')||[];
+    const r=((await sbFetch('qas2_mr_ops_daily?report_date=eq.'+d+'&select=*'))||[])[0];
     const sel=mrEl('dro-eq');if(sel)sel.innerHTML='<option value="">— equipment —</option>'+mrEquip.filter(e=>e.active!==false).map(e=>`<option>${escapeHtml(e.code)}</option>`).join('');
     const info=mrEl('dro-info');
     if(r){const p=r.power||{};const parts=[];if(r.fg_pressure!=null)parts.push('FG '+r.fg_pressure+' barg');if(r.fg_consumption!=null)parts.push(mrFmt(mrNum(r.fg_consumption),0)+' Sm³');MR_UNITS.forEach(u=>{if(p[u]!=null)parts.push(u+' '+p[u]+' MWh');});
@@ -6606,14 +6606,14 @@ function drOpsCollect(){
 async function drOpsSave(date){
   const o=drOpsCollect();if(!o)return;
   try{
-    const cur=((await sbFetch('qas2_ops_daily?report_date=eq.'+date+'&select=*'))||[])[0]||{};
+    const cur=((await sbFetch('qas2_mr_ops_daily?report_date=eq.'+date+'&select=*'))||[])[0]||{};
     const row={report_date:date,fg_pressure:o.fg_pressure??cur.fg_pressure??null,fg_flow:o.fg_flow??cur.fg_flow??null,fg_consumption:o.fg_consumption??cur.fg_consumption??null,
       power:{...(cur.power||{}),...o.power},counters:{...(cur.counters||{}),...o.counters},remarks:o.remarks?((cur.remarks?cur.remarks+' | ':'')+o.remarks):(cur.remarks??null),updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
     Object.keys(row.counters).forEach(k=>{if(!Object.keys(row.counters[k]||{}).length)delete row.counters[k];});
-    await sbUpsert('qas2_ops_daily',[row],'report_date');
+    await sbUpsert('qas2_mr_ops_daily',[row],'report_date');
     ['dro-fgp','dro-fgf','dro-fgc','dro-rem',...MR_UNITS.map(u=>'dro-p-'+u)].forEach(id=>{const el=mrEl(id);if(el)el.value='';});mrEl('dro-rows').innerHTML='';
     showToast('Operations readings saved ✓');
-  }catch(e){showToast('Report saved, but the operations readings were not: '+(/qas2_ops_daily|PGRST|42P01/.test(e.message)?'run qas2_monthly_setup.sql first.':e.message),'error');}
+  }catch(e){showToast('Report saved, but the operations readings were not: '+(/qas2_mr_ops_daily|PGRST|42P01/.test(e.message)?'run qas2_monthly_setup.sql first.':e.message),'error');}
 }
 
 // ═════════ GROUPED NAVIGATION ═════════

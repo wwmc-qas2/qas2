@@ -295,6 +295,32 @@ img[src^="sbs:"]{opacity:0}
 .mr-th-classic i{background:linear-gradient(#fff 0 26%,#1F3864 26% 64%,#fff 64%);border:1px solid #E3E8EF}
 .mr-glc{grid-column:1/-1;font-size:12.5px;color:#374151;display:flex;gap:8px;align-items:center}
 @media (max-width:640px){.mr-thp{grid-template-columns:1fr 1fr}}
+.nav-f{overflow-x:auto}.nav-f .cnt:empty{display:none}
+.subnav{background:#fff;border-bottom:1px solid var(--border,#E3E8EF);padding:8px 20px}
+.subnav .sn{display:flex;gap:6px;flex-wrap:wrap;max-width:1160px;margin:0 auto}
+.subnav .sn-b{border:1px solid var(--border,#D6DCE5)!important;border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:#374151;background:#fff;margin:0}
+.subnav .sn-b:hover{background:#F1F5FB}.subnav .sn-b.active{background:var(--navy,#1F3864);color:#fff;border-color:var(--navy,#1F3864)!important}
+.subnav .sn-b::after{display:none!important}
+@media (max-width:640px){.subnav{padding:8px 10px}.subnav .sn{flex-wrap:nowrap;overflow-x:auto}.subnav .sn-b{white-space:nowrap}}
+.mr-steps{display:flex;align-items:center;gap:0;margin:0 0 16px;background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:14px;padding:8px}
+.mr-step{flex:1;display:flex;align-items:center;gap:10px;border:0;background:none;padding:8px 10px;border-radius:10px;cursor:pointer;text-align:left;font:inherit;min-width:0}
+.mr-step .n{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:#EEF2F7;color:#64748B}
+.mr-step .t{display:flex;flex-direction:column;min-width:0}.mr-step b{font-size:13px;color:#1F2937}.mr-step small{font-size:11px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mr-step:hover{background:#F6F8FB}.mr-step.on{background:var(--navy-light,#E8EEF7)}.mr-step.on .n{background:var(--navy,#1F3864);color:#fff}.mr-step.on b{color:var(--navy,#1F3864)}.mr-step.past .n{background:#DCFCE7;color:#15803D}
+.mr-step-ln{flex:none;width:18px;height:2px;background:#E3E8EF}
+.mr-help{background:#F0F7FF;border:1px solid #CFE3FA;color:#1E3A5F;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.mr-grp{background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.mr-grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;font-weight:700;color:#1F3864}.mr-grp>summary::-webkit-details-marker{display:none}
+.mr-grp>summary::before{content:"▸";color:#94A3B8;font-size:12px;transition:transform .15s}.mr-grp[open]>summary::before{transform:rotate(90deg)}
+.mr-gt{flex:1;font-size:14.5px}.mr-gc{font-size:12px;font-weight:700;background:#FFFBEB;color:#B45309;border-radius:20px;padding:3px 10px}.mr-gc.done{background:#ECFDF3;color:#15803D}
+.mr-grp[open]>summary{border-bottom:1px solid var(--border,#E3E8EF)}.mr-gb{padding:12px;background:#F8FAFC}.mr-gb .mr-card{margin-bottom:10px}.mr-gb .mr-card:last-child{margin-bottom:0}
+.mr-na{margin-left:8px;border:1px solid #D6DCE5;background:#fff;color:#6B7280;border-radius:6px;font-size:11px;font-weight:700;padding:2px 8px;cursor:pointer}.mr-na:hover{border-color:#94A3B8;color:#374151}
+.mr-card.is-na{opacity:.65}
+.mr-savebar{position:sticky;bottom:10px;z-index:20;display:flex;align-items:center;gap:8px;justify-content:flex-end;background:#fff;border:1px solid var(--border,#E3E8EF);border-radius:12px;padding:10px 12px;margin-top:12px;box-shadow:0 8px 24px rgba(15,39,71,.12)}
+.mr-savebar .st{margin-right:auto;font-size:12.5px;color:#15803D;font-weight:600}.mr-savebar.dirty{border-color:#F5A524}.mr-savebar.dirty .st{color:#B45309}
+.mr-next{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
+.mr-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.mr-pill{border:1px solid var(--border,#D6DCE5);background:#fff;border-radius:20px;padding:7px 14px;font:inherit;font-size:12.5px;font-weight:600;color:#374151;cursor:pointer}.mr-pill.on{background:var(--navy,#1F3864);color:#fff;border-color:var(--navy,#1F3864)}
+@media (max-width:760px){.mr-steps{overflow-x:auto}.mr-step{flex:none}.mr-step small{display:none}.mr-step-ln{width:8px}}
 .dro summary{cursor:pointer;list-style:none}.dro summary::-webkit-details-marker{display:none}.dro summary::after{content:"▸";float:right;color:#9CA3AF}.dro[open] summary::after{content:"▾"}
 .dro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dro-p{grid-template-columns:repeat(5,minmax(0,1fr))}
 .dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
@@ -851,46 +877,34 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <button class="logout-btn" onclick="doLogout()">Logout</button>
     </div>
   </div>
-  <nav class="tabs nav-g no-print" aria-label="Main">
-    <button class="tab ng-top admin-only" id="tab-dash" onclick="switchTab('dashboard')" style="display:none">Overview</button>
-    <div class="ng" data-g="com"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">O&amp;M <span class="cnt" id="cnt"></span> <i>▾</i></button>
-      <div class="ng-menu" role="menu">
-        <div class="ng-lbl">Punch List</div>
-        <button class="tab ng-item" id="tab-new" role="menuitem" onclick="navPick('new')">＋ New Ticket</button>
-        <button class="tab ng-item" id="tab-register" role="menuitem" onclick="navPick('register')">📋 Punch List Register</button>
-        <button class="tab ng-item admin-only" id="tab-pl-approvals" role="menuitem" onclick="navPick('approvals')" style="display:none">✔ Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span></button>
-        <div class="ng-lbl">Daily Report</div>
-        <button class="tab ng-item" id="tab-dailyreport-new" role="menuitem" onclick="navPick('dailyreport-new')">＋ New Daily Report</button>
-        <button class="tab ng-item" id="tab-dailyreport-register" role="menuitem" onclick="navPick('dailyreport-register')">🗂 Daily Report Register</button>
-      </div></div>
-    <div class="ng sup-only" data-g="mr" style="display:none"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Monthly Report <i>▾</i></button>
-      <div class="ng-menu" role="menu">
-        <button class="tab ng-item" data-mr="report" role="menuitem" onclick="navPickMR('report')">📄 Monthly Report</button>
-        <div class="ng-lbl">Data</div>
-        <button class="tab ng-item" data-mr="ops" role="menuitem" onclick="navPickMR('ops')">⛽ Daily Operations Log</button>
-        <button class="tab ng-item" data-mr="staff" role="menuitem" onclick="navPickMR('staff')">👥 Staff Register</button>
-        <button class="tab ng-item" data-mr="cr" role="menuitem" onclick="navPickMR('cr')">❓ CR Cases</button>
-        <div class="ng-lbl">Report sections</div>
-        <button class="tab ng-item" data-mr="hse" role="menuitem" onclick="navPickMR('hse')">🦺 HSE</button>
-        <button class="tab ng-item" data-mr="hr" role="menuitem" onclick="navPickMR('hr')">🎓 HR &amp; Training</button>
-        <button class="tab ng-item" data-mr="opsdata" role="menuitem" onclick="navPickMR('opsdata')">🛢 Inventory &amp; Utilities</button>
-        <button class="tab ng-item" data-mr="docs" role="menuitem" onclick="navPickMR('docs')">📑 SOPs, WIs &amp; Manuals</button>
-        <button class="tab ng-item" data-mr="maint" role="menuitem" onclick="navPickMR('maint')">🛠 Maintenance</button>
-        <button class="tab ng-item" data-mr="finance" role="menuitem" onclick="navPickMR('finance')">🛒 Finance &amp; Other</button>
-        <button class="tab ng-item" data-mr="equip" role="menuitem" onclick="navPickMR('equip')">⚙ Equipment &amp; Running Hours</button>
-      </div></div>
-    <div class="ng" data-g="lib"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Library <i>▾</i></button>
-      <div class="ng-menu" role="menu">
-        <button class="tab ng-item" id="tab-docs" role="menuitem" onclick="navPick('docs')">📁 Documents</button>
-        <button class="tab ng-item" id="tab-om" role="menuitem" onclick="navPick('om')">📚 O&amp;M Library</button>
-      </div></div>
-    <div class="ng admin-only" data-g="adm" style="display:none"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Admin <i>▾</i></button>
-      <div class="ng-menu" role="menu">
-        <button class="tab ng-item admin-only" id="tab-users" role="menuitem" onclick="navPick('users')" style="display:none">👤 Manage Users</button>
-        <button class="tab ng-item" role="menuitem" onclick="navPick('users','al-body')">🕘 Activity Log</button>
-        <button class="tab ng-item" role="menuitem" onclick="navPick('users','sm-panel')">🛟 Storage &amp; Backups</button>
-      </div></div>
+  <nav class="tabs nav-f no-print" aria-label="Main">
+    <button class="tab nf-top admin-only" id="tab-dash" data-sec="dash" onclick="switchTab('dashboard')" style="display:none">Overview</button>
+    <button class="tab nf-top" data-sec="pl" onclick="navSec('pl')">Punch List <span class="cnt" id="cnt"></span></button>
+    <button class="tab nf-top" data-sec="dr" onclick="navSec('dr')">Daily Report</button>
+    <button class="tab nf-top sup-only" data-sec="mr" onclick="navSec('mr')" style="display:none">Monthly Report</button>
+    <button class="tab nf-top" data-sec="lib" onclick="navSec('lib')">Library</button>
+    <button class="tab nf-top admin-only" data-sec="adm" onclick="navSec('adm')" style="display:none">Admin</button>
   </nav>
+  <div class="subnav no-print" id="subnav" style="display:none">
+    <div class="sn" data-sec="pl">
+      <button class="tab sn-b" id="tab-new" data-tab="new" onclick="switchTab('new')">＋ New Ticket</button>
+      <button class="tab sn-b" id="tab-register" data-tab="register" onclick="switchTab('register')">Register</button>
+      <button class="tab sn-b admin-only" id="tab-pl-approvals" data-tab="approvals" onclick="switchTab('approvals')" style="display:none">Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span></button>
+    </div>
+    <div class="sn" data-sec="dr">
+      <button class="tab sn-b" id="tab-dailyreport-new" data-tab="dailyreport-new" onclick="switchTab('dailyreport-new')">＋ New Report</button>
+      <button class="tab sn-b" id="tab-dailyreport-register" data-tab="dailyreport-register" onclick="switchTab('dailyreport-register')">Register</button>
+    </div>
+    <div class="sn" data-sec="lib">
+      <button class="tab sn-b" id="tab-docs" data-tab="docs" onclick="switchTab('docs')">Documents</button>
+      <button class="tab sn-b" id="tab-om" data-tab="om" onclick="switchTab('om')">O&amp;M Library</button>
+    </div>
+    <div class="sn" data-sec="adm">
+      <button class="tab sn-b admin-only" id="tab-users" data-tab="users" onclick="switchTab('users')" style="display:none">Manage Users</button>
+      <button class="tab sn-b" data-tab="users" data-scroll="al-body" onclick="navPick('users','al-body')">Activity Log</button>
+      <button class="tab sn-b" data-tab="users" data-scroll="sm-panel" onclick="navPick('users','sm-panel')">Storage &amp; Backups</button>
+    </div>
+  </div>
   <div class="content">
 
     <!-- DASHBOARD -->
@@ -1207,6 +1221,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     <div class="view no-print" id="view-monthly">
       <div class="mr-top"><div><div class="mr-kick">Monthly Plant Report</div><h2 id="mr-title">Monthly Report</h2></div>
         <label id="mr-month-wrap" class="mr-month">Month <input type="month" id="mr-month" onchange="mrSetMonth(this.value)"></label></div>
+      <div class="mr-steps" id="mr-steps"></div>
       <div id="mr-body"></div>
     </div>
     <div class="view no-print" id="view-om">
@@ -6151,7 +6166,7 @@ const MR_SECTIONS=[
 const MR_BY=Object.fromEntries(MR_SECTIONS.map(s=>[s.k,s]));
 
 let mrMonth=(()=>{const d=new Date();if(d.getDate()<=10)d.setMonth(d.getMonth()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');})();
-let mrPage='report',mrRow=null,mrPrev=null,mrOps=[],mrEquip=[],mrStaff=[],mrCR=[],mrDirty=false,mrSetupMissing=false;
+let mrPage='sections',mrRow=null,mrPrev=null,mrOps=[],mrEquip=[],mrStaff=[],mrCR=[],mrDirty=false,mrSetupMissing=false;
 const mrEl=id=>document.getElementById(id);
 const mrMonthLabel=(m,long)=>{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleString('en-GB',{month:long?'long':'short',year:'numeric'});};
 const mrRange=m=>{const [y,mo]=m.split('-').map(Number);const last=new Date(y,mo,0).getDate();return {from:m+'-01',to:m+'-'+String(last).padStart(2,'0'),days:last};};
@@ -6184,7 +6199,12 @@ async function mrLoad(force){
   mrRow=(row||[])[0]||{month:mrMonth,data:{}};mrRow.data=mrRow.data||{};
   mrPrev=(prev||[])[0]||null;mrOps=ops||[];mrEquip=eq||[];mrStaff=(st||[]).filter(s=>s.status!=='Removed');mrCR=(cr||[]).filter(c=>c.status!=='Removed');
 }
+const MR_STEPS=[['ops','Daily data','Fuel, power & running hours'],['sections','Write sections','HSE, HR, maintenance …'],['registers','Registers','Staff, CR cases, equipment'],['report','Generate PDF','Cover, design & print']];
+const MR_GROUPS=[['report','Summary & Events'],['hse','HSE'],['hr','HR & Training'],['opsdata','Operations data'],['docs','SOPs, WIs & Manuals'],['maint','Maintenance'],['finance','Finance & Other']];
+let mrReg='staff',mrOpenGrp='report';
 function mrGo(page){
+  if(['staff','cr','equip'].includes(page)){mrReg=page;page='registers';}
+  else if(MR_GROUPS.some(g=>g[0]===page)&&page!=='report'){mrOpenGrp=page;page='sections';}
   if(page)mrPage=page;
   try{localStorage.setItem('qas2_mr_page',mrPage);}catch(e){}
   if(getActiveTabState()!=='monthly')switchTab('monthly');else mrRender();
@@ -6192,14 +6212,15 @@ function mrGo(page){
 }
 async function mrRender(){
   const box=mrEl('mr-body');if(!box)return;
-  const p=MR_PAGES.find(x=>x[0]===mrPage)||MR_PAGES[0];
-  mrEl('mr-title').textContent=p[1].replace(/^\S+\s/,'');
+  if(!MR_STEPS.some(x=>x[0]===mrPage)){const legacy=mrPage;mrPage='sections';if(['staff','cr','equip'].includes(legacy)){mrPage='registers';mrReg=legacy;}else if(MR_GROUPS.some(g=>g[0]===legacy))mrOpenGrp=legacy;}
+  const p=MR_STEPS.find(x=>x[0]===mrPage);
+  mrEl('mr-title').textContent=p[1];mrStepsRender();
   const ms=mrEl('mr-month');if(ms&&ms.value!==mrMonth)ms.value=mrMonth;
-  mrEl('mr-month-wrap').style.display=['staff','cr','equip'].includes(mrPage)?'none':'';
+  mrEl('mr-month-wrap').style.display=mrPage==='registers'?'none':'';
   box.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading…</div>';
   try{await mrLoad();}catch(e){box.innerHTML='<div class="mr-warn">'+mrSetupMsg(e)+'</div>';return;}
   mrDirty=false;
-  ({report:mrRenderReport,ops:mrRenderOps,staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrPage]||mrRenderGroup)();
+  ({report:mrRenderReport,ops:mrRenderOpsStep,sections:mrRenderSections,registers:mrRenderRegisters}[mrPage]||mrRenderSections)();mrStepsRender();
 }
 function mrSetMonth(v){if(!v)return;if(mrDirty&&!confirm('You have unsaved changes on this page. Switch month anyway?')){mrEl('mr-month').value=mrMonth;return;}mrMonth=v;mrRender();}
 
@@ -6219,14 +6240,19 @@ function mrTableEditor(s){
 }
 function mrRowHtml(s,r,i){return `<tr>${s.num?`<td class="mr-n">${i+1}</td>`:''}${s.cols.map(c=>`<td><textarea rows="1" data-c="${c[0]}" oninput="mrDirty=true;mrGrow(this)">${escapeHtml(r[c[0]]??'')}</textarea></td>`).join('')}<td><button type="button" class="mr-x" title="Remove row" aria-label="Remove row" onclick="this.closest('tr').remove();mrDirty=true">✕</button></td></tr>`;}
 function mrGrow(t){t.style.height='auto';t.style.height=Math.min(220,t.scrollHeight)+'px';}
-function mrAddRow(k){const s=MR_BY[k];const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.insertAdjacentHTML('beforeend',mrRowHtml(s,{},tb.children.length));mrDirty=true;tb.lastElementChild.querySelector('textarea').focus();}
+function mrAddRow(k){const s=MR_BY[k];const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.closest('.mr-et').dataset.touched='1';tb.insertAdjacentHTML('beforeend',mrRowHtml(s,{},tb.children.length));mrDirty=true;tb.lastElementChild.querySelector('textarea').focus();}
 function mrCollect(){
-  const out={};
-  document.querySelectorAll('#mr-body .mr-ta').forEach(t=>{out[t.dataset.k]=t.value.trim();});
-  document.querySelectorAll('#mr-body .mr-et').forEach(tb=>{const s=MR_BY[tb.dataset.k];
-    out[tb.dataset.k]=[...tb.querySelectorAll('tbody tr')].map(tr=>{const o={};tr.querySelectorAll('textarea[data-c]').forEach(x=>{if(x.value.trim())o[x.dataset.c]=x.value.trim();});return o;}).filter(o=>Object.keys(o).length);});
+  // only sections that were changed (or marked NA) — untouched sections stay "Not filled"
+  const out={};const d=(mrRow&&mrRow.data)||{};
+  document.querySelectorAll('#mr-body .mr-ta').forEach(t=>{const k=t.dataset.k,v=t.value.trim(),o=d[k]==null?'':String(d[k]).trim();if(v!==o||t.dataset.na||(d[k]==null&&t.dataset.touched))out[k]=v;});
+  document.querySelectorAll('#mr-body .mr-et').forEach(tb=>{const k=tb.dataset.k;
+    const rows=[...tb.querySelectorAll('tbody tr')].map(tr=>{const o={};tr.querySelectorAll('textarea[data-c]').forEach(x=>{if(x.value.trim())o[x.dataset.c]=x.value.trim();});return o;}).filter(o=>Object.keys(o).length);
+    const base=Array.isArray(d[k])?d[k]:null;
+    if(tb.dataset.na||tb.dataset.touched||(base&&JSON.stringify(rows)!==JSON.stringify(base)))out[k]=rows;});
   return out;
 }
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('#mr-body .mr-et .mr-x');if(x){const et=x.closest('.mr-et');if(et)et.dataset.touched='1';mrDirty=true;setTimeout(mrSaveBarShow,0);}},true);
+document.addEventListener('input',e=>{const t=e.target;if(!t.closest||!t.closest('#mr-body'))return;const ta=t.closest('.mr-ta');if(ta)ta.dataset.touched='1';const et=t.closest('.mr-et');if(et)et.dataset.touched='1';},true);
 async function mrSaveSections(btn){
   if(!mrCanEdit()){showToast('Only supervisors and admins can edit the monthly report.','error');return;}
   const changes=mrCollect();
@@ -6237,17 +6263,17 @@ async function mrSaveSections(btn){
     const data={...(cur&&cur.data||{}),...changes};
     await sbUpsert('qas2_mr_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');
     mrRow={month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};mrDirty=false;showToast('Saved ✓');
-    if(mrPage==='report'){const y=window.scrollY;mrRender();requestAnimationFrame(()=>window.scrollTo(0,y));}
+    if(['report','sections'].includes(mrPage)){const y=window.scrollY;mrRender();requestAnimationFrame(()=>window.scrollTo(0,y));}
   }catch(e){showToast(mrSetupMissing?'Run qas2_monthly_setup.sql first.':'Save failed: '+e.message,'error');}
   finally{if(btn){btn.disabled=false;btn.textContent='Save';}}
 }
 function mrCopyPrev(k){
   const s=MR_BY[k];const v=mrPrev&&mrPrev.data?mrPrev.data[k]:undefined;
   if(v==null){showToast('Nothing saved for '+mrMonthLabel(mrPrevMonth(mrMonth))+'.','error');return;}
-  if(s.type==='table'){const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.innerHTML=(v||[]).map((r,i)=>mrRowHtml(s,r,i)).join('');tb.querySelectorAll('textarea').forEach(mrGrow);}
+  if(s.type==='table'){const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.closest('.mr-et').dataset.touched='1';tb.innerHTML=(v||[]).map((r,i)=>mrRowHtml(s,r,i)).join('');tb.querySelectorAll('textarea').forEach(mrGrow);}
   else{const ta=document.querySelector(`.mr-ta[data-k="${k}"]`);if(ta)ta.value=v;}
   const ia=document.querySelector(`.mr-ta[data-k="${mrIntroKey(k)}"]`);if(ia&&mrPrev.data[mrIntroKey(k)]!=null)ia.value=mrPrev.data[mrIntroKey(k)];
-  mrDirty=true;showToast('Copied from '+mrMonthLabel(mrPrevMonth(mrMonth))+' — press Save.');
+  mrDirty=true;mrSaveBarShow();showToast('Copied from '+mrMonthLabel(mrPrevMonth(mrMonth))+' — press Save.');
 }
 function mrSectionCard(s){
   const head=`<div class="mr-sh"><span class="mr-no">${escapeHtml(s.no)}</span><b>${escapeHtml(s.t)}</b>${s.carry&&mrPrev?`<button type="button" class="mr-link" onclick="mrCopyPrev('${s.k}')">Copy from ${escapeHtml(mrMonthLabel(mrPrevMonth(mrMonth)))}</button>`:''}</div>`;
@@ -6257,6 +6283,53 @@ function mrSectionCard(s){
 }
 function mrAutoNote(s){
   return {staff:`Filled automatically from the <a href="#" onclick="mrGo('staff');return false">Staff Register</a>.`,power:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,counters:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a> and <a href="#" onclick="mrGo('equip');return false">Equipment & Running Hours</a>.`,fg:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,punch:'Filled automatically from the Punch List.',cr:`Filled automatically from the <a href="#" onclick="mrGo('cr');return false">CR Cases</a> register.`}[s.src]||'';
+}
+function mrStepsRender(){
+  const box=mrEl('mr-steps');if(!box)return;
+  let sub={};
+  try{const d=(mrRow&&mrRow.data)||{};const st=MR_SECTIONS.map(x=>mrStatus(x)).filter(Boolean).filter(x=>x[0]!=='auto');
+    const okN=st.filter(x=>x[0]==='ok'||x[0]==='na').length;sub.sections=okN+' of '+st.length+' done';
+    sub.ops=(mrOps||[]).filter(r=>r.fg_consumption!=null||Object.keys(r.power||{}).length).length+' days recorded';
+    sub.registers=(mrStaff||[]).filter(x=>x.status!=='Removed').length+' staff · '+(mrCR||[]).length+' CR';}catch(e){}
+  const cur=MR_STEPS.findIndex(x=>x[0]===mrPage);
+  box.innerHTML=MR_STEPS.map((x,i)=>`<button type="button" class="mr-step${i===cur?' on':''}${i<cur?' past':''}" onclick="mrGoSafe('${x[0]}')"><span class="n">${i+1}</span><span class="t"><b>${x[1]}</b><small>${escapeHtml(sub[x[0]]||x[2])}</small></span></button>`).join('<span class="mr-step-ln"></span>');
+}
+function mrGoSafe(p){if(mrDirty&&!confirm('You have unsaved changes on this page. Leave without saving?'))return;mrGo(p);}
+function mrGroupStatus(g){const st=MR_SECTIONS.filter(s=>s.g===g).map(mrStatus).filter(Boolean).filter(x=>x[0]!=='auto');const ok=st.filter(x=>x[0]==='ok'||x[0]==='na').length;return [ok,st.length];}
+function mrNaBtn(s){return (s.type==='text'||s.type==='table')&&mrCanEdit()?`<button type="button" class="mr-na" onclick="mrMarkNA('${s.k}')" title="Nothing to report this month — prints “NA”">NA</button>`:'';}
+function mrMarkNA(k){const s=MR_BY[k];if(s.type==='table'){const et=document.querySelector(`.mr-et[data-k="${k}"]`);if(et){et.querySelector('tbody').innerHTML='';et.dataset.na='1';}}else{const ta=document.querySelector(`.mr-ta[data-k="${k}"]`);if(ta){ta.value='';ta.dataset.na='1';}}
+  const card=document.querySelector(`.mr-card[data-sk="${k}"]`);if(card)card.classList.add('is-na');mrDirty=true;mrSaveBarShow();}
+function mrSaveBarShow(){const b=mrEl('mr-savebar');if(b){b.classList.toggle('dirty',!!mrDirty);const t=b.querySelector('.st');if(t)t.textContent=mrDirty?'Unsaved changes':'All changes saved';}}
+function mrRenderSections(){
+  const ro=!mrCanEdit();const prevL=mrMonthLabel(mrPrevMonth(mrMonth));
+  const grp=g=>{
+    const list=MR_SECTIONS.filter(s=>s.g===g[0]);const [ok,n]=mrGroupStatus(g[0]);
+    let inner;
+    if(g[0]==='report')inner=['exec','ops_events'].map(k=>{const s=MR_BY[k];return `<div class="mr-card" data-sk="${k}"><div class="mr-sh"><span class="mr-no">${s.no}</span><b>${s.t}</b>${ro?'':`<button type="button" class="mr-link" onclick="${k==='exec'?'mrDraftExec()':'mrDraftEvents()'}">✨ Draft from daily reports</button>`}</div>${mrTextEditor(s)}</div>`;}).join('');
+    else inner=list.map(s=>mrSectionCard(s).replace('<div class="mr-card','<div data-sk="'+s.k+'" class="mr-card').replace('</b>','</b>'+mrNaBtn(s))).join('');
+    const done=n&&ok===n;
+    return `<details class="mr-grp" data-g="${g[0]}" ${g[0]===mrOpenGrp?'open':''}><summary><span class="mr-gt">${escapeHtml(g[1])}</span><span class="mr-gc ${done?'done':''}">${done?'✓ ':''}${ok} / ${n}</span></summary><div class="mr-gb">${inner}</div></details>`;
+  };
+  mrEl('mr-body').innerHTML=`<div class="mr-help">Open a group and write what happened this month. Press <b>NA</b> for anything with nothing to report. ${mrPrev&&!ro?`Sections that repeat every month can be copied from ${escapeHtml(prevL)}.`:''}</div>
+    ${ro?'<div class="mr-note" style="margin:6px 0 10px">View only — supervisors and admins can edit.</div>':''}
+    ${MR_GROUPS.map(grp).join('')}
+    ${ro?'':`<div class="mr-savebar" id="mr-savebar"><span class="st">All changes saved</span>${mrPrev?`<button class="btn" type="button" onclick="mrCopyAllPrev(this)">Copy empty from ${escapeHtml(prevL)}</button>`:''}<button class="btn primary" type="button" onclick="mrSaveSections(this)">Save</button></div>`}
+    <div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('ops')">← Daily data</button><button class="btn primary" type="button" onclick="mrGoSafe('registers')">Next: Registers →</button></div>`;
+  document.querySelectorAll('#mr-body textarea').forEach(mrGrow);
+  document.querySelectorAll('#mr-body details.mr-grp').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){mrOpenGrp=d.dataset.g;d.querySelectorAll('textarea').forEach(mrGrow);}}));
+  mrEl('mr-body').addEventListener('input',mrSaveBarShow);
+  if(ro)document.querySelectorAll('#mr-body textarea,#mr-body button.mr-x,#mr-body .mr-tbtns button').forEach(x=>x.disabled=true);
+  if(mrOpenGrp&&mrOpenGrp!=='report')setTimeout(()=>document.querySelector(`#mr-body details[data-g="${mrOpenGrp}"]`)?.scrollIntoView({block:'start',behavior:'smooth'}),60);
+}
+function mrRenderOpsStep(){
+  mrRenderOps();
+  mrEl('mr-body').insertAdjacentHTML('afterbegin','<div class="mr-help">Each shift fills these in the <b>Daily Report → Operations Readings</b>. Check for missing days and correct numbers here. Totals for the month are added automatically.</div>');
+  mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><span></span><button class="btn primary" type="button" onclick="mrGoSafe('sections')">Next: Write sections →</button></div>`);
+}
+function mrRenderRegisters(){
+  ({staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrReg]||mrRenderStaff)();
+  mrEl('mr-body').insertAdjacentHTML('afterbegin',`<div class="mr-pills">${[['staff','👥 Staff — joined / left'],['cr','❓ CR Cases'],['equip','⚙ Equipment & running hours']].map(x=>`<button type="button" class="mr-pill${mrReg===x[0]?' on':''}" onclick="mrReg='${x[0]}';mrGoSafe('registers')">${x[1]}</button>`).join('')}</div>`);
+  mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('sections')">← Write sections</button><button class="btn primary" type="button" onclick="mrGoSafe('report')">Next: Generate PDF →</button></div>`);
 }
 function mrRenderGroup(){
   const list=MR_SECTIONS.filter(s=>s.g===mrPage);
@@ -6274,7 +6347,7 @@ function mrRenderOps(){
   const today=drToday();
   const cnt=r=>{const c=r.counters||{};const ks=Object.keys(c).filter(k=>c[k]&&(c[k].s||c[k].t||c[k].h));return ks.length?ks.map(k=>`${k} ${c[k].s||0}/${c[k].t||0}/${c[k].h||0}h`).join(', '):'—';};
   const tot={fgc:0,flow:0,p:{}};
-  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ro?'<span class="mr-note">View only.</span>':'<button class="btn primary" onclick="mrSaveOps(this)">Save changes</button>'}<span class="mr-note">Shift readings from the daily report land here automatically. Counters: starts / trips / running hours.</span></div>
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ro?'<span class="mr-note">View only.</span>':'<button class="btn primary" onclick="mrSaveOps(this)">Save changes</button>'}<span class="mr-note">Counters = starts / trips / running hours.</span></div>
    <div class="mr-tw"><table class="mr-ops"><thead><tr><th rowspan="2">Date</th><th colspan="3">Fuel Gas</th><th colspan="${MR_UNITS.length}">Power Production (MWh)</th><th rowspan="2">Starts / Trips / Hours</th><th rowspan="2">Remarks</th></tr>
    <tr><th>Pressure<br>(barg)</th><th>Flow<br>(SCFM)</th><th>Consumption<br>(Sm³/day)</th>${MR_UNITS.map(u=>`<th>${u}</th>`).join('')}</tr></thead><tbody>
    ${dates.map(d=>{const r=mrOpsRow(d);const p=r.power||{};const future=d>today;
@@ -6454,23 +6527,21 @@ function mrStatus(s){
 }
 function mrRenderReport(){
   const ed=mrCanEdit();const d=mrRow.data;
-  const sts=MR_SECTIONS.map(s=>[s,mrStatus(s)]).filter(x=>x[1]);
-  const ready=sts.filter(x=>['ok','auto','na'].includes(x[1][0])).length;const pct=Math.round(ready*100/sts.length);
+  const sts=MR_SECTIONS.map(s=>[s,mrStatus(s)]).filter(x=>x[1]&&x[1][0]!=='auto');
+  const ready=sts.filter(x=>['ok','na'].includes(x[1][0])).length;const pct=Math.round(ready*100/sts.length);
   const pageOf=g=>(MR_PAGES.find(p=>p[0]===g)||['report',''])[1];
   const cover=d.cover||[];
   mrEl('mr-body').innerHTML=`
-   <div class="mr-hero"><div><div class="mr-hl">${escapeHtml(mrMonthLabel(mrMonth,true))}</div><div class="mr-pct"><b>${pct}%</b> ready · ${ready} of ${sts.length} sections</div><div class="mr-bar2"><i style="width:${pct}%"></i></div>
+   <div class="mr-hero"><div><div class="mr-hl">${escapeHtml(mrMonthLabel(mrMonth,true))}</div><div class="mr-pct"><b>${pct}%</b> ready · ${ready} of ${sts.length} sections written · tables from site data fill automatically</div><div class="mr-bar2"><i style="width:${pct}%"></i></div>
      <div class="mr-meta">${mrRow.updated_at?'Last saved '+escapeHtml(formatDateTime(mrRow.updated_at))+(mrRow.updated_by?' by '+escapeHtml(mrRow.updated_by):''):'Nothing saved for this month yet.'}</div></div>
-     <div class="mr-actions"><button class="btn primary" onclick="mrPrint()">🖨 Generate PDF</button>${ed&&mrPrev?'<button class="btn" onclick="mrCopyAllPrev(this)">Copy empty sections from last month</button>':''}</div></div>
+     <div class="mr-actions"><button class="btn primary" onclick="mrPrint()">🖨 Generate PDF</button></div></div>
    <div class="mr-card">${mrThemePicker()}</div>
    <div class="mr-card"><div class="mr-sh"><b>Cover photos</b><span class="mr-note">Two photos for the first page (e.g. control room and plant).</span></div>
      <div class="mr-cover">${[0,1].map(i=>`<div class="mr-cv">${cover[i]?`<img src="${escapeHtml(cover[i])}" alt="Cover photo ${i+1}">`:'<span>No photo</span>'}${ed?`<label class="btn sm">Choose…<input type="file" accept="image/*" hidden onchange="mrCoverSet(${i},this)"></label>${cover[i]?`<button class="btn sm" type="button" onclick="mrCoverSet(${i},null)">Remove</button>`:''}`:''}</div>`).join('')}</div></div>
    ${ed?'':'<div class="mr-note" style="margin:8px 0">View only — supervisors and admins can edit.</div>'}
-   <div class="mr-card">${['exec','ops_events'].map(k=>{const s=MR_BY[k];return `<div class="mr-sh"><span class="mr-no">${s.no}</span><b>${s.t}</b>${ed?`<button type="button" class="mr-link" onclick="${k==='exec'?'mrDraftExec()':'mrDraftEvents()'}">✨ Draft from daily reports</button>`:''}</div>${mrTextEditor(s)}`;}).join('<div style="height:14px"></div>')}
-     ${ed?'<div class="mr-bar" style="margin-top:10px"><button class="btn primary" onclick="mrSaveSections(this)">Save</button></div>':''}</div>
-   <div class="mr-card"><div class="mr-sh"><b>Sections</b><span class="mr-note">Empty text prints as “NA”, like the October report.</span></div>
+   <div class="mr-card"><div class="mr-sh"><b>What will be in the report</b><span class="mr-note">Empty sections print as “NA”, like the October report.</span></div>
      <div class="mr-tw"><table class="mr-list"><tbody>${MR_SECTIONS.map(s=>{const st=mrStatus(s);if(!st)return `<tr class="mr-lh"><td colspan="3">${escapeHtml(s.no)} ${escapeHtml(s.t)}</td></tr>`;
-       return `<tr><td class="mr-no">${escapeHtml(s.no)}</td><td>${escapeHtml(s.t)}</td><td><span class="mr-s mr-s-${st[0]}">${escapeHtml(st[1])}</span></td><td>${s.g!=='report'?`<a href="#" onclick="mrGo('${s.g}');return false">${escapeHtml(pageOf(s.g).replace(/^\S+\s/,''))} →</a>`:''}</td></tr>`;}).join('')}</tbody></table></div></div>`;
+       return `<tr><td class="mr-no">${escapeHtml(s.no)}</td><td>${escapeHtml(s.t)}</td><td><span class="mr-s mr-s-${st[0]}">${escapeHtml(st[1])}</span></td><td>${s.type==='auto'?'':`<a href="#" onclick="mrOpenGrp='${s.g}';mrGo('sections');return false">${st[0]==='empty'?'Write':'Edit'} →</a>`}</td></tr>`;}).join('')}</tbody></table></div></div>`;
   document.querySelectorAll('#mr-body textarea').forEach(mrGrow);
   if(!ed)document.querySelectorAll('#mr-body textarea').forEach(x=>x.disabled=true);
 }
@@ -6484,6 +6555,7 @@ async function mrCoverSet(i,input){
 }
 async function mrCopyAllPrev(btn){
   if(!mrPrev){return;}
+  if(mrDirty){showToast('Save your changes first, then copy.','error');return;}
   if(!confirm('Copy from '+mrMonthLabel(mrPrevMonth(mrMonth),true)+' every section that is still empty this month?\n\nSections you already filled are not touched.'))return;
   btn.disabled=true;
   try{const cur=((await sbFetch('qas2_mr_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};let n=0;
@@ -6890,15 +6962,25 @@ function navToggle(btn){
 }
 function navPick(tab,scrollId){navClose();switchTab(tab);if(scrollId)setTimeout(()=>document.getElementById(scrollId)?.scrollIntoView({behavior:'smooth',block:'start'}),400);}
 function navPickMR(page){navClose();mrGo(page);}
+const NAV_SEC={dashboard:'dash',new:'pl',register:'pl',approvals:'pl','dailyreport-new':'dr','dailyreport-register':'dr',docs:'lib',om:'lib',users:'adm',monthly:'mr'};
+function navVisible(b){return b&&b.style.display!=='none';}
 function navSync(){
-  document.querySelectorAll('.nav-g .ng').forEach(g=>{
-    const items=[...g.querySelectorAll('.ng-item')];
-    const anyVisible=items.some(b=>b.style.display!=='none');
-    if(!g.classList.contains('sup-only')&&!g.classList.contains('admin-only'))g.style.display=anyVisible?'':'none';
-    let act=items.some(b=>b.classList.contains('active'));
-    if(g.dataset.g==='mr'){const on=getActiveTabState()==='monthly';act=on;g.querySelectorAll('[data-mr]').forEach(b=>b.classList.toggle('active',on&&b.dataset.mr===mrPage));}
-    g.querySelector('.ng-btn').classList.toggle('active',act);
-  });
+  let tab=getActiveTabState();if(tab==='dailyreport'){let m='new';try{m=getDRViewModeState()==='register'?'register':'new';}catch(e){}tab='dailyreport-'+m;}const sec=NAV_SEC[tab]||'';
+  document.querySelectorAll('.nav-f .nf-top').forEach(b=>{const g=document.querySelector(`.subnav .sn[data-sec="${b.dataset.sec}"]`);
+    if(g&&!b.classList.contains('admin-only')&&!b.classList.contains('sup-only'))b.style.display=[...g.querySelectorAll('.sn-b')].some(navVisible)?'':'none';
+    b.classList.toggle('active',b.dataset.sec===sec);});
+  let any=false;
+  document.querySelectorAll('.subnav .sn').forEach(g=>{const vis=[...g.querySelectorAll('.sn-b')].filter(navVisible);const show=g.dataset.sec===sec&&vis.length>1;g.style.display=show?'':'none';if(show)any=true;
+    g.querySelectorAll('.sn-b[data-scroll]').forEach(x=>x.classList.remove('active'));});
+  const sn=document.getElementById('subnav');if(sn)sn.style.display=any?'':'none';
+  try{if(sec&&sec!=='dash')localStorage.setItem('qas2_nav_'+sec,tab);}catch(e){}
+}
+function navSec(sec){
+  if(sec==='mr'){switchTab('monthly');return;}
+  const def={pl:'register',dr:'dailyreport-new',lib:'docs',adm:'users'}[sec];let t=null;try{t=localStorage.getItem('qas2_nav_'+sec);}catch(e){}
+  const g=document.querySelector(`.subnav .sn[data-sec="${sec}"]`);const ok=x=>x&&g&&[...g.querySelectorAll('.sn-b')].some(b=>b.dataset.tab===x&&navVisible(b));
+  if(!ok(t))t=ok(def)?def:([...(g?g.querySelectorAll('.sn-b'):[])].find(navVisible)||{}).dataset?.tab;
+  if(t)switchTab(t);
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.nav-g .ng'))navClose();});
 window.addEventListener('resize',navClose);window.addEventListener('scroll',()=>{if(document.querySelector('.nav-g .ng.open'))navClose();},{passive:true});

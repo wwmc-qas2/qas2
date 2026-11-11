@@ -236,6 +236,60 @@ img[src^="sbs:"]{opacity:0}
 .pw-msg{font-size:12.5px;color:#374151;margin:0 0 12px;line-height:1.5}.pw-msg:empty{display:none}
 .pw-rules{list-style:none;margin:0;padding:0;font-size:12px;color:#6B7280;display:grid;gap:3px}.pw-rules li.ok{color:#15803D;font-weight:600}
 .pw-show{display:flex;align-items:center;gap:6px;font-size:12px;color:#4B5563;font-weight:400;cursor:pointer}
+/* grouped navigation */
+.nav-g{overflow:visible!important;align-items:stretch}
+.nav-g .ng{position:relative;display:flex}.nav-g .cnt:empty{display:none}
+.nav-g .ng-btn i{font-style:normal;font-size:10px;opacity:.7;margin-left:2px}
+.nav-g .ng.open .ng-btn{color:var(--navy);background:var(--navy-light)}
+.nav-g .ng-menu{display:none;position:fixed;z-index:400;min-width:240px;max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--border,#E3E8EF);border-radius:12px;box-shadow:0 14px 34px rgba(15,39,71,.18);padding:6px}
+.nav-g .ng.open .ng-menu{display:block}
+.nav-g .ng-item{display:flex;align-items:center;gap:6px;width:100%;text-align:left;border:0;border-radius:8px;padding:9px 12px;font-size:13px;color:#1F2937;border-bottom:0!important;background:none}
+.nav-g .ng-item:hover{background:#F1F5FB}
+.nav-g .ng-item.active{background:var(--navy-light);color:var(--navy);font-weight:700}
+.nav-g .ng-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF;padding:8px 12px 3px}
+@media (max-width:640px){.nav-g{overflow-x:auto!important}.nav-g .ng-menu{min-width:220px}}
+/* monthly report pages */
+.mr-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.mr-kick{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4472C4;font-weight:700}.mr-top h2{margin:2px 0 0;font-size:20px;color:#1F3864}
+.mr-month{font-size:12px;color:#6B7280;display:flex;align-items:center;gap:8px}.mr-month input{padding:7px 10px;border:1px solid var(--border,#D6DCE5);border-radius:8px;font:inherit;font-size:13px}
+.mr-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 12px}
+.mr-note{font-size:12px;color:#6B7280}
+.mr-warn{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F;border-radius:10px;padding:14px 16px;font-size:13px}
+.mr-card{background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.mr-auto{background:#F8FAFD}.mr-autonote{font-size:12.5px;color:#374151;margin-top:6px}
+.mr-sh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.mr-sh b{color:#1F3864;font-size:14px}
+.mr-no{font-size:11px;font-weight:800;color:#fff;background:#4472C4;border-radius:5px;padding:1px 6px;min-width:22px;text-align:center}
+.mr-gh{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4472C4;margin:18px 2px 8px}
+.mr-link{background:none;border:0;color:#2563EB;font:inherit;font-size:12px;cursor:pointer;padding:0;margin-left:auto}.mr-link:hover{text-decoration:underline}
+.mr-ta{width:100%;border:1px solid var(--border,#D6DCE5);border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;line-height:1.5;resize:vertical;min-height:40px}
+.mr-tw{overflow-x:auto}
+.mr-et{width:100%;border-collapse:collapse;font-size:12.5px}.mr-et th{background:#DEEAF6!important;color:#1F3864!important;font-size:11.5px;padding:6px;border:1px solid #C9D7EA;text-align:left}
+.mr-et td{border:1px solid #E3E8EF;padding:0;vertical-align:top}.mr-et td textarea,.mr-et td input{width:100%;border:0;padding:6px 7px;font:inherit;font-size:12.5px;resize:none;background:transparent;min-height:30px;line-height:1.4}
+.mr-et td textarea:focus,.mr-et td input:focus{outline:2px solid #93C5FD;background:#fff}
+.mr-et .mr-n{text-align:center;color:#6B7280;padding:6px 4px;font-size:11.5px}
+.mr-x{background:none;border:0;color:#9CA3AF;cursor:pointer;font-size:13px;padding:6px 8px}.mr-x:hover{color:#B91C1C}
+.mr-tbtns{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.mr-ops{border-collapse:collapse;font-size:12px;min-width:980px;width:100%}.mr-ops th{background:#DEEAF6!important;color:#1F3864!important;border:1px solid #C9D7EA;padding:5px 6px;font-size:11px;text-align:center;white-space:nowrap}
+.mr-ops tbody th{background:#F6F8FB!important;text-align:left}.mr-ops td{border:1px solid #E3E8EF;padding:0}.mr-ops td input{width:100%;min-width:62px;border:0;padding:6px;font:inherit;font-size:12px;text-align:right;background:transparent}.mr-ops td input[type=text]{text-align:left;min-width:140px}
+.mr-ops td input:focus{outline:2px solid #93C5FD;background:#fff}.mr-ops tr.mr-future{opacity:.45}.mr-ops tfoot td,.mr-ops tfoot th{background:#F1F5FB!important;padding:6px;text-align:right}
+.mr-ops .mr-cnt{padding:4px 8px;font-size:11px;color:#374151;white-space:nowrap}.mr-ops .mr-cnt .mr-link{margin-left:8px}
+.mr-cnt-t{width:100%;border-collapse:collapse;font-size:12.5px}.mr-cnt-t th,.mr-cnt-t td{border-bottom:1px solid #EEF1F5;padding:4px 6px;text-align:left}.mr-cnt-t thead th{background:none!important;color:#6B7280!important;font-size:11px}
+.mr-cnt-t input{width:90px;padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}.mr-cnt-t .mr-g td{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4472C4;padding-top:10px}
+.mr-eq input{min-width:90px}
+.mr-depts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.mr-depts span{background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:10px;padding:6px 12px;font-size:11.5px;color:#6B7280}.mr-depts b{color:#1F3864;font-size:16px;margin-right:6px}
+.mr-st{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;background:#EEF3FB;color:#1F3864}.mr-st-joined{background:#ECFDF3;color:#15803D}.mr-st-left,.mr-st-closed{background:#F3F4F6;color:#6B7280}.mr-st-expected,.mr-st-planned{background:#FFFBEB;color:#B45309}.mr-st-issued{background:#FEF2F2;color:#B91C1C}
+.mr-hero{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;background:linear-gradient(120deg,#1F3864,#2E5597);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.mr-hl{font-size:22px;font-weight:800}.mr-pct{font-size:13px;opacity:.9;margin-top:2px}.mr-pct b{font-size:16px}.mr-bar2{height:7px;background:rgba(255,255,255,.2);border-radius:5px;overflow:hidden;width:260px;max-width:100%;margin:8px 0}.mr-bar2 i{display:block;height:100%;background:#7FC8F8}
+.mr-meta{font-size:11.5px;opacity:.75}.mr-actions{display:flex;gap:8px;flex-wrap:wrap}.mr-hero .btn{background:#fff;color:#1F3864;border-color:#fff}.mr-hero .btn.primary{background:#7FC8F8;border-color:#7FC8F8;color:#0F2747}
+.mr-cover{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mr-cv{border:1px dashed #C9D2DE;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-height:120px}.mr-cv img{width:100%;max-height:180px;object-fit:cover;border-radius:8px}.mr-cv span{color:#9CA3AF;font-size:12px}
+.mr-list{width:100%;border-collapse:collapse;font-size:12.5px}.mr-list td{padding:6px 8px;border-bottom:1px solid #F1F3F7}.mr-list .mr-lh td{font-weight:800;color:#1F3864;background:#F6F8FB;font-size:12px}.mr-list td.mr-no{background:none;color:#4472C4;width:50px;font-weight:700}
+.mr-list a{font-size:12px;color:#2563EB;text-decoration:none;white-space:nowrap}
+.mr-s{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}.mr-s-ok{background:#ECFDF3;color:#15803D}.mr-s-auto{background:#EEF3FB;color:#1D4ED8}.mr-s-na{background:#F3F4F6;color:#6B7280}.mr-s-empty{background:#FFFBEB;color:#B45309}
+.dro summary{cursor:pointer;list-style:none}.dro summary::-webkit-details-marker{display:none}.dro summary::after{content:"▸";float:right;color:#9CA3AF}.dro[open] summary::after{content:"▾"}
+.dro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dro-p{grid-template-columns:repeat(5,minmax(0,1fr))}
+.dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
+#dro-eq{padding:6px 8px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:12.5px}
+@media (max-width:640px){.dro-grid,.dro-p{grid-template-columns:1fr 1fr}.mr-cover{grid-template-columns:1fr}}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -579,6 +633,11 @@ img[src^="sbs:"]{opacity:0}
   .topbar-divider,.topbar-sub,.topbar-credit,.topbar-user{display:none}
   .topbar-logo{height:28px;padding:2px 6px}
   .topbar-right{gap:6px}
+  .topbar{overflow:hidden}.topbar-left{min-width:0;flex-shrink:1}
+  .logout-btn{padding:5px 9px}
+}
+@media(max-width:430px){
+  .ux-size{display:none}
   .ux-size button{padding:4px 6px}
   .tabs{padding:0 8px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
   .tab{padding:12px 13px}
@@ -782,18 +841,46 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <button class="logout-btn" onclick="doLogout()">Logout</button>
     </div>
   </div>
-  <div class="tabs no-print">
-    <button class="tab admin-only" id="tab-dash" onclick="switchTab('dashboard')" style="display:none">Dashboard</button>
-    <button class="tab" id="tab-new" onclick="switchTab('new')">New Ticket</button>
-    <button class="tab" id="tab-register" onclick="switchTab('register')">Register <span class="cnt" id="cnt">–</span></button>
-    <button class="tab admin-only" id="tab-users" onclick="switchTab('users')" style="display:none">Manage Users</button>
-    <button class="tab admin-only" id="tab-pl-approvals" onclick="switchTab('approvals')" style="display:none">
-      Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span>
-    </button>
-    <button class="tab" id="tab-dailyreport-register" onclick="switchTab('dailyreport-register')">📋 Daily Report Register</button>
-    <button class="tab" id="tab-docs" onclick="switchTab('docs')">📁 Documents</button>
-    <button class="tab" id="tab-om" onclick="switchTab('om')">📚 O&amp;M Library</button>
-  </div>
+  <nav class="tabs nav-g no-print" aria-label="Main">
+    <button class="tab ng-top admin-only" id="tab-dash" onclick="switchTab('dashboard')" style="display:none">Overview</button>
+    <div class="ng" data-g="com"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">O&amp;M <span class="cnt" id="cnt"></span> <i>▾</i></button>
+      <div class="ng-menu" role="menu">
+        <div class="ng-lbl">Punch List</div>
+        <button class="tab ng-item" id="tab-new" role="menuitem" onclick="navPick('new')">＋ New Ticket</button>
+        <button class="tab ng-item" id="tab-register" role="menuitem" onclick="navPick('register')">📋 Punch List Register</button>
+        <button class="tab ng-item admin-only" id="tab-pl-approvals" role="menuitem" onclick="navPick('approvals')" style="display:none">✔ Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span></button>
+        <div class="ng-lbl">Daily Report</div>
+        <button class="tab ng-item" id="tab-dailyreport-new" role="menuitem" onclick="navPick('dailyreport-new')">＋ New Daily Report</button>
+        <button class="tab ng-item" id="tab-dailyreport-register" role="menuitem" onclick="navPick('dailyreport-register')">🗂 Daily Report Register</button>
+      </div></div>
+    <div class="ng sup-only" data-g="mr" style="display:none"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Monthly Report <i>▾</i></button>
+      <div class="ng-menu" role="menu">
+        <button class="tab ng-item" data-mr="report" role="menuitem" onclick="navPickMR('report')">📄 Monthly Report</button>
+        <div class="ng-lbl">Data</div>
+        <button class="tab ng-item" data-mr="ops" role="menuitem" onclick="navPickMR('ops')">⛽ Daily Operations Log</button>
+        <button class="tab ng-item" data-mr="staff" role="menuitem" onclick="navPickMR('staff')">👥 Staff Register</button>
+        <button class="tab ng-item" data-mr="cr" role="menuitem" onclick="navPickMR('cr')">❓ CR Cases</button>
+        <div class="ng-lbl">Report sections</div>
+        <button class="tab ng-item" data-mr="hse" role="menuitem" onclick="navPickMR('hse')">🦺 HSE</button>
+        <button class="tab ng-item" data-mr="hr" role="menuitem" onclick="navPickMR('hr')">🎓 HR &amp; Training</button>
+        <button class="tab ng-item" data-mr="opsdata" role="menuitem" onclick="navPickMR('opsdata')">🛢 Inventory &amp; Utilities</button>
+        <button class="tab ng-item" data-mr="docs" role="menuitem" onclick="navPickMR('docs')">📑 SOPs, WIs &amp; Manuals</button>
+        <button class="tab ng-item" data-mr="maint" role="menuitem" onclick="navPickMR('maint')">🛠 Maintenance</button>
+        <button class="tab ng-item" data-mr="finance" role="menuitem" onclick="navPickMR('finance')">🛒 Finance &amp; Other</button>
+        <button class="tab ng-item" data-mr="equip" role="menuitem" onclick="navPickMR('equip')">⚙ Equipment &amp; Running Hours</button>
+      </div></div>
+    <div class="ng" data-g="lib"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Library <i>▾</i></button>
+      <div class="ng-menu" role="menu">
+        <button class="tab ng-item" id="tab-docs" role="menuitem" onclick="navPick('docs')">📁 Documents</button>
+        <button class="tab ng-item" id="tab-om" role="menuitem" onclick="navPick('om')">📚 O&amp;M Library</button>
+      </div></div>
+    <div class="ng admin-only" data-g="adm" style="display:none"><button type="button" class="tab ng-btn" aria-haspopup="true" aria-expanded="false" onclick="navToggle(this)">Admin <i>▾</i></button>
+      <div class="ng-menu" role="menu">
+        <button class="tab ng-item admin-only" id="tab-users" role="menuitem" onclick="navPick('users')" style="display:none">👤 Manage Users</button>
+        <button class="tab ng-item" role="menuitem" onclick="navPick('users','al-body')">🕘 Activity Log</button>
+        <button class="tab ng-item" role="menuitem" onclick="navPick('users','sm-panel')">🛟 Storage &amp; Backups</button>
+      </div></div>
+  </nav>
   <div class="content">
 
     <!-- DASHBOARD -->
@@ -979,6 +1066,25 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         </div>
       </div>
 
+      <!-- OPERATIONS READINGS -->
+      <details class="dr-form-section dro" id="dro-box" ontoggle="if(this.open)drOpsLoad()">
+        <summary class="dr-section-head">⛽ Operations Readings (Optional — shift data for the monthly report)</summary>
+        <div class="dr-section-body">
+          <p class="mr-note" id="dro-info" style="margin:0 0 10px"></p>
+          <div class="dro-grid">
+            <div class="field"><label for="dro-fgp">Fuel gas pressure (barg)</label><input type="number" step="any" inputmode="decimal" id="dro-fgp"></div>
+            <div class="field"><label for="dro-fgf">Fuel gas daily flow (SCFM)</label><input type="number" step="any" inputmode="decimal" id="dro-fgf"></div>
+            <div class="field"><label for="dro-fgc">Fuel gas consumption (Sm³/day)</label><input type="number" step="any" inputmode="decimal" id="dro-fgc"></div>
+          </div>
+          <div class="dro-lbl">Power production (MWh)</div>
+          <div class="dro-grid dro-p"><div class="field"><label for="dro-p-GT11">GT11</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT11"></div><div class="field"><label for="dro-p-GT12">GT12</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT12"></div><div class="field"><label for="dro-p-GT13">GT13</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT13"></div><div class="field"><label for="dro-p-STG21">STG21</label><input type="number" step="any" inputmode="decimal" id="dro-p-STG21"></div><div class="field"><label for="dro-p-STG22">STG22</label><input type="number" step="any" inputmode="decimal" id="dro-p-STG22"></div></div>
+          <div class="dro-lbl">Starts / trips / running hours today</div>
+          <div class="mr-tw"><table class="mr-cnt-t"><thead><tr><th>Equipment</th><th>Starts</th><th>Trips</th><th>Hours</th><th></th></tr></thead><tbody id="dro-rows"></tbody></table></div>
+          <div style="display:flex;gap:8px;margin-top:6px"><select id="dro-eq" aria-label="Equipment"><option value="">— equipment —</option></select><button type="button" class="btn sm" onclick="drOpsAddRow()">+ Add</button></div>
+          <div class="field" style="margin-top:10px"><label for="dro-rem">Remarks (optional)</label><input id="dro-rem" placeholder="e.g. GT11 ran on Black Start mode"></div>
+        </div>
+      </details>
+
       <!-- PHOTOS -->
       <div class="dr-form-section">
         <div class="dr-section-head">📷 Supporting Photos (Optional)</div>
@@ -1088,6 +1194,11 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     </div>
     <!-- DOCUMENTS -->
     <!-- ═════════ O&M LIBRARY (Manuals Tree) ═════════ -->
+    <div class="view no-print" id="view-monthly">
+      <div class="mr-top"><div><div class="mr-kick">Monthly Plant Report</div><h2 id="mr-title">Monthly Report</h2></div>
+        <label id="mr-month-wrap" class="mr-month">Month <input type="month" id="mr-month" onchange="mrSetMonth(this.value)"></label></div>
+      <div id="mr-body"></div>
+    </div>
     <div class="view no-print" id="view-om">
       <div class="om-head">
         <div>
@@ -1304,6 +1415,10 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 </div>
 
 <!-- ADD USER MODAL -->
+<div class="modal-bg" id="mr-cnt-bg"><div class="modal" style="max-width:560px"><div class="modal-head"><h3 id="mr-cnt-title">Counters</h3><button onclick="document.getElementById('mr-cnt-bg').classList.remove('show')" aria-label="Close">&times;</button></div>
+  <div class="modal-body"><p class="mr-note" style="margin:0 0 8px">Leave empty for equipment that did not run.</p><div id="mr-cnt-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="document.getElementById('mr-cnt-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-cnt-save">Save</button></div></div></div></div>
+<div class="modal-bg" id="mr-staff-bg"><div class="modal" style="max-width:520px"><div class="modal-head"><h3 id="mr-staff-title">Edit</h3><button onclick="document.getElementById('mr-staff-bg').classList.remove('show')" aria-label="Close">&times;</button></div>
+  <div class="modal-body"><div id="mr-staff-form" style="display:flex;flex-direction:column;gap:12px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="document.getElementById('mr-staff-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-staff-save">Save</button></div></div></div></div>
 <div class="modal-bg" id="pw-modal-bg">
   <div class="modal" style="max-width:420px">
     <div class="modal-head"><h3 id="pw-title">Change password</h3><button id="pw-x" onclick="pwClose()" aria-label="Close">&times;</button></div>
@@ -1876,6 +1991,7 @@ function showApp(){
   setDisplay('tab-dailyreport-register',isViewerRole?'none':'');
   setDisplay('tab-docs','');
   setDisplay('tab-om','');
+  try{navSync();}catch(e){}
   initForm();
   const restoredView=restoreAppViewState();
   let initialTab=(isAdmin||isViewerRole)?'dashboard':(currentUser.role==='supervisor'?'register':'new');
@@ -3429,6 +3545,7 @@ function switchTab(tab){
   if(tab==='dailyreport-register'){drMode='register';tab='dailyreport';}
   if(tab==='dashboard'&&!canViewDashboard()) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
   if(isViewer() && !['dashboard','docs','om'].includes(tab)) tab='docs';
+  if(tab==='monthly'&&!isSupervisor()) tab='dailyreport';
   if((tab==='users'&&!isAdmin())||(tab==='approvals'&&!isSupervisor())) tab=isViewer()?'docs':(isSupervisor()?'register':'new');
   const previousTab=getActiveTabState();
   const currentDrMode=getDRViewModeState();
@@ -3437,7 +3554,7 @@ function switchTab(tab){
   setActiveTabState(tab);
   if(drMode) setDRViewModeState(drMode);
   persistAppViewState();
-  const views=['dashboard','new','register','users','approvals','dailyreport','docs','om'];
+  const views=['dashboard','new','register','users','approvals','dailyreport','docs','om','monthly'];
   views.forEach(v=>{
     const el=document.getElementById('view-'+v);
     if(el)el.classList.toggle('active',v===tab);
@@ -3455,7 +3572,9 @@ function switchTab(tab){
     const drBtn=document.getElementById(getDRViewModeState()==='register'?'tab-dailyreport-register':'tab-dailyreport-new');
     if(drBtn)drBtn.classList.add('active');
   }
+  navSync();
   if(sameTab) return;
+  if(tab==='monthly') scheduleRender(()=>mrRender());
   if(tab==='register') scheduleRender(()=>loadTickets(false));
   if(tab==='users') scheduleRender(()=>loadUsers());
   if(tab==='dashboard') setTimeout(renderDashboard,40);
@@ -3654,6 +3773,7 @@ async function submitDailyReport(){
 
     await drPost(drData);
     showToast('Report '+repNo+' submitted ✓','success');
+    try{await drOpsSave(drData.report_date);}catch(e){}
     clearDRForm();
     invalidateReportsCache();
     loadTodayReports(true);
@@ -5439,6 +5559,7 @@ function drInitForm(){
   draRender();draFillSystems();drpPreview();
 }
 async function drDateChanged(){
+  try{if(document.getElementById('dro-box')?.open)drOpsLoad();}catch(e){}
   const di=document.getElementById('dr-date');if(!di||!di.value)return;
   if(di.value>drToday())di.value=drToday();
   const d=new Date(di.value+'T00:00:00');
@@ -5954,6 +6075,571 @@ async function smDownload(){
   finally{b.disabled=false;b.textContent='⬇ Download full backup (data + photos + files)';}
 }
 function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();let l='';try{l=localStorage.getItem('qas2_last_full_backup')||'';}catch(e){}const el=smEl('sm-last');if(el)el.textContent=l?'Last full backup from this computer: '+l:'No full backup downloaded from this computer yet';}
+
+
+// ═════════════════════════ MONTHLY PLANT REPORT ═════════════════════════
+const MR_ENERGY_LOGO='data:image/png;base64,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';
+const MR_UNITS=['GT11','GT12','GT13','STG21','STG22'];
+const MR_DEPTS=['Operation (ICOD)','Maintenance (ICOD)','Procurement & Stores','HR & Admin','HSE','Security','Fire Team'];
+const MR_STAFF_DEPTS=['Operation','Maintenance','Procurement & Stores','HR & Admin','HSE','Security','Fire Team'];
+const MR_PAGES=[['report','📄 Monthly Report'],['ops','⛽ Daily Operations Log'],['staff','👥 Staff Register'],['cr','❓ CR Cases'],['hse','🦺 HSE'],['hr','🎓 HR & Training'],['opsdata','🛢 Inventory & Utilities'],['docs','📑 SOPs, WIs & Manuals'],['maint','🛠 Maintenance'],['finance','🛒 Finance & Other'],['equip','⚙ Equipment & Running Hours']];
+// every section of the report, in order. type: text | table | auto. carry = "copy from last month" makes sense
+const MR_SECTIONS=[
+ {k:'exec',no:'0',t:'Executive Summary',g:'report',type:'text',rows:10,ph:'Summary of the month — press “Draft from daily reports” to start from the reports.'},
+ {k:'h1',no:'1',t:'HSE',g:'hse',type:'head'},
+ {k:'hse_intro',no:'1.1',t:'HSE Statistic',g:'hse',type:'text',def:'During the month, HSE performance at Qassim-2 remained satisfactory, with zero Lost Time Injuries (LTIs) and no OSHA-reportable incidents.'},
+ {k:'hse_stats',no:'',t:'HSE Statistics',g:'hse',type:'table',sub:true,cols:[['cat','Category',40],['total','Total',12],['rem','Remarks',48]],rows:[{cat:'Near Miss Report',total:'0'},{cat:'1st Aid Case',total:'0'}],carry:true},
+ {k:'hse_major',no:'1.2',t:'Major Incidents',g:'hse',type:'text'},
+ {k:'hse_near',no:'1.3',t:'Near Miss/Medical Case',g:'hse',type:'text'},
+ {k:'hse_nc',no:'1.4',t:'Non-Compliances',g:'hse',type:'text'},
+ {k:'hse_train',no:'1.5',t:'Health and Safety Training & Toolbox Talks',g:'hse',type:'text'},
+ {k:'hse_fire',no:'1.6',t:'Fire Department',g:'hse',type:'text'},
+ {k:'hse_ms',no:'1.7',t:'HSE Management System',g:'hse',type:'text'},
+ {k:'hse_env',no:'1.8',t:'Environment Issues',g:'hse',type:'text'},
+ {k:'hse_health',no:'1.9',t:'Health Issues',g:'hse',type:'text'},
+ {k:'hse_sec',no:'1.10',t:'Security',g:'hse',type:'text'},
+ {k:'hse_other',no:'1.11',t:'Other Matters',g:'hse',type:'text'},
+ {k:'h2',no:'2',t:'Human Resources',g:'hr',type:'head'},
+ {k:'h21',no:'2.1',t:'Key Activities',g:'hr',type:'head2'},
+ {k:'hr_recruit',no:'2.1.1',t:'Recruitment',g:'hr',type:'auto',src:'staff',intro:true,def:'Recruitment and manpower mobilization activities continued during the month in line with the planned O&M organization and project requirements.'},
+ {k:'hr_onboard',no:'2.1.2',t:'Onboarding of the Team',g:'hr',type:'table',intro:true,cols:[['dept','Department',22],['planned','Planned',9],['joined','Joined',9],['recruited','Recruited',10],['pending','Pending',10],['remaining','Remaining',10],['notes','Notes',30]],rows:MR_DEPTS.map(d=>({dept:d})),carry:true,note:'“Joined” and “Remaining” are filled from the Staff Register when left empty.'},
+ {k:'hr_admin',no:'2.2',t:'Admin Activities',g:'hr',type:'text'},
+ {k:'hr_stats',no:'2.3',t:'HR Statistics',g:'hr',type:'table',intro:true,cols:[['act','Activity',40],['prog','Progress',14],['status','Status',46]],carry:true},
+ {k:'hr_training',no:'2.4',t:'Training',g:'hr',type:'table',intro:true,cols:[['name','Classroom & OJT Training',36],['start','Start Date',14],['finish','Finish Date',14],['dur','Duration',10],['status','Status',26]],carry:true,num:true},
+ {k:'h3',no:'3',t:'Operations and Maintenance',g:'opsdata',type:'head',intro:true,def:'The O&M team continued actively participating in system walkdowns, pre-commissioning and commissioning activities, functional testing, and technical document reviews.'},
+ {k:'h31',no:'3.1',t:'Operations',g:'opsdata',type:'head2'},
+ {k:'ops_events',no:'3.1.1',t:'Operation Event Summary',g:'report',type:'text',rows:14,ph:'Main operational events by working period — press “Draft from daily reports”.'},
+ {k:'ops_chem',no:'3.1.2',t:'Chemical Consumption and Stock',g:'opsdata',type:'table',cols:[['chem','Chemical',36],['unit','Unit',12],['cons','Consumption',16],['stock','Stock',16],['rem','Remarks',20]],carry:true},
+ {k:'ops_kpi',no:'3.1.3',t:'Statistics and Other KPIs',g:'opsdata',type:'text'},
+ {k:'ops_avail',no:'3.1.4',t:'Unit Wise Availability Loss',g:'opsdata',type:'text'},
+ {k:'ops_power',no:'3.1.5',t:'GTGs Power Production',g:'opsdata',type:'auto',src:'power'},
+ {k:'ops_counters',no:'3.1.6',t:'Start Up and Trips',g:'opsdata',type:'auto',src:'counters'},
+ {k:'ops_fg',no:'3.1.7',t:'Fuel Gas Consumption',g:'opsdata',type:'auto',src:'fg'},
+ {k:'ops_fo',no:'3.1.8',t:'Fuel Oil Consumption',g:'opsdata',type:'table',cols:[['item','Items',22],['last','Last Reading (mm)',24],['new','New Reading (mm)',24],['cons','Diesel Oil Consumption (mm)',30]],rows:[{item:'Tank 1'},{item:'Tank 2'}],carry:true,calc:'fo'},
+ {k:'ops_inv',no:'3.1.9',t:'Water and Fuel Oil Inventory',g:'opsdata',type:'table',cols:[['tank','Tank',50],['unit','Unit',20],['vol','Volume',30]],rows:['Raw Water A Tank level','Raw Water B Tank level','Service /Fire Water A Tanks level','Service /Fire Water B Tanks level','Demin Water A Tank level','Demin Water B Tank level','Diesel Oil Tank A level','Diesel Oil Tank B level'].map(x=>({tank:x,unit:'M'})),carry:true},
+ {k:'ops_h2',no:'3.1.10',t:'Hydrogen Generation Plant Data',g:'opsdata',type:'table',cols:[['item','Item',60],['meas','Measurement',22],['unit','Unit',18]],rows:[{item:'Hydrogen Generation Plant#1 Production',unit:'m³'},{item:'Hydrogen Generation Plant#2 Production',unit:'m³'},{item:'Hydrogen Storage Tank#1 Pressure',unit:'Barg'},{item:'Hydrogen Storage Tank#2 Pressure',unit:'Barg'}],carry:true},
+ {k:'ops_psrc',no:'3.1.11',t:'Power Source',g:'opsdata',type:'table',cols:[['src','Power Source',28],['eq','Equipment / Systems Supplied',72]],rows:[{src:'Black Start Diesel Generator (BSDG)',eq:'CCB; WTP; GT11, GT12 and GT13; HRSG11 and HRSG12; Hydrogen Station; Air Compressor System; Fuel Gas System; Fuel Oil System; HT/LT Closed Cooling Water System; and Fin Fan Cooler System.'},{src:'Temporary Generator',eq:'All other plant systems not listed above.'}],carry:true},
+ {k:'doc_sop',no:'3.2',t:'Standard Operating Procedures (SOPs) Documentation (ICOD & PCOD) Summary',g:'docs',type:'table',cols:[['item','Item',18],['prog','In progress',11],['prep','Prepared',11],['shared','Shared to SPV on',14],['appr','Approved',11],['trans','Transmittal',24],['total','Total',11]],rows:['Operations','HSEQ','Security Procedure','Chemical / Laboratory'].map(x=>({item:x})),carry:true,calc:'total'},
+ {k:'h33',no:'3.3',t:'Maintenance',g:'maint',type:'head2',intro:true,def:'During the reporting period, the Maintenance Team continued supporting plant readiness, commissioning, technical document review, and maintenance preparation.'},
+ {k:'doc_manuals',no:'3.3.1',t:'Training & O&M Manuals Document Review',g:'docs',type:'table',cols:[['docno','Document No.',24],['title','Document Title',30],['status','Status',18],['rem','Remarks',28]],carry:true,num:true},
+ {k:'doc_wi',no:'3.3.2',t:'Maintenance Work Instructions (WIs) (ICOD/PCOD) Documentation Summary',g:'docs',type:'table',cols:[['item','Item',28],['prog','In progress',18],['prep','Prepared',18],['appr','Approved',18],['total','Total',18]],rows:['Mechanical','Electrical','I&C'].map(x=>({item:x})),carry:true,calc:'total'},
+ {k:'mt_punch',no:'3.3.3',t:'Plant Punch Points Issued Summary',g:'maint',type:'auto',src:'punch'},
+ {k:'mt_pm',no:'3.3.4',t:'Preventive Maintenance Plans - Running Systems',g:'maint',type:'table',intro:true,cols:[['sys','System',18],['scope','PM Plan Scope',30],['done','PM Completed',18],['pend','Pending Information / Action',34]],carry:true,num:true},
+ {k:'mt_cr',no:'3.3.5',t:'Engineering Clarification Request Cases',g:'maint',type:'auto',src:'cr'},
+ {k:'mt_spares',no:'3.3.6',t:'Spare Part Consumables & Special Tools Review',g:'maint',type:'text',rows:6},
+ {k:'mt_concerns',no:'3.3.7',t:'O&M Concerns',g:'maint',type:'text',rows:6},
+ {k:'it',no:'4',t:'IT',g:'finance',type:'text'},
+ {k:'h5',no:'5',t:'Finance',g:'finance',type:'head'},
+ {k:'fin_high',no:'5.1',t:'Highlights For the Month',g:'finance',type:'text'},
+ {k:'fin_ctrl',no:'5.2',t:'Internal Control Management and Efficiency (Income)',g:'finance',type:'text'},
+ {k:'fin_proc',no:'5.3',t:'Procurement',g:'finance',type:'text'},
+ {k:'fin_po',no:'5.3.1',t:'PO Details',g:'finance',type:'table',intro:true,cols:[['type','Type (Material / Services)',18],['po','PO No.',16],['desc','Description',30],['vendor','Vendor',18],['status','Status',18]],num:true},
+ {k:'h6',no:'6',t:'Other Matters',g:'finance',type:'head'},
+ {k:'oth_lic',no:'6.1',t:'Licenses',g:'finance',type:'text'},
+ {k:'oth_ins',no:'6.2',t:'Insurance Register',g:'finance',type:'text'},
+ {k:'annex',no:'7',t:'Annexures',g:'finance',type:'text',rows:6,carry:true,def:'Annexure-1: Q2 - PPA ICOD Training Status\nAnnexure-2: Q2 - Operations SOPs Status\nAnnexure-3: Q2 - Maintenance WIs Status\nAnnexure-4: Q2 - Punch List Register\nAnnexure-5: Q2 - PM Plans Running Systems\nAnnexure-6: Q2 - Clarification Cases'}];
+const MR_BY=Object.fromEntries(MR_SECTIONS.map(s=>[s.k,s]));
+
+let mrMonth=(()=>{const d=new Date();if(d.getDate()<=10)d.setMonth(d.getMonth()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');})();
+let mrPage='report',mrRow=null,mrPrev=null,mrOps=[],mrEquip=[],mrStaff=[],mrCR=[],mrDirty=false,mrSetupMissing=false;
+const mrEl=id=>document.getElementById(id);
+const mrMonthLabel=(m,long)=>{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleString('en-GB',{month:long?'long':'short',year:'numeric'});};
+const mrRange=m=>{const [y,mo]=m.split('-').map(Number);const last=new Date(y,mo,0).getDate();return {from:m+'-01',to:m+'-'+String(last).padStart(2,'0'),days:last};};
+const mrPrevMonth=m=>{const [y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');};
+const mrNum=v=>{if(v===''||v==null)return null;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:null;};
+const mrFmt=(n,d=1)=>n==null?'-':(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toLocaleString('en-US');
+const mrCanEdit=()=>typeof isSupervisor==='function'&&isSupervisor();
+
+async function sbUpsert(table,rows,onConflict){
+  const r=await fetch(SB_URL+'/rest/v1/'+table+'?on_conflict='+encodeURIComponent(onConflict),{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(rows)});
+  if(!r.ok)throw new Error(await r.text());
+  const t=r.status===204?null:await r.json();
+  try{auditFromFetch(table,'PATCH',Array.isArray(rows)?rows[0]:rows,t);}catch(e){}
+  return t;
+}
+function mrSetupMsg(e){
+  const m=String(e&&e.message||e);
+  if(/qas2_(ops_daily|monthly|staff|cr_cases|equipment)|PGRST205|42P01|does not exist|Could not find the table/i.test(m)){mrSetupMissing=true;return '⚠ The monthly report is not set up yet — run <b>qas2_monthly_setup.sql</b> in Supabase → SQL Editor, then reload.';}
+  return 'Error: '+escapeHtml(m);
+}
+async function mrLoad(force){
+  const {from,to}=mrRange(mrMonth);
+  const [row,prev,ops,eq,st,cr]=await Promise.all([
+    sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'),
+    sbFetch('qas2_monthly?month=eq.'+mrPrevMonth(mrMonth)+'&select=*'),
+    sbFetch('qas2_ops_daily?select=*&report_date=gte.'+from+'&report_date=lte.'+to+'&order=report_date.asc'),
+    sbFetch('qas2_equipment?select=*&order=sort_order.asc,code.asc'),
+    sbFetch('qas2_staff?select=*&order=created_at.asc'),
+    sbFetch('qas2_cr_cases?select=*&order=cr_no.asc')]);
+  mrRow=(row||[])[0]||{month:mrMonth,data:{}};mrRow.data=mrRow.data||{};
+  mrPrev=(prev||[])[0]||null;mrOps=ops||[];mrEquip=eq||[];mrStaff=(st||[]).filter(s=>s.status!=='Removed');mrCR=(cr||[]).filter(c=>c.status!=='Removed');
+}
+function mrGo(page){
+  if(page)mrPage=page;
+  try{localStorage.setItem('qas2_mr_page',mrPage);}catch(e){}
+  if(getActiveTabState()!=='monthly')switchTab('monthly');else mrRender();
+  navSync();
+}
+async function mrRender(){
+  const box=mrEl('mr-body');if(!box)return;
+  const p=MR_PAGES.find(x=>x[0]===mrPage)||MR_PAGES[0];
+  mrEl('mr-title').textContent=p[1].replace(/^\S+\s/,'');
+  const ms=mrEl('mr-month');if(ms&&ms.value!==mrMonth)ms.value=mrMonth;
+  mrEl('mr-month-wrap').style.display=['staff','cr','equip'].includes(mrPage)?'none':'';
+  box.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading…</div>';
+  try{await mrLoad();}catch(e){box.innerHTML='<div class="mr-warn">'+mrSetupMsg(e)+'</div>';return;}
+  mrDirty=false;
+  ({report:mrRenderReport,ops:mrRenderOps,staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrPage]||mrRenderGroup)();
+}
+function mrSetMonth(v){if(!v)return;if(mrDirty&&!confirm('You have unsaved changes on this page. Switch month anyway?')){mrEl('mr-month').value=mrMonth;return;}mrMonth=v;mrRender();}
+
+// ───────── section editors (text + table) ─────────
+function mrVal(k){const d=mrRow?.data||{};return d[k];}
+function mrIntroKey(k){return k+'__intro';}
+function mrTextEditor(s,keyOverride,label){
+  const k=keyOverride||s.k;const v=mrVal(k);
+  return `<textarea class="mr-ta" data-k="${k}" rows="${s.rows||3}" placeholder="${escapeHtml(s.ph||(label?'Introduction text (optional)':'Write here — leave empty to print “NA”'))}" oninput="mrDirty=true">${escapeHtml(v!=null?v:(s.def&&!label?'':''))}</textarea>${s.def&&v==null?`<button type="button" class="mr-link" onclick="mrUseDefault('${k}')">Use standard text</button>`:''}`;
+}
+function mrUseDefault(k){const s=MR_BY[k.replace('__intro','')];const ta=document.querySelector(`.mr-ta[data-k="${k}"]`);if(ta&&s){ta.value=s.def||'';mrDirty=true;}}
+function mrTableRows(s){const v=mrVal(s.k);return Array.isArray(v)?v:(s.rows?JSON.parse(JSON.stringify(s.rows)):[]);}
+function mrTableEditor(s){
+  const rows=mrTableRows(s);
+  return `<div class="mr-tw"><table class="mr-et" data-k="${s.k}"><thead><tr>${s.num?'<th style="width:34px">#</th>':''}${s.cols.map(c=>`<th style="width:${c[2]}%">${escapeHtml(c[1])}</th>`).join('')}<th style="width:34px"></th></tr></thead><tbody>${rows.map((r,i)=>mrRowHtml(s,r,i)).join('')}</tbody></table></div>
+    <div class="mr-tbtns"><button type="button" class="btn sm" onclick="mrAddRow('${s.k}')">+ Add row</button>${s.note?`<span class="mr-note">${escapeHtml(s.note)}</span>`:''}</div>`;
+}
+function mrRowHtml(s,r,i){return `<tr>${s.num?`<td class="mr-n">${i+1}</td>`:''}${s.cols.map(c=>`<td><textarea rows="1" data-c="${c[0]}" oninput="mrDirty=true;mrGrow(this)">${escapeHtml(r[c[0]]??'')}</textarea></td>`).join('')}<td><button type="button" class="mr-x" title="Remove row" aria-label="Remove row" onclick="this.closest('tr').remove();mrDirty=true">✕</button></td></tr>`;}
+function mrGrow(t){t.style.height='auto';t.style.height=Math.min(220,t.scrollHeight)+'px';}
+function mrAddRow(k){const s=MR_BY[k];const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.insertAdjacentHTML('beforeend',mrRowHtml(s,{},tb.children.length));mrDirty=true;tb.lastElementChild.querySelector('textarea').focus();}
+function mrCollect(){
+  const out={};
+  document.querySelectorAll('#mr-body .mr-ta').forEach(t=>{out[t.dataset.k]=t.value.trim();});
+  document.querySelectorAll('#mr-body .mr-et').forEach(tb=>{const s=MR_BY[tb.dataset.k];
+    out[tb.dataset.k]=[...tb.querySelectorAll('tbody tr')].map(tr=>{const o={};tr.querySelectorAll('textarea[data-c]').forEach(x=>{if(x.value.trim())o[x.dataset.c]=x.value.trim();});return o;}).filter(o=>Object.keys(o).length);});
+  return out;
+}
+async function mrSaveSections(btn){
+  if(!mrCanEdit()){showToast('Only supervisors and admins can edit the monthly report.','error');return;}
+  const changes=mrCollect();
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    // merge into the latest saved version so two people editing different pages don't overwrite each other
+    const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];
+    const data={...(cur&&cur.data||{}),...changes};
+    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');
+    mrRow={month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};mrDirty=false;showToast('Saved ✓');
+    if(mrPage==='report'){const y=window.scrollY;mrRender();requestAnimationFrame(()=>window.scrollTo(0,y));}
+  }catch(e){showToast(mrSetupMissing?'Run qas2_monthly_setup.sql first.':'Save failed: '+e.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Save';}}
+}
+function mrCopyPrev(k){
+  const s=MR_BY[k];const v=mrPrev&&mrPrev.data?mrPrev.data[k]:undefined;
+  if(v==null){showToast('Nothing saved for '+mrMonthLabel(mrPrevMonth(mrMonth))+'.','error');return;}
+  if(s.type==='table'){const tb=document.querySelector(`.mr-et[data-k="${k}"] tbody`);tb.innerHTML=(v||[]).map((r,i)=>mrRowHtml(s,r,i)).join('');tb.querySelectorAll('textarea').forEach(mrGrow);}
+  else{const ta=document.querySelector(`.mr-ta[data-k="${k}"]`);if(ta)ta.value=v;}
+  const ia=document.querySelector(`.mr-ta[data-k="${mrIntroKey(k)}"]`);if(ia&&mrPrev.data[mrIntroKey(k)]!=null)ia.value=mrPrev.data[mrIntroKey(k)];
+  mrDirty=true;showToast('Copied from '+mrMonthLabel(mrPrevMonth(mrMonth))+' — press Save.');
+}
+function mrSectionCard(s){
+  const head=`<div class="mr-sh"><span class="mr-no">${escapeHtml(s.no)}</span><b>${escapeHtml(s.t)}</b>${s.carry&&mrPrev?`<button type="button" class="mr-link" onclick="mrCopyPrev('${s.k}')">Copy from ${escapeHtml(mrMonthLabel(mrPrevMonth(mrMonth)))}</button>`:''}</div>`;
+  if(s.type==='head'||s.type==='head2')return s.intro?`<div class="mr-card mr-headcard">${head}${mrTextEditor(s,mrIntroKey(s.k),true)}</div>`:`<div class="mr-gh">${escapeHtml(s.no)} ${escapeHtml(s.t)}</div>`;
+  if(s.type==='auto')return `<div class="mr-card mr-auto">${head}${s.intro?mrTextEditor(s,mrIntroKey(s.k),true):''}<div class="mr-autonote">${mrAutoNote(s)}</div></div>`;
+  return `<div class="mr-card">${head}${s.intro?mrTextEditor(s,mrIntroKey(s.k),true):''}${s.type==='table'?mrTableEditor(s):mrTextEditor(s)}</div>`;
+}
+function mrAutoNote(s){
+  return {staff:`Filled automatically from the <a href="#" onclick="mrGo('staff');return false">Staff Register</a>.`,power:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,counters:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a> and <a href="#" onclick="mrGo('equip');return false">Equipment & Running Hours</a>.`,fg:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,punch:'Filled automatically from the Punch List.',cr:`Filled automatically from the <a href="#" onclick="mrGo('cr');return false">CR Cases</a> register.`}[s.src]||'';
+}
+function mrRenderGroup(){
+  const list=MR_SECTIONS.filter(s=>s.g===mrPage);
+  const ro=!mrCanEdit();
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ro?'<span class="mr-note">View only — supervisors and admins can edit.</span>':`<button class="btn primary" onclick="mrSaveSections(this)">Save</button><span class="mr-note">Saved for <b>${escapeHtml(mrMonthLabel(mrMonth,true))}</b>. Empty text prints as “NA”.</span>`}</div>`+list.map(mrSectionCard).join('')+(ro?'':`<div class="mr-bar"><button class="btn primary" onclick="mrSaveSections(this)">Save</button></div>`);
+  document.querySelectorAll('#mr-body textarea').forEach(mrGrow);
+  if(ro)document.querySelectorAll('#mr-body textarea,#mr-body button.mr-x,#mr-body .mr-tbtns button').forEach(x=>x.disabled=true);
+}
+
+// ───────── Daily Operations Log ─────────
+function mrOpsRow(d){return mrOps.find(r=>String(r.report_date).slice(0,10)===d)||{report_date:d,power:{},counters:{}};}
+function mrRenderOps(){
+  const {days}=mrRange(mrMonth);const ro=!mrCanEdit();
+  const dates=[...Array(days)].map((_,i)=>mrMonth+'-'+String(i+1).padStart(2,'0'));
+  const today=drToday();
+  const cnt=r=>{const c=r.counters||{};const ks=Object.keys(c).filter(k=>c[k]&&(c[k].s||c[k].t||c[k].h));return ks.length?ks.map(k=>`${k} ${c[k].s||0}/${c[k].t||0}/${c[k].h||0}h`).join(', '):'—';};
+  const tot={fgc:0,flow:0,p:{}};
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ro?'<span class="mr-note">View only.</span>':'<button class="btn primary" onclick="mrSaveOps(this)">Save changes</button>'}<span class="mr-note">Shift readings from the daily report land here automatically. Counters: starts / trips / running hours.</span></div>
+   <div class="mr-tw"><table class="mr-ops"><thead><tr><th rowspan="2">Date</th><th colspan="3">Fuel Gas</th><th colspan="${MR_UNITS.length}">Power Production (MWh)</th><th rowspan="2">Starts / Trips / Hours</th><th rowspan="2">Remarks</th></tr>
+   <tr><th>Pressure<br>(barg)</th><th>Flow<br>(SCFM)</th><th>Consumption<br>(Sm³/day)</th>${MR_UNITS.map(u=>`<th>${u}</th>`).join('')}</tr></thead><tbody>
+   ${dates.map(d=>{const r=mrOpsRow(d);const p=r.power||{};const future=d>today;
+     if(mrNum(r.fg_consumption)!=null)tot.fgc+=mrNum(r.fg_consumption);MR_UNITS.forEach(u=>{if(mrNum(p[u])!=null)tot.p[u]=(tot.p[u]||0)+mrNum(p[u]);});
+     const inp=(f,v)=>`<input type="number" step="any" inputmode="decimal" data-f="${f}" value="${v??''}" ${ro||future?'disabled':''} oninput="mrDirty=true;this.closest('tr').dataset.ch=1">`;
+     return `<tr data-d="${d}" class="${future?'mr-future':''}"><th>${d.slice(8)} ${new Date(d+'T00:00:00').toLocaleString('en-GB',{weekday:'short'})}</th><td>${inp('fg_pressure',r.fg_pressure)}</td><td>${inp('fg_flow',r.fg_flow)}</td><td>${inp('fg_consumption',r.fg_consumption)}</td>${MR_UNITS.map(u=>`<td>${inp('p_'+u,p[u])}</td>`).join('')}
+       <td class="mr-cnt"><span>${escapeHtml(cnt(r))}</span>${ro||future?'':`<button type="button" class="mr-link" onclick="mrCountersOpen('${d}')">Edit</button>`}</td><td><input type="text" data-f="remarks" value="${escapeHtml(r.remarks||'')}" ${ro||future?'disabled':''} oninput="mrDirty=true;this.closest('tr').dataset.ch=1"></td></tr>`;}).join('')}
+   </tbody><tfoot><tr><th>Total</th><td></td><td></td><td><b>${mrFmt(tot.fgc,0)}</b></td>${MR_UNITS.map(u=>`<td><b>${tot.p[u]!=null?mrFmt(tot.p[u]):'-'}</b></td>`).join('')}<td></td><td></td></tr></tfoot></table></div>`;
+}
+async function mrSaveOps(btn){
+  const rows=[...document.querySelectorAll('#mr-body tr[data-ch]')];if(!rows.length){showToast('Nothing changed.');return;}
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const out=rows.map(tr=>{const d=tr.dataset.d;const old=mrOpsRow(d);const power={...(old.power||{})};const o={report_date:d,counters:old.counters||{},updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
+      tr.querySelectorAll('input[data-f]').forEach(x=>{const f=x.dataset.f;if(f.startsWith('p_')){const n=mrNum(x.value);if(n==null)delete power[f.slice(2)];else power[f.slice(2)]=n;}else if(f==='remarks')o.remarks=x.value.trim()||null;else o[f]=mrNum(x.value);});
+      o.power=power;return o;});
+    await sbUpsert('qas2_ops_daily',out,'report_date');showToast('Saved ✓');mrDirty=false;mrRender();
+  }catch(e){showToast('Save failed: '+e.message,'error');btn.disabled=false;btn.textContent='Save changes';}
+}
+function mrCountersOpen(d){
+  const r=mrOpsRow(d);const c=r.counters||{};
+  const groups=[...new Set(mrEquip.filter(e=>e.active!==false).map(e=>e.grp||'Other'))];
+  mrEl('mr-cnt-title').textContent='Starts / trips / running hours — '+formatDateTime(d+'T12:00:00').split(',')[0];
+  mrEl('mr-cnt-body').innerHTML=`<div class="mr-tw"><table class="mr-cnt-t"><thead><tr><th>Equipment</th><th>Starts</th><th>Trips</th><th>Running hours</th></tr></thead><tbody>${groups.map(g=>`<tr class="mr-g"><td colspan="4">${escapeHtml(g)}</td></tr>`+mrEquip.filter(e=>e.active!==false&&(e.grp||'Other')===g).map(e=>{const v=c[e.code]||{};
+    return `<tr data-code="${escapeHtml(e.code)}"><th>${escapeHtml(e.code)}</th><td><input type="number" min="0" step="1" data-x="s" value="${v.s??''}"></td><td><input type="number" min="0" step="1" data-x="t" value="${v.t??''}"></td><td><input type="number" min="0" step="any" data-x="h" value="${v.h??''}"></td></tr>`;}).join('')).join('')}</tbody></table></div>`;
+  mrEl('mr-cnt-save').onclick=()=>mrCountersSave(d);
+  mrEl('mr-cnt-bg').classList.add('show');
+}
+async function mrCountersSave(d){
+  const c={};document.querySelectorAll('#mr-cnt-body tr[data-code]').forEach(tr=>{const v={};tr.querySelectorAll('input').forEach(x=>{const n=mrNum(x.value);if(n!=null&&n!==0)v[x.dataset.x]=n;});if(Object.keys(v).length)c[tr.dataset.code]=v;});
+  const old=mrOpsRow(d);
+  try{await sbUpsert('qas2_ops_daily',[{report_date:d,fg_pressure:old.fg_pressure??null,fg_flow:old.fg_flow??null,fg_consumption:old.fg_consumption??null,power:old.power||{},remarks:old.remarks??null,counters:c,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
+    mrEl('mr-cnt-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
+  catch(e){showToast('Save failed: '+e.message,'error');}
+}
+// counters summary for a month: per equipment starts, trips, monthly hours, total hours at month end
+async function mrCounterSummary(month){
+  const {from,to}=mrRange(month);
+  const all=await sbFetch('qas2_ops_daily?select=report_date,counters&report_date=lte.'+to+'&order=report_date.asc&limit=5000')||[];
+  return mrEquip.filter(e=>e.active!==false).map(e=>{let s=0,t=0,h=0,tot=Number(e.baseline_rhr||0);const base=String(e.baseline_date||'2026-10-31').slice(0,10);
+    all.forEach(r=>{const d=String(r.report_date).slice(0,10);const v=(r.counters||{})[e.code];if(!v)return;
+      if(d>base)tot+=Number(v.h||0);if(d>=from&&d<=to){s+=Number(v.s||0);t+=Number(v.t||0);h+=Number(v.h||0);}});
+    const atEnd=to>=String(e.baseline_date||'2026-10-31').slice(0,10);
+    return {code:e.code,grp:e.grp,s,t,h,tot:atEnd?tot:null};});
+}
+
+// ───────── Equipment ─────────
+function mrRenderEquip(){
+  const ad=typeof isAdmin==='function'&&isAdmin();
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ad?'<button class="btn primary" onclick="mrSaveEquip(this)">Save</button><button class="btn" onclick="mrAddEquip()">+ Add equipment</button>':'<span class="mr-note">View only — admins can edit.</span>'}<span class="mr-note">“Running hours before tracking” = the total on the baseline date (from the October report). Daily hours after that date are added to it.</span></div>
+   <div class="mr-tw"><table class="mr-et mr-eq"><thead><tr><th>Code</th><th>Group</th><th>Running hours before tracking</th><th>Starts before tracking</th><th>Baseline date</th><th>Order</th><th>Active</th></tr></thead><tbody>${mrEquip.map(e=>mrEqRow(e,ad)).join('')}</tbody></table></div>`;
+}
+function mrEqRow(e,ad){const dis=ad?'':'disabled';return `<tr data-id="${e.id??''}"><td><input data-f="code" value="${escapeHtml(e.code||'')}" ${dis}></td><td><input data-f="grp" value="${escapeHtml(e.grp||'')}" ${dis}></td><td><input type="number" step="any" data-f="baseline_rhr" value="${e.baseline_rhr??0}" ${dis}></td><td><input type="number" step="1" data-f="baseline_starts" value="${e.baseline_starts??0}" ${dis}></td><td><input type="date" data-f="baseline_date" value="${String(e.baseline_date||'2026-10-31').slice(0,10)}" ${dis}></td><td><input type="number" step="1" data-f="sort_order" value="${e.sort_order??0}" ${dis}></td><td><input type="checkbox" data-f="active" ${e.active!==false?'checked':''} ${dis}></td></tr>`;}
+function mrAddEquip(){document.querySelector('.mr-eq tbody').insertAdjacentHTML('beforeend',mrEqRow({active:true,sort_order:(mrEquip.length+1)*10},true));}
+async function mrSaveEquip(btn){
+  const rows=[...document.querySelectorAll('.mr-eq tbody tr')].map(tr=>{const o={};tr.querySelectorAll('[data-f]').forEach(x=>{const f=x.dataset.f;o[f]=x.type==='checkbox'?x.checked:['baseline_rhr','baseline_starts','sort_order'].includes(f)?(mrNum(x.value)||0):x.value.trim();});return o;}).filter(o=>o.code);
+  btn.disabled=true;try{await sbUpsert('qas2_equipment',rows,'code');showToast('Saved ✓');mrRender();}catch(e){showToast('Save failed: '+e.message,'error');}finally{btn.disabled=false;}
+}
+
+// ───────── Staff Register ─────────
+let mrStaffFilter='current';
+function mrRenderStaff(){
+  const ed=mrCanEdit();const st=mrStaff;
+  const isCur=s=>s.status==='Joined';
+  const list=st.filter(s=>mrStaffFilter==='all'||(mrStaffFilter==='current'?isCur(s):mrStaffFilter==='left'?s.status==='Left':['Planned','Expected'].includes(s.status)));
+  const byDept=MR_STAFF_DEPTS.map(d=>[d,st.filter(s=>s.department===d&&isCur(s)).length]);
+  const chip=(k,l,n)=>`<button type="button" class="um-chip ${mrStaffFilter===k?'on':''}" onclick="mrStaffFilter='${k}';mrRenderStaff()">${l} <b>${n}</b></button>`;
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ed?'<button class="btn primary" onclick="mrStaffEdit(null)">+ Add person</button>':''}
+     ${chip('current','On site',st.filter(isCur).length)}${chip('expected','Expected',st.filter(s=>['Planned','Expected'].includes(s.status)).length)}${chip('left','Left',st.filter(s=>s.status==='Left').length)}${chip('all','All',st.length)}</div>
+   <div class="mr-depts">${byDept.map(([d,n])=>`<span><b>${n}</b>${escapeHtml(d)}</span>`).join('')}</div>
+   ${list.length?`<div class="um-table-wrap"><table class="um-table"><thead><tr><th>Name</th><th>Position</th><th>Department</th><th>Status</th><th>Joined</th><th>Left</th><th>Notes</th><th></th></tr></thead><tbody>${list.map(s=>`<tr class="${s.status==='Left'?'um-off':''}">
+     <td data-l="Name"><b>${escapeHtml(s.name)}</b></td><td data-l="Position">${escapeHtml(s.position||'')}</td><td data-l="Department">${escapeHtml(s.department||'')}</td>
+     <td data-l="Status"><span class="mr-st mr-st-${escapeHtml((s.status||'').toLowerCase())}">${escapeHtml(s.status||'')}</span></td>
+     <td data-l="Joined">${s.join_date?escapeHtml(String(s.join_date).slice(0,10)):'—'}</td><td data-l="Left">${s.leave_date?escapeHtml(String(s.leave_date).slice(0,10)):'—'}</td><td data-l="Notes">${escapeHtml(s.notes||'')}</td>
+     <td class="um-act">${ed?`<button class="btn sm" type="button" onclick="mrStaffEdit('${escapeHtml(String(s.id))}')">Edit</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Nobody here.</div>'}`;
+}
+function mrStaffEdit(id){
+  const s=id?mrStaff.find(x=>String(x.id)===String(id)):{status:'Joined',department:'Operation'};if(!s)return;
+  mrEl('mr-staff-title').textContent=id?'Edit — '+s.name:'Add person';
+  mrEl('mr-staff-form').innerHTML=`<div class="field"><label>Name</label><input id="st-name" value="${escapeHtml(s.name||'')}"></div>
+    <div class="field"><label>Position</label><input id="st-pos" value="${escapeHtml(s.position||'')}" list="st-pos-list"><datalist id="st-pos-list">${[...new Set(mrStaff.map(x=>x.position).filter(Boolean))].map(p=>`<option value="${escapeHtml(p)}">`).join('')}</datalist></div>
+    <div class="field"><label>Department</label><select id="st-dept">${MR_STAFF_DEPTS.map(d=>`<option ${d===s.department?'selected':''}>${d}</option>`).join('')}</select></div>
+    <div class="field"><label>Status</label><select id="st-status">${['Planned','Expected','Joined','Left'].map(d=>`<option ${d===s.status?'selected':''}>${d}</option>`).join('')}${id?'<option value="Removed">Removed (entered by mistake)</option>':''}</select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label>Joined / expected on</label><input type="date" id="st-join" value="${s.join_date?String(s.join_date).slice(0,10):''}"></div><div class="field"><label>Left on</label><input type="date" id="st-leave" value="${s.leave_date?String(s.leave_date).slice(0,10):''}"></div></div>
+    <div class="field"><label>Notes</label><input id="st-notes" value="${escapeHtml(s.notes||'')}"></div>`;
+  mrEl('mr-staff-save').onclick=()=>mrStaffSave(id);mrEl('mr-staff-bg').classList.add('show');
+}
+async function mrStaffSave(id){
+  const o={name:mrEl('st-name').value.trim(),position:mrEl('st-pos').value.trim()||null,department:mrEl('st-dept').value,status:mrEl('st-status').value,join_date:mrEl('st-join').value||null,leave_date:mrEl('st-leave').value||null,notes:mrEl('st-notes').value.trim()||null};
+  if(!o.name){showToast('Name is required.','error');return;}
+  if(o.status==='Left'&&!o.leave_date)o.leave_date=drToday();
+  if(o.status==='Removed'&&!confirm('Hide '+o.name+' from the register? (Use this only for entries made by mistake.)'))return;
+  try{if(id)await sbFetch('qas2_staff?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_staff','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
+  catch(e){showToast('Save failed: '+e.message,'error');}
+}
+
+// ───────── CR cases ─────────
+let mrCrFilter='open';
+function mrRenderCR(){
+  const ed=mrCanEdit();const open=c=>c.status!=='Closed';
+  const list=mrCR.filter(c=>mrCrFilter==='all'||(mrCrFilter==='open'?open(c):!open(c)));
+  const chip=(k,l,n)=>`<button type="button" class="um-chip ${mrCrFilter===k?'on':''}" onclick="mrCrFilter='${k}';mrRenderCR()">${l} <b>${n}</b></button>`;
+  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ed?'<button class="btn primary" onclick="mrCrEdit(null)">+ New CR</button>':''}${chip('open','Open',mrCR.filter(open).length)}${chip('closed','Closed',mrCR.filter(c=>!open(c)).length)}${chip('all','All',mrCR.length)}</div>
+   ${list.length?`<div class="um-table-wrap"><table class="um-table"><thead><tr><th>CR No</th><th>Issue Date</th><th>Related System / Document</th><th>Status</th><th>Action</th><th></th></tr></thead><tbody>${list.map(c=>`<tr>
+     <td data-l="CR No"><code>${escapeHtml(c.cr_no)}</code></td><td data-l="Issue Date">${escapeHtml(String(c.issue_date||'').slice(0,10))}</td><td data-l="Subject">${escapeHtml(c.subject||'')}</td>
+     <td data-l="Status"><span class="mr-st mr-st-${open(c)?'issued':'closed'}">${escapeHtml(c.status||'')}${c.closed_date?' · '+escapeHtml(String(c.closed_date).slice(0,10)):''}</span></td><td data-l="Action">${escapeHtml(c.action||'')}</td>
+     <td class="um-act">${ed?`<button class="btn sm" type="button" onclick="mrCrEdit('${escapeHtml(String(c.id))}')">Edit</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No cases.</div>'}`;
+}
+function mrCrEdit(id){
+  const c=id?mrCR.find(x=>String(x.id)===String(id)):{status:'Issued',issue_date:drToday(),action:'Under discussion with the Engineering and EPC teams'};if(!c)return;
+  mrEl('mr-staff-title').textContent=id?'Edit — '+c.cr_no:'New clarification request';
+  mrEl('mr-staff-form').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label>CR No</label><input id="cr-no" value="${escapeHtml(c.cr_no||'')}" placeholder="WQGTA2-CR-1017"></div><div class="field"><label>Issue date</label><input type="date" id="cr-date" value="${String(c.issue_date||'').slice(0,10)}"></div></div>
+    <div class="field"><label>Related system / document</label><textarea id="cr-subj" rows="2">${escapeHtml(c.subject||'')}</textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label>Status</label><select id="cr-status">${['Issued','Under review','Closed'].map(d=>`<option ${d===c.status?'selected':''}>${d}</option>`).join('')}${id?'<option value="Removed">Removed (entered by mistake)</option>':''}</select></div><div class="field"><label>Closed on</label><input type="date" id="cr-closed" value="${c.closed_date?String(c.closed_date).slice(0,10):''}"></div></div>
+    <div class="field"><label>Action</label><input id="cr-action" value="${escapeHtml(c.action||'')}"></div>`;
+  mrEl('mr-staff-save').onclick=()=>mrCrSave(id);mrEl('mr-staff-bg').classList.add('show');
+}
+async function mrCrSave(id){
+  const o={cr_no:mrEl('cr-no').value.trim(),issue_date:mrEl('cr-date').value||null,subject:mrEl('cr-subj').value.trim()||null,status:mrEl('cr-status').value,closed_date:mrEl('cr-closed').value||null,action:mrEl('cr-action').value.trim()||null};
+  if(!o.cr_no){showToast('CR No is required.','error');return;}
+  if(o.status==='Closed'&&!o.closed_date)o.closed_date=drToday();
+  if(mrCR.some(x=>x.cr_no===o.cr_no&&String(x.id)!==String(id))){showToast('That CR No already exists.','error');return;}
+  try{if(id)await sbFetch('qas2_cr_cases?id=eq.'+id,'PATCH',o);else await sbFetch('qas2_cr_cases','POST',o);mrEl('mr-staff-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
+  catch(e){showToast('Save failed: '+e.message,'error');}
+}
+
+// ───────── automatic drafts from the daily reports ─────────
+async function mrMonthReports(){const {from,to}=mrRange(mrMonth);return (await fetchReportsByDate('',false)||[]).filter(r=>{const d=String(r.report_date||'').slice(0,10);return d>=from&&d<=to;});}
+function mrWeeks(month){
+  // one block per week (Sunday → Saturday); the label uses the first and last day that has reports
+  const {from,to}=mrRange(month);const out=[];let cur=null;
+  for(let d=from;d<=to;d=drAddDays(d,1)){const wd=new Date(d+'T12:00:00').getDay();if(!cur||wd===0){if(cur)out.push(cur);cur=[d,d];}else cur[1]=d;}
+  if(cur)out.push(cur);return out;
+}
+async function mrDraftEvents(){
+  const reps=await mrMonthReports();
+  if(!reps.length){showToast('No daily reports in '+mrMonthLabel(mrMonth)+'.','error');return;}
+  const lab=d=>{const x=new Date(d+'T12:00:00');return x.getDate()+' '+x.toLocaleString('en-GB',{month:'long',year:'numeric'});};
+  const parts=[];
+  mrWeeks(mrMonth).forEach(([a,b])=>{a=String(a);b=String(b);
+    const rs=reps.filter(r=>{const d=String(r.report_date).slice(0,10);return d>=a&&d<=b;});if(!rs.length)return;
+    const ds=rs.map(r=>String(r.report_date).slice(0,10)).sort();a=ds[0];b=ds[ds.length-1];
+    const seen=new Set();const lines=[];
+    rs.forEach(r=>{(drParseItems(r)||[]).forEach(x=>{const key=(x.sys+'|'+x.act).toLowerCase();if(seen.has(key))return;seen.add(key);
+      const tag={'Completed':'Completed','In progress':'Ongoing','On hold':'On hold','Planned':'Planned'}[x.st]||'Completed';lines.push({tag,txt:(x.sys?x.sys+' — ':'')+x.act});});
+      if(!(drParseItems(r)||[]).length&&r.content&&r.content!=='–'){const t=String(r.content).replace(/\s+/g,' ').trim();const key=t.toLowerCase().slice(0,80);if(!seen.has(key)){seen.add(key);lines.push({tag:'Completed',txt:t.slice(0,300)});}}
+      if(r.achievements&&r.achievements!=='None reported'){const t=String(r.achievements).trim();if(!seen.has(t.toLowerCase())){seen.add(t.toLowerCase());lines.push({tag:'Achievement',txt:t});}}});
+    const order={'Achievement':0,'Completed':1,'Ongoing':2,'On hold':3,'Planned':4};lines.sort((x,y)=>order[x.tag]-order[y.tag]);
+    parts.push((a===b?lab(a):(new Date(a+'T12:00:00').getDate()+' ~ '+lab(b)))+'\n'+lines.slice(0,14).map(l=>'• '+l.tag+': '+l.txt).join('\n'));
+  });
+  const ta=document.querySelector('.mr-ta[data-k="ops_events"]');
+  if(ta.value.trim()&&!confirm('Replace the current text with a new draft from the daily reports?'))return;
+  ta.value=parts.join('\n\n');mrGrow(ta);mrDirty=true;showToast('Draft ready — review it, then Save.');
+}
+async function mrDraftExec(){
+  const reps=await mrMonthReports();const T=await fetchAllTickets(false)||[];const {from,to}=mrRange(mrMonth);const s=drpStats(T,from,to);
+  const items=reps.flatMap(r=>drParseItems(r)||[]);const done=items.filter(x=>x.st==='Completed');
+  const sys=[...new Set(items.map(x=>x.sys).filter(Boolean))].slice(0,8);
+  const ach=[...new Set(reps.map(r=>r.achievements).filter(a=>a&&a!=='None reported'))].slice(0,6);
+  const txt=`During ${mrMonthLabel(mrMonth,true)}, Qassim-2 O&M readiness activities continued in support of commissioning and the Initial Commercial Operation Date (ICOD).${sys.length?' The O&M team focused on '+sys.join(', ')+'.':''}\n\nHSE performance remained satisfactory, with no Lost Time Injuries (LTIs) reported during the month.\n\nKey achievements during the month included:\n${(ach.length?ach:done.slice(0,6).map(x=>(x.sys?x.sys+': ':'')+x.act)).map(a=>'• '+a).join('\n')}\n\n${reps.length} daily reports recorded ${items.length} activities (${done.length} completed). On the Punch List, ${s.raised.length} points were raised and ${s.closed.length} closed during the month, with ${s.openAt.length} open at month end.`;
+  const ta=document.querySelector('.mr-ta[data-k="exec"]');
+  if(ta.value.trim()&&!confirm('Replace the current text with a new draft?'))return;
+  ta.value=txt;mrGrow(ta);mrDirty=true;showToast('Draft ready — review it, then Save.');
+}
+
+// ───────── Monthly Report page (overview + PDF) ─────────
+function mrStatus(s){
+  const d=mrRow.data;
+  if(s.type==='head'||s.type==='head2')return null;
+  if(s.type==='auto'){
+    const n={staff:mrStaff.length,power:mrOps.filter(r=>Object.keys(r.power||{}).length).length,counters:mrOps.filter(r=>Object.keys(r.counters||{}).length).length,fg:mrOps.filter(r=>r.fg_pressure!=null||r.fg_consumption!=null).length,punch:1,cr:mrCR.length}[s.src];
+    return n?['auto','Auto · '+({power:n+' days',counters:n+' days',fg:n+' days',staff:n+' people',cr:n+' cases'}[s.src]||'from site data')]:['empty','No data yet'];
+  }
+  const v=d[s.k];
+  if(s.type==='table')return Array.isArray(v)&&v.length?['ok',v.length+' row(s)']:(v!==undefined?['na','Empty → NA']:['empty','Not filled']);
+  return v&&String(v).trim()?['ok','Filled']:(v!==undefined?['na','Empty → NA']:['empty','Not filled']);
+}
+function mrRenderReport(){
+  const ed=mrCanEdit();const d=mrRow.data;
+  const sts=MR_SECTIONS.map(s=>[s,mrStatus(s)]).filter(x=>x[1]);
+  const ready=sts.filter(x=>['ok','auto','na'].includes(x[1][0])).length;const pct=Math.round(ready*100/sts.length);
+  const pageOf=g=>(MR_PAGES.find(p=>p[0]===g)||['report',''])[1];
+  const cover=d.cover||[];
+  mrEl('mr-body').innerHTML=`
+   <div class="mr-hero"><div><div class="mr-hl">${escapeHtml(mrMonthLabel(mrMonth,true))}</div><div class="mr-pct"><b>${pct}%</b> ready · ${ready} of ${sts.length} sections</div><div class="mr-bar2"><i style="width:${pct}%"></i></div>
+     <div class="mr-meta">${mrRow.updated_at?'Last saved '+escapeHtml(formatDateTime(mrRow.updated_at))+(mrRow.updated_by?' by '+escapeHtml(mrRow.updated_by):''):'Nothing saved for this month yet.'}</div></div>
+     <div class="mr-actions"><button class="btn primary" onclick="mrPrint()">🖨 Generate PDF</button>${ed&&mrPrev?'<button class="btn" onclick="mrCopyAllPrev(this)">Copy empty sections from last month</button>':''}</div></div>
+   <div class="mr-card"><div class="mr-sh"><b>Cover photos</b><span class="mr-note">Two photos for the first page (e.g. control room and plant).</span></div>
+     <div class="mr-cover">${[0,1].map(i=>`<div class="mr-cv">${cover[i]?`<img src="${escapeHtml(cover[i])}" alt="Cover photo ${i+1}">`:'<span>No photo</span>'}${ed?`<label class="btn sm">Choose…<input type="file" accept="image/*" hidden onchange="mrCoverSet(${i},this)"></label>${cover[i]?`<button class="btn sm" type="button" onclick="mrCoverSet(${i},null)">Remove</button>`:''}`:''}</div>`).join('')}</div></div>
+   ${ed?'':'<div class="mr-note" style="margin:8px 0">View only — supervisors and admins can edit.</div>'}
+   <div class="mr-card">${['exec','ops_events'].map(k=>{const s=MR_BY[k];return `<div class="mr-sh"><span class="mr-no">${s.no}</span><b>${s.t}</b>${ed?`<button type="button" class="mr-link" onclick="${k==='exec'?'mrDraftExec()':'mrDraftEvents()'}">✨ Draft from daily reports</button>`:''}</div>${mrTextEditor(s)}`;}).join('<div style="height:14px"></div>')}
+     ${ed?'<div class="mr-bar" style="margin-top:10px"><button class="btn primary" onclick="mrSaveSections(this)">Save</button></div>':''}</div>
+   <div class="mr-card"><div class="mr-sh"><b>Sections</b><span class="mr-note">Empty text prints as “NA”, like the October report.</span></div>
+     <div class="mr-tw"><table class="mr-list"><tbody>${MR_SECTIONS.map(s=>{const st=mrStatus(s);if(!st)return `<tr class="mr-lh"><td colspan="3">${escapeHtml(s.no)} ${escapeHtml(s.t)}</td></tr>`;
+       return `<tr><td class="mr-no">${escapeHtml(s.no)}</td><td>${escapeHtml(s.t)}</td><td><span class="mr-s mr-s-${st[0]}">${escapeHtml(st[1])}</span></td><td>${s.g!=='report'?`<a href="#" onclick="mrGo('${s.g}');return false">${escapeHtml(pageOf(s.g).replace(/^\S+\s/,''))} →</a>`:''}</td></tr>`;}).join('')}</tbody></table></div></div>`;
+  document.querySelectorAll('#mr-body textarea').forEach(mrGrow);
+  if(!ed)document.querySelectorAll('#mr-body textarea').forEach(x=>x.disabled=true);
+}
+async function mrCoverSet(i,input){
+  try{
+    let v=null;
+    if(input&&input.files&&input.files[0]){const [small]=await compressFiles([input.files[0]]);v=await sbStoreDataUrl(small,'monthly/'+mrMonth);}
+    const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};const cv=[...(data.cover||[])];cv[i]=v;data.cover=cv.filter((x,k)=>k<2);
+    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');mrRender();
+  }catch(e){showToast('Could not save the photo: '+e.message,'error');}
+}
+async function mrCopyAllPrev(btn){
+  if(!mrPrev){return;}
+  if(!confirm('Copy from '+mrMonthLabel(mrPrevMonth(mrMonth),true)+' every section that is still empty this month?\n\nSections you already filled are not touched.'))return;
+  btn.disabled=true;
+  try{const cur=((await sbFetch('qas2_monthly?month=eq.'+mrMonth+'&select=*'))||[])[0];const data={...(cur&&cur.data||{})};let n=0;
+    MR_SECTIONS.forEach(s=>{if(!s.carry)return;[s.k,mrIntroKey(s.k)].forEach(k=>{if(data[k]==null&&mrPrev.data[k]!=null){data[k]=mrPrev.data[k];n++;}});});
+    await sbUpsert('qas2_monthly',[{month:mrMonth,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');showToast(n+' section(s) copied ✓');mrRender();}
+  catch(e){showToast('Failed: '+e.message,'error');btn.disabled=false;}
+}
+
+// ───────── PDF ─────────
+async function mrPrint(){
+  const w=window.open('','_blank');
+  if(!w){showToast('Allow pop-ups to generate the PDF.','error');return;}
+  w.document.write('<p style="font:14px Segoe UI,Arial;padding:30px">Preparing the monthly report…</p>');
+  try{
+    await mrLoad();
+    const d=mrRow.data,M=mrMonthLabel(mrMonth),ML=mrMonthLabel(mrMonth,true),{from,to,days}=mrRange(mrMonth);
+    const E=x=>escapeHtml(x==null?'':String(x));
+    const para=v=>{const t=(v==null?'':String(v)).trim();if(!t)return '<p class="na">NA</p>';
+      return t.split(/\n{2,}/).map(b=>{const ls=b.split('\n');if(ls.every(l=>/^\s*[•\-\*]/.test(l)||!l.trim()))return '<ul>'+ls.filter(l=>l.trim()).map(l=>'<li>'+E(l.replace(/^\s*[•\-\*]\s*/,''))+'</li>').join('')+'</ul>';
+        const head=ls.length>1&&!/^\s*[•\-\*]/.test(ls[0])&&/^\d{1,2}(\s*[~–-]\s*\d{1,2})?\s+\w+/.test(ls[0])?'<p class="per">'+E(ls[0])+'</p>':'';const rest=head?ls.slice(1):ls;
+        return head+(rest.every(l=>/^\s*[•\-\*]/.test(l))?'<ul>'+rest.map(l=>'<li>'+E(l.replace(/^\s*[•\-\*]\s*/,''))+'</li>').join('')+'</ul>':'<p>'+rest.map(E).join('<br>')+'</p>');}).join('');};
+    const tbl=(cols,rows,opts={})=>{if(!rows.length)return '<p class="na">NA</p>';return `<table class="t">${opts.cap?`<caption>${E(opts.cap)}</caption>`:''}<thead><tr>${opts.num?'<th style="width:6%">Sr. No.</th>':''}${cols.map(c=>`<th style="width:${c[2]}%">${E(c[1])}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${opts.num?`<td class="c">${i+1}.</td>`:''}${cols.map(c=>`<td class="${c[3]||''}">${E(r[c[0]]??(opts.dash?'-':''))}</td>`).join('')}</tr>`).join('')}</tbody>${opts.foot||''}</table>`;};
+    const H=(no,t,lvl)=>`<h${lvl} id="s${E(no).replace(/\./g,'_')}">${no?E(no)+' ':''}${E(t)}</h${lvl}>`;
+    const lvl=s=>!s.no||!s.no.includes('.')?2:s.no.split('.').length===2?3:4;
+    // auto data
+    const staffRows=mrStaff.filter(s=>s.status!=='Removed'&&!(s.status==='Left'&&s.leave_date&&String(s.leave_date).slice(0,10)<from)&&!(s.join_date&&String(s.join_date).slice(0,10)>to&&s.status==='Joined'))
+      .map(s=>({pos:s.position||'',emp:s.name,status:s.status==='Left'?'Left'+(s.leave_date?' ('+String(s.leave_date).slice(0,10)+')':''):s.status,exp:['Planned','Expected'].includes(s.status)&&s.join_date?String(s.join_date).slice(0,10):''}));
+    const joinedBy=dep=>mrStaff.filter(s=>s.status==='Joined'&&(s.department||'')===dep.replace(/\s*\(ICOD\)/,'')&&!(s.join_date&&String(s.join_date).slice(0,10)>to)).length;
+    const onboard=(Array.isArray(d.hr_onboard)?d.hr_onboard:MR_BY.hr_onboard.rows).map(r=>{const o={...r};if(o.joined==null||o.joined===''){o.joined=String(joinedBy(o.dept||''));}const pl=mrNum(o.planned),jn=mrNum(o.joined);if((o.remaining==null||o.remaining==='')&&pl!=null&&jn!=null)o.remaining=String(Math.max(0,pl-jn));return o;});
+    const opsBy=Object.fromEntries(mrOps.map(r=>[String(r.report_date).slice(0,10),r]));
+    const dates=[...Array(days)].map((_,i)=>mrMonth+'-'+String(i+1).padStart(2,'0'));
+    const dl=dd=>{const x=new Date(dd+'T12:00:00');return x.getDate()+'.'+x.toLocaleString('en-GB',{month:'short'})+'.'+x.getFullYear();};
+    const pTot={};const powerRows=dates.map(dd=>{const p=(opsBy[dd]||{}).power||{};const o={date:dl(dd)};MR_UNITS.forEach(u=>{const n=mrNum(p[u]);o[u]=n==null?'-':mrFmt(n);if(n!=null)pTot[u]=(pTot[u]||0)+n;});return o;});
+    const pAll=Object.values(pTot).reduce((a,b)=>a+b,0);
+    const counters=await mrCounterSummary(mrMonth);
+    const fgRows=dates.map(dd=>{const r=opsBy[dd]||{};return {date:dl(dd),p:r.fg_pressure!=null?mrFmt(mrNum(r.fg_pressure),2):'-',f:r.fg_flow!=null?mrFmt(mrNum(r.fg_flow),0):'-',c:r.fg_consumption!=null?mrFmt(mrNum(r.fg_consumption),0):'-'};});
+    const fgP=mrOps.map(r=>mrNum(r.fg_pressure)).filter(x=>x!=null),fgC=mrOps.map(r=>mrNum(r.fg_consumption)).filter(x=>x!=null),fgF=mrOps.map(r=>mrNum(r.fg_flow)).filter(x=>x!=null);
+    const T=await fetchAllTickets(false)||[];const ps=drpStats(T,'0000-01-01',to);const pm=drpStats(T,from,to);
+    const crRows=mrCR.filter(c=>{const i=String(c.issue_date||'').slice(0,10);const cl=c.closed_date?String(c.closed_date).slice(0,10):'';return (!i||i<=to)&&!(cl&&cl<from);})
+      .map(c=>({no:c.cr_no,date:c.issue_date?new Date(String(c.issue_date).slice(0,10)+'T12:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).replace(/ /g,'-'):'',sub:c.subject||'',st:c.status+(c.closed_date&&c.status==='Closed'?' ('+String(c.closed_date).slice(0,10)+')':''),act:c.action||''}));
+    const fo=(Array.isArray(d.ops_fo)?d.ops_fo:[]).map(r=>{const o={...r};if(!o.cons){const a=mrNum(o.last),b=mrNum(o.new);if(a!=null&&b!=null)o.cons=String(Math.round((a-b)*10)/10);}return o;});
+    const withTotal=(rows,keys)=>rows.map(r=>{const o={...r};if(!o.total){const n=keys.map(k=>mrNum(o[k])).filter(x=>x!=null);if(n.length)o.total=String(n.reduce((a,b)=>a+b,0));}return o;});
+    // body
+    const body=MR_SECTIONS.map(s=>{
+      const intro=d[mrIntroKey(s.k)]!=null&&String(d[mrIntroKey(s.k)]).trim()?para(d[mrIntroKey(s.k)]):'';
+      if(s.type==='head')return (s.no==='1'?'':'')+`<section class="sec">${H(s.no,s.t,2)}${intro}</section>`;
+      if(s.type==='head2')return `<section>${H(s.no,s.t,3)}${intro}</section>`;
+      let inner='';
+      switch(s.k){
+        case 'hse_stats':inner=tbl(s.cols,Array.isArray(d[s.k])?d[s.k]:s.rows,{cap:'HSE Statistics for the Month of '+mrMonthLabel(mrMonth,true).replace(' ','-')});return `<section>${inner}</section>`;
+        case 'hr_recruit':inner=intro+tbl([['pos','Position',30],['emp','Employee',28],['status','Status',18],['exp','Expected Joining',24]],staffRows);break;
+        case 'hr_onboard':inner=intro+tbl(s.cols,onboard);break;
+        case 'ops_power':inner=tbl([['date','Dates',20],...MR_UNITS.map(u=>[u,u,16,'c'])],powerRows,{cap:ML+' - GTGs Power Production (MWh)',foot:`<tfoot><tr><th colspan="3">GTGs Total Power Generated:</th><th colspan="3" class="c">${pAll?mrFmt(pAll)+' MWh':'-'}</th></tr></tfoot>`});break;
+        case 'ops_counters':inner=tbl([['code','Unit/Equipment',26,'c'],['s','No. Start',14,'c'],['t','No. Trip',14,'c'],['h','Monthly RHR',18,'c'],['tot','Total RHR on '+new Date(to+'T12:00:00').getDate()+' '+M,28,'c']],counters.map(c=>({code:c.code,s:c.s||'-',t:c.t||'-',h:c.h?mrFmt(c.h):'-',tot:c.tot?mrFmt(c.tot):'-'})),{cap:ML+' - Monthly Equipment Counters'});break;
+        case 'ops_fg':inner=tbl([['date','DATE',22,'c'],['p','Fuel Gas Pressure (barg)',24,'c'],['f','Daily Flow (SCFM)',22,'c'],['c','Daily Consumption (Sm³/day)',32,'c']],fgRows,{cap:ML+' - Fuel Gas Consumption',foot:`<tfoot><tr><th>Total / Average</th><th class="c">${fgP.length?'avg '+mrFmt(fgP.reduce((a,b)=>a+b,0)/fgP.length,2):'-'}</th><th class="c">${fgF.length?'avg '+mrFmt(fgF.reduce((a,b)=>a+b,0)/fgF.length,0):'-'}</th><th class="c">${fgC.length?mrFmt(fgC.reduce((a,b)=>a+b,0),0):'-'}</th></tr></tfoot>`});break;
+        case 'ops_fo':inner=tbl(s.cols,fo,{dash:true});break;
+        case 'doc_sop':inner=intro+tbl(s.cols,withTotal(Array.isArray(d[s.k])?d[s.k]:[],['prog','prep']),{dash:true,cap:'Standard Operating Procedures (SOPs)'});break;
+        case 'doc_wi':inner=intro+tbl(s.cols,withTotal(Array.isArray(d[s.k])?d[s.k]:[],['prog','prep']),{dash:true,cap:'Work Instructions (WIs)'});break;
+        case 'mt_punch':inner=tbl([['k','Section',50],['v','Total',50,'c']],[{k:'Total Punch Points',v:ps.raised.length},{k:'Closed Points',v:ps.closed.length},{k:'Open Points',v:ps.openAt.length},{k:'Raised this month',v:pm.raised.length},{k:'Closed this month',v:pm.closed.length}]);break;
+        case 'mt_cr':inner=tbl([['no','CR No',14],['date','Issue Date',13],['sub','Related System/Document',35],['st','Status',12],['act','Action',26]],crRows,{num:true});break;
+        default:
+          if(s.type==='table')inner=intro+tbl(s.cols,Array.isArray(d[s.k])?d[s.k]:[],{num:s.num});
+          else inner=intro+para(d[s.k]);
+      }
+      const keep=/<table/.test(inner)&&(inner.match(/<tr/g)||[]).length<=36;
+      return `<section${keep?' class="keep"':''}>${H(s.no,s.t,lvl(s))}${inner}</section>`;
+    }).join('');
+    const toc=MR_SECTIONS.filter(s=>s.no&&s.k!=='hse_stats').map(s=>`<div class="toc-${lvl(s)}"><a href="#s${E(s.no).replace(/\./g,'_')}">${E(s.no)} ${E(s.t)}</a></div>`).join('');
+    const cover=await sbSignRefs((d.cover||[]).filter(Boolean));
+    const logo=getWWMCLogoSrc();
+    const hdr=`<table class="hdr"><tr><td class="l">${logo?`<img src="${logo}" alt="WWMC">`:''}</td><td class="m"><div class="t1">Monthly Plant Report</div><div class="t2">${E(M)}</div></td><td class="r"><img src="${MR_ENERGY_LOGO}" alt="Wahat Al Wusta Energy"></td></tr></table>`;
+    const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Q2- Monthly Plant Report (${E(M)})</title><style>
+      @page{size:A4;margin:12mm 14mm 16mm;@bottom-left{content:"${E(M)}";font:9px Calibri,Arial;color:#333}@bottom-center{content:counter(page) " | Page";font:9px Calibri,Arial;color:#333}}
+      *{box-sizing:border-box}body{margin:0;font:11pt/1.45 Calibri,"Segoe UI",Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .bar{position:sticky;top:0;background:#1F3864;color:#fff;padding:8px 14px;display:flex;gap:10px;align-items:center;font:13px Segoe UI,Arial;z-index:5}.bar button{background:#fff;color:#1F3864;border:0;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer}
+      @media print{.bar{display:none}}
+      .page{max-width:182mm;margin:0 auto}
+      table.wrap{width:100%;border-collapse:collapse}table.wrap>thead>tr>td{padding:0 0 10px}table.wrap>tbody>tr>td{padding:0}
+      .hdr{width:100%;border-collapse:collapse}.hdr td{border:1px solid #000;padding:6px 8px;vertical-align:middle}.hdr .l{width:25%}.hdr .r{width:25%;text-align:center}.hdr img{max-height:52px;max-width:100%}
+      .hdr .m{text-align:center}.hdr .t1{color:#4472C4;font-size:17pt;font-weight:700;line-height:1.1}.hdr .t2{color:#4472C4;font-size:11pt;font-weight:700}
+      .cover{text-align:center;page-break-after:always}.cover h1{font-size:18pt;margin:22px 0 60px}.cover .big{font-size:24pt;font-weight:700;margin:0 0 70px}.cover img{width:150mm;max-height:95mm;object-fit:cover;display:block;margin:0 auto 14px}
+      .toc{page-break-after:always}.toc h2{color:#1F3864;font-size:13pt}.toc div{border-bottom:1px dotted #999;padding:3px 0;font-size:10.5pt}.toc a{color:#111;text-decoration:none}.toc-2{font-weight:700;margin-top:4px}.toc-3{padding-left:16px!important}.toc-4{padding-left:34px!important;font-size:10pt!important}
+      h2{font-size:14pt;margin:16px 0 8px;page-break-after:avoid}h3{font-size:12.5pt;margin:14px 0 6px;page-break-after:avoid}h4{font-size:11pt;margin:12px 0 6px;page-break-after:avoid}
+      section{margin-left:0}section>p,section>ul{margin:4px 0 8px 22px}p.na{margin-left:22px}p.per{font-weight:700;margin:12px 0 4px 22px}ul{padding-left:22px}li{margin:3px 0}
+      table.t{width:calc(100% - 22px);margin:6px 0 12px 22px;border-collapse:collapse;font-size:9.8pt;page-break-inside:auto}table.t tr{page-break-inside:avoid}section.keep{break-inside:avoid;page-break-inside:avoid}
+      table.t caption{background:#DEEAF6;border:1px solid #000;border-bottom:0;font-weight:700;padding:4px}table.t th{background:#DEEAF6;border:1px solid #000;padding:4px 5px;font-weight:700;text-align:center}
+      table.t td{border:1px solid #000;padding:3px 6px;vertical-align:top}table.t td.c{text-align:center}table.t tfoot th{background:#DEEAF6}
+      .sec{page-break-before:auto}
+    </style></head><body>
+    <div class="bar"><b>Monthly Plant Report — ${E(ML)}</b><span style="opacity:.8">Use “Save as PDF” in the print window.</span><span style="flex:1"></span><button onclick="window.print()">Print / Save PDF</button></div>
+    <div class="page"><table class="wrap"><thead><tr><td>${hdr}</td></tr></thead><tbody><tr><td>
+      <div class="cover"><h1>Monthly O&amp;M Report (${E(M)})</h1><div class="big">Qassim-2 1980 MW CCGT</div>${cover.filter(Boolean).map(u=>`<img src="${E(u)}" alt="">`).join('')}</div>
+      <div class="toc"><h2>Table of Contents</h2>${toc}</div>
+      ${body}
+    </td></tr></tbody></table></div></body></html>`;
+    w.document.open();w.document.write(await sbResolveHtml(html));w.document.close();
+  }catch(e){w.document.body.innerHTML='<p style="font:14px Arial;padding:30px;color:#B91C1C">'+(mrSetupMissing?'Run qas2_monthly_setup.sql first.':'Could not build the report: '+escapeHtml(e.message))+'</p>';}
+}
+
+// ───────── shift readings on the daily report ─────────
+async function drOpsLoad(){
+  const box=mrEl('dro-box');if(!box)return;
+  const d=document.getElementById('dr-date')?.value||drToday();
+  try{
+    if(!mrEquip.length)mrEquip=await sbFetch('qas2_equipment?select=*&order=sort_order.asc,code.asc')||[];
+    const r=((await sbFetch('qas2_ops_daily?report_date=eq.'+d+'&select=*'))||[])[0];
+    const sel=mrEl('dro-eq');if(sel)sel.innerHTML='<option value="">— equipment —</option>'+mrEquip.filter(e=>e.active!==false).map(e=>`<option>${escapeHtml(e.code)}</option>`).join('');
+    const info=mrEl('dro-info');
+    if(r){const p=r.power||{};const parts=[];if(r.fg_pressure!=null)parts.push('FG '+r.fg_pressure+' barg');if(r.fg_consumption!=null)parts.push(mrFmt(mrNum(r.fg_consumption),0)+' Sm³');MR_UNITS.forEach(u=>{if(p[u]!=null)parts.push(u+' '+p[u]+' MWh');});
+      const c=Object.entries(r.counters||{}).map(([k,v])=>k+' '+(v.s||0)+'/'+(v.t||0)+'/'+(v.h||0)+'h');
+      info.innerHTML='Already recorded for this day'+(r.updated_by?' by '+escapeHtml(r.updated_by):'')+': '+escapeHtml(parts.concat(c).join(' · ')||'—')+'. Values you enter below replace them.';}
+    else info.textContent='Nothing recorded for this day yet.';
+    box.dataset.ok='1';
+  }catch(e){box.dataset.ok='';const info=mrEl('dro-info');if(info)info.textContent='Operations readings are not set up yet (run qas2_monthly_setup.sql).';}
+}
+function drOpsAddRow(){
+  const sel=mrEl('dro-eq');const code=sel.value;if(!code)return;
+  if(document.querySelector(`#dro-rows tr[data-code="${CSS.escape(code)}"]`)){sel.value='';return;}
+  mrEl('dro-rows').insertAdjacentHTML('beforeend',`<tr data-code="${escapeHtml(code)}"><th>${escapeHtml(code)}</th><td><input type="number" min="0" step="1" data-x="s" placeholder="0"></td><td><input type="number" min="0" step="1" data-x="t" placeholder="0"></td><td><input type="number" min="0" step="any" data-x="h" placeholder="0"></td><td><button type="button" class="mr-x" onclick="this.closest('tr').remove()" aria-label="Remove">✕</button></td></tr>`);
+  sel.value='';
+}
+function drOpsCollect(){
+  const g=id=>mrNum(mrEl(id)?.value);
+  const o={fg_pressure:g('dro-fgp'),fg_flow:g('dro-fgf'),fg_consumption:g('dro-fgc'),power:{},counters:{}};
+  MR_UNITS.forEach(u=>{const n=g('dro-p-'+u);if(n!=null)o.power[u]=n;});
+  document.querySelectorAll('#dro-rows tr[data-code]').forEach(tr=>{const v={};tr.querySelectorAll('input').forEach(x=>{const n=mrNum(x.value);if(n!=null&&n!==0)v[x.dataset.x]=n;});o.counters[tr.dataset.code]=v;});
+  const rem=(mrEl('dro-rem')?.value||'').trim();if(rem)o.remarks=rem;
+  const any=o.fg_pressure!=null||o.fg_flow!=null||o.fg_consumption!=null||Object.keys(o.power).length||Object.keys(o.counters).length||rem;
+  return any?o:null;
+}
+async function drOpsSave(date){
+  const o=drOpsCollect();if(!o)return;
+  try{
+    const cur=((await sbFetch('qas2_ops_daily?report_date=eq.'+date+'&select=*'))||[])[0]||{};
+    const row={report_date:date,fg_pressure:o.fg_pressure??cur.fg_pressure??null,fg_flow:o.fg_flow??cur.fg_flow??null,fg_consumption:o.fg_consumption??cur.fg_consumption??null,
+      power:{...(cur.power||{}),...o.power},counters:{...(cur.counters||{}),...o.counters},remarks:o.remarks?((cur.remarks?cur.remarks+' | ':'')+o.remarks):(cur.remarks??null),updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
+    Object.keys(row.counters).forEach(k=>{if(!Object.keys(row.counters[k]||{}).length)delete row.counters[k];});
+    await sbUpsert('qas2_ops_daily',[row],'report_date');
+    ['dro-fgp','dro-fgf','dro-fgc','dro-rem',...MR_UNITS.map(u=>'dro-p-'+u)].forEach(id=>{const el=mrEl(id);if(el)el.value='';});mrEl('dro-rows').innerHTML='';
+    showToast('Operations readings saved ✓');
+  }catch(e){showToast('Report saved, but the operations readings were not: '+(/qas2_ops_daily|PGRST|42P01/.test(e.message)?'run qas2_monthly_setup.sql first.':e.message),'error');}
+}
+
+// ═════════ GROUPED NAVIGATION ═════════
+function navClose(){document.querySelectorAll('.nav-g .ng.open').forEach(g=>{g.classList.remove('open');g.querySelector('.ng-btn')?.setAttribute('aria-expanded','false');});}
+function navToggle(btn){
+  const g=btn.closest('.ng');const was=g.classList.contains('open');navClose();if(was)return;
+  g.classList.add('open');btn.setAttribute('aria-expanded','true');
+  const m=g.querySelector('.ng-menu');const r=btn.getBoundingClientRect();
+  m.style.top=(r.bottom)+'px';m.style.left=Math.max(8,Math.min(r.left,window.innerWidth-m.offsetWidth-8))+'px';
+}
+function navPick(tab,scrollId){navClose();switchTab(tab);if(scrollId)setTimeout(()=>document.getElementById(scrollId)?.scrollIntoView({behavior:'smooth',block:'start'}),400);}
+function navPickMR(page){navClose();mrGo(page);}
+function navSync(){
+  document.querySelectorAll('.nav-g .ng').forEach(g=>{
+    const items=[...g.querySelectorAll('.ng-item')];
+    const anyVisible=items.some(b=>b.style.display!=='none');
+    if(!g.classList.contains('sup-only')&&!g.classList.contains('admin-only'))g.style.display=anyVisible?'':'none';
+    let act=items.some(b=>b.classList.contains('active'));
+    if(g.dataset.g==='mr'){const on=getActiveTabState()==='monthly';act=on;g.querySelectorAll('[data-mr]').forEach(b=>b.classList.toggle('active',on&&b.dataset.mr===mrPage));}
+    g.querySelector('.ng-btn').classList.toggle('active',act);
+  });
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.nav-g .ng'))navClose();});
+window.addEventListener('resize',navClose);window.addEventListener('scroll',()=>{if(document.querySelector('.nav-g .ng.open'))navClose();},{passive:true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')navClose();});
+try{const p=localStorage.getItem('qas2_mr_page');if(p)mrPage=p;}catch(e){}
 
 // ── print / save builder ──
 const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];

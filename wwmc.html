@@ -321,6 +321,23 @@ img[src^="sbs:"]{opacity:0}
 .mr-next{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
 .mr-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.mr-pill{border:1px solid var(--border,#D6DCE5);background:#fff;border-radius:20px;padding:7px 14px;font:inherit;font-size:12.5px;font-weight:600;color:#374151;cursor:pointer}.mr-pill.on{background:var(--navy,#1F3864);color:#fff;border-color:var(--navy,#1F3864)}
 @media (max-width:760px){.mr-steps{overflow-x:auto}.mr-step{flex:none}.mr-step small{display:none}.mr-step-ln{width:8px}}
+.anx-drop{border:2px dashed #B9C7DA;border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:#F8FAFD;margin-bottom:14px;display:flex;flex-direction:column;gap:3px}.anx-drop b{color:#1F3864;font-size:14px}.anx-drop span{font-size:12px;color:#6B7280}.anx-drop.on,.anx-drop:hover{border-color:#2563EB;background:#EFF6FF}
+.anx-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.anx-card{background:var(--card,#fff);border:1px solid var(--border,#E3E8EF);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}.anx-gen{background:#F8FAFD}
+.anx-h{display:flex;gap:10px;align-items:center}.anx-h b{display:block;color:#1F3864;font-size:13.5px}.anx-h small{display:block;color:#4B5563;font-size:12px}
+.anx-n{flex:none;width:30px;height:30px;border-radius:8px;background:#08735F;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}.anx-gen .anx-n{background:#1F3864}
+.anx-file{font-size:12px;color:#1F2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.anx-when{font-size:11.5px;color:#6B7280}
+.anx-k{font-size:12.5px;color:#374151}.anx-k b{color:#1F3864}.anx-k .ok{color:#15803D;font-weight:700}.anx-k .on{color:#1D4ED8;font-weight:700}.anx-k .pe{color:#B45309;font-weight:700}
+.anx-b{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.anx-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}.anx-top b{display:block;color:#1F3864}.anx-top small{color:#6B7280;font-size:12px}
+.anx-filters .mr-pill i{font-style:normal;opacity:.65;margin-left:3px}.anx-fr{display:flex;gap:8px;align-items:center;margin:0 0 10px;flex-wrap:wrap}.anx-fr select,.anx-fr input{padding:7px 10px;border:1px solid var(--border,#D6DCE5);border-radius:8px;font:inherit;font-size:13px}.anx-fr input{min-width:220px}
+.anx-t{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}.anx-t th{background:#08735F!important;color:#fff!important;font-size:11.5px;padding:7px 8px;text-align:left;position:sticky;top:0;z-index:1}.anx-t td{border-bottom:1px solid #EEF1F5;padding:5px 8px;vertical-align:top}.anx-t tr:nth-child(even) td{background:#F7FAF9}
+.anx-c-title,.anx-c-topic,.anx-c-task{min-width:260px}.anx-c-rem,.anx-c-notes{min-width:180px}.anx-c-ver{min-width:160px}.anx-c-rev .anx-in{min-width:52px;width:56px}.anx-c-due,.anx-c-start,.anx-c-finish,.anx-c-done{min-width:130px}.anx-sh{white-space:nowrap;color:#6B7280;font-size:11.5px}
+.anx-in{width:100%;border:1px solid #D6DCE5;border-radius:6px;padding:5px 7px;font:inherit;font-size:12.5px;background:#fff;resize:vertical;min-width:90px}.anx-pct{width:70px;min-width:70px}
+.anx-st{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}.anx-st-ok{background:#ECFDF3;color:#15803D}.anx-st-on{background:#EFF6FF;color:#1D4ED8}.anx-st-pend{background:#FFFBEB;color:#B45309}.anx-st-x{background:#F3F4F6;color:#6B7280}
+select.anx-in.anx-st-ok{border-color:#86EFAC;background:#F0FDF4;color:#15803D;font-weight:700}select.anx-in.anx-st-on{border-color:#93C5FD;background:#EFF6FF;color:#1D4ED8;font-weight:700}select.anx-in.anx-st-pend{border-color:#FCD34D;background:#FFFBEB;color:#B45309;font-weight:700}
+.mr-anxl{margin-left:10px}
+@media (max-width:900px){.anx-grid{grid-template-columns:1fr 1fr}}@media (max-width:600px){.anx-grid{grid-template-columns:1fr}.anx-fr input{min-width:0;flex:1}}
 .dro summary{cursor:pointer;list-style:none}.dro summary::-webkit-details-marker{display:none}.dro summary::after{content:"▸";float:right;color:#9CA3AF}.dro[open] summary::after{content:"▾"}
 .dro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dro-p{grid-template-columns:repeat(5,minmax(0,1fr))}
 .dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
@@ -6203,7 +6220,7 @@ const MR_STEPS=[['ops','Daily data','Fuel, power & running hours'],['sections','
 const MR_GROUPS=[['report','Summary & Events'],['hse','HSE'],['hr','HR & Training'],['opsdata','Operations data'],['docs','SOPs, WIs & Manuals'],['maint','Maintenance'],['finance','Finance & Other']];
 let mrReg='staff',mrOpenGrp='report';
 function mrGo(page){
-  if(['staff','cr','equip'].includes(page)){mrReg=page;page='registers';}
+  if(['staff','cr','equip','annex'].includes(page)){mrReg=page;page='registers';}
   else if(MR_GROUPS.some(g=>g[0]===page)&&page!=='report'){mrOpenGrp=page;page='sections';}
   if(page)mrPage=page;
   try{localStorage.setItem('qas2_mr_page',mrPage);}catch(e){}
@@ -6306,7 +6323,8 @@ function mrRenderSections(){
     const list=MR_SECTIONS.filter(s=>s.g===g[0]);const [ok,n]=mrGroupStatus(g[0]);
     let inner;
     if(g[0]==='report')inner=['exec','ops_events'].map(k=>{const s=MR_BY[k];return `<div class="mr-card" data-sk="${k}"><div class="mr-sh"><span class="mr-no">${s.no}</span><b>${s.t}</b>${ro?'':`<button type="button" class="mr-link" onclick="${k==='exec'?'mrDraftExec()':'mrDraftEvents()'}">✨ Draft from daily reports</button>`}</div>${mrTextEditor(s)}</div>`;}).join('');
-    else inner=list.map(s=>mrSectionCard(s).replace('<div class="mr-card','<div data-sk="'+s.k+'" class="mr-card').replace('</b>','</b>'+mrNaBtn(s))).join('');
+    else inner=list.map(s=>{const ak=Object.keys(ANX).find(k=>ANX[k].sec===s.k);const al=ak&&!ro?`<button type="button" class="mr-link mr-anxl" onclick="mrAnxRefresh('${ak}')" title="Fill this table from the uploaded Annexure-${ANX[ak].n} Excel">⟳ From Annexure-${ANX[ak].n}</button>`:'';
+      return mrSectionCard(s).replace('<div class="mr-card','<div data-sk="'+s.k+'" class="mr-card').replace('</b>','</b>'+mrNaBtn(s)+al);}).join('');
     const done=n&&ok===n;
     return `<details class="mr-grp" data-g="${g[0]}" ${g[0]===mrOpenGrp?'open':''}><summary><span class="mr-gt">${escapeHtml(g[1])}</span><span class="mr-gc ${done?'done':''}">${done?'✓ ':''}${ok} / ${n}</span></summary><div class="mr-gb">${inner}</div></details>`;
   };
@@ -6326,9 +6344,336 @@ function mrRenderOpsStep(){
   mrEl('mr-body').insertAdjacentHTML('afterbegin','<div class="mr-help">Each shift fills these in the <b>Daily Report → Operations Readings</b>. Check for missing days and correct numbers here. Totals for the month are added automatically.</div>');
   mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><span></span><button class="btn primary" type="button" onclick="mrGoSafe('sections')">Next: Write sections →</button></div>`);
 }
+const ANX_TPL_PUNCH="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";
+const ANX_TPL_CR="UEsDBBQAAAAIABFpbF1Gx01IlQAAAM0AAAAQAAAAZG9jUHJvcHMvYXBwLnhtbE3PTQvCMAwG4L9SdreZih6kDkQ9ip68zy51hbYpbYT67+0EP255ecgboi6JIia2mEXxLuRtMzLHDUDWI/o+y8qhiqHke64x3YGMsRoPpB8eA8OibdeAhTEMOMzit7Dp1C5GZ3XPlkJ3sjpRJsPiWDQ6sScfq9wcChDneiU+ixNLOZcrBf+LU8sVU57mym/8ZAW/B7oXUEsDBBQAAAAIABFpbF1ab4Wm7gAAACsCAAARAAAAZG9jUHJvcHMvY29yZS54bWzNksFqwzAMhl9l+J7ITlgZJvWlo6cOBits7GZstTWLE2NrJH37OVmbMrYH2NHS70+fQI0J0vQRn2MfMJLDdDf6tkvShDU7EQUJkMwJvU5lTnS5eeij15Sf8QhBmw99RKg4X4FH0laThglYhIXIVGONNBE19fGCt2bBh8/YzjBrAFv02FECUQpgapoYzmPbwA0wwQijT98FtAtxrv6JnTvALskxuSU1DEM51HMu7yDg7Wn3Mq9buC6R7gzmX8lJOgdcs+vk13rzuN8yVfFqVQhRiGovuOQPsr5/n1x/+N2EfW/dwf1j46ugauDXXagvUEsDBBQAAAAIABFpbF2ZXJwjEAYAAJwnAAATAAAAeGwvdGhlbWUvdGhlbWUxLnhtbO1aW3PaOBR+76/QeGf2bQvGNoG2tBNzaXbbtJmE7U4fhRFYjWx5ZJGEf79HNhDLlg3tkk26mzwELOn7zkVH5+g4efPuLmLohoiU8nhg2S/b1ru3L97gVzIkEUEwGaev8MAKpUxetVppAMM4fckTEsPcgosIS3gUy9Zc4FsaLyPW6rTb3VaEaWyhGEdkYH1eLGhA0FRRWm9fILTlHzP4FctUjWWjARNXQSa5iLTy+WzF/NrePmXP6TodMoFuMBtYIH/Ob6fkTlqI4VTCxMBqZz9Wa8fR0kiAgsl9lAW6Sfaj0xUIMg07Op1YznZ89sTtn4zK2nQ0bRrg4/F4OLbL0otwHATgUbuewp30bL+kQQm0o2nQZNj22q6RpqqNU0/T933f65tonAqNW0/Ta3fd046Jxq3QeA2+8U+Hw66JxqvQdOtpJif9rmuk6RZoQkbj63oSFbXlQNMgAFhwdtbM0gOWXin6dZQa2R273UFc8FjuOYkR/sbFBNZp0hmWNEZynZAFDgA3xNFMUHyvQbaK4MKS0lyQ1s8ptVAaCJrIgfVHgiHF3K/99Ze7yaQzep19Os5rlH9pqwGn7bubz5P8c+jkn6eT101CznC8LAnx+yNbYYcnbjsTcjocZ0J8z/b2kaUlMs/v+QrrTjxnH1aWsF3Pz+SejHIju932WH32T0duI9epwLMi15RGJEWfyC265BE4tUkNMhM/CJ2GmGpQHAKkCTGWoYb4tMasEeATfbe+CMjfjYj3q2+aPVehWEnahPgQRhrinHPmc9Fs+welRtH2Vbzco5dYFQGXGN80qjUsxdZ4lcDxrZw8HRMSzZQLBkGGlyQmEqk5fk1IE/4rpdr+nNNA8JQvJPpKkY9psyOndCbN6DMawUavG3WHaNI8ev4F+Zw1ChyRGx0CZxuzRiGEabvwHq8kjpqtwhErQj5iGTYacrUWgbZxqYRgWhLG0XhO0rQR/FmsNZM+YMjszZF1ztaRDhGSXjdCPmLOi5ARvx6GOEqa7aJxWAT9nl7DScHogstm/bh+htUzbCyO90fUF0rkDyanP+kyNAejmlkJvYRWap+qhzQ+qB4yCgXxuR4+5Xp4CjeWxrxQroJ7Af/R2jfCq/iCwDl/Ln3Ppe+59D2h0rc3I31nwdOLW95GblvE+64x2tc0LihjV3LNyMdUr5Mp2DmfwOz9aD6e8e362SSEr5pZLSMWkEuBs0EkuPyLyvAqxAnoZFslCctU02U3ihKeQhtu6VP1SpXX5a+5KLg8W+Tpr6F0PizP+Txf57TNCzNDt3JL6raUvrUmOEr0scxwTh7LDDtnPJIdtnegHTX79l125COlMFOXQ7gaQr4Dbbqd3Do4npiRuQrTUpBvw/npxXga4jnZBLl9mFdt59jR0fvnwVGwo+88lh3HiPKiIe6hhpjPw0OHeXtfmGeVxlA0FG1srCQsRrdguNfxLBTgZGAtoAeDr1EC8lJVYDFbxgMrkKJ8TIxF6HDnl1xf49GS49umZbVuryl3GW0iUjnCaZgTZ6vK3mWxwVUdz1Vb8rC+aj20FU7P/lmtyJ8MEU4WCxJIY5QXpkqi8xlTvucrScRVOL9FM7YSlxi84+bHcU5TuBJ2tg8CMrm7Oal6ZTFnpvLfLQwJLFuIWRLiTV3t1eebnK56Inb6l3fBYPL9cMlHD+U751/0XUOufvbd4/pukztITJx5xREBdEUCI5UcBhYXMuRQ7pKQBhMBzZTJRPACgmSmHICY+gu98gy5KRXOrT45f0Usg4ZOXtIlEhSKsAwFIRdy4+/vk2p3jNf6LIFthFQyZNUXykOJwT0zckPYVCXzrtomC4Xb4lTNuxq+JmBLw3punS0n/9te1D20Fz1G86OZ4B6zh3OberjCRaz/WNYe+TLfOXDbOt4DXuYTLEOkfsF9ioqAEativrqvT/klnDu0e/GBIJv81tuk9t3gDHzUq1qlZCsRP0sHfB+SBmOMW/Q0X48UYq2msa3G2jEMeYBY8wyhZjjfh0WaGjPVi6w5jQpvQdVA5T/b1A1o9g00HJEFXjGZtjaj5E4KPNz+7w2wwsSO4e2LvwFQSwMEFAAAAAgAEWlsXWQ3+++eAwAACgsAABgAAAB4bC93b3Jrc2hlZXRzL3NoZWV0MS54bWyVVm2TmkgQ/isTLnW5q7oEFlZETq1CYJWq3dWIZisfZ3XQqQBDZsY1l1+fmQFZ4wExH0To7qefZ3reengk9AvbI8TBtyzN2Ujbc164us42e5RB9oEUKBeehNAMcvFJdzorKIJbBcpS3TQMW88gzrXxUNkWdDwkB57iHC0oYIcsg/S/CUrJcaTdaCfDEu/2XBr08bCAOxQjvi5EfIL5iiyEofLpdc4tzlDOMMkBRclIm5jubCAjVMAnjI7s7B2wPTlOKd7eCxliVIYG5EifCfki3dFWmkQ8StGGy5xQ/L0gH6XpSPOkzK+KxTsTIYHn7ye+O1Ubof0ZMuST9Alv+X6kORrYogQeUr4kxxmqxtuT+TYkZeoJjmWsqYHNgXGSVVghIMN5+Q+/VaU4i79xWgBmBTAvAbctAKsCWNcCbivA7bWAXgXoXQCslni7ircv4s22IvUrQP9SURvAqQDOlYoGVfzgyvgb4zRthlo95XSrtRJADsdDSo6AykkS6eTLRChlCi+WCM7l1ok5FV4scHz80Yvj6AGYwL/3ltFd5HuraP4IluHHdRivYhB48Wwy95bBUOeCToL0jfgJmprLqrksxWW2cUHGcCa5/OkKRIsF+POPG8f6Fzw9PfhgXiAK5X5hHVS9mqqnqKwWqtV85d0Dfwl8Lw7jnxMqvN+Nny/CxwZU0I1aPwbhUtTuUxQ+NaDDbrR/P4/DoAE3LXG3LbjJZxCvvNU67qibWPjyiLCM07KqD426oLYikQVOxv58/bjy/nonCrhEO8w4ou/evJ28tV3x6BmG8fdQT8bDF8Hycl7UMoetckzs96HdGBaUYf1XqujukiuUXKHi+kc7r6vWTB2WOZ2rc5bVbsk2LbMNWioec8gPrGGmZt04nxxy3jFL/Xoy+uWmNVQief291rjdFbS7wnbXtHK1nRBRHK8bl+WsAprX1nza/1+1fxq+cxr+1OmW9It9NnN+V5jTLWxQCxt0C2vdwrPB70oatEjSz876DNGd6isY2MilVW692lo2M4HtBur6urDLJsdssIe2GzbF+7brN+ax3JnVZLfdiYrXX2WW/dgDpDucM5CiREg2PvTF+UbL46j84KRQN9Yz4eKoUq970RYiKgOEPyGEnz5ee7xDAQjFKOfqFhlpKcy3bAMLpIFCPGmMv6Pqot1SeMT5ruxLXXpNZ0qSBG9QQDYH0SrysjWlKC1vrD0umBiDi0XvR6Nt2djV7e/4B1BLAwQUAAAACAARaWxdMNNpVCcBAADBAgAAGAAAAHhsL2RyYXdpbmdzL2RyYXdpbmcxLnhtbJ2STW7DIBCFr4I4QHHSqkotjFTFatVNmyuMMAQkfqyBJO7tC7YXSbupsuI9HvMBA/ySeiSTdyF11OQ8towlaZSH9BBHFUqiI3rIxeKRDQgXG47esW3TPLM0ooIhGaVyvyRU8BjUXjn3GqSJKLjG6AWX0YkNZ3Wo+ktr0cy2Ko7xIl44q0PVa7oqzhaEmjKRU0efHsveTUOJ/O7odrebDRP8iDAaK98QvBI8nN+v/KEcRH6eD0js0NENJaFMdnRvADPZ1OqS3haUOfYXMmn0JYF23W1pXQt3NM+DDfQK1UMGckJ7B0rWexSWbGe1HkreTVoB+B9A1NpK1Ud58irkhYLKQbYxJGPHRAm2tev4McydZjc3vvZF3z6idLYw67Ja9+tjsfp1xQ9QSwMEFAAAAAgAEWlsXY7R6TmLAAAA7QAAACMAAAB4bC9kcmF3aW5ncy9fcmVscy9kcmF3aW5nMS54bWwucmVsc43POwrDMBAE0KuIPYDXTpEiyK7SuA2+wCKvLRHrg7QB5/YRJIUDKVLODDwYfeONxMVQrEtF7X4LpQcrki6IxVj2VJqYONRlidmT1JhXTGTutDKe2vaM+WjAoI+mmp6J/xHjsjjD12genoP8gNFYygJqoryy9ID79q4+S9dUEdQ495DHuQMcNH69G15QSwMEFAAAAAgAEWlsXXf3IoWNAAAA8wAAACMAAAB4bC93b3Jrc2hlZXRzL19yZWxzL3NoZWV0MS54bWwucmVsc43POwrDMBAE0KuIPYDXTpEiyK7SuA2+wCKvPsT6IMnEuX3cJDiQIuXMwIORN16ouhiKdamIzS+h9GBrTRfEoix7Kk1MHPZFx+yp7jEbTKTuZBhPbXvGfDRgkEdTTM/E/4hRa6f4GtXqOdQfMM6ZHi4YEBNlw7UH3JZ3+Vm7ZndBjHMPeZw7wEHi18fhBVBLAwQUAAAACAARaWxdEUeyzBsEAAAvDgAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQyLnhtbJVXXXOiShD9K1Pcqvu2QRCV5KpVLhpDVTQGdK19nMio7ALDZcaY7K/fHpj4gYMkDzEw9OnT3acHprt7mv1mW0I4eoujhPW0Lefpna6z1ZbEmN3QlCTwZE2zGHO4zTY6SzOCgxwUR7rZaLT1GIeJ1u/ma7Os36U7HoUJmWWI7eIYZ+/fSUT3Pc3QPha8cLPlYkHvd1O8IT7hixTs1yGf0xksyGf6wWcQxiRhIU1QRtY9bWDcubawyA1+hGTPTq4R29L9OAuDRwgDsmpoSGT6Qulv8dgNxJJgTgh699MohFhaGuI0fSRr7pAoAoa2hvCKh69kBmY97YVyTmPxHLLgmMPSOqN/SJJHQSICthBdemFcOJFORQn+lxkcExRBnV5/5HKf1x3q8oIZcWi0DAO+7Wm2hgKyxruIe3T/QGQtW8LfikYs/0X7whayWO0YBCOxEEAcJsV//CbLfGJvNioApgSYJYDRrAA0JaBZArSqQrIkwPosQ0sCWiWAZVUA2hLQ/ixDRwI6ZUBVlWwJsEuAZhXgVgJu824o5Mu1H2KO+92M7lGWWwuNm4fEDqpDG6+ERd5ZRSawHCZiA/o8g8cheOT954HvuxNkotF07E5HI8+djpHzOPDce9cZzN2nKfJGz4uRP/e7OodQBExfwR+EcIjDPNCZBZ1VRYcZC2Ogc5zxHLmzGfr3H8Nu/oeWy4mDnlKSYbFd2BUuq8j52JCXOVtFEK2KIPzFZDLwfl7haMm6XuFoFRztCo4pvTn3n6O+16AcD6mBTg3QZWxHEPQGUYCHNWB/9/ILXlNIRx6JwEWA/HfGSaxwNapzBW/AHVMA72uAg/w1qQCO60oWUQYRV6T+UIMe4ncm2k7F7NZgPfgUwmfyShu1Zasa1W3ULjg6OYf4Wr72ja7+etozZyaXYSyfx/OB+c3xvhmNhqHqHenAPuGw2qZpnfMMpdltlbQ4TiMCX+q8WVS9UTgQG1Pdo76/GA1VvVHDvEgCkqEgZFBEVtElyhybjcZ5jg+qcpeN3Jpw3q4o3qlXvFNUyTgJwSwpfmZSo7ipUlw6MM8Vb96WFJdmVd+GQnGV0hJY9ZZ3Hp98tdI1jG8qaZXJXEqrqGu7tJXcr9GfKWvXK2tfNlezpKz9hb3cVClrK/ey1S4pa39mL6uULYBm1adzMR2OPDgR/HBHS5W+NbxKfZUpXeqrqK5V3rlfoy/01U+OVXjH6X0YcXjdFIfxlhwnYpJt8rM6Qyu6S8TZQDtZPQ4fxpm1XLfuXEu1bt65+bFZP7ov5p4JzjZhwlAEkwLMJDfQsFnRbfk1DCTiCrZfMVDImy0MYCQTNyDfmlL+cXOcpnYpollIEp4fs3pahJOArXBKNJhQ4PTlh39IfvjMJ66PFm/I+8MZVcR8mBH7fwFQSwMEFAAAAAgAEWlsXV3XP/rjAQAA4wYAABQAAAB4bC9jaGFydHMvY2hhcnQxLnhtbM1VTW/bMAz9K6lRoLcpSZHmA66BxMEWYMVmJEDvtCXbQmXJoJQ23q+fJNut23WXrQh6IWGS75GPsKQwKwHNoYaMjU6VkPo2KI2pV4TorGQV6C+qZtJmcoUVGPuJBaEIT1wWlSDT8fiGeIogCr2PQsONYNadohB5VkYhrFJFmwTbBiv4hxYVcBkQR1X/L4snSdA5yvJ9gpaWPIe8MVG8H2WgmR6lzUgbMEftaoyvxLbe2lYecUpJp7oWyqyRQRRSdSxKeTRxu5VHwCZWQqEePYK4DSZOjmaWjNNTGxq7kELKcPDtyLXBPcujMI+utqDLVAHSq4vdTUhskPRZP4fudAj5IXtCbVzHdh6tBKdBuy4hXWffjCbmrYh+Co/4yoX4iGE0Fmksut1sl4vpdNMN89zmzMqJl/5a/+Q8+q838+128Qn1T8+jfzJbLubXn0J/BtbIY/XOEb38djlfWbNsT2pfRDzEMv8Vt3O43R84DyH+1qB3qdB206V6umMFk/Q7a4Yn0MbvQQz/SRuJwfyAir2pOzB8J5owzJg0gyjpeubcLucgeMbWshjkSyXYgf/qiGazFvP6GiQvF6TwY/c+Ud3FiB7WJ135Pdc/pWgGWijX9UaAfNDrDlVA7XHdG0RenrXoN1BLAwQUAAAACAARaWxdkFj7ljoEAAA6JQAADQAAAHhsL3N0eWxlcy54bWzdWm2PozYQ/iuI71cCBAJVEmk3WaRKbXXS7Yd+JcEklsxLjbNN7tfXg0lwNsxdtmEVUqIV2ON55vG8GDA7rcSBkW9bQoSxz1hezcytEOWvllWttySLq1+KkuRSkhY8i4Vs8o1VlZzESQVKGbOc0ci3spjm5nya77IoE5WxLna5mJn2qctQp98S2emPTUPBLYqEzMwk+ZJl2ZeDPExrPrUakPk0LXINa2KqHgkZZ8R4i9nMXMSMrjgFtTTOKDuobgc61gUruCHkLAgwkT3VdyW2VQsm2OBkNC94bVxZeG/nidOYgXzVILQG+GY1M0ejUTBxvejMin8N4BmIH0yeJp4OEvRMKrwJL6qPD+OdYYwdzx1H/c3xklPfPrOvAvxJIG9zfN94l5N0nJsAl2HgOM89ArrPk+Uy6BHQ9kI56R4BOxJldBPgZWX0UV06Rn2ChZUy1i6sI1P1zKdlLATheSQbtVLdeSEymuvXQylX1g2PD7bjmVcrVAWjCZjcLHTmL17kvLzUMJrqjaBtjHoEbVecHkHbAuqTqRP5kdczaFtIPYK25d7n9CfRUxSioPVJVsOq4Anhp3oIzGPXfMpIKqQ6p5stnEVRQgEXQhSZvEhovCnyuK6Vo4auadQPVzNTbOuHo/MF01u+LFW8YWhj40qNemxN50oFOfLI+0oNNfgxJnYXjncxes8QDjL/h0rngyHqot5cyAVqTRj7Bnh/pWevVvtUe60awUtVfrqUS1tzqWBUA/B1NIWtwTr+f8I1SvpWiOednE1et//eFYJ85SSl+7q9T08EMPTJp6IHn4oetuihju6YRlyW7PDE6CbPiArc1Qbn0/ioZ2wLTr9La/BIt5YdhJvGG+GCrrUeCO8+xWna4/69YGvwI8QN4wG4QedpPwhP50F4ugPmqaW/lv2uTtMeFk1smZ30slTZHgI/MC/Y/oPwxJfUIdF07kHzZ6S0dcP5HFIXfjJonjSAD7JcGP/wuHwl+6s4a8U9HlrRNBv/wyd6N3/Cq8etGaAtm95jONYfGk0sUQdH9G7+7DlRJwN2rEYzGABNq3lh13YFzvYETr0GfCqYmX/Ch1bWGjZWO8oEzZvWlibydnixNSDhRbxi5Bxfjk9IGu+YeD0JZ2Z7/QdJ6C4LT6O+gjOaUe3177Bboj6O1tsi0hbck/ckWTRNvlmd7+LXByi8l7Rb8ZcSTEfJuiUgw+xgDDAdpYXZ+T/NJ0Dno2QYt6BTEqA6AaqjtLoki/qH2enWCeXRPdMwdF3fxzy6WHQyWGB+833460bDuIEGZgcsfczXeLTxDPlxHmAx/VGGYDPFMxGbKe5rkHT7DTTCsDvamB3QwKKA5Q7Y77YDOdWt47oQVYwbVsG4JAwxCeRid476PuIdH37d8cGqxHXDsFsCsm4GrotJoBpxCcYAOGASV33XfHc/so73Kav9b6n5v1BLAwQUAAAACAARaWxdl4q7HMAAAAATAgAACwAAAF9yZWxzLy5yZWxznZK5bsMwDEB/xdCeMAfQIYgzZfEWBPkBVqIP2BIFikWdv6/apXGQCxl5PTwS3B5pQO04pLaLqRj9EFJpWtW4AUi2JY9pzpFCrtQsHjWH0kBE22NDsFosPkAuGWa3vWQWp3OkV4hc152lPdsvT0FvgK86THFCaUhLMw7wzdJ/MvfzDDVF5UojlVsaeNPl/nbgSdGhIlgWmkXJ06IdpX8dx/aQ0+mvYyK0elvo+XFoVAqO3GMljHFitP41gskP7H4AUEsDBBQAAAAIABFpbF3CApqtlgEAAIkDAAAPAAAAeGwvd29ya2Jvb2sueG1stZNRa9swEMe/iicCfavTsJQtxIHRsC0wtpCWvgbZOsdHJZ2RLk3XT7+TPW9uy0pf9iTdnfy7//0lL08U7kqiu+zBWR8L1TC3izyPVQNOx3NqwUulpuA0SxgOeWwDaBMbAHY2n02nl7nT6NVqObC2IR8HxFAxkpdkStwinOLfegqze4xYokX+Wahub0FlDj06fARTqKnKYkOnrxTwkTxre10FsrZQF33hFgJj9SJ9nUTe6DJ2GdblTouQQl1OBVhjiNyd6PhaNN6DHO6jI9NntAxhrRm+BDq26A8JI1PkozE6H4a1N3ER3mIj1TVWsKbq6MBz72MAmwT62GAbVea1g0KtdWxK0sGkmaTJxvTzsQgbuRUWKIWwMZ3E/yfnapft4IBRrBkJmr0iaNZ5NhhloEYP5rvAnka/+fsH6935/o/5utRRaJbS9Y7mb9AY8Gm7OhtpOns3+TSZLyabyYdlPqL/u9U2oOf9DbKF+LLPc7ig58/A+dOR5PtqG7K0dIjZ+/nFR3luR2uvJPfDfyNthpc0/AWrX1BLAwQUAAAACAARaWxdjfcsWrQAAACJAgAAGgAAAHhsL19yZWxzL3dvcmtib29rLnhtbC5yZWxzxZJNCoMwEEavEnKAjtrSRVFX3bgtXiDo+IPRhMyU6u1rdaGBLrqRrsI3Ie97MIkfqBW3ZqCmtSTGXg+UyIbZ3gCoaLBXdDIWh/mmMq5XPEdXg1VFp2qEKAiu4PYMmcZ7psgni78QTVW1Bd5N8exx4C9geBnXUYPIUuTK1ciJhFFvY4LlCE8zWYqsTKTLylDCv4UiTyg6UIh40kibzZq9+vOB9Ty/xa19ievQ38nl4wDez0vfUEsDBBQAAAAIABFpbF0amFKpOQEAAEsFAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbMWUuW7DMAyGX8XwGsRKM3Qokixt1zZDX0CV6FiwLojM9faljwRokboJHKCLaZnk//GAtfg4RsDs4KzHZV4RxSchUFXgJBYhgmdPGZKTxMe0EVGqWm5AzGezR6GCJ/A0pUYjXy1eoJRbS9nrgT+jCX6ZJ7CYZ89dYMNa5jJGa5Qk9oud1z8o055QcGYbg5WJOOGAXFwkNJ7fAX3e+w5SMhqytUz0Jh1HiYMVSEcLWAxLXKgxlKVRoIPaOk4pMCaQGisAcrboRCfDZOIJQ/d8GM1vZYaAHLlOISJvLMHtuNNKmuxpZCFIZIZbPBNZenR/0Gxbg76SzePdh1S3+0DRmvEz/r7js/4fdegk98Zv8PQyvo5e6Mb+5//Uv6r4iJ25W+/MbwWvmMFnCPW9f+/GFk4af+KL9g5dfQFQSwECFAMUAAAACAARaWxdRsdNSJUAAADNAAAAEAAAAAAAAAAAAAAAgAEAAAAAZG9jUHJvcHMvYXBwLnhtbFBLAQIUAxQAAAAIABFpbF1ab4Wm7gAAACsCAAARAAAAAAAAAAAAAACAAcMAAABkb2NQcm9wcy9jb3JlLnhtbFBLAQIUAxQAAAAIABFpbF2ZXJwjEAYAAJwnAAATAAAAAAAAAAAAAACAAeABAAB4bC90aGVtZS90aGVtZTEueG1sUEsBAhQDFAAAAAgAEWlsXWQ3+++eAwAACgsAABgAAAAAAAAAAAAAAICBIQgAAHhsL3dvcmtzaGVldHMvc2hlZXQxLnhtbFBLAQIUAxQAAAAIABFpbF0w02lUJwEAAMECAAAYAAAAAAAAAAAAAACAAfULAAB4bC9kcmF3aW5ncy9kcmF3aW5nMS54bWxQSwECFAMUAAAACAARaWxdjtHpOYsAAADtAAAAIwAAAAAAAAAAAAAAgAFSDQAAeGwvZHJhd2luZ3MvX3JlbHMvZHJhd2luZzEueG1sLnJlbHNQSwECFAMUAAAACAARaWxdd/cihY0AAADzAAAAIwAAAAAAAAAAAAAAgAEeDgAAeGwvd29ya3NoZWV0cy9fcmVscy9zaGVldDEueG1sLnJlbHNQSwECFAMUAAAACAARaWxdEUeyzBsEAAAvDgAAGAAAAAAAAAAAAAAAgIHsDgAAeGwvd29ya3NoZWV0cy9zaGVldDIueG1sUEsBAhQDFAAAAAgAEWlsXV3XP/rjAQAA4wYAABQAAAAAAAAAAAAAAIABPRMAAHhsL2NoYXJ0cy9jaGFydDEueG1sUEsBAhQDFAAAAAgAEWlsXZBY+5Y6BAAAOiUAAA0AAAAAAAAAAAAAAIABUhUAAHhsL3N0eWxlcy54bWxQSwECFAMUAAAACAARaWxdl4q7HMAAAAATAgAACwAAAAAAAAAAAAAAgAG3GQAAX3JlbHMvLnJlbHNQSwECFAMUAAAACAARaWxdwgKarZYBAACJAwAADwAAAAAAAAAAAAAAgAGgGgAAeGwvd29ya2Jvb2sueG1sUEsBAhQDFAAAAAgAEWlsXY33LFq0AAAAiQIAABoAAAAAAAAAAAAAAIABYxwAAHhsL19yZWxzL3dvcmtib29rLnhtbC5yZWxzUEsBAhQDFAAAAAgAEWlsXRqYUqk5AQAASwUAABMAAAAAAAAAAAAAAIABTx0AAFtDb250ZW50X1R5cGVzXS54bWxQSwUGAAAAAA4ADgCuAwAAuR4AAAAA";
+
+// ═════════ EXCEL ANNEXURES (upload → site → download in the same design) ═════════
+// Reading and writing works directly on the .xlsx (a ZIP of XML files): only the cells that changed are
+// rewritten, so dashboards, charts, formulas, colours and print settings in the original file stay as they are.
+const XL_ENT={amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"};
+function xlUnesc(s){return String(s).replace(/&(#x[0-9a-f]+|#\d+|\w+);/gi,(m,e)=>e[0]==='#'?String.fromCodePoint(e[1].toLowerCase()==='x'?parseInt(e.slice(2),16):+e.slice(1)):(XL_ENT[e]??m));}
+function xlEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');}
+function xlColNum(c){let n=0;for(const ch of c)n=n*26+ch.charCodeAt(0)-64;return n;}
+function xlColName(n){let s='';while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=(n-m-1)/26;}return s;}
+function xlSerialToIso(v){const n=+v;if(v===''||v==null||!isFinite(n)||n<20000||n>80000)return '';return new Date(Date.UTC(1899,11,30)+Math.round(n)*86400000).toISOString().slice(0,10);}
+function xlIsoToSerial(s){const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(s||'');return m?(Date.UTC(+m[1],+m[2]-1,+m[3])-Date.UTC(1899,11,30))/86400000:null;}
+async function xlOpen(buf){
+  const JSZip=await smLoadZip();const z=await JSZip.loadAsync(buf);
+  const ssf=z.file('xl/sharedStrings.xml');const ssx=ssf?await ssf.async('string'):'';
+  const ss=[...ssx.matchAll(/<si>([\s\S]*?)<\/si>/g)].map(m=>xlUnesc([...m[1].replace(/<rPh[\s\S]*?<\/rPh>/g,'').matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(x=>x[1]).join('')));
+  const wbx=await z.file('xl/workbook.xml').async('string');const relx=await z.file('xl/_rels/workbook.xml.rels').async('string');
+  const rels={};for(const m of relx.matchAll(/<Relationship\b([^>]*?)\/?>/g)){const a={};for(const x of m[1].matchAll(/([\w:]+)="([^"]*)"/g))a[x[1]]=x[2];rels[a.Id]=a.Target;}
+  const sheets=[];for(const m of wbx.matchAll(/<sheet\b([^>]*?)\/?>/g)){const a={};for(const x of m[1].matchAll(/([\w:]+)="([^"]*)"/g))a[x[1]]=x[2];let t=(rels[a['r:id']]||'').replace(/^\//,'');if(!t.startsWith('xl/'))t='xl/'+t;sheets.push({name:xlUnesc(a.name||''),path:t});}
+  return {z,ss,sheets,wbx,xml:{},dirty:new Set()};
+}
+async function xlSheet(bk,name){const s=bk.sheets.find(x=>x.name===name);if(!s)return null;if(bk.xml[s.path]==null){const f=bk.z.file(s.path);bk.xml[s.path]=f?await f.async('string'):'';}return s;}
+function xlCells(bk,xml){
+  const out=new Map();
+  for(const m of xml.matchAll(/<c r="([A-Z]+)(\d+)"([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)){
+    const [,col,row,attr,inner]=m;const t=(/\bt="(\w+)"/.exec(attr)||[])[1];const s=(/\bs="(\d+)"/.exec(attr)||[])[1];let v=null,f=null;
+    if(inner){const vv=/<v>([\s\S]*?)<\/v>/.exec(inner);if(vv)v=xlUnesc(vv[1]);if(/<f[\s>\/]/.test(inner))f=1;
+      if(t==='s'&&v!=null)v=bk.ss[+v]??'';else if(t==='inlineStr')v=xlUnesc([...inner.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(x=>x[1]).join(''));}
+    out.set(col+row,{col,row:+row,v,f,s,t});}
+  return out;
+}
+// write one cell (never over a formula). val: string | number | null.  opt.s = style id to use
+function xlSetCell(xml,ref,val,opt){
+  opt=opt||{};const [,col,row]=/^([A-Z]+)(\d+)$/.exec(ref);
+  const mk=a=>{a=(a||'').replace(/\s*\bt="\w+"/,'');if(opt.s!=null)a=/\bs="/.test(a)?a.replace(/\bs="\d+"/,'s="'+opt.s+'"'):a+' s="'+opt.s+'"';
+    if(val==null||val==='')return `<c r="${ref}"${a}/>`;if(typeof val==='number')return `<c r="${ref}"${a}><v>${val}</v></c>`;
+    return `<c r="${ref}"${a} t="inlineStr"><is><t xml:space="preserve">${xlEsc(val)}</t></is></c>`;};
+  const m=new RegExp('<c r="'+ref+'"([^>]*?)(?:\\/>|>([\\s\\S]*?)<\\/c>)').exec(xml);
+  if(m){if(m[2]&&/<f[\s>\/]/.test(m[2]))return xml;return xml.slice(0,m.index)+mk(m[1])+xml.slice(m.index+m[0].length);}
+  const rm=new RegExp('<row r="'+row+'"([^>]*?)(\\/>|>([\\s\\S]*?)<\\/row>)').exec(xml);const cell=mk(opt.s0!=null?' s="'+opt.s0+'"':'');
+  if(!rm){const re=/<row r="(\d+)"/g;let at=-1,mm;while((mm=re.exec(xml))){if(+mm[1]>+row){at=mm.index;break;}}
+    const nr=`<row r="${row}">${cell}</row>`;if(at<0){const e=xml.indexOf('</sheetData>');return e<0?xml:xml.slice(0,e)+nr+xml.slice(e);}return xml.slice(0,at)+nr+xml.slice(at);}
+  if(rm[2]==='/>')return xml.slice(0,rm.index)+`<row r="${row}"${rm[1]}>${cell}</row>`+xml.slice(rm.index+rm[0].length);
+  const inner=rm[3];const cn=xlColNum(col);let pos=inner.length;for(const cm of inner.matchAll(/<c r="([A-Z]+)\d+"/g)){if(xlColNum(cm[1])>cn){pos=cm.index;break;}}
+  return xml.slice(0,rm.index)+`<row r="${row}"${rm[1]}>${inner.slice(0,pos)+cell+inner.slice(pos)}</row>`+xml.slice(rm.index+rm[0].length);
+}
+// keep a formula, store its value so the file shows correct numbers even before Excel recalculates
+function xlSetCached(xml,ref,val){
+  const m=new RegExp('<c r="'+ref+'"([^>]*?)>([\\s\\S]*?)<\\/c>').exec(xml);if(!m||!/<f[\s>\/]/.test(m[2]))return xml;
+  let a=m[1].replace(/\s*\bt="\w+"/,'');const f=(/<f[\s\S]*?(?:<\/f>|\/>)/.exec(m[2])||[''])[0];
+  const v=typeof val==='number'?`<v>${val}</v>`:val==null||val===''?'':`<v>${xlEsc(val)}</v>`;if(typeof val==='string'&&val!=='')a+=' t="str"';
+  return xml.slice(0,m.index)+`<c r="${ref}"${a}>${f}${v}</c>`+xml.slice(m.index+m[0].length);
+}
+async function xlSave(bk){
+  for(const p of bk.dirty)bk.z.file(p,bk.xml[p]);
+  let w=bk.wbx;if(/<calcPr\b/.test(w))w=w.replace(/<calcPr\b([^>]*?)(\/?)>/,(m,a,c)=>'<calcPr'+a.replace(/\s*fullCalcOnLoad="\w+"/,'')+' fullCalcOnLoad="1"'+c+'>');
+  else w=w.replace(/(<extLst>|<\/workbook>)/,'<calcPr fullCalcOnLoad="1"/>$1');
+  bk.z.file('xl/workbook.xml',w);
+  return await bk.z.generateAsync({type:'blob',compression:'DEFLATE',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function xlDownload(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);}
+function anxD(d){if(!d)return '';const x=new Date(String(d).slice(0,10)+'T00:00:00');return isNaN(x)?String(d):x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function anxNorm(s){return String(s||'').toLowerCase().replace(/&amp;/g,'&').replace(/[^a-z0-9%&]+/g,' ').trim();}
+
+// ── the four annexures that come from Excel
+const ANX={
+  training:{n:1,title:'PPA ICOD Training Status',short:'Training',sec:'hr_training',
+    sheetRe:/^Q2 Appendix/i,key:'topic',
+    fields:[['no',/^(sr )?no$/,'Sr.'],['disc',/^discipline$/,'Discipline'],['phase',/^phase$/,'Phase'],['type',/^training type$/,'Type'],['topic',/^training topic$/,'Training topic'],['days',/^day/,'Days'],['part',/^participants?$/,'Participants'],
+      ['start',/^start/,'Start','date'],['finish',/^finish/,'Finish','date'],['status',/^status$/,'Status','choice'],['prog',/^progress/,'Progress','pct'],['done',/^completion date$/,'Completed on','date'],['notes',/^notes?$/,'Notes','text'],['owner',/^owner$/,'Owner','text'],['flag',/^schedule flag$/,'Flag']],
+    edit:['start','finish','status','prog','done','notes','owner'],choices:['Pending','In Progress','Completed','TBD','Cancelled'],
+    show:['no','disc','phase','topic','days','start','finish','status','prog','done','notes'],
+    stat:r=>/^complet/i.test(r.v.status)?'ok':/progress/i.test(r.v.status)?'on':/cancel/i.test(r.v.status)?'x':'pend'},
+  sop:{n:2,title:'Operations SOPs Status',short:'SOPs',sec:'doc_sop',
+    sheetRe:/(SOP|HSSE) Register/i,key:'title',
+    fields:[['no',/^no$/,'No.'],['pkg',/^package$/,'Package'],['cat',/^category$/,'Category'],['title',/(sop title|procedure)$/,'Title'],['status',/^status$/,'Status','choice'],['ver',/^verification$/,'Verification','text'],['phase',/phase$/,'Phase'],['rem',/^remarks?$/,'Remarks','text']],
+    edit:['status','ver','rem'],choices:['COMPLETE','ONGOING'],show:['no','pkg','cat','title','status','ver','rem'],
+    stat:r=>/^complete/i.test(r.v.status)?'ok':'on'},
+  wi:{n:3,title:'Maintenance WIs Status',short:'WIs',sec:'doc_wi',
+    sheetRe:/^(I&C|Mechanical|Electrical)$/i,key:'title',
+    fields:[['id',/^id$/,'ID'],['type',/^document type$/,'Type'],['title',/^procedure/,'Procedure / Work instruction'],['status',/^status$/,'Status','choice'],['phase',/^phase$/,'Phase','choice'],['due',/^due date$/,'Due','date'],['ver',/^verification$/,'Verification','text'],['rev',/^revision$/,'Rev.','text'],['rem',/^remarks?$/,'Remarks','text']],
+    edit:['status','phase','due','ver','rev','rem'],choices:['Pending','Done','Approved'],phaseChoices:['ICOD','PCOD'],show:['id','type','title','status','phase','due','ver','rev','rem'],
+    stat:r=>/^approved/i.test(r.v.status)?'ok':/^done/i.test(r.v.status)?'ok':'pend'},
+  pm:{n:5,title:'PM Plans Running Systems',short:'PM plans',sec:'mt_pm',
+    sheetRe:/^\d+\s+\S/,key:'task',
+    fields:[['pm',/^pm no/,'PM No.'],['equip',/^(equipment type|sub system)$/,'Equipment'],['task',/^task description$/,'Task'],['disc',/^discipline$/,'Discipline'],['meter',/^meter interval/,'Meter (h)'],['time',/^time interval$/,'Interval'],['ql',/^qual/,'Qual.'],['applies',/^(applies to|applicability)/,'Applies to'],['units',/^no of units$/,'Units']],
+    edit:[],show:['pm','equip','task','disc','meter','time'],stat:()=>'',titleRow:true},
+};
+const ANX_GEN={punch:{n:4,title:'Punch List Register',short:'Punch List'},cr:{n:6,title:'Clarification Cases',short:'CR Cases'}};
+let anxData={},anxView=null,anxFilter={sh:'',st:'',q:''},anxDirty=new Set(),anxBusy=false;
+function anxDetect(bk){const names=bk.sheets.map(s=>s.name);for(const [k,d] of Object.entries(ANX)){const hit=names.filter(n=>d.sheetRe.test(n));if(k==='pm'?hit.length>=2:hit.length)return k;}return null;}
+async function anxParse(bk,kind){
+  const d=ANX[kind];const rows=[],sheets=[];
+  for(const sh of bk.sheets.filter(s=>d.sheetRe.test(s.name))){
+    await xlSheet(bk,sh.name);const cells=xlCells(bk,bk.xml[sh.path]);
+    let hdr=0,map={};
+    for(let r=1;r<=12&&!hdr;r++){const m={};for(const [ref,c] of cells){if(c.row!==r||c.v==null)continue;const lab=anxNorm(c.v);const fd=d.fields.find(f=>f[1].test(lab)&&!Object.values(m).includes(f[0]));if(fd&&!m[c.col])m[c.col]=fd[0];}
+      if(Object.values(m).includes(d.key)&&Object.keys(m).length>=4){hdr=r;map=m;}}
+    if(!hdr)continue;
+    const title=d.titleRow?String((cells.get('A1')||{}).v||sh.name).replace(/\s*[–-]\s*Preventive Maintenance Plan\s*$/i,''):sh.name;
+    sheets.push({name:sh.name,title,cols:map});
+    const keyCol=Object.keys(map).find(c=>map[c]===d.key);const maxR=Math.max(0,...[...cells.values()].map(c=>c.row));
+    for(let r=hdr+1;r<=maxR;r++){const kc=cells.get(keyCol+r);if(!kc||kc.v==null||String(kc.v).trim()==='')continue;
+      const v={};for(const [col,f] of Object.entries(map)){const c=cells.get(col+r);let x=c?c.v:null;const ft=(d.fields.find(z=>z[0]===f)||[])[3];
+        if(ft==='date')x=xlSerialToIso(x)||(x==null?'':String(x));else if(ft==='pct')x=x==null||x===''?'':Math.round(+x*100);else x=x==null?'':String(x).trim();v[f]=x;}
+      rows.push({sh:sh.name,r,v});}
+  }
+  return {rows,sheets};
+}
+function anxCounts(kind,rows){
+  const d=ANX[kind];const c={total:rows.length,ok:0,on:0,pend:0,x:0};rows.forEach(r=>{const s=d.stat(r);if(s)c[s]=(c[s]||0)+1;});return c;
+}
+async function anxLoad(){
+  try{const rows=await sbFetch('qas2_mr_annex?select=*')||[];anxData={};rows.forEach(r=>anxData[r.kind]=r);return true;}
+  catch(e){anxData={};anxData._err=/qas2_mr_annex|404|PGRST/.test(e.message)?'setup':e.message;return false;}
+}
+// ── report summaries built from the annexures (merged into the month's report data)
+function anxSummaries(kind,rows,cur){
+  const d=ANX[kind];const old=Array.isArray(cur)?cur:null;const n=x=>String(x);
+  if(kind==='wi'){
+    const base=old&&old.length?old.map(x=>({...x})):[{item:'Mechanical'},{item:'Electrical'},{item:'I&C'}];
+    base.forEach(row=>{const rs=rows.filter(r=>anxNorm(r.sh)===anxNorm(row.item));if(!rs.length)return;
+      const ap=rs.filter(r=>/^approved/i.test(r.v.status)).length,dn=rs.filter(r=>/^done/i.test(r.v.status)).length;row.prog=n(rs.length-ap-dn);row.prep=n(dn+ap);row.appr=n(ap);row.total=n(rs.length);});
+    return base;}
+  if(kind==='sop'){
+    const base=old&&old.length?old.map(x=>({...x})):['Operations','HSEQ','Security Procedure','Chemical / Laboratory'].map(x=>({item:x}));
+    const put=(item,rs)=>{const row=base.find(b=>anxNorm(b.item)===anxNorm(item));if(!row||!rs.length)return;const ok=rs.filter(r=>/^complete/i.test(r.v.status)).length;row.prog=n(rs.length-ok);row.prep=n(ok);row.total=n(rs.length);if(!row.appr)row.appr='0';};
+    put('Operations',rows.filter(r=>/SOP Register/i.test(r.sh)));put('HSEQ',rows.filter(r=>/HSSE/i.test(r.sh)));
+    return base;}
+  if(kind==='training'){
+    const fmt=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(s||'');return m?(+m[3])+'/'+(+m[2])+'/'+m[1]:(s||'');};
+    const rs=rows.filter(r=>!r.v.phase||/icod/i.test(r.v.phase));
+    return rs.map(r=>({name:r.v.topic+(r.v.disc&&!/^(gt&st)$/i.test(r.v.disc)?' ('+r.v.disc+')':''),start:fmt(r.v.start),finish:fmt(r.v.finish),dur:r.v.days?r.v.days+(+r.v.days===1?' Day':' Days'):'',
+      status:/^complet/i.test(r.v.status)?'Complete':/cancel/i.test(r.v.status)?('Cancelled'+(r.v.notes?' – '+r.v.notes:'')):(r.v.status||'')}));}
+  if(kind==='pm'){
+    const meta=(anxData.pm&&anxData.pm.meta&&anxData.pm.meta.sheets)||[];
+    return meta.map(sh=>{const rs=rows.filter(r=>r.sh===sh.name);const eq=[...new Set(rs.map(r=>r.v.equip).filter(Boolean))];
+      const prev=(old||[]).find(o=>anxNorm(o.sys)===anxNorm(sh.title)||anxNorm(sh.title).includes(anxNorm(o.sys))||anxNorm(o.sys).includes(anxNorm(sh.title).split(' (')[0]));
+      return {sys:sh.title,scope:(eq.slice(0,6).join(', ')+(eq.length>6?' …':''))+' — '+rs.length+' tasks',done:prev&&prev.done||'-',pend:prev&&prev.pend||''};});}
+  return cur;
+}
+async function anxApplyToReport(kinds,month){
+  month=month||mrMonth;const changed=[];
+  try{const cur=(await sbFetch('qas2_mr_monthly?month=eq.'+month+'&select=*')||[])[0];const data=Object.assign({},cur&&cur.data||{});
+    kinds.forEach(k=>{const a=anxData[k];if(!a||!ANX[k])return;const sec=ANX[k].sec;const v=anxSummaries(k,a.rows||[],data[sec]);if(v&&JSON.stringify(v)!==JSON.stringify(data[sec])){data[sec]=v;changed.push(MR_BY[sec].no);}});
+    if(changed.length){await sbUpsert('qas2_mr_monthly',[{month,data,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'month');if(month===mrMonth&&mrRow)mrRow.data=data;}
+  }catch(e){showToast('Could not update the report tables: '+e.message,'error');}
+  return changed;
+}
+// ── upload
+function anxPick(kind){const i=document.createElement('input');i.type='file';i.accept='.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';i.onchange=()=>{if(i.files[0])anxUpload(i.files[0],kind);};i.click();}
+async function anxUpload(file,expect){
+  if(!mrCanEdit()){showToast('Only supervisors and admins can upload annexures.','error');return;}
+  if(anxBusy)return;anxBusy=true;showToast('Reading '+file.name+' …');
+  try{
+    if(!/\.xlsx$/i.test(file.name))throw new Error('Please choose an Excel file (.xlsx).');
+    const buf=await file.arrayBuffer();const bk=await xlOpen(buf);const kind=anxDetect(bk);
+    if(!kind)throw new Error('This file does not look like one of the annexures (Training, SOPs, WIs or PM plans).');
+    if(expect&&expect!==kind&&!confirm(`This file looks like Annexure-${ANX[kind].n} (${ANX[kind].title}), not Annexure-${ANX[expect].n}. Upload it as Annexure-${ANX[kind].n}?`)){anxBusy=false;return;}
+    const {rows,sheets}=await anxParse(bk,kind);if(!rows.length)throw new Error('No rows were found in this file.');
+    const prev=anxData[kind];
+    if(prev&&prev.rows&&prev.rows.length&&!confirm(`Replace Annexure-${ANX[kind].n} with “${file.name}”?\n\n${rows.length} items will be loaded from the file. The previous file stays in the history.`)){anxBusy=false;return;}
+    let ref;try{ref=await sbUploadBlob(FILES_BUCKET,'annex/'+kind+'/'+sbNewName('')+'/'+sbSafeName(file.name),new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));}
+    catch(e){if(buf.byteLength>4e6)throw e;ref=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(file);});}
+    const now=new Date().toISOString(),who=currentUser?.name||'';
+    const row={kind,file_name:file.name,file_ref:ref,rows,meta:{sheets,counts:anxCounts(kind,rows)},uploaded_by:who,uploaded_at:now,updated_by:who,updated_at:now};
+    await sbUpsert('qas2_mr_annex',[row],'kind');anxData[kind]=row;
+    try{await sbFetch('qas2_mr_annex_files','POST',{kind,file_name:file.name,file_ref:ref,rows_count:rows.length,uploaded_by:who});}catch(e){}
+    const ch=await anxApplyToReport([kind]);
+    showToast(`Annexure-${ANX[kind].n} loaded: ${rows.length} items`+(ch.length?' · report table '+ch.join(', ')+' updated':''));
+    anxView=null;mrRenderAnnex();
+  }catch(e){showToast(e.message,'error');}
+  anxBusy=false;
+}
+// ── download (the uploaded file with the site's changes written into it)
+function anxFileName(base,ext){const lab=mrMonthLabel(mrMonth);return String(base).replace(/\.xlsx$/i,'').replace(/^[0-9a-f]{6,}-/i,'').replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[ _-]+\d{4}/i,lab).replace(/_/g,' ')+(ext||'.xlsx');}
+async function anxDownload(kind){
+  const a=anxData[kind];if(!a||!a.file_ref){showToast('Upload the Excel file first.','error');return;}
+  showToast('Preparing the Excel file …');
+  try{
+    const url=isSbRef(a.file_ref)?await sbFileUrl(a.file_ref):a.file_ref;const r=await fetch(url);if(!r.ok)throw new Error('Could not open the stored file ('+r.status+')');
+    const bk=await xlOpen(await r.arrayBuffer());const d=ANX[kind];let n=0;
+    for(const sh of (a.meta&&a.meta.sheets)||[]){
+      const s=await xlSheet(bk,sh.name);if(!s)continue;let xml=bk.xml[s.path];const cells=xlCells(bk,xml);
+      const colOf={};Object.entries(sh.cols).forEach(([c,f])=>colOf[f]=c);
+      const styleBy={};d.edit.forEach(f=>{const col=colOf[f];if(!col)return;styleBy[f]={};for(const c of cells.values())if(c.col===col&&c.v!=null&&c.s!=null&&styleBy[f][String(c.v).toUpperCase()]==null)styleBy[f][String(c.v).toUpperCase()]=c.s;});
+      for(const row of (a.rows||[]).filter(x=>x.sh===sh.name)){
+        for(const f of d.edit){const col=colOf[f];if(!col)continue;const ref=col+row.r;const c=cells.get(ref);if(c&&c.f)continue;
+          const ft=(d.fields.find(z=>z[0]===f)||[])[3];let nv=row.v[f]??'';let ov=c?c.v:null;
+          if(ft==='date'){const ser=xlIsoToSerial(nv);if(ser!=null){if(ov!=null&&+ov===ser)continue;xml=xlSetCell(xml,ref,ser);n++;continue;}if(xlSerialToIso(ov)===nv||String(ov??'')===String(nv))continue;}
+          else if(ft==='pct'){const p=nv===''?null:Math.round(+nv)/100;if((ov==null||ov==='')&&p==null)continue;if(ov!=null&&ov!==''&&p!=null&&Math.abs(+ov-p)<1e-9)continue;xml=xlSetCell(xml,ref,p);n++;continue;}
+          else if(String(ov??'').trim()===String(nv).trim())continue;
+          const sty=styleBy[f]&&styleBy[f][String(nv).toUpperCase()];xml=xlSetCell(xml,ref,nv===''?null:nv,sty!=null&&ft==='choice'?{s:sty}:{});n++;}
+      }
+      bk.xml[s.path]=xml;bk.dirty.add(s.path);
+    }
+    if(kind==='sop')await anxSopTexts(bk,a.rows||[]);
+    xlDownload(await xlSave(bk),anxFileName(a.file_name));showToast(n?`Excel ready — ${n} change(s) from the site written into the file`:'Excel ready');
+  }catch(e){showToast('Could not build the Excel file: '+e.message,'error');}
+}
+// the SOP workbook keeps a few totals as plain text — refresh them
+async function anxSopTexts(bk,rows){
+  const cnt=re=>{const rs=rows.filter(r=>re.test(r.sh));const c=rs.filter(r=>/^complete/i.test(r.v.status)).length;return {t:rs.length,c,o:rs.length-c,v:rs.filter(r=>/visible/i.test(r.v.ver)).length};};
+  const I=cnt(/^ICOD/i),P=cnt(/^PCOD/i),H=cnt(/HSSE/i);
+  for(const [name,k] of [['ICOD SOP Register',I],['PCOD SOP Register',P],['Safety HSSE Register',H]]){const s=await xlSheet(bk,name);if(!s)continue;let x=bk.xml[s.path];const c=xlCells(bk,x).get('A4');
+    if(c&&!c.f&&/^Total:/i.test(String(c.v||''))){x=xlSetCell(x,'A4',`Total: ${k.t}     Complete: ${k.c}     Ongoing: ${k.o}      Completion: ${(k.t?k.c*100/k.t:0).toFixed(1)}%`);bk.xml[s.path]=x;bk.dirty.add(s.path);}}
+  const s=await xlSheet(bk,'Dashboard');if(!s)return;let x=bk.xml[s.path];const c=xlCells(bk,x);
+  const put=(ref,re,val)=>{const cc=c.get(ref);if(cc&&!cc.f&&re.test(String(cc.v||'')))x=xlSetCell(x,ref,val);};
+  put('B9',/SOPs? complete/i,`${I.c} of ${I.t} SOPs complete & visible in SharePoint`);put('E9',/complete/i,`${P.c} complete · ${P.o} Ongoing`);put('G9',/visible/i,`${H.v} visible in SharePoint`);
+  const p6=c.get('P6');if(p6&&!p6.f&&/^\d+$/.test(String(p6.v||'')))x=xlSetCell(x,'P6',P.o);
+  bk.xml[s.path]=x;bk.dirty.add(s.path);
+}
+// ── Annexure-4 (Punch List) and Annexure-6 (CR cases) generated from the site
+function anxB64(b){const s=atob(b);const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u.buffer;}
+async function anxFillRegister(bk,sheet,rows,opts){
+  const s=await xlSheet(bk,sheet);let xml=bk.xml[s.path];const cells=xlCells(bk,xml);
+  const ncol=Math.max(...[...cells.values()].filter(c=>c.row===5).map(c=>xlColNum(c.col)));const last=xlColName(ncol);
+  const sty=r=>Object.fromEntries([...cells.values()].filter(c=>c.row===r).map(c=>[c.col,c.s]));const st6=sty(6),st7=sty(7);
+  const bySt={};(opts.styleCols||[]).forEach(col=>{bySt[col]={};[6,7,8].forEach(r=>{const c=cells.get(col+r);if(c&&c.v!=null)bySt[col][String(c.v).toUpperCase()]=c.s;});});
+  const rowRe=/<row r="(\d+)"[^>]*?(?:\/>|>[\s\S]*?<\/row>)/g;xml=xml.replace(rowRe,(m,r)=>+r>=6?'':m);
+  const out=rows.map((vals,i)=>{const r=6+i,base=i%2===0?st6:st7;return `<row r="${r}" ht="21" customHeight="1">`+vals.map((v,j)=>{const col=xlColName(j+1);let s=base[col];if(bySt[col]&&v!=null&&bySt[col][String(v).toUpperCase()]!=null)s=bySt[col][String(v).toUpperCase()];
+      const a=s!=null?` s="${s}"`:'';if(v==null||v==='')return `<c r="${col}${r}"${a}/>`;if(typeof v==='number')return `<c r="${col}${r}"${a}><v>${v}</v></c>`;return `<c r="${col}${r}"${a} t="inlineStr"><is><t xml:space="preserve">${xlEsc(v)}</t></is></c>`;}).join('')+'</row>';}).join('');
+  xml=xml.replace('</sheetData>',out+'</sheetData>');const end=5+Math.max(1,rows.length);
+  xml=xml.replace(/<dimension ref="[^"]*"\/>/,`<dimension ref="A1:${last}${end}"/>`).replace(/<autoFilter ref="[^"]*"/,`<autoFilter ref="A5:${last}${end}"`);
+  if(opts.summary)xml=xlSetCell(xml,'A4',opts.summary);if(opts.sub)xml=xlSetCell(xml,'A2',opts.sub);
+  bk.xml[s.path]=xml;bk.dirty.add(s.path);
+}
+function anxDays(a,b){const x=xlIsoToSerial(String(a||'').slice(0,10)),y=xlIsoToSerial(String(b||'').slice(0,10));return x!=null&&y!=null?Math.max(0,Math.round(y-x)):null;}
+async function anxGenPunch(){
+  showToast('Preparing the Punch List Excel …');
+  try{
+    const T=(typeof allTickets!=='undefined'&&allTickets&&allTickets.length?allTickets:null)||await sbFetch('qas2_tickets?select=id,no,date,priority,system_name,category,kks,description,status,date_closed&order=no.asc')||[];
+    const today=new Date().toISOString().slice(0,10);const list=[...T].sort((a,b)=>String(a.no||'').localeCompare(String(b.no||'')));
+    const P=x=>String(x.priority||'').trim().charAt(0).toUpperCase();const ST=x=>String(x.status||'').toUpperCase()==='CLOSED'?'CLOSED':'OPEN';
+    const rows=list.map((t,i)=>[i+1,t.no||'',xlIsoToSerial(String(t.date||'').slice(0,10)),P(t)||'',t.system_name||'',t.category||'',t.kks||'',t.description||'',ST(t),ST(t)==='CLOSED'?xlIsoToSerial(String(t.date_closed||'').slice(0,10)):null,anxDays(t.date,ST(t)==='CLOSED'?(t.date_closed||today):today)]);
+    const bk=await xlOpen(anxB64(ANX_TPL_PUNCH));const open=rows.filter(r=>r[8]==='OPEN').length,closed=rows.length-open;
+    await anxFillRegister(bk,'Punch Register',rows,{styleCols:['D','I'],summary:`Total: ${rows.length}     Open: ${open}     Closed: ${closed}     Closure: ${(rows.length?closed*100/rows.length:0).toFixed(1)}%`,sub:`Qassim 2 CCGT IPP · WWMC Operations · ${mrMonthLabel(mrMonth,true)} · generated ${anxD(today)}`});
+    const s=await xlSheet(bk,'Dashboard');let x=bk.xml[s.path];
+    x=xlSetCached(x,'B6',rows.length);x=xlSetCached(x,'C6',open);x=xlSetCached(x,'D6',closed);x=xlSetCached(x,'E6',rows.length?closed/rows.length:0);x=xlSetCached(x,'C17',open);x=xlSetCached(x,'C18',closed);
+    ['A','B','C'].forEach((p,i)=>{const r=11+i;const o=rows.filter(z=>z[3]===p&&z[8]==='OPEN').length,c=rows.filter(z=>z[3]===p&&z[8]==='CLOSED').length;x=xlSetCached(x,'C'+r,o);x=xlSetCached(x,'D'+r,c);x=xlSetCached(x,'E'+r,o+c);});
+    const sys={};rows.forEach(z=>{const k=z[4]||'(no system)';sys[k]=sys[k]||{o:0,c:0};z[8]==='OPEN'?sys[k].o++:sys[k].c++;});
+    const top=Object.entries(sys).sort((a,b)=>b[1].o-a[1].o||b[1].c-a[1].c).slice(0,15);
+    for(let i=0;i<15;i++){const r=11+i,t=top[i];x=xlSetCell(x,'G'+r,t?t[0]:null);x=xlSetCached(x,'H'+r,t?t[1].o:'');x=xlSetCached(x,'I'+r,t?t[1].c:'');x=xlSetCached(x,'J'+r,t?t[1].o+t[1].c:'');}
+    bk.xml[s.path]=x;bk.dirty.add(s.path);
+    xlDownload(await xlSave(bk),`Annexure-4 Q2 - Punch List Register ${mrMonthLabel(mrMonth)}.xlsx`);showToast('Punch List Excel ready — '+rows.length+' points');
+  }catch(e){showToast('Could not build the Excel file: '+e.message,'error');}
+}
+async function anxGenCR(){
+  showToast('Preparing the CR cases Excel …');
+  try{
+    const C=(mrCR&&mrCR.length?mrCR:await sbFetch('qas2_mr_cr_cases?select=*&order=cr_no.asc'))||[];const today=new Date().toISOString().slice(0,10);
+    const list=C.filter(c=>c.status!=='Removed').sort((a,b)=>String(a.issue_date||'').localeCompare(String(b.issue_date||''))||String(a.cr_no).localeCompare(String(b.cr_no)));
+    const ST=c=>String(c.status||'Issued').toUpperCase();
+    const rows=list.map((c,i)=>[i+1,c.cr_no||'',xlIsoToSerial(String(c.issue_date||'').slice(0,10)),c.subject||'',ST(c),c.action||'',ST(c)==='CLOSED'?xlIsoToSerial(String(c.closed_date||'').slice(0,10)):null,c.issue_date?anxDays(c.issue_date,ST(c)==='CLOSED'?(c.closed_date||today):today):null,c.notes||'']);
+    const bk=await xlOpen(anxB64(ANX_TPL_CR));const closed=rows.filter(r=>r[4]==='CLOSED').length,rev=rows.filter(r=>r[4]==='UNDER REVIEW').length,iss=rows.filter(r=>r[4]==='ISSUED').length;
+    await anxFillRegister(bk,'CR Register',rows,{styleCols:['E'],summary:`Total: ${rows.length}     Open: ${rows.length-closed}     Under review: ${rev}     Closed: ${closed}`,sub:`Qassim 2 CCGT IPP · WWMC Operations · ${mrMonthLabel(mrMonth,true)} · generated ${anxD(today)}`});
+    const s=await xlSheet(bk,'Dashboard');let x=bk.xml[s.path];
+    x=xlSetCached(x,'B6',rows.length);x=xlSetCached(x,'C6',rows.length-closed);x=xlSetCached(x,'D6',rev);x=xlSetCached(x,'E6',closed);x=xlSetCached(x,'H7',iss);x=xlSetCached(x,'H8',rev);x=xlSetCached(x,'H9',closed);
+    bk.xml[s.path]=x;bk.dirty.add(s.path);
+    xlDownload(await xlSave(bk),`Annexure-6 Q2 - Clarification Cases ${mrMonthLabel(mrMonth)}.xlsx`);showToast('CR cases Excel ready — '+rows.length+' cases');
+  }catch(e){showToast('Could not build the Excel file: '+e.message,'error');}
+}
+// ── page: Monthly Report → ③ Registers → Annexures
+async function mrRenderAnnex(){
+  const body=mrEl('mr-anx');if(!body)return;
+  if(!anxData||!Object.keys(anxData).length||anxData._stale){body.innerHTML='<div class="mr-note">Loading annexures…</div>';await anxLoad();}
+  if(anxData._err==='setup'){body.innerHTML='<div class="mr-warn">The annexure tables are not set up yet — run <b>qas2_annex_setup.sql</b> in Supabase → SQL Editor, then refresh.</div>';return;}
+  if(anxView){anxRenderRegister();return;}
+  const ed=mrCanEdit();const nT=(typeof allTickets!=='undefined'&&allTickets)?allTickets.length:null;
+  const card=(k,d)=>{const a=anxData[k];const c=a&&a.meta&&a.meta.counts;const st=a?`<div class="anx-file" title="${escapeHtml(a.file_name||'')}">📄 ${escapeHtml(a.file_name||'')}</div><div class="anx-when">Uploaded ${escapeHtml(formatDateTime(a.uploaded_at))} by ${escapeHtml(a.uploaded_by||'—')}${a.updated_at&&a.updated_at!==a.uploaded_at?` · edited ${escapeHtml(formatDateTime(a.updated_at))} by ${escapeHtml(a.updated_by||'')}`:''}</div>`:'<div class="anx-when">No file uploaded yet.</div>';
+    const kp=c?(k==='pm'?`<div class="anx-k"><b>${(a.meta.sheets||[]).length}</b> systems · <b>${c.total}</b> PM tasks</div>`:`<div class="anx-k"><b>${c.total}</b> items · <span class="ok">${c.ok} done</span>${c.on?` · <span class="on">${c.on} in progress</span>`:''}${c.pend?` · <span class="pe">${c.pend} pending</span>`:''}${c.x?` · ${c.x} cancelled`:''}</div>`):'';
+    return `<div class="anx-card"><div class="anx-h"><span class="anx-n">${d.n}</span><div><b>Annexure-${d.n}</b><small>${escapeHtml(d.title)}</small></div></div>${st}${kp}
+      <div class="anx-b">${a?`<button class="btn sm" type="button" onclick="anxOpen('${k}')">${ed&&ANX[k].edit.length?'✎ View / edit':'View'}</button><button class="btn sm" type="button" onclick="anxDownload('${k}')">⬇ Excel</button>`:''}${ed?`<button class="btn sm ${a?'':'primary'}" type="button" onclick="anxPick('${k}')">⬆ ${a?'Replace':'Upload Excel'}</button>`:''}</div></div>`;};
+  const gen=(k,d,info,fn)=>`<div class="anx-card anx-gen"><div class="anx-h"><span class="anx-n">${d.n}</span><div><b>Annexure-${d.n}</b><small>${escapeHtml(d.title)}</small></div></div><div class="anx-when">Built from the site's data — always up to date.</div><div class="anx-k">${info}</div><div class="anx-b"><button class="btn sm primary" type="button" onclick="${fn}()">⬇ Generate Excel</button></div></div>`;
+  body.innerHTML=`<div class="mr-help">Upload each annexure's Excel file once. The site reads it, fills the matching report tables (2.4, 3.2, 3.3.2, 3.3.4) and keeps the file. Update statuses here or upload a newer file — <b>⬇ Excel</b> gives you the same file with the site's changes written in (dashboards and charts recalculate when opened).</div>
+    ${ed?`<div class="anx-drop" id="anx-drop" onclick="anxPick()"><b>⬆ Upload an annexure Excel</b><span>Drop the .xlsx here or click — the site recognises which annexure it is.</span></div>`:''}
+    <div class="anx-grid">${Object.entries(ANX).filter(([k])=>k!=='pm').map(([k,d])=>card(k,d)).join('')}${gen('punch',ANX_GEN.punch,nT!=null?`<b>${nT}</b> punch points`:'Punch List register','anxGenPunch')}${card('pm',ANX.pm)}${gen('cr',ANX_GEN.cr,`<b>${(mrCR||[]).length}</b> CR cases`,'anxGenCR')}</div>`;
+  const dz=mrEl('anx-drop');if(dz){['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on');}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on');}));dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)anxUpload(f);});}
+}
+function anxOpen(k){anxView=k;anxFilter={sh:'',st:'',q:''};anxDirty=new Set();mrRenderAnnex();window.scrollTo({top:0});}
+function anxBack(){if(anxDirty.size&&!confirm('You have unsaved changes. Leave without saving?'))return;anxView=null;anxDirty=new Set();mrRenderAnnex();}
+function anxRenderRegister(){
+  const k=anxView,d=ANX[k],a=anxData[k];const body=mrEl('mr-anx');if(!a){anxView=null;return mrRenderAnnex();}
+  const ed=mrCanEdit()&&d.edit.length>0;const sheets=(a.meta&&a.meta.sheets)||[];const lab=f=>(d.fields.find(z=>z[0]===f)||[])[2]||f;
+  const q=anxFilter.q.toLowerCase();
+  const rows=(a.rows||[]).map((r,i)=>({r,i})).filter(({r})=>(!anxFilter.sh||r.sh===anxFilter.sh)&&(!anxFilter.st||d.stat(r)===anxFilter.st)&&(!q||Object.values(r.v).join(' ').toLowerCase().includes(q)));
+  const choices=f=>{const base=f==='phase'?(d.phaseChoices||[]):d.choices;return [...new Set([...base,...(a.rows||[]).map(r=>r.v[f]).filter(Boolean)])];};
+  const cell=(x,f)=>{const v=x.r.v[f]??'';const ft=(d.fields.find(z=>z[0]===f)||[])[3];
+    if(!ed||!d.edit.includes(f)){if(f==='status')return `<span class="anx-st anx-st-${d.stat(x.r)}">${escapeHtml(v)}</span>`;if(ft==='date')return escapeHtml(v?anxD(v):'');if(ft==='pct')return v===''?'':escapeHtml(v+'%');return escapeHtml(v);}
+    const at=`data-i="${x.i}" data-f="${f}"`;
+    if(ft==='choice')return `<select class="anx-in anx-st-${f==='status'?d.stat(x.r):''}" ${at}>${(choices(f).includes(v)?[]:[v]).concat(choices(f)).map(o=>`<option${o===v?' selected':''}>${escapeHtml(o)}</option>`).join('')}</select>`;
+    if(ft==='date')return `<input type="date" class="anx-in" ${at} value="${/^\d{4}-\d\d-\d\d$/.test(v)?v:''}" title="${escapeHtml(v)}">`;
+    if(ft==='pct')return `<input type="number" min="0" max="100" class="anx-in anx-pct" ${at} value="${escapeHtml(v)}">`;
+    return `<textarea class="anx-in" rows="1" ${at}>${escapeHtml(v)}</textarea>`;};
+  const c=anxCounts(k,a.rows||[]);
+  body.innerHTML=`<div class="anx-top"><button class="btn sm" type="button" onclick="anxBack()">← Annexures</button><div><b>Annexure-${d.n} · ${escapeHtml(d.title)}</b><small>${escapeHtml(a.file_name||'')}</small></div><span style="flex:1"></span><button class="btn sm" type="button" onclick="anxDownload('${k}')">⬇ Excel</button></div>
+    <div class="anx-filters">${sheets.length>1?`<div class="mr-pills">${[['','All']].concat(sheets.map(s=>[s.name,s.title])).map(([v,t])=>`<button type="button" class="mr-pill${anxFilter.sh===v?' on':''}" onclick="anxFilter.sh=${escapeHtml(JSON.stringify(v))};anxRenderRegister()">${escapeHtml(t)} <i>${v?(a.rows||[]).filter(r=>r.sh===v).length:(a.rows||[]).length}</i></button>`).join('')}</div>`:''}
+      <div class="anx-fr">${k!=='pm'?`<select onchange="anxFilter.st=this.value;anxRenderRegister()"><option value="">All statuses (${c.total})</option><option value="ok"${anxFilter.st==='ok'?' selected':''}>Done (${c.ok})</option>${c.on?`<option value="on"${anxFilter.st==='on'?' selected':''}>In progress (${c.on})</option>`:''}${c.pend?`<option value="pend"${anxFilter.st==='pend'?' selected':''}>Pending (${c.pend})</option>`:''}</select>`:''}<input type="search" placeholder="Search…" value="${escapeHtml(anxFilter.q)}" oninput="anxFilter.q=this.value;clearTimeout(window._anxq);window._anxq=setTimeout(()=>{anxRenderRegister();const s=document.querySelector('.anx-fr input[type=search]');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length);}},250)"><span class="mr-note">${rows.length} shown</span></div></div>
+    <div class="mr-tw"><table class="anx-t"><thead><tr>${sheets.length>1&&!anxFilter.sh?'<th>Sheet</th>':''}${d.show.map(f=>`<th class="anx-c-${f}">${escapeHtml(lab(f))}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,600).map(x=>`<tr>${sheets.length>1&&!anxFilter.sh?`<td class="anx-sh">${escapeHtml((sheets.find(s=>s.name===x.r.sh)||{}).title||x.r.sh)}</td>`:''}${d.show.map(f=>`<td class="anx-c-${f}">${cell(x,f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+    ${rows.length>600?'<div class="mr-note">Showing the first 600 — use the filters to narrow down.</div>':''}
+    ${ed?`<div class="mr-savebar${anxDirty.size?' dirty':''}" id="anx-savebar"><span class="st">${anxDirty.size?anxDirty.size+' unsaved change(s)':'All changes saved'}</span><button class="btn primary" type="button" onclick="anxSave(this)">Save</button></div>`:''}`;
+  body.querySelectorAll('.anx-in').forEach(el=>{el.addEventListener(el.tagName==='SELECT'||el.type==='date'?'change':'input',()=>{const r=a.rows[+el.dataset.i];const f=el.dataset.f;let v=el.value;if(el.type==='number')v=v===''?'':Math.max(0,Math.min(100,Math.round(+v)));r.v[f]=v;anxDirty.add(el.dataset.i+':'+f);
+    if(f==='status'&&el.tagName==='SELECT'){el.className='anx-in anx-st-'+d.stat(r);if(k==='training'&&/^complet/i.test(v)){if(r.v.prog!==100){r.v.prog=100;anxDirty.add(el.dataset.i+':prog');const p=body.querySelector(`[data-i="${el.dataset.i}"][data-f="prog"]`);if(p)p.value=100;}}}
+    const sb=mrEl('anx-savebar');if(sb){sb.classList.add('dirty');sb.querySelector('.st').textContent=anxDirty.size+' unsaved change(s)';}});});
+  body.querySelectorAll('textarea.anx-in').forEach(t=>{t.style.height='auto';t.style.height=Math.min(120,t.scrollHeight+2)+'px';});
+}
+async function anxSave(btn){
+  const k=anxView,a=anxData[k];if(!a||!anxDirty.size){showToast('Nothing to save');return;}
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{const now=new Date().toISOString();
+    const cur=(await sbFetch('qas2_mr_annex?kind=eq.'+k+'&select=uploaded_at,file_ref')||[])[0];
+    if(cur&&cur.file_ref!==a.file_ref){showToast('A newer file was uploaded meanwhile — reloading. Please re-apply your changes.','error');anxData._stale=true;anxView=null;await mrRenderAnnex();return;}
+    a.meta=Object.assign({},a.meta,{counts:anxCounts(k,a.rows)});a.updated_by=currentUser?.name||'';a.updated_at=now;
+    await sbFetch('qas2_mr_annex?kind=eq.'+k,'PATCH',{rows:a.rows,meta:a.meta,updated_by:a.updated_by,updated_at:now});
+    const n=anxDirty.size;anxDirty=new Set();const ch=await anxApplyToReport([k]);
+    showToast(`Saved ${n} change(s)`+(ch.length?' · report table '+ch.join(', ')+' updated':''));anxRenderRegister();
+  }catch(e){showToast('Save failed: '+e.message,'error');if(btn){btn.disabled=false;btn.textContent='Save';}}
+}
+
+async function mrAnxRefresh(k){
+  if(mrDirty){showToast('Save your changes first.','error');return;}
+  await anxLoad();if(anxData._err==='setup'){showToast('Run qas2_annex_setup.sql first.','error');return;}
+  if(!anxData[k]){if(confirm(`Annexure-${ANX[k].n} (${ANX[k].title}) has not been uploaded yet. Go to Registers → Annexures to upload it?`)){mrReg='annex';mrGo('registers');}return;}
+  const ch=await anxApplyToReport([k]);showToast(ch.length?'Updated from Annexure-'+ANX[k].n:'Already up to date with Annexure-'+ANX[k].n);const y=window.scrollY;await mrRender();requestAnimationFrame(()=>window.scrollTo(0,y));
+}
 function mrRenderRegisters(){
-  ({staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrReg]||mrRenderStaff)();
-  mrEl('mr-body').insertAdjacentHTML('afterbegin',`<div class="mr-pills">${[['staff','👥 Staff — joined / left'],['cr','❓ CR Cases'],['equip','⚙ Equipment & running hours']].map(x=>`<button type="button" class="mr-pill${mrReg===x[0]?' on':''}" onclick="mrReg='${x[0]}';mrGoSafe('registers')">${x[1]}</button>`).join('')}</div>`);
+  if(mrReg==='annex'){mrEl('mr-body').innerHTML='<div id="mr-anx"></div>';if(!anxView)anxData._stale=true;mrRenderAnnex();}
+  else ({staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrReg]||mrRenderStaff)();
+  mrEl('mr-body').insertAdjacentHTML('afterbegin',`<div class="mr-pills">${[['staff','👥 Staff — joined / left'],['cr','❓ CR Cases'],['equip','⚙ Equipment & running hours'],['annex','📎 Annexures (Excel)']].map(x=>`<button type="button" class="mr-pill${mrReg===x[0]?' on':''}" onclick="if(anxDirty.size&&!confirm('You have unsaved changes. Leave without saving?'))return;anxDirty=new Set();anxView=null;mrReg='${x[0]}';mrGoSafe('registers')">${x[1]}</button>`).join('')}</div>`);
   mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('sections')">← Write sections</button><button class="btn primary" type="button" onclick="mrGoSafe('report')">Next: Generate PDF →</button></div>`);
 }
 function mrRenderGroup(){

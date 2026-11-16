@@ -440,6 +440,11 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .pli-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pli-sum div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:7px 10px}.pli-sum b{display:block;font-size:19px;color:#0F2747}.pli-sum span{font-size:11px;color:#6B7280}.pli-sum .ok{border-top-color:#16A34A}.pli-sum .dup{border-top-color:#94A3B8}.pli-sum .cl{border-top-color:#64748B}.pli-sum .bad{border-top-color:#DC2626}
 .pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 td:last-child,.pli-t2 td:nth-child(2){white-space:nowrap}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
 .pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.done{background:#1F3864;color:#fff}.pli-sum .done{border-top-color:#1F3864}.pli-t2 tr.done td{background:#F0FDF4}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
+.ho-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ho-tools{display:flex;gap:8px;align-items:center;font-size:12px;margin-bottom:6px}.ho-tools input{flex:1;padding:6px 9px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:13px}.ho-tools a{color:#1F3864;font-weight:700}
+.ho-sys{max-height:300px;overflow:auto;border:1px solid #E3E8EF;border-radius:8px}.ho-si{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #F1F5F9;font-size:13px;cursor:pointer}.ho-si span{flex:1}.ho-si small{color:#94A3B8;font-size:11px}.ho-si em{font-style:normal;font-size:11px;color:#64748B;white-space:nowrap}.ho-si em b{color:#B91C1C}
+.ho-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:13px;margin:4px 0 8px}.ho-row>span{width:58px;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase}.ho-row label{display:flex;gap:5px;align-items:center;cursor:pointer}.ho-row input[type=date]{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
+.ho-n{background:#F1F5FB;border-radius:8px;padding:7px 10px;font-size:13px;color:#1F3864}
+@media(max-width:760px){.ho-cols{grid-template-columns:1fr}}
 .sn-sum{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13.5px}.sn-sum .btn{margin-left:auto}
 .sn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:52vh;overflow:auto;padding-right:2px}.sn-card{border:1px solid #E3E8EF;border-radius:11px;padding:10px 12px;background:#fff}
 .sn-h{display:flex;justify-content:space-between;font-size:12.5px;color:#6B7280;margin-bottom:6px}.sn-h b{color:#0F2747}
@@ -1139,7 +1144,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
             <button class="btn sm" onclick="exportCSV()">&#8659; Export Excel</button>
             <button class="btn sm" onclick="printTickets(getSelectedRegisterTicketIds())" title="Tick tickets in the list, then print them — one A4 page each">&#128438; Print tickets</button>
             <button class="btn sm sup-only" onclick="pliOpen()" style="display:none">&#8679; Import Excel</button>
-            <button class="btn sm primary admin-only no-print" id="handover-report-btn" onclick="generateHandoverReport()" style="display:none">&#128196; Handover Report</button>
+            <button class="btn sm primary sup-only no-print" id="handover-report-btn" onclick="generateHandoverReport()" style="display:none">&#128196; Handover Report</button>
           </div>
         </div>
         <div id="reg-quick" class="reg-quick no-print"></div>
@@ -1565,6 +1570,26 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
   <div class="modal-body"><p class="mr-note" style="margin:0 0 8px">Leave empty for equipment that did not run.</p><div id="mr-cnt-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="document.getElementById('mr-cnt-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-cnt-save">Save</button></div></div></div></div>
 <div class="modal-bg" id="mr-staff-bg"><div class="modal" style="max-width:520px"><div class="modal-head"><h3 id="mr-staff-title">Edit</h3><button onclick="document.getElementById('mr-staff-bg').classList.remove('show')" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div id="mr-staff-form" style="display:flex;flex-direction:column;gap:12px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="document.getElementById('mr-staff-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-staff-save">Save</button></div></div></div></div>
+<div class="modal-bg" id="ho-bg"><div class="modal" style="max-width:860px;width:96vw"><div class="modal-head"><h3>Handover report</h3><button onclick="hoClose()" aria-label="Close">&times;</button></div>
+  <div class="modal-body drb">
+    <div class="ho-cols"><div>
+      <fieldset><legend>1 · Which systems</legend><div class="ho-tools"><input id="ho-q" type="search" placeholder="Search system…" oninput="hoSysRender()"><a href="#" onclick="hoSysAll(true);return false">All</a> · <a href="#" onclick="hoSysAll(false);return false">None</a></div><div id="ho-sys" class="ho-sys"></div></fieldset>
+      <fieldset><legend>2 · Which items</legend>
+        <div class="ho-row" id="ho-pri"><span>Priority</span><label><input type="checkbox" value="A" checked onchange="hoCount()"> A</label><label><input type="checkbox" value="B" checked onchange="hoCount()"> B</label><label><input type="checkbox" value="C" checked onchange="hoCount()"> C</label></div>
+        <div class="ho-row"><span>Status</span><label><input type="radio" name="ho-st" value="all" checked onchange="hoCount()"> Open + closed</label><label><input type="radio" name="ho-st" value="open" onchange="hoCount()"> Open only</label><label><input type="radio" name="ho-st" value="closed" onchange="hoCount()"> Closed only</label></div>
+        <div class="ho-row"><span>Raised</span><input type="date" id="ho-df" onchange="hoCount()"> to <input type="date" id="ho-dt" onchange="hoCount()"></div>
+        <div class="ho-n" id="ho-n"></div></fieldset>
+    </div><div>
+      <fieldset><legend>3 · Handover details</legend>
+        <div class="field"><label for="ho-title">Title</label><input id="ho-title"></div>
+        <div class="field"><label for="ho-type">Handover stage</label><select id="ho-type"></select></div>
+        <div class="drb-grid"><div class="field"><label for="ho-from">Handed over by</label><input id="ho-from"></div><div class="field"><label for="ho-to">Received by</label><input id="ho-to"></div></div>
+        <div class="field"><label for="ho-ref">Reference (TOP / test package / RFI)</label><input id="ho-ref" placeholder="optional"></div>
+        <div class="field"><label for="ho-rem">Remarks</label><textarea id="ho-rem" rows="2" placeholder="optional — printed in the report"></textarea></div></fieldset>
+      <fieldset><legend>4 · What to include</legend><div id="ho-secs"></div></fieldset>
+    </div></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px"><button class="btn" type="button" onclick="hoClose()">Cancel</button><button class="btn primary" type="button" onclick="hoGenerate()">📄 Generate report</button></div>
+  </div></div></div>
 <div class="modal-bg" id="sn-bg"><div class="modal" style="max-width:980px;width:96vw"><div class="modal-head"><h3>System names — merge look-alikes</h3><button onclick="snClose()" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div id="sn-body"></div><div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" type="button" onclick="snClose()">Close</button></div></div></div></div>
 <div class="modal-bg" id="pli-bg"><div class="modal" style="max-width:920px;width:96vw"><div class="modal-head"><h3>Import punch items from Excel</h3><button onclick="pliClose()" aria-label="Close">&times;</button></div>
@@ -3471,199 +3496,109 @@ async function rejectPLRequest(id){
 }
 
 // ── HANDOVER REPORT ──
+// ═════════ HANDOVER REPORT — builder (choose scope, details and sections) ═════════
+const HO_SECS=[['verdict','Handover verdict (ready / with conditions / not ready)',true],['kpi','Key figures',true],['charts','Charts',true],['systems','Summary by system',true],['open','Open items — full list',true],['overdue','Overdue items',true],['closed','Closed items',false],['sheets','Annex: one ticket sheet per open item (with photos)',false],['sign','Sign-off',true]];
+const HO_TYPES=['Construction → Commissioning','Commissioning → Operations (WWMC)','Mechanical Completion','Ready for Start-up','Custom'];
+let hoAll=[],hoGroups=[];
 async function generateHandoverReport(){
-  const btn=document.getElementById('handover-report-btn');
-  if(btn){btn.disabled=true;btn.textContent='Generating...';}
-  try{
-    const tickets=await sbFetch('qas2_tickets?select=*&order=no.asc');
-    const open=tickets.filter(x=>x.status==='OPEN');
-    const closed=tickets.filter(x=>x.status==='CLOSED');
-    const overdue=tickets.filter(x=>isOverdue(x));
-    const priA=tickets.filter(x=>x.priority==='A');
-    const priB=tickets.filter(x=>x.priority==='B');
-    const priC=tickets.filter(x=>x.priority==='C');
-    const dateStr=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
-    const docNo='QAS2-HPLR-'+new Date().toISOString().split('T')[0].replace(/-/g,'');
-    const permitted=open.length===0;
-    const LOGO=WWMC_LOGO;
-    const NAVY='#1F3864',RED='#B91C1C',GREEN='#166534',GOLD='#C9A84C',AMBER='#92400E';
-
-    const css=`
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:11px}
-      @page{size:A4;margin:12mm 14mm}
-      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-      .hdr{background:${NAVY};color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
-      .hdr-badge{font-size:8px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:${GOLD};margin-bottom:3px}
-      .hdr-title{font-size:17px;font-weight:800;letter-spacing:.03em}
-      .hdr-sub{font-size:9px;color:rgba(255,255,255,.6);margin-top:2px}
-      .hdr-right{text-align:right}
-      .hdr-docno{font-family:monospace;font-size:13px;font-weight:700;color:${GOLD}}
-      .hdr-date{font-size:9px;color:rgba(255,255,255,.65);margin-top:4px}
-      .gold-bar{height:4px;background:linear-gradient(90deg,${GOLD},#e8c97a,${GOLD});margin-bottom:14px}
-      .status-banner{padding:12px 16px;border-radius:6px;font-size:13px;font-weight:800;text-align:center;margin-bottom:14px;border:2px solid;letter-spacing:.03em}
-      .status-ok{background:#DCFCE7;color:${GREEN};border-color:#86EFAC}
-      .status-no{background:#FEE2E2;color:${RED};border-color:#FCA5A5}
-      .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
-      .stat{border-radius:6px;padding:8px 4px;text-align:center;border:1px solid rgba(0,0,0,.07)}
-      .stat-num{font-size:20px;font-weight:800;line-height:1}
-      .stat-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:#666;margin-top:3px}
-      .sec-head{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#fff;padding:5px 10px;border-radius:4px 4px 0 0;margin-bottom:0}
-      .sec-body{border:1px solid #e0e6f0;border-top:none;border-radius:0 0 4px 4px;margin-bottom:12px;overflow:hidden}
-      .ptbl{width:100%;border-collapse:collapse;font-size:10px}
-      .ptbl thead tr{background:${NAVY};color:#fff}
-      .ptbl th{padding:6px 8px;text-align:left;font-weight:700;font-size:9px;letter-spacing:.05em;white-space:nowrap}
-      .ptbl td{padding:5px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top}
-      .ptbl tr:nth-child(even) td{background:#FAFBFF}
-      .pri{display:inline-block;padding:1px 7px;border-radius:3px;font-weight:800;font-size:9px}
-      .pri-A{background:#FEE2E2;color:#B91C1C}
-      .pri-B{background:#FEF3C7;color:#92400E}
-      .pri-C{background:#F0FDF4;color:#15803D}
-      .empty-note{padding:10px 12px;font-size:10px;font-weight:600;color:${GREEN};background:#F0FDF4}
-      .sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:16px;padding-top:14px;border-top:2px solid ${NAVY}}
-      .sig-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#666;margin-bottom:22px}
-      .sig-line{border-bottom:1px solid #444;margin-bottom:4px;height:26px}
-      .sig-name{font-size:9px;color:#555}
-      .doc-footer{margin-top:12px;display:flex;justify-content:space-between;font-size:8px;color:#aaa;border-top:1px solid #eee;padding-top:8px}
-      /* logo */
-      .hdr-logo-wrap{width:80px;height:60px;background:#fff;border-radius:8px;border:1.5px solid #e0e6f0;display:flex;align-items:center;justify-content:center;padding:4px;flex-shrink:0}
-      .hdr-logo-wrap img{width:72px;height:52px;object-fit:contain}
-      .hdr-brand{display:flex;align-items:center;gap:14px}
-      .hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#3BB273;margin-bottom:3px}
-      .gold-bar{height:4px;background:linear-gradient(90deg,#C9A84C,#e8c97a,#C9A84C);margin-bottom:14px}
-    `;
-
-    const plLabel={A:'A – Safety Critical',B:'B – Operational',C:'C – Minor'};
-
-    const trow=(t,idx)=>`<tr>
-      <td style="font-family:monospace;font-weight:700;color:${NAVY};white-space:nowrap">${t.no}</td>
-      <td>${t.system_name||'–'}</td>
-      <td><span class="pri pri-${t.priority||'C'}">${t.priority||'–'}</span></td>
-      <td style="color:#555">${(t.description||'').substring(0,60)}${(t.description||'').length>60?'…':''}</td>
-      <td style="white-space:nowrap">${t.date||'–'}</td>
-      <td style="white-space:nowrap">${t.deadline||'–'}</td>
-      <td>${t.raised_by||'–'}</td>
-    </tr>`;
-
-    const closedRow=(t)=>`<tr>
-      <td style="font-family:monospace;font-weight:700;color:${NAVY};white-space:nowrap">${t.no}</td>
-      <td>${t.system_name||'–'}</td>
-      <td><span class="pri pri-${t.priority||'C'}">${t.priority||'–'}</span></td>
-      <td style="color:#555">${(t.description||'').substring(0,60)}${(t.description||'').length>60?'…':''}</td>
-      <td style="white-space:nowrap">${t.date||'–'}</td>
-      <td style="white-space:nowrap">${t.date_closed||'–'}</td>
-      <td>${t.raised_by||'–'}</td>
-    </tr>`;
-
-    let html='';
-
-    // Header
-    // Header
-  html+=`<div class="hdr">
-    <div class="hdr-brand">
-      <div class="hdr-logo-wrap"><img src="${LOGO}"></div>
-      <div>
-
-        <div class="hdr-title">Commissioning Handover Punch List Report</div>
-        <div class="hdr-sub">Al-Qassim 2 CCGT Power Plant &nbsp;·&nbsp; Wahat Al Wusta Maintenance Co.</div>
-      </div>
-    </div>
-    <div class="hdr-right">
-      <div class="hdr-docno">${docNo}</div>
-      <div class="hdr-date">${dateStr}</div>
-      <div class="hdr-date">Prepared by: ${currentUser.name}</div>
-    </div>
-  </div>
-  <div class="gold-bar"></div>`;
-    // Stats
-    html+=`<div class="stats">
-      ${[['Total',tickets.length,'#EEF2F8',NAVY],['Open',open.length,'#FEE2E2',RED],['Closed',closed.length,'#DCFCE7',GREEN],['Overdue',overdue.length,overdue.length?'#FEE2E2':'#F9FAFB',overdue.length?RED:'#888'],['Priority A',priA.length,'#FEE2E2',RED],['Closed %',tickets.length?Math.round(closed.length/tickets.length*100)+'%':'-','#F0FDF4',GREEN]].map(([l,v,bg,c])=>`
-      <div class="stat" style="background:${bg}">
-        <div class="stat-num" style="color:${c}">${v}</div>
-        <div class="stat-lbl">${l}</div>
-      </div>`).join('')}
-    </div>`;
-
-    // Open tickets
-    html+=`<div class="sec-head" style="background:${open.length?RED:GREEN}">Open Punch Tickets (${open.length})</div>
-    <div class="sec-body">`;
-    if(open.length){
-      html+=`<table class="ptbl"><thead><tr>
-        <th>Ticket No.</th><th>System</th><th>Priority</th><th>Description</th><th>Date Raised</th><th>Target Close</th><th>Raised By</th>
-      </tr></thead><tbody>${open.map((t,i)=>trow(t,i)).join('')}</tbody></table>`;
-    }else{
-      html+=`<div class="empty-note">&#10003; No open punch tickets — system ready for handover</div>`;
-    }
-    html+='</div>';
-
-    // Closed tickets
-    html+=`<div class="sec-head" style="background:${GREEN}">Closed Punch Tickets (${closed.length})</div>
-    <div class="sec-body">`;
-    if(closed.length){
-      html+=`<table class="ptbl"><thead><tr>
-        <th>Ticket No.</th><th>System</th><th>Priority</th><th>Description</th><th>Date Raised</th><th>Date Closed</th><th>Raised By</th>
-      </tr></thead><tbody>${closed.map(t=>closedRow(t)).join('')}</tbody></table>`;
-    }else{
-      html+=`<div class="empty-note" style="color:#666;background:#f9f9f9">No closed tickets yet</div>`;
-    }
-    html+='</div>';
-
-    // Signatures
-    html+=`<div class="sig-grid">
-      <div>
-        <div class="sig-title">Prepared by / SCE</div>
-        <div class="sig-line"></div>
-        <div class="sig-name">${currentUser.name} &nbsp;|&nbsp; SCE</div>
-      </div>
-      <div>
-        <div class="sig-title">EPC Contractor</div>
-        <div class="sig-line"></div>
-        <div class="sig-name">Name: _________________ &nbsp; Date: _________</div>
-      </div>
-      <div>
-        <div class="sig-title">Owner Representative</div>
-        <div class="sig-line"></div>
-        <div class="sig-name">Name: _________________ &nbsp; Date: _________</div>
-      </div>
-    </div>`;
-
-    // Footer
-
-
-
-
-
-
-  // ── High-quality PDF via print dialog (vector, no canvas) ──
-    const printHtml2=[
-      '<!DOCTYPE html>',
-      '<html>',
-      '<head>',
-      '<meta charset="UTF-8">',
-      '<title>'+docNo+'<\/title>',
-      '<style>',
-      css,
-      '@page{size:A4;margin:12mm 14mm}',
-      '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}',
-      '<\/style>',
-      '<\/head>',
-      '<body><div style="padding:0">',
-      html,
-      '<\/div><\/body>',
-      '<\/html>'
-    ].join('');
-    const win2=window.open('','_blank','width=900,height=700');
-    if(!win2){showToast('Allow popups to generate PDF');return;}
-    win2.document.open();
-    win2.document.write(await sbResolveHtml(printHtml2));
-    win2.document.close();
-    win2.focus();
-    setTimeout(function(){
-      try{win2.print();}catch(e){}
-    },800);
-  }catch(err){showToast('Error: '+err.message);console.error(err);}
-  finally{if(btn){btn.disabled=false;btn.textContent='\u{1F4C4} Handover Report';}}
+  const bg=document.getElementById('ho-bg');bg.classList.add('show');document.getElementById('ho-sys').innerHTML='<p class="mr-note">Loading tickets…</p>';
+  try{hoAll=await sbFetch('qas2_tickets?select=*&order=no.asc')||[];}catch(e){showToast('Could not load tickets: '+e.message,'error');return;}
+  hoGroups=snGroups(hoAll).sort((a,b)=>a.names[0].n.localeCompare(b.names[0].n));
+  let sv={};try{sv=JSON.parse(localStorage.getItem('qas2_ho')||'{}');}catch(e){}
+  document.getElementById('ho-title').value=sv.title||'Punch List Handover Report';
+  document.getElementById('ho-type').innerHTML=HO_TYPES.map(t=>`<option${t===(sv.type||HO_TYPES[0])?' selected':''}>${t}</option>`).join('');
+  document.getElementById('ho-from').value=sv.from||'EPC Contractor (CEEC)';document.getElementById('ho-to').value=sv.to||'WWMC Operations';
+  document.getElementById('ho-ref').value='';document.getElementById('ho-rem').value='';
+  document.getElementById('ho-secs').innerHTML=HO_SECS.map(([k,l,d])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${(sv.s?sv.s.includes(k):d)?'checked':''}> ${l}</label>`).join('');
+  document.querySelectorAll('#ho-pri input').forEach(i=>i.checked=true);document.querySelector('input[name="ho-st"][value="all"]').checked=true;
+  document.getElementById('ho-q').value='';hoSysRender();
 }
+function hoClose(){document.getElementById('ho-bg').classList.remove('show');}
+function hoSysRender(){
+  const q=(document.getElementById('ho-q').value||'').toLowerCase();const box=document.getElementById('ho-sys');
+  const prev=new Set([...box.querySelectorAll('input:checked')].map(i=>i.value));const first=!box.querySelector('input');
+  box.innerHTML=hoGroups.map((g,i)=>{const open=g.names.reduce((a,x)=>a+hoAll.filter(t=>t.system_name===x.n&&t.status!=='CLOSED').length,0);const hide=q&&!g.names.some(x=>x.n.toLowerCase().includes(q));
+    return `<label class="ho-si"${hide?' style="display:none"':''}><input type="checkbox" value="${i}" ${first||prev.has(String(i))?'checked':''} onchange="hoCount()"><span>${escapeHtml(g.names[0].n)}${g.names.length>1?` <small>+${g.names.length-1} spelling${g.names.length>2?'s':''}</small>`:''}</span><em>${g.total}${open?` · <b>${open} open</b>`:''}</em></label>`;}).join('')||'<p class="mr-note">No tickets yet.</p>';
+  hoCount();
+}
+function hoSysAll(v){document.querySelectorAll('#ho-sys label:not([style*="none"]) input').forEach(i=>i.checked=v);hoCount();}
+function hoPick(){
+  const gs=[...document.querySelectorAll('#ho-sys input:checked')].map(i=>hoGroups[+i.value]);const names=new Set(gs.flatMap(g=>g.names.map(x=>x.n)));
+  const pr=[...document.querySelectorAll('#ho-pri input:checked')].map(i=>i.value);const st=document.querySelector('input[name="ho-st"]:checked')?.value||'all';
+  const f=document.getElementById('ho-df').value,t=document.getElementById('ho-dt').value;
+  const label=g=>g.names[0].n;const sysOf=new Map();gs.forEach(g=>g.names.forEach(x=>sysOf.set(x.n,label(g))));
+  const list=hoAll.filter(x=>names.has(x.system_name)&&pr.includes(x.priority||'C')&&(st==='all'||(st==='open'?x.status!=='CLOSED':x.status==='CLOSED'))&&(!f||String(x.date||'')>=f)&&(!t||String(x.date||'')<=t)).map(x=>({...x,_sys:sysOf.get(x.system_name)||x.system_name}));
+  return {list,gs,allSys:gs.length===hoGroups.length};
+}
+function hoCount(){const {list,gs}=hoPick();const o=list.filter(x=>x.status!=='CLOSED').length;document.getElementById('ho-n').innerHTML=`<b>${list.length}</b> tickets · <b>${o}</b> open · ${gs.length} of ${hoGroups.length} systems`;}
+async function hoGenerate(){
+  const {list,gs,allSys}=hoPick();if(!list.length){showToast('No tickets match these choices.','error');return;}
+  const s=[...document.querySelectorAll('#ho-secs input:checked')].map(i=>i.value);const has=k=>s.includes(k);
+  const o={title:document.getElementById('ho-title').value.trim()||'Punch List Handover Report',type:document.getElementById('ho-type').value,from:document.getElementById('ho-from').value.trim(),to:document.getElementById('ho-to').value.trim(),ref:document.getElementById('ho-ref').value.trim(),rem:document.getElementById('ho-rem').value.trim()};
+  try{localStorage.setItem('qas2_ho',JSON.stringify({title:o.title,type:o.type,from:o.from,to:o.to,s}));}catch(e){}
+  const w=window.open('','_blank');if(!w){showToast('Allow pop-ups for this site to open the report.','error');return;}
+  w.document.write('<p style="font-family:Segoe UI,Arial;padding:40px;color:#1F3864;font-size:15px">Building the handover report…</p>');
+  try{
+    const E=s=>escapeHtml(s==null?'':String(s));const iso=new Date().toISOString().slice(0,10);
+    const D=s=>{if(!s)return '–';const d=new Date(String(s).slice(0,10)+'T00:00:00');return isNaN(d)?String(s):d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});};
+    const age=x=>x.date?Math.max(0,Math.round((new Date(iso)-new Date(String(x.date).slice(0,10)))/864e5)):null;
+    const open=list.filter(x=>x.status!=='CLOSED'),closed=list.filter(x=>x.status==='CLOSED'),over=open.filter(isOverdue);
+    const oA=open.filter(x=>x.priority==='A'),oB=open.filter(x=>x.priority==='B'),oC=open.filter(x=>(x.priority||'C')==='C');
+    const verdict=oA.length?['no','NOT READY FOR HANDOVER',`${oA.length} Priority A (safety critical) item${oA.length===1?' is':'s are'} still open and must be closed first.`]:open.length?['cond','READY WITH CONDITIONS',`No Priority A items open. ${oB.length} B and ${oC.length} C item${oB.length+oC.length===1?' remains':'s remain'} open — to be closed as per the agreed plan.`]:['ok','READY FOR HANDOVER','All punch items in scope are closed.'];
+    const pct=list.length?Math.round(closed.length*100/list.length):0;
+    const scope=allSys?'All systems':gs.length<=4?gs.map(g=>g.names[0].n).join(', '):gs.length+' systems';
+    const docNo='QAS2-HOR-'+iso.replace(/-/g,'');
+    const secs=[];
+    if(has('verdict'))secs.push(`<div class="vd ${verdict[0]}"><div class="vi">${verdict[0]==='ok'?'✓':verdict[0]==='cond'?'!':'✕'}</div><div><b>${verdict[1]}</b><span>${E(verdict[2])}</span></div><div class="vp"><b>${pct}%</b><span>items closed</span></div></div>`);
+    if(has('kpi'))secs.push(`<div class="kpis">${[[list.length,'Items in scope',''],[open.length,'Open','neg'],[closed.length,'Closed','ok'],[over.length,'Overdue',over.length?'neg':''],[oA.length,'Open · A','neg'],[oB.length,'Open · B','warn'],[oC.length,'Open · C','info']].map(([v,l,c])=>`<div class="kpi ${c}"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`);
+    // per system
+    const bySys=new Map();list.forEach(x=>{const k=x._sys;if(!bySys.has(k))bySys.set(k,[]);bySys.get(k).push(x);});
+    const sysRows=[...bySys.entries()].map(([k,L])=>{const op=L.filter(x=>x.status!=='CLOSED');return {k,L,op,a:op.filter(x=>x.priority==='A').length,b:op.filter(x=>x.priority==='B').length,c:op.filter(x=>(x.priority||'C')==='C').length,cl:L.length-op.length,ov:op.filter(isOverdue).length};}).sort((x,y)=>y.op.length-x.op.length||x.k.localeCompare(y.k));
+    if(has('charts')){
+      const W=520,rh=22,pl=150,iw=W-pl-40,mx=Math.max(1,...sysRows.map(r=>r.L.length));const top=sysRows.slice(0,14);
+      const bars=`<svg viewBox="0 0 ${W} ${top.length*rh+8}" width="100%" font-family="Segoe UI,Arial" font-size="10">${top.map((r,i)=>{const y=4+i*rh;let x=pl;const seg=(n,c)=>{if(!n)return '';const w=iw*n/mx;const s=`<rect x="${x.toFixed(1)}" y="${y+3}" width="${w.toFixed(1)}" height="14" fill="${c}"/>`;x+=w;return s;};
+        return `<text x="${pl-6}" y="${y+14}" text-anchor="end" fill="#334155">${E(r.k.length>26?r.k.slice(0,25)+'…':r.k)}</text>`+seg(r.a,'#B91C1C')+seg(r.b,'#D97706')+seg(r.c,'#2563EB')+seg(r.cl,'#86EFAC')+`<text x="${(x+5).toFixed(1)}" y="${y+14}" fill="#0F2747" font-weight="700">${r.op.length}/${r.L.length}</text>`;}).join('')}</svg>`;
+      const pie=(()=>{const parts=[[oA.length,'#B91C1C','A'],[oB.length,'#D97706','B'],[oC.length,'#2563EB','C']].filter(p=>p[0]);const tot=open.length;if(!tot)return '<div class="none">No open items</div>';let a=-Math.PI/2;const R=52,r=32,cx=70,cy=64;
+        const arcs=parts.map(([n,c])=>{const b=a+2*Math.PI*n/tot;const lg=b-a>Math.PI?1:0;const P=(ang,rad)=>[cx+rad*Math.cos(ang),cy+rad*Math.sin(ang)];const [x1,y1]=P(a,R),[x2,y2]=P(b-1e-4,R),[x3,y3]=P(b-1e-4,r),[x4,y4]=P(a,r);a=b;return `<path d="M${x1},${y1}A${R},${R} 0 ${lg} 1 ${x2},${y2}L${x3},${y3}A${r},${r} 0 ${lg} 0 ${x4},${y4}Z" fill="${c}"/>`;}).join('');
+        return `<svg viewBox="0 0 250 130" width="100%">${arcs}<text x="70" y="62" text-anchor="middle" font-size="18" font-weight="800" fill="#0F2747" font-family="Segoe UI,Arial">${tot}</text><text x="70" y="76" text-anchor="middle" font-size="9" fill="#6B7280" font-family="Segoe UI,Arial">open</text>${parts.map(([n,c,l],i)=>`<rect x="145" y="${34+i*22}" width="11" height="11" rx="2" fill="${c}"/><text x="162" y="${43+i*22}" font-size="11" fill="#334155" font-family="Segoe UI,Arial">Priority ${l} · <tspan font-weight="700">${n}</tspan></text>`).join('')}</svg>`;})();
+      const bk=[['0–7 d',0,7],['8–14 d',8,14],['15–30 d',15,30],['> 30 d',31,1e9]].map(([l,a,b])=>[l,open.filter(x=>{const g=age(x);return g!=null&&g>=a&&g<=b;}).length]);const bm=Math.max(1,...bk.map(x=>x[1]));
+      const aging=`<svg viewBox="0 0 250 130" width="100%" font-family="Segoe UI,Arial" font-size="10">${bk.map(([l,n],i)=>{const h=90*n/bm;const x=18+i*58;return `<rect x="${x}" y="${105-h}" width="40" height="${h}" rx="3" fill="${i===3?'#B91C1C':i===2?'#D97706':'#1F3864'}"/><text x="${x+20}" y="${100-h}" text-anchor="middle" font-weight="700" fill="#0F2747">${n}</text><text x="${x+20}" y="121" text-anchor="middle" fill="#6B7280">${l}</text>`;}).join('')}</svg>`;
+      secs.push(`<h2>Overview</h2><div class="charts">${sysRows.length>1?`<div class="ch wide"><div class="ct">Items by system — open / total</div>${bars}<div class="lg"><span><i style="background:#B91C1C"></i>Open A</span><span><i style="background:#D97706"></i>Open B</span><span><i style="background:#2563EB"></i>Open C</span><span><i style="background:#86EFAC"></i>Closed</span></div></div>`:''}
+        <div class="ch"><div class="ct">Open items by priority</div>${pie}</div><div class="ch"><div class="ct">Age of open items</div>${aging}</div></div>`);}
+    if(has('systems'))secs.push(`<h2>Summary by system</h2><table class="t"><thead><tr><th>System</th><th class="c">Total</th><th class="c">Open A</th><th class="c">Open B</th><th class="c">Open C</th><th class="c">Closed</th><th class="c">Overdue</th><th style="width:20%">Progress</th><th>Status</th></tr></thead><tbody>${sysRows.map(r=>{const p=Math.round(r.cl*100/r.L.length);const v=r.a?['no','Not ready']:r.op.length?['cond','With conditions']:['ok','Ready'];
+      return `<tr><td><b>${E(r.k)}</b></td><td class="c">${r.L.length}</td><td class="c">${r.a?`<b class="neg">${r.a}</b>`:'0'}</td><td class="c">${r.b}</td><td class="c">${r.c}</td><td class="c">${r.cl}</td><td class="c">${r.ov?`<b class="neg">${r.ov}</b>`:'0'}</td><td><div class="pb"><i style="width:${p}%"></i></div><small>${p}%</small></td><td><span class="vt ${v[0]}">${v[1]}</span></td></tr>`;}).join('')}</tbody></table>`);
+    const row=(x,cl)=>`<tr><td class="mono nw" style="font-size:9.5px">${E(x.no)}</td><td><span class="pr p${x.priority||'C'}">${E(x.priority||'C')}</span></td><td>${E(x.description||'')}${x.kks?` <small class="mono">${E(x.kks)}</small>`:''}${x.responsible?`<small>Responsible: ${E(x.responsible)}</small>`:''}</td><td class="nw">${E(D(x.date))}</td><td class="nw">${cl?E(D(x.date_closed)):isOverdue(x)?`<b class="neg">${E(D(x.deadline))}</b>`:E(D(x.deadline))}</td><td class="c">${cl?'':age(x)??''}</td></tr>`;
+    const listBy=(L,cl)=>{const m=new Map();L.slice().sort((a,b)=>String(a.priority||'C').localeCompare(String(b.priority||'C'))||String(a.no).localeCompare(String(b.no))).forEach(x=>{if(!m.has(x._sys))m.set(x._sys,[]);m.get(x._sys).push(x);});
+      return [...m.entries()].map(([k,L2])=>`<div class="grp"><div class="gh">${E(k)}<span>${L2.length} item${L2.length===1?'':'s'}</span></div><table class="t"><thead><tr><th style="width:19%">Ticket</th><th style="width:5%">Pri</th><th>Description</th><th style="width:11%">Raised</th><th style="width:11%">${cl?'Closed':'Target'}</th><th style="width:7%" class="c">${cl?'':'Age d'}</th></tr></thead><tbody>${L2.map(x=>row(x,cl)).join('')}</tbody></table></div>`).join('');};
+    if(has('open'))secs.push(`<h2>Open items <small>${open.length}</small></h2>`+(open.length?listBy(open,false):'<div class="none">✓ No open items in scope.</div>'));
+    if(has('overdue')&&over.length)secs.push(`<h2>Overdue items <small>${over.length}</small></h2>`+listBy(over,false));
+    if(has('closed'))secs.push(`<h2>Closed items <small>${closed.length}</small></h2>`+(closed.length?listBy(closed,true):'<div class="none">No closed items in scope.</div>'));
+    if(o.rem)secs.push(`<h2>Remarks</h2><div class="rem">${E(o.rem).replace(/\n/g,'<br>')}</div>`);
+    if(has('sign'))secs.push(`<div class="sign"><h2>Sign-off</h2><table class="sg"><thead><tr><th></th><th>Handed over by<small>${E(o.from)}</small></th><th>Received by<small>${E(o.to)}</small></th><th>Witnessed by<small>Owner / QA-QC</small></th></tr></thead><tbody><tr><th>Name</th><td></td><td></td><td></td></tr><tr class="s"><th>Signature</th><td></td><td></td><td></td></tr><tr><th>Date</th><td></td><td></td><td></td></tr></tbody></table></div>`);
+    let annex='';
+    if(has('sheets')&&open.length){const L=open.slice(0,80);for(let i=0;i<L.length;i++){let ph=[];try{ph=(await fetchTicketPhotosById(L[i].id,false)||[]).map(p=>p.photo_data||p).filter(x=>typeof x==='string');}catch(e){}let lg=[];try{lg=await sbFetch('qas2_ticket_updates?ticket_id=eq.'+encodeURIComponent(String(L[i].id))+'&select=*&order=created_at.asc')||[];}catch(e){}annex+=tkSheet(L[i],ph,lg).html;}}
+    const html=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${E(o.title)} — ${E(scope)}</title><style>${TK_CSS}${HO_CSS}</style></head><body>
+      <div class="bar"><b>${E(o.title)}</b><span style="flex:1"></span><button class="p" onclick="window.print()">🖨 Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
+      <section class="page ho"><table class="hdr"><tr><td class="lg"><img src="${getWWMCLogoSrc()}" alt=""></td>
+        <td class="tt"><div class="co">Wahat Al Wusta Maintenance Company</div><div class="pl">Al-Qassim 2 CCGT IPP · 1,980 MW</div><h1>${E(o.title)}</h1><div class="sy">${E(o.type)}${o.from||o.to?' · '+E(o.from)+' → '+E(o.to):''}</div></td>
+        <td class="dc"><table><tr><th>Doc. No.</th><td class="no">${docNo}</td></tr><tr><th>Scope</th><td style="white-space:normal">${E(scope)}</td></tr>${o.ref?`<tr><th>Reference</th><td style="white-space:normal">${E(o.ref)}</td></tr>`:''}<tr><th>Prepared by</th><td>${E(currentUser?.name||'')}</td></tr><tr><th>Date</th><td>${E(D(iso))}</td></tr></table></td></tr></table>
+        ${secs.join('')}
+        <div class="foot"><span>QAS2 CORE · Wahat Al Wusta Maintenance Co.</span><span>${docNo}</span></div></section>${annex}</body></html>`;
+    w.document.open();w.document.write(has('sheets')?await sbResolveHtml(html):html);w.document.close();hoClose();
+  }catch(e){try{w.document.body.innerHTML='<p style="font:14px Arial;padding:30px;color:#B91C1C">Could not build the report: '+escapeHtml(e.message)+'</p>';}catch(_){}}
+}
+const HO_CSS=`.ho{min-height:0}.ho h2{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--brand);border-bottom:2px solid var(--brand);padding-bottom:4px;margin:16px 0 8px;display:flex;align-items:baseline;gap:8px;break-after:avoid}.ho h2 small{font-size:11px;color:var(--mute);letter-spacing:0}
+.vd{display:flex;align-items:center;gap:14px;border-radius:10px;padding:12px 16px;margin-top:12px;border:2px solid}.vd .vi{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex:none}.vd b{display:block;font-size:16px;letter-spacing:.04em}.vd span{font-size:12px}.vd>div:nth-child(2){flex:1}.vd .vp{text-align:right}.vd .vp b{font-size:24px}.vd .vp span{font-size:10px;color:var(--mute)}
+.vd.ok{background:var(--okb);border-color:#86EFAC;color:var(--ok)}.vd.ok .vi{background:var(--ok)}.vd.cond{background:var(--warnb);border-color:#FCD34D;color:var(--warn)}.vd.cond .vi{background:#D97706}.vd.no{background:var(--negb);border-color:#FCA5A5;color:var(--neg)}.vd.no .vi{background:var(--neg)}
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}.kpi{border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:6px;padding:7px 8px}.kpi b{display:block;font-size:20px;line-height:1.1;color:var(--brand)}.kpi span{font-size:9.5px;color:var(--mute)}.kpi.neg{border-top-color:var(--neg)}.kpi.neg b{color:var(--neg)}.kpi.ok{border-top-color:var(--ok)}.kpi.ok b{color:var(--ok)}.kpi.warn{border-top-color:#D97706}.kpi.warn b{color:var(--warn)}.kpi.info{border-top-color:var(--info)}.kpi.info b{color:var(--info)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ch{border:1px solid var(--line);border-radius:8px;padding:8px 10px;break-inside:avoid}.ch.wide{grid-column:1/-1}.ct{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);margin-bottom:4px}.lg{display:flex;gap:12px;font-size:9.5px;color:var(--mute);margin-top:4px}.lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.t .c{text-align:center}.t tbody tr:nth-child(even) td{background:#F8FAFC}.t td small{display:block;color:var(--mute);font-size:9.5px}.mono{font-family:Consolas,monospace;font-size:10.5px}.nw{white-space:nowrap}.neg{color:var(--neg)}
+.pb{height:6px;background:#EEF1F5;border-radius:4px;overflow:hidden;margin-top:4px}.pb i{display:block;height:100%;background:var(--ok)}.vt{display:inline-block;font-size:9.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.vt.ok{background:var(--okb);color:var(--ok)}.vt.cond{background:var(--warnb);color:var(--warn)}.vt.no{background:var(--negb);color:var(--neg)}
+.pr{display:inline-block;width:20px;text-align:center;border-radius:4px;font-weight:900;font-size:10px;color:#fff}.pA{background:#B91C1C}.pB{background:#D97706}.pC{background:#2563EB}
+.grp{margin-bottom:10px}.gh{display:flex;justify-content:space-between;background:var(--soft);border-left:4px solid var(--brand);padding:5px 10px;font-weight:700;color:var(--brand);font-size:12px;break-after:avoid}.gh span{font-weight:600;color:var(--mute);font-size:10.5px}.grp .t tr{break-inside:avoid}
+.none{padding:10px 12px;border-radius:8px;background:var(--okb);color:var(--ok);font-weight:700}.rem{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px}
+.sign{break-inside:avoid;margin-top:14px}.sg thead th small{display:block;text-transform:none;letter-spacing:0;color:var(--mute);font-weight:600}
+@media print{.page.ho{min-height:0;page-break-after:always}}`;
 
 // ── PRINT TICKET ──
 // ═════════ PUNCH TICKET — printable sheet (one ticket per A4 page) ═════════

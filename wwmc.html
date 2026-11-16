@@ -404,6 +404,21 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
 #dro-eq{padding:6px 8px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:12.5px}
 @media (max-width:640px){.dro-grid,.dro-p{grid-template-columns:1fr 1fr}.mr-cover{grid-template-columns:1fr}}
+.dpc-sum{margin-left:auto;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:none;opacity:.75}
+.dpc-t{width:100%;border-collapse:collapse;font-size:13px}.dpc-t th{background:#F1F5FB;color:#1F3864;font-size:11px;font-weight:700;text-align:left;padding:7px 8px;white-space:nowrap}
+.dpc-t td{border-bottom:1px solid #EEF1F5;padding:6px 8px;vertical-align:middle}.dpc-t td small{display:block;font-size:10.5px;color:#6B7280;font-weight:500}.dpc-t .r{text-align:right;font-variant-numeric:tabular-nums}
+.dpc-t tr.g td{background:none;border-bottom:2px solid #1F3864;color:#1F3864;font-weight:800;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:14px 8px 5px}
+.dpc-t tr.tot td{background:#F8FAFD;font-weight:700}.dpc-t tr.tot td b{color:#1F3864}
+.dpc-t input{width:100%;min-width:92px;max-width:150px;padding:7px 9px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums}
+.dpc-t input:focus{outline:2px solid #3B82F6;outline-offset:-1px;border-color:#3B82F6}
+.dpc-t input.chg{background:#FFFBEB;border-color:#F5A524}
+.dpc-mu{display:none;font-size:10.5px;color:#6B7280;font-weight:600}.dpc-v{font-weight:700;color:#0F2747;white-space:nowrap}.dpc-u{color:#6B7280;font-size:12px;white-space:nowrap}
+.dpc-f{display:inline-block!important;margin-top:2px;padding:1px 7px;border-radius:9px;background:#FEF3C7;color:#92400E!important;font-weight:700!important}.dpc-f.bad{background:#FEE2E2;color:#991B1B!important}
+.dpc-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:14px 0 4px}.dpc-k div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:8px 10px;background:#fff}
+.dpc-k b{display:block;font-size:19px;color:#0F2747;font-variant-numeric:tabular-nums;line-height:1.2}.dpc-k span{font-size:10.5px;color:#6B7280;font-weight:600}.dpc-k div.na b{color:#B6BFCC}
+.dpc-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #EEF1F5}.dpc-foot .mr-note{flex:1;min-width:200px;margin:0}
+.dpc-foot .st.dirty{color:#B45309;font-weight:700}
+@media (max-width:640px){.dpc-t{font-size:12.5px}.dpc-t .hm{display:none}.dpc-t td,.dpc-t th{padding:6px 4px}.dpc-t input{min-width:70px;max-width:96px;padding:7px 6px}.dpc-v{white-space:normal;min-width:62px}.dpc-f{display:block!important;width:max-content;max-width:110px;white-space:normal;font-size:9.5px!important;margin-left:auto}.dpc-u{display:none}.dpc-mu{display:inline!important}.dpc-t th:last-child{display:none}.dpc-t td:first-child small{display:none}.dpc-k{grid-template-columns:1fr 1fr}}
 .lazy-more{text-align:center;color:var(--muted,#6B7280);font-size:12px;padding:14px 0}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:#fff;border-radius:var(--radius-lg);width:720px;max-width:96%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
@@ -1169,19 +1184,18 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
         </div>
       </div>
 
+      <!-- PRODUCTION & CONSUMPTION -->
+      <details class="dr-form-section dpc" id="dpc-box" ontoggle="if(this.open)dpcLoad()">
+        <summary class="dr-section-head">📊 Production &amp; Consumption <span class="dpc-sum">once a day · 24 h · optional</span></summary>
+        <div class="dr-section-body" id="dpc-body"><p class="mr-note">Loading…</p></div>
+      </details>
+
       <!-- OPERATIONS READINGS -->
       <details class="dr-form-section dro" id="dro-box" ontoggle="if(this.open)drOpsLoad()">
-        <summary class="dr-section-head">⛽ Operations Readings (Optional — shift data for the monthly report)</summary>
+        <summary class="dr-section-head">⏱ Starts / Trips / Running Hours (Optional — for the monthly report)</summary>
         <div class="dr-section-body">
           <p class="mr-note" id="dro-info" style="margin:0 0 10px"></p>
-          <div class="dro-grid">
-            <div class="field"><label for="dro-fgp">Fuel gas pressure (barg)</label><input type="number" step="any" inputmode="decimal" id="dro-fgp"></div>
-            <div class="field"><label for="dro-fgf">Fuel gas daily flow (SCFM)</label><input type="number" step="any" inputmode="decimal" id="dro-fgf"></div>
-            <div class="field"><label for="dro-fgc">Fuel gas consumption (Sm³/day)</label><input type="number" step="any" inputmode="decimal" id="dro-fgc"></div>
-          </div>
-          <div class="dro-lbl">Power production (MWh)</div>
-          <div class="dro-grid dro-p"><div class="field"><label for="dro-p-GT11">GT11</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT11"></div><div class="field"><label for="dro-p-GT12">GT12</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT12"></div><div class="field"><label for="dro-p-GT13">GT13</label><input type="number" step="any" inputmode="decimal" id="dro-p-GT13"></div><div class="field"><label for="dro-p-STG21">STG21</label><input type="number" step="any" inputmode="decimal" id="dro-p-STG21"></div><div class="field"><label for="dro-p-STG22">STG22</label><input type="number" step="any" inputmode="decimal" id="dro-p-STG22"></div></div>
-          <div class="dro-lbl">Starts / trips / running hours today</div>
+          <div class="dro-lbl" style="margin-top:0">Starts / trips / running hours today</div>
           <div class="mr-tw"><table class="mr-cnt-t"><thead><tr><th>Equipment</th><th>Starts</th><th>Trips</th><th>Hours</th><th></th></tr></thead><tbody id="dro-rows"></tbody></table></div>
           <div style="display:flex;gap:8px;margin-top:6px"><select id="dro-eq" aria-label="Equipment"><option value="">— equipment —</option></select><button type="button" class="btn sm" onclick="drOpsAddRow()">+ Add</button></div>
           <div class="field" style="margin-top:10px"><label for="dro-rem">Remarks (optional)</label><input id="dro-rem" placeholder="e.g. GT11 ran on Black Start mode"></div>
@@ -3886,6 +3900,7 @@ async function submitDailyReport(){
   const activities=[draText(drItemsList),drNotesTxt].filter(Boolean).join('\n');
   const system=document.getElementById('dr-system').value.trim()||[...new Set(drItemsList.map(x=>x.sys).filter(Boolean))].join(', ');
 
+  {const pc=dpcPending();if(pc&&pc.bad&&!confirm(pc.bad+' meter reading(s) in Production & Consumption are lower than the previous reading. Submit anyway?'))return;}
   const btn=document.getElementById('dr-submit-btn');
   if(btn){btn.disabled=true;btn.textContent='Submitting...';}
 
@@ -3919,6 +3934,7 @@ async function submitDailyReport(){
     await drPost(drData);
     showToast('Report '+repNo+' submitted ✓','success');
     try{await drOpsSave(drData.report_date);}catch(e){}
+    try{if(dpc.d===drData.report_date)await dpcSave(true);}catch(e){}
     clearDRForm();
     invalidateReportsCache();
     loadTodayReports(true);
@@ -5715,6 +5731,7 @@ function drInitForm(){
 }
 async function drDateChanged(){
   try{if(document.getElementById('dro-box')?.open)drOpsLoad();}catch(e){}
+  try{if(document.getElementById('dpc-box')?.open)dpcLoad(true);}catch(e){}
   const di=document.getElementById('dr-date');if(!di||!di.value)return;
   if(di.value>drToday())di.value=drToday();
   const d=new Date(di.value+'T00:00:00');
@@ -6236,7 +6253,7 @@ function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();let l='';tr
 // ═════════════════════════ OPERATIONS ═════════════════════════
 // Running hours (daily cumulative counters) · Changeover (duty/standby by actual hours, weekly by system)
 // · Fuel & water (one meter reading a day) · Setup
-const OP_PAGES=[['today','Today'],['hours','Running Hours'],['co','Changeover'],['meters','Fuel & Water'],['setup','Setup']];
+const OP_PAGES=[['today','Today'],['hours','Running Hours'],['co','Changeover'],['meters','Production'],['setup','Setup']];
 const OP_WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 let opPage='today',opDate='',opEq=[],opGroups=[],opCO=[],opMeters=[],opRd=[],opHrs=[],opSet={work_hours:{days:[0,1,2,3,4],from:'07:00',to:'15:00'}},opLoaded=0,opErr='',opDirty=false,opSetupTab='equip';
 try{const p=localStorage.getItem('qas2_op_page');if(p&&OP_PAGES.some(x=>x[0]===p))opPage=p;}catch(e){}
@@ -6421,7 +6438,8 @@ async function opFeedMonthly(d){
     const counters=Object.assign({},cur.counters||{});let ch=false;
     opEq.filter(e=>e.in_report!==false).forEach(e=>{const x=opHoursOnDay(e.code,d);if(x&&x.h>=0&&x.h<=24*x.days+0.05){const o=Object.assign({},counters[e.code]||{});if(o.h!==Math.round(x.h*10)/10){o.h=Math.round(x.h*10)/10;counters[e.code]=o;ch=true;}}});
     const fg=opMeters.find(m=>m.code==='FG-PLANT');let fgc=cur.fg_consumption;if(fg){const c=opMCons(fg,d);if(c&&c.v>=0&&c.days===1&&opNum(fgc)!==c.v){fgc=c.v;ch=true;}}
-    if(ch)await sbUpsert('qas2_mr_ops_daily',[{report_date:d,counters,fg_consumption:fgc,power:cur.power||{},updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
+    const power=Object.assign({},cur.power||{});opMeters.filter(m=>DPC_PKEY[m.code]&&m.active!==false).forEach(m=>{const c=opMCons(m,d);if(c&&c.v>=0&&c.days===1){const v=Math.round(c.v*100)/100;if(power[DPC_PKEY[m.code]]!==v){power[DPC_PKEY[m.code]]=v;ch=true;}}});
+    if(ch)await sbUpsert('qas2_mr_ops_daily',[{report_date:d,counters,fg_consumption:fgc,power,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
   }catch(e){console.warn('monthly feed',e.message);}
 }
 // ── CHANGEOVER
@@ -6486,23 +6504,23 @@ function opRenderMeters(){
   const d=opDate,ro=!opCanEnter();const month=d.slice(0,7);const act=opMeters.filter(m=>m.active!==false);
   const days=[];for(let x=month+'-01';x.slice(0,7)===month&&x<=opToday();x=opAdd(x,1))days.push(x);
   const row=m=>{const prev=opMLastBefore(m.code,d);const cur=opMReading(m.code,d);
-    return `<tr><td><b>${escapeHtml(m.name)}</b><small>${escapeHtml(m.code)} · ${m.mode==='daily'?'daily consumption':'totalizer'}</small></td>
+    return `<tr><td><b>${escapeHtml(m.name)}</b><small>${escapeHtml(m.code)} · ${m.mode==='daily'?'daily value':'totalizer'}</small></td>
       <td class="r">${m.mode==='daily'?'<span class="mr-note">—</span>':prev?opFmt(opNum(prev.value),0)+'<small>'+escapeHtml(opDL(prev.reading_date))+'</small>':'<span class="mr-note">—</span>'}</td>
       <td>${ro?(cur!=null?opFmt(cur,0):'—'):`<input class="op-in" inputmode="decimal" data-m="${escapeHtml(m.code)}" value="${cur!=null?cur:''}" placeholder="${m.mode==='daily'?'consumption':'meter reading'}">`}</td>
       <td class="r op-mc">${opMCell(m,cur,d)}</td><td>${escapeHtml(m.unit)}</td></tr>`;};
   const tot=m=>{let s=0,n=0;days.forEach(x=>{const c=opMCons(m,x);if(c&&c.v>=0){s+=c.v;n++;}});return {s,n};};
-  const fuel=act.filter(m=>m.kind==='fuel'),water=act.filter(m=>m.kind!=='fuel');
+  const power=act.filter(m=>m.kind==='power'),fuel=act.filter(m=>m.kind==='fuel'),water=act.filter(m=>m.kind!=='fuel'&&m.kind!=='power');
   const plant=act.find(m=>m.code==='FG-PLANT');const gts=act.filter(m=>/^FG-GT/.test(m.code));
   const chk=plant&&gts.length?(()=>{const p=tot(plant).s,g=gts.reduce((a,m)=>a+tot(m).s,0);if(!p||!g)return '';const diff=(p-g)*100/p;return `<div class="op-hint">Plant meter vs sum of GT meters this month: ${opFmt(p,0)} vs ${opFmt(g,0)} Sm³ (${diff>=0?'+':''}${opFmt(diff,1)}%)</div>`;})():'';
   const grid=ms=>`<div class="mr-tw"><table class="op-t op-grid-t"><thead><tr><th>Date</th>${ms.map(m=>`<th class="r">${escapeHtml(m.name.replace(/^Fuel gas — /,'FG ').replace(/ water.*$/i,''))}<small>${escapeHtml(m.unit)}</small></th>`).join('')}</tr></thead>
     <tbody>${days.slice().reverse().map(x=>`<tr${x===d?' class="on"':''}><td>${escapeHtml(opDL(x))}</td>${ms.map(m=>{const c=opMCons(m,x);return `<td class="r">${c?(c.v<0?'<span class="op-bad">'+opFmt(c.v,0)+'</span>':opFmt(c.v,0)+(c.days>1?'<small>'+c.days+'d</small>':'')):'·'}</td>`;}).join('')}</tr>`).join('')}</tbody>
     <tfoot><tr><th>Total</th>${ms.map(m=>`<th class="r">${opFmt(tot(m).s,0)}</th>`).join('')}</tr><tr><th>Daily average</th>${ms.map(m=>{const t=tot(m);return `<th class="r">${t.n?opFmt(t.s/t.n,0):'—'}</th>`;}).join('')}</tr></tfoot></table></div>`;
-  opEl('op-body').innerHTML=`<div class="mr-help">Once a day, enter each <b>meter reading</b> as shown on the totalizer. The site calculates the day's consumption and the month's total. Fuel gas for the whole plant also fills the monthly report.</div>
+  opEl('op-body').innerHTML=`<div class="mr-help">Once a day (24 h), enter each <b>meter reading</b> as shown on the totalizer, or the day's value for meters set to <b>Daily</b>. The same values appear in the Daily Report's <b>Production &amp; Consumption</b> card — enter them in either place. Power per unit also fills the monthly report.</div>
     <div class="op-bar"><label class="mr-month">Date <input type="date" value="${d}" max="${opToday()}" onchange="opSetDate(this.value)"></label></div>
     <div class="mr-tw"><table class="op-t"><thead><tr><th>Meter</th><th class="r">Previous</th><th>Reading on ${escapeHtml(opDL(d))}</th><th class="r">Consumption</th><th></th></tr></thead>
-      <tbody>${fuel.length?`<tr class="op-gh"><td colspan="5">⛽ Fuel</td></tr>`+fuel.map(row).join(''):''}${water.length?`<tr class="op-gh"><td colspan="5">💧 Water</td></tr>`+water.map(row).join(''):''}</tbody></table></div>
+      <tbody>${power.length?`<tr class="op-gh"><td colspan="5">⚡ Power generation</td></tr>`+power.map(row).join(''):''}${fuel.length?`<tr class="op-gh"><td colspan="5">⛽ Fuel</td></tr>`+fuel.map(row).join(''):''}${water.length?`<tr class="op-gh"><td colspan="5">💧 Water</td></tr>`+water.map(row).join(''):''}</tbody></table></div>
     ${ro?'':`<div class="mr-savebar" id="op-savebar"><span class="st">All saved</span><button class="btn primary" type="button" onclick="opSaveMeters(this)">Save readings</button></div>`}
-    <div class="mr-gh">${escapeHtml(mrMonthLabel(month,true))} — fuel</div>${fuel.length?grid(fuel):''}${chk}
+    ${power.length?`<div class="mr-gh">${escapeHtml(mrMonthLabel(month,true))} — power</div>`+grid(power):''}${fuel.length?`<div class="mr-gh">${escapeHtml(mrMonthLabel(month,true))} — fuel</div>`+grid(fuel):''}${chk}
     <div class="mr-gh">${escapeHtml(mrMonthLabel(month,true))} — water</div>${water.length?grid(water):''}`;
   opEl('op-body').querySelectorAll('input.op-in').forEach(i=>i.addEventListener('input',()=>{opDirty=true;const m=opMeters.find(x=>x.code===i.dataset.m);i.closest('tr').querySelector('.op-mc').innerHTML=opMCell(m,opNum(i.value),opDate);const sb=opEl('op-savebar');if(sb){sb.classList.add('dirty');sb.querySelector('.st').textContent='Unsaved readings';}}));
 }
@@ -6540,7 +6558,7 @@ function opRenderSetup(){
     h+=`<div class="mr-help"><b>Totalizer</b> = enter the meter's running total; the site subtracts. <b>Daily</b> = enter the day's consumption directly.</div>
       <div class="mr-tw"><table class="op-t op-set"><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Unit</th><th>Entry</th><th>Order</th><th>Active</th></tr></thead><tbody>
       ${opMeters.concat([{code:'',_new:1,kind:'water',unit:'m³',mode:'totalizer'}]).map(m=>`<tr data-code="${escapeHtml(m.code||'')}"><td>${m._new?'<input data-f="code" placeholder="+ new code">':'<b>'+escapeHtml(m.code)+'</b>'}</td><td><input data-f="name" value="${escapeHtml(m.name||'')}"></td>
-        <td><select data-f="kind"><option value="fuel"${m.kind==='fuel'?' selected':''}>Fuel</option><option value="water"${m.kind!=='fuel'?' selected':''}>Water</option></select></td><td><input data-f="unit" value="${escapeHtml(m.unit||'')}" style="width:70px"></td>
+        <td><select data-f="kind"><option value="power"${m.kind==='power'?' selected':''}>Power</option><option value="fuel"${m.kind==='fuel'?' selected':''}>Fuel</option><option value="water"${m.kind!=='fuel'&&m.kind!=='power'?' selected':''}>Water</option></select></td><td><input data-f="unit" value="${escapeHtml(m.unit||'')}" style="width:70px"></td>
         <td><select data-f="mode"><option value="totalizer"${m.mode!=='daily'?' selected':''}>Totalizer</option><option value="daily"${m.mode==='daily'?' selected':''}>Daily</option></select></td><td><input data-f="sort_order" value="${m.sort_order??''}" style="width:60px"></td><td class="c"><input type="checkbox" data-f="active" ${m.active!==false?'checked':''}></td></tr>`).join('')}</tbody></table></div>
       <div class="mr-savebar"><span class="st">Edit any cell, then save</span><button class="btn primary" type="button" onclick="opSaveMetersSetup(this)">Save meters</button></div>`;
   }else{
@@ -7834,8 +7852,185 @@ window.addEventListener('resize',navClose);window.addEventListener('scroll',()=>
 document.addEventListener('keydown',e=>{if(e.key==='Escape')navClose();});
 try{const p=localStorage.getItem('qas2_mr_page');if(p)mrPage=p;}catch(e){}
 
+// ───────── Production & Consumption (daily report) ─────────
+// Entered once a day for 24 h. Power, diesel and water are meters (qas2_op_meters) — the same readings the
+// Operations ▸ Production page shows. Fuel gas is pressure only (qas2_mr_ops_daily.fg_pressure).
+const DPC_PKEY={'PG-GT11':'GT11','PG-GT12':'GT12','PG-GT13':'GT13','PG-ST21':'STG21','PG-ST22':'STG22'};
+const DPC_NET='PG-NET';
+const DPC_GROUPS=[['power','⚡ Power generation'],['fuel','⛽ Fuel'],['water','💧 Water consumption']];
+let dpc={d:null,me:[],rd:[],ops:[],err:'',dirty:false};
+function dpcMeters(me){return (me||[]).filter(m=>m.active!==false&&['power','fuel','water'].includes(m.kind));}
+function dpcIsGross(m){return m.kind==='power'&&m.code!==DPC_NET;}
+function dpcVal(rd,code,d){const r=rd.find(x=>x.meter_code===code&&x.reading_date===d);return r?opNum(r.value):null;}
+function dpcPrev(rd,code,d){let r=null;for(const x of rd){if(x.meter_code===code&&x.reading_date<d&&(!r||x.reading_date>r.reading_date))r=x;}return r;}
+// value for the day: a daily meter is the value itself; a totalizer is today's reading minus the previous one
+function dpcDay(rd,m,d,cur){const v=cur!==undefined?cur:dpcVal(rd,m.code,d);if(v==null)return null;if(m.mode==='daily')return {v,days:1};const p=dpcPrev(rd,m.code,d);if(!p)return {v:null,first:1};return {v:v-opNum(p.value),days:opDays(p.reading_date,d)};}
+function dpcAvg7(rd,m,d){const a=[];for(let i=1;i<=7;i++){const c=dpcDay(rd,m,opAdd(d,-i));if(c&&c.v!=null&&c.days===1&&c.v>=0)a.push(c.v);}return a.length>=3?a.reduce((s,x)=>s+x,0)/a.length:null;}
+function dpcGross(rd,me,d,get){let s=0,n=0;me.filter(dpcIsGross).forEach(m=>{const c=get?get(m):dpcDay(rd,m,d);if(c&&c.v!=null&&c.days===1){s+=c.v;n++;}});return n?s:null;}
+function dpcOpsOn(ops,d){return (ops||[]).find(r=>r.report_date===d)||null;}
+function dpcQ(me){return 'meter_code=in.('+me.map(m=>'"'+m.code+'"').join(',')+')';}
+async function dpcLoad(force){
+  const body=mrEl('dpc-body');if(!body)return;const d=mrEl('dr-date')?.value||drToday();
+  if(!force&&dpc.d===d&&(dpc.dirty||dpc.me.length))return;
+  body.innerHTML='<p class="mr-note">Loading…</p>';
+  try{
+    const me=dpcMeters(await sbFetch('qas2_op_meters?select=*&order=sort_order.asc,code.asc'));
+    const [rd,ops]=await Promise.all([me.length?sbFetch('qas2_op_meter_readings?select=*&'+dpcQ(me)+'&reading_date=gte.'+opAdd(d,-60)+'&reading_date=lte.'+d+'&order=reading_date.asc'):[],
+      sbFetch('qas2_mr_ops_daily?select=report_date,fg_pressure,updated_by&report_date=gte.'+opAdd(d,-1)+'&report_date=lte.'+d).catch(()=>[])]);
+    dpc={d,me,rd:rd||[],ops:ops||[],err:me.length?'':'setup',dirty:false};
+  }catch(e){dpc={d,me:[],rd:[],ops:[],err:/qas2_op_|PGRST|42P01|404|column/i.test(e.message)?'setup':e.message,dirty:false};}
+  dpcRender();
+}
+function dpcRender(){
+  const body=mrEl('dpc-body');if(!body)return;const d=dpc.d,yd=opAdd(d,-1);
+  if(dpc.err){body.innerHTML=`<p class="mr-note">${dpc.err==='setup'?'Production &amp; Consumption is not set up yet. An admin needs to run <b>qas2_production_setup.sql</b> once in Supabase.':'Could not load: '+escapeHtml(dpc.err)}</p>`;return;}
+  const ro=!opCanEnter();const me=dpc.me;
+  const prevCell=m=>{if(m.mode!=='daily'){const p=dpcPrev(dpc.rd,m.code,d);return p?`${opFmt(opNum(p.value),1)}<small>reading · ${escapeHtml(opDL(p.reading_date))}</small>`:'<span class="mr-note">—</span>';}
+    const y=dpcVal(dpc.rd,m.code,yd);return y!=null?`${opFmt(y,1)}<small>yesterday</small>`:'<span class="mr-note">—</span>';};
+  const inp=(m,cur)=>ro?(cur!=null?opFmt(cur,1):'—'):`<input class="dpc-in" inputmode="decimal" data-m="${escapeHtml(m.code)}" value="${cur!=null?cur:''}" placeholder="${m.mode==='daily'?'today':'reading'}" aria-label="${escapeHtml(m.name)}">`;
+  const row=m=>{const cur=dpcVal(dpc.rd,m.code,d);
+    return `<tr data-m="${escapeHtml(m.code)}"><td><b>${escapeHtml(m.name)}</b> <span class="dpc-mu">${escapeHtml(m.unit||'')}</span><small>${m.mode==='daily'?'value for the day':'meter reading (totalizer)'}</small></td>
+      <td class="r hm">${prevCell(m)}</td><td>${inp(m,cur)}</td><td class="r dpc-v"></td><td class="dpc-u">${escapeHtml(m.unit||'')}</td></tr>`;};
+  const gross=me.filter(dpcIsGross),net=me.find(m=>m.code===DPC_NET);
+  const fy=dpcOpsOn(dpc.ops,yd),ft=dpcOpsOn(dpc.ops,d);const fgp=ft&&ft.fg_pressure!=null?opNum(ft.fg_pressure):null;
+  let rows='';
+  DPC_GROUPS.forEach(([k,l])=>{const list=me.filter(m=>m.kind===k);if(!list.length&&k!=='fuel')return;
+    rows+=`<tr class="g"><td colspan="5">${l}</td></tr>`;
+    if(k==='power'){rows+=gross.map(row).join('');
+      if(gross.length)rows+=`<tr class="tot"><td><b>Total gross generation</b> <span class="dpc-mu">MWh</span><small>calculated</small></td><td class="r hm" id="dpc-gy"></td><td></td><td class="r dpc-v" id="dpc-gt">—</td><td class="dpc-u">MWh</td></tr>`;
+      if(net)rows+=row(net)+`<tr class="tot"><td><b>Auxiliary consumption</b> <span class="dpc-mu">%</span><small>gross − net export</small></td><td class="r hm"></td><td></td><td class="r dpc-v" id="dpc-aux">—</td><td class="dpc-u">%</td></tr>`;}
+    else if(k==='fuel'){rows+=`<tr data-fg="1"><td><b>Fuel gas pressure</b> <span class="dpc-mu">barg</span><small>pressure only</small></td><td class="r hm">${fy&&fy.fg_pressure!=null?opFmt(opNum(fy.fg_pressure),2)+'<small>yesterday</small>':'<span class="mr-note">—</span>'}</td>
+        <td>${ro?(fgp!=null?opFmt(fgp,2):'—'):`<input id="dpc-fgp" inputmode="decimal" value="${fgp!=null?fgp:''}" placeholder="barg" aria-label="Fuel gas pressure">`}</td><td class="r dpc-v" id="dpc-fgv">—</td><td class="dpc-u">barg</td></tr>`+list.map(row).join('');}
+    else rows+=list.map(row).join('');});
+  const recBy=[...new Set(dpc.rd.filter(r=>r.reading_date===d).map(r=>r.updated_by).filter(Boolean))];
+  body.innerHTML=`<div class="mr-help" style="margin-top:0">One entry for the whole day (24 h). For a <b>totalizer</b> type the meter reading — the site subtracts the previous reading. Values more than 40% away from the last 7 days are flagged so typing mistakes are caught. Whether this appears in the printed report is your choice in <b>Print / Save</b>.</div>
+    <div class="mr-tw"><table class="dpc-t"><thead><tr><th>Item</th><th class="r hm">Previous</th><th>Today's entry</th><th class="r">Day value</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="dpc-k" id="dpc-k"></div>
+    <div class="dpc-foot"><p class="mr-note st" id="dpc-st">${recBy.length?'Recorded for '+escapeHtml(opDL(d))+' by '+escapeHtml(recBy.join(', '))+'. Changes replace the saved values.':'Nothing recorded for '+escapeHtml(opDL(d))+' yet.'} Saved with the report when you press Submit.</p>
+      ${ro?'':'<button type="button" class="btn sm primary" onclick="dpcSave(false,this)">Save readings now</button>'}</div>`;
+  body.querySelectorAll('input.dpc-in,#dpc-fgp').forEach(i=>i.addEventListener('input',()=>{dpc.dirty=true;i.classList.add('chg');dpcCalc();const st=mrEl('dpc-st');if(st){st.classList.add('dirty');st.textContent='Unsaved — saved when you submit the report, or press “Save readings now”.';}}));
+  dpcCalc();
+}
+function dpcCur(code){const i=document.querySelector(`#dpc-body input.dpc-in[data-m="${CSS.escape(code)}"]`);return i?opNum(i.value):dpcVal(dpc.rd,code,dpc.d);}
+function dpcCalc(){
+  const d=dpc.d,yd=opAdd(d,-1);const out={};const set=(id,h)=>{const e=mrEl(id);if(e)e.innerHTML=h;};
+  dpc.me.forEach(m=>{const cur=dpcCur(m.code);const c=cur==null?null:dpcDay(dpc.rd,m,d,cur);out[m.code]=c;
+    const cell=document.querySelector(`#dpc-body tr[data-m="${CSS.escape(m.code)}"] .dpc-v`);if(!cell)return;let h='—';
+    if(c&&c.first)h='<span class="mr-note">first reading</span>';
+    else if(c&&c.v!=null){if(c.v<0)h=`<span class="op-bad">${opFmt(c.v,1)}</span><small class="dpc-f bad">below previous reading</small>`;
+      else{h=opFmt(c.v,1)+(c.days>1?`<small>${c.days} days</small>`:'');const a=c.days===1?dpcAvg7(dpc.rd,m,d):null;if(a&&a>0){const dv=(c.v-a)*100/a;if(Math.abs(dv)>=40)h+=`<small class="dpc-f" title="7-day average ${opFmt(a,1)}">${dv>0?'▲':'▼'} ${opFmt(Math.abs(dv),0)}% vs 7-day avg</small>`;}}}
+    cell.innerHTML=h;});
+  const gross=dpcGross(dpc.rd,dpc.me,d,m=>out[m.code]);const gy=dpcGross(dpc.rd,dpc.me,yd);
+  set('dpc-gt',gross!=null?opFmt(gross,1):'—');set('dpc-gy',gy!=null?opFmt(gy,1)+'<small>yesterday</small>':'');
+  const net=out[DPC_NET]&&out[DPC_NET].v!=null&&out[DPC_NET].days===1?out[DPC_NET].v:null;
+  const aux=gross>0&&net!=null?(gross-net)*100/gross:null;
+  set('dpc-aux',aux==null?'—':(aux<0||aux>15?`<span class="op-bad">${opFmt(aux,2)}</span><small class="dpc-f bad">check gross / net</small>`:opFmt(aux,2)));
+  const fi=mrEl('dpc-fgp');const fg=fi?opNum(fi.value):null;set('dpc-fgv',fg!=null?opFmt(fg,2):'—');
+  const sumKind=k=>{let s=null;dpc.me.filter(m=>m.kind===k).forEach(m=>{const c=out[m.code];if(c&&c.v!=null&&c.v>=0)s=(s||0)+c.v;});return s;};
+  const fuelM=dpc.me.filter(m=>m.kind==='fuel');const dm=dpc.me.find(m=>m.code==='DM');const dmv=dm&&out.DM&&out.DM.v!=null&&out.DM.v>=0?out.DM.v:null;
+  const k=(v,l,dg)=>`<div class="${v==null?'na':''}"><b>${v==null?'—':opFmt(v,dg==null?0:dg)}</b><span>${l}</span></div>`;
+  set('dpc-k',k(gross,'Gross generation · MWh')+(dpc.me.some(m=>m.code===DPC_NET)?k(net,'Net export · MWh')+k(aux,'Auxiliary · %',2):'')+(fuelM.length?k(sumKind('fuel'),'Diesel · '+(fuelM[0].unit||'')):'')+(dm?k(dmv!=null&&gross>0?dmv/gross:null,'Demin per MWh · m³',3):''));
+  return {out,gross,net,aux};
+}
+function dpcPending(){
+  if(!dpc.d||dpc.err||!mrEl('dpc-body')?.querySelector('.dpc-t'))return null;const rows=[];let bad=0;const now=new Date().toISOString();
+  document.querySelectorAll('#dpc-body input.dpc-in').forEach(i=>{const v=opNum(i.value);const code=i.dataset.m;if(v==null||v===dpcVal(dpc.rd,code,dpc.d))return;const m=dpc.me.find(x=>x.code===code);const p=dpcPrev(dpc.rd,code,dpc.d);if(m&&m.mode!=='daily'&&p&&v<opNum(p.value))bad++;
+    rows.push({meter_code:code,reading_date:dpc.d,value:v,updated_by:currentUser?.name||'',updated_at:now});});
+  const fi=mrEl('dpc-fgp');const fg=fi?opNum(fi.value):null;const ft=dpcOpsOn(dpc.ops,dpc.d);
+  return {rows,bad,fg:fg!=null&&fg!==opNum(ft&&ft.fg_pressure)?fg:null};
+}
+async function dpcSave(quiet,btn){
+  const p=dpcPending();if(!p||(!p.rows.length&&p.fg==null)){if(!quiet)showToast('Nothing new to save');return true;}
+  if(!quiet&&p.bad&&!confirm(p.bad+' meter reading(s) are lower than the previous reading. Save anyway?'))return false;
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  const d=dpc.d;
+  try{
+    if(p.rows.length){await sbUpsert('qas2_op_meter_readings',p.rows,'meter_code,reading_date');
+      p.rows.forEach(r=>{const i=dpc.rd.findIndex(x=>x.meter_code===r.meter_code&&x.reading_date===r.reading_date);if(i>=0)dpc.rd[i]=r;else dpc.rd.push(r);});dpc.rd.sort((a,b)=>a.reading_date.localeCompare(b.reading_date));}
+    await dpcMirror(d,p.fg);
+    const nx=opAdd(d,1);if(nx<=drToday()&&p.rows.some(r=>{const m=dpc.me.find(x=>x.code===r.meter_code);return m&&m.mode!=='daily'&&DPC_PKEY[m.code];}))await dpcMirror(nx,null);
+    if(p.fg!=null){const ft=dpcOpsOn(dpc.ops,d);if(ft)ft.fg_pressure=p.fg;else dpc.ops.push({report_date:d,fg_pressure:p.fg,updated_by:currentUser?.name||''});}
+    opLoaded=0;dpc.dirty=false;dpcRender();showToast('Production & consumption saved ✓');return true;
+  }catch(e){showToast((quiet?'Report saved, but production & consumption was not: ':'Save failed: ')+(/qas2_op_|42P01|PGRST/.test(e.message)?'run qas2_production_setup.sql first.':e.message),'error');if(btn){btn.disabled=false;btn.textContent='Save readings now';}return false;}
+}
+// keep the monthly report in step: MWh per unit and the fuel-gas pressure for the day
+async function dpcMirror(d,fg){
+  try{
+    const pm=dpc.me.filter(m=>DPC_PKEY[m.code]);let rd=dpc.rd;
+    if(pm.length&&d!==dpc.d)rd=await sbFetch('qas2_op_meter_readings?select=*&'+dpcQ(pm)+'&reading_date=gte.'+opAdd(d,-60)+'&reading_date=lte.'+d+'&order=reading_date.asc')||[];
+    const power={};pm.forEach(m=>{const c=dpcDay(rd,m,d);if(c&&c.v!=null&&c.v>=0&&c.days===1)power[DPC_PKEY[m.code]]=Math.round(c.v*100)/100;});
+    if(!Object.keys(power).length&&fg==null)return;
+    const cur=((await sbFetch('qas2_mr_ops_daily?report_date=eq.'+d+'&select=report_date,power,counters'))||[])[0];
+    const row={report_date:d,power:{...((cur&&cur.power)||{}),...power},updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
+    if(!cur)row.counters={};if(fg!=null)row.fg_pressure=fg;
+    await sbUpsert('qas2_mr_ops_daily',[row],'report_date');
+  }catch(e){console.warn('monthly mirror',e.message);}
+}
+// ── the printed section (ticked or not in Print / Save)
+async function dpcPrintSection(dates,E){
+  if(!dates.length)return null;
+  try{
+    const first=dates[0],last=dates[dates.length-1];const mStart=last.slice(0,7)+'-01';const lo=first<mStart?first:mStart;
+    const me=dpcMeters(await sbFetch('qas2_op_meters?select=*&order=sort_order.asc,code.asc'));if(!me.length)return null;
+    const [rd,ops]=await Promise.all([sbFetch('qas2_op_meter_readings?select=*&'+dpcQ(me)+'&reading_date=gte.'+opAdd(lo,-45)+'&reading_date=lte.'+last+'&order=reading_date.asc'),
+      sbFetch('qas2_mr_ops_daily?select=report_date,fg_pressure&report_date=gte.'+opAdd(lo,-1)+'&report_date=lte.'+last).catch(()=>[])]);
+    const R=rd||[],O=ops||[];const f=(n,dg)=>n==null?'—':opFmt(n,dg==null?1:dg);
+    const dv=(m,d)=>{const c=dpcDay(R,m,d);return c&&c.v!=null&&c.v>=0?c:null;};
+    const span=(a,b)=>{const L=[];for(let x=a;x<=b;x=opAdd(x,1))L.push(x);return L;};
+    const sum=(m,L)=>{let s=null;L.forEach(x=>{const c=dv(m,x);if(c)s=(s||0)+c.v;});return s;};
+    const fgOn=d=>{const r=dpcOpsOn(O,d);return r&&r.fg_pressure!=null?opNum(r.fg_pressure):null;};
+    const avg=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
+    const gross=me.filter(dpcIsGross),net=me.find(m=>m.code===DPC_NET),fuel=me.filter(m=>m.kind==='fuel'),water=me.filter(m=>m.kind==='water');
+    const gOn=d=>dpcGross(R,me,d);const nOn=d=>{const c=net&&dv(net,d);return c&&c.days===1?c.v:null;};
+    const auxOf=(g,n)=>g>0&&n!=null?(g-n)*100/g:null;
+    const sumG=L=>{let s=null;L.forEach(x=>{const g=gOn(x);if(g!=null)s=(s||0)+g;});return s;};const sumN=L=>{let s=null;L.forEach(x=>{const n=nOn(x);if(n!=null)s=(s||0)+n;});return s;};
+    const dmM=me.find(m=>m.code==='DM');
+    const css=`<style>.pc td.r,.pc th.r{text-align:right;font-variant-numeric:tabular-nums}.pc tr.g td{background:none!important;color:var(--brand);font-weight:800;font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1.5px solid var(--brand);padding-top:10px}.pc tr.tot td{font-weight:700;background:var(--soft)!important}.pc td small{color:var(--mute);font-size:9.5px}.prodsec .kpis{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}.prodsec{break-inside:avoid}</style>`;
+    const k=(v,l,cls='')=>`<div class="kpi ${cls}"><b>${v}</b><span>${l}</span></div>`;
+    let h='',sub='';
+    if(dates.length===1){
+      const d=last,yd=opAdd(d,-1),M=span(mStart,d);
+      const line=(name,t,y,mt,u,cls='')=>`<tr class="${cls}"><td>${name}</td><td class="r"><b>${t}</b></td><td class="r">${y}</td><td class="r">${mt}</td><td>${u}</td></tr>`;
+      const mrow=m=>{const t=dv(m,d),y=dv(m,yd);return line(E(m.name),t?f(t.v)+(t.days>1?` <small>(${t.days} d)</small>`:''):'—',y?f(y.v):'—',f(sum(m,M)),E(m.unit||''));};
+      const has=m=>dv(m,d)||dv(m,yd)||sum(m,M)!=null;
+      let rows='';
+      const pw=gross.filter(has);
+      if(pw.length||(net&&has(net))){rows+=`<tr class="g"><td colspan="5">Power generation</td></tr>`+pw.map(mrow).join('');
+        if(pw.length)rows+=line('<b>Total gross generation</b>',f(gOn(d)),f(gOn(yd)),f(sumG(M)),'MWh','tot');
+        if(net&&has(net)){rows+=mrow(net)+line('Auxiliary consumption',f(auxOf(gOn(d),nOn(d)),2),f(auxOf(gOn(yd),nOn(yd)),2),f(auxOf(sumG(M),sumN(M)),2),'%','tot');}}
+      const fgT=fgOn(d),fgY=fgOn(yd),fgM=avg(M.map(fgOn));const fu=fuel.filter(has);
+      if(fgT!=null||fgY!=null||fu.length){rows+=`<tr class="g"><td colspan="5">Fuel</td></tr>`+(fgT!=null||fgY!=null?line('Fuel gas pressure',f(fgT,2),f(fgY,2),fgM!=null?f(fgM,2)+' <small>avg</small>':'—','barg'):'')+fu.map(mrow).join('');}
+      const wa=water.filter(has);if(wa.length)rows+=`<tr class="g"><td colspan="5">Water consumption</td></tr>`+wa.map(mrow).join('');
+      if(!rows)return null;
+      const g=gOn(d),n=nOn(d),a=auxOf(g,n),dm=dmM&&dv(dmM,d);
+      h=`<div class="kpis">${k(f(g,0),'Gross MWh')}${net?k(f(n,0),'Net export MWh','ok'):''}${net?k(f(a,2),'Auxiliary %','info'):''}${fu.map(m=>k(f(dv(m,d)?.v,0),'Diesel · '+E(m.unit||''))).join('')}${dmM?k(dm&&g>0?f(dm.v/g,3):'—','Demin m³ / MWh'):''}</div>
+        <table class="t pc"><thead><tr><th>Item</th><th class="r" style="width:16%">${E(opDL(d))}</th><th class="r" style="width:16%">Previous day</th><th class="r" style="width:17%">Month to date</th><th style="width:9%">Unit</th></tr></thead><tbody>${rows}</tbody></table>`;
+      sub='24 h · '+opDL(d);
+    }else{
+      const L=span(first,last);const has=m=>sum(m,L)!=null;
+      const line=(name,t,a,pk,u,cls='')=>`<tr class="${cls}"><td>${name}</td><td class="r"><b>${t}</b></td><td class="r">${a}</td><td class="r">${pk}</td><td>${u}</td></tr>`;
+      const stat=m=>{const v=L.map(x=>dv(m,x)).filter(c=>c&&c.days===1).map(c=>c.v);return {n:v.length,avg:avg(v),max:v.length?Math.max(...v):null};};
+      const mrow=m=>{const s=stat(m);return line(E(m.name),f(sum(m,L)),f(s.avg),f(s.max),E(m.unit||''));};
+      let rows='';const pw=gross.filter(has);
+      if(pw.length){const gv=L.map(gOn).filter(x=>x!=null);rows+=`<tr class="g"><td colspan="5">Power generation</td></tr>`+pw.map(mrow).join('')+line('<b>Total gross generation</b>',f(sumG(L)),f(avg(gv)),f(gv.length?Math.max(...gv):null),'MWh','tot');
+        if(net&&has(net))rows+=mrow(net)+line('Auxiliary consumption',f(auxOf(sumG(L),sumN(L)),2),'','','%','tot');}
+      const fgA=L.map(fgOn).filter(x=>x!=null);const fu=fuel.filter(has);
+      if(fgA.length||fu.length)rows+=`<tr class="g"><td colspan="5">Fuel</td></tr>`+(fgA.length?line('Fuel gas pressure','—',f(avg(fgA),2),f(Math.max(...fgA),2),'barg'):'')+fu.map(mrow).join('');
+      const wa=water.filter(has);if(wa.length)rows+=`<tr class="g"><td colspan="5">Water consumption</td></tr>`+wa.map(mrow).join('');
+      if(!rows)return null;
+      const cols=[...fu,...wa];const sh=m=>E(String(m.name).replace(/\s*\(.*?\)\s*/g,' ').replace(/ water$/i,'').replace(/ consumption$/i,'').trim());
+      const daily=`<h4>Day by day</h4><table class="t pc"><thead><tr><th>Date</th><th class="r">Gross MWh</th>${net?'<th class="r">Net MWh</th><th class="r">Aux %</th>':''}${cols.map(m=>`<th class="r">${sh(m)} <small style="color:inherit;opacity:.75">${E(m.unit||'')}</small></th>`).join('')}</tr></thead>
+        <tbody>${L.map(x=>{const g=gOn(x),n=nOn(x);return `<tr><td>${E(opDL(x))}</td><td class="r">${f(g,0)}</td>${net?`<td class="r">${f(n,0)}</td><td class="r">${f(auxOf(g,n),2)}</td>`:''}${cols.map(m=>{const c=dv(m,x);return `<td class="r">${c?f(c.v,0):'—'}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table>`;
+      const G=sumG(L),N=sumN(L);
+      h=`<div class="kpis">${k(f(G,0),'Gross MWh')}${net?k(f(N,0),'Net export MWh','ok')+k(f(auxOf(G,N),2),'Auxiliary %','info'):''}${fu.map(m=>k(f(sum(m,L),0),'Diesel · '+E(m.unit||''))).join('')}${dmM?k(G>0&&sum(dmM,L)!=null?f(sum(dmM,L)/G,3):'—','Demin m³ / MWh'):''}</div>
+        <table class="t pc"><thead><tr><th>Item</th><th class="r" style="width:16%">Period total</th><th class="r" style="width:16%">Daily average</th><th class="r" style="width:16%">Highest day</th><th style="width:9%">Unit</th></tr></thead><tbody>${rows}</tbody></table>${L.length<=62?daily:''}`;
+      sub=opDL(first)+' – '+opDL(last);
+    }
+    return {t:'Production &amp; consumption <small>'+E(sub)+'</small>',cls:'prodsec',h:css+h};
+  }catch(e){console.warn('production section',e.message);return null;}
+}
 // ── print / save builder ──
-const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
+const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['prod','Production & consumption (power, fuel, water)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
 let drbIds=null,drCurrentList=[];
 const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly'],['plantmap','Plant Map','Plant schematic, day score, today vs yesterday']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
@@ -7940,6 +8135,7 @@ async function drbPrint(){
         <div class="kpis">${k(reps.length,'Reports')}${k(people.length,'People')}${k(systems.length,'Systems')}${items.length?k(cnt('Completed'),'Completed','ok')+k(cnt('In progress')+cnt('On hold'),'In progress / on hold','info'):''}${k(issuesN,'Reports with issues',issuesN?'neg':'')}${pl?k(pl.raised.length+' / '+pl.closed.length,'Punch raised / closed','pl'):''}</div>
         ${systems.length?`<div class="chips">${systems.slice(0,24).map(s=>`<span>${E(s)}</span>`).join('')}${systems.length>24?`<span>+${systems.length-24} more</span>`:''}</div>`:''}`});
     }
+    if(has('prod')){prog('Adding production & consumption…');const pc=await dpcPrintSection(dates,E);if(pc)sections.push(pc);}
     const actTable=list=>`<table class="t"><thead><tr><th style="width:22%">System</th><th>Activity</th><th style="width:15%">Status</th><th style="width:16%">KKS</th></tr></thead><tbody>${list.map(x=>`<tr><td>${E(x.sys)}</td><td>${E(x.act)}</td><td><span class="st ${stCls(x.st)}">${E(x.st)}</span></td><td class="mono">${E(x.kks)}</td></tr>`).join('')}</tbody></table>`;
     const callout=(cls,icon,title,text)=>`<div class="call ${cls}"><div class="ci">${icon}</div><div><div class="ct">${title}</div><div class="cx">${E(text)}</div></div></div>`;
     if(c.layout==='system'){

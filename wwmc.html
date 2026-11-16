@@ -436,6 +436,12 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .op-form{display:flex;flex-direction:column;gap:10px}.op-fl{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:#374151}.op-fl input,.op-fl select{padding:9px 10px;border:1px solid #D6DCE5;border-radius:8px;font:inherit;font-size:14px;font-weight:400}
 .op-how{display:grid;gap:8px}.op-hc{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;border:1.5px solid #E3E8EF;border-radius:10px;padding:10px 12px;cursor:pointer}.op-hc input{grid-row:span 2;margin-top:3px}.op-hc b{font-size:13.5px;color:#0F2747}.op-hc small{font-size:12px;color:#6B7280}.op-hc:has(input:checked){border-color:#1F3864;background:#F1F5FB}
 .op-chk{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.pli-steps{display:grid;gap:10px}.pli-s{display:flex;gap:12px;border:1px solid #E3E8EF;border-radius:11px;padding:12px 14px}.pli-s>span{width:28px;height:28px;border-radius:50%;background:#1F3864;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.pli-s b{display:block;font-size:14px;color:#0F2747}.pli-s small{display:block;font-size:12.5px;color:#6B7280;margin:2px 0 8px}
+.pli-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pli-sum div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:7px 10px}.pli-sum b{display:block;font-size:19px;color:#0F2747}.pli-sum span{font-size:11px;color:#6B7280}.pli-sum .ok{border-top-color:#16A34A}.pli-sum .dup{border-top-color:#94A3B8}.pli-sum .cl{border-top-color:#64748B}.pli-sum .bad{border-top-color:#DC2626}
+.pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
+.pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
+.pri-A{color:#B91C1C}.pri-B{color:#B45309}.pri-C{color:#15803D}
+@media(max-width:640px){.pli-sum{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:640px){.op-gnav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.op-gc{white-space:nowrap}}
 .mr-opsv td.r{text-align:right;font-variant-numeric:tabular-nums}.mr-opsv td:last-child{padding-left:10px;text-align:center}.mr-ops tr.mr-miss th,.mr-ops tr.mr-miss td{background:#FEF2F2}
 .op-mv{margin-top:18px;background:#fff;border:1px solid #E3E8EF;border-radius:12px;padding:4px 14px 12px}.op-mv>summary{cursor:pointer;font-weight:800;color:#1F3864;padding:10px 0;font-size:14px}
@@ -1056,7 +1062,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
 
     <!-- NEW TICKET -->
     <div class="view" id="view-new">
-      <div class="ticket-header"><h2>Commissioning Punch Ticket</h2><p>Fill in the details and submit</p></div>
+      <div class="ticket-header"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2>Commissioning Punch Ticket</h2><p>Fill in the details and submit</p></div><button class="btn sm sup-only" type="button" onclick="pliOpen()" style="display:none;background:#fff;color:#1F3864">&#8679; Many items? Import from Excel</button></div></div>
       <div class="ticket-body">
         <div class="sec-label">Ticket Info</div>
         <div class="grid4" style="margin-bottom:16px">
@@ -1120,6 +1126,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
               <option value="deadline">Deadline</option>
             </select>
             <button class="btn sm" onclick="exportCSV()">&#8659; Export Excel</button>
+            <button class="btn sm sup-only" onclick="pliOpen()" style="display:none">&#8679; Import Excel</button>
             <button class="btn sm primary admin-only no-print" id="handover-report-btn" onclick="generateHandoverReport()" style="display:none">&#128196; Handover Report</button>
           </div>
         </div>
@@ -1546,6 +1553,8 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
   <div class="modal-body"><p class="mr-note" style="margin:0 0 8px">Leave empty for equipment that did not run.</p><div id="mr-cnt-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="document.getElementById('mr-cnt-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-cnt-save">Save</button></div></div></div></div>
 <div class="modal-bg" id="mr-staff-bg"><div class="modal" style="max-width:520px"><div class="modal-head"><h3 id="mr-staff-title">Edit</h3><button onclick="document.getElementById('mr-staff-bg').classList.remove('show')" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div id="mr-staff-form" style="display:flex;flex-direction:column;gap:12px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="document.getElementById('mr-staff-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-staff-save">Save</button></div></div></div></div>
+<div class="modal-bg" id="pli-bg"><div class="modal" style="max-width:920px;width:96vw"><div class="modal-head"><h3>Import punch items from Excel</h3><button onclick="pliClose()" aria-label="Close">&times;</button></div>
+  <div class="modal-body"><div class="mr-note" id="pli-st" style="margin:0 0 8px"></div><div id="pli-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" type="button" onclick="pliClose()">Cancel</button><button class="btn primary" type="button" id="pli-go" onclick="pliImport(this)" style="display:none">Import</button></div></div></div></div>
 <div class="modal-bg" id="op-co-bg"><div class="modal" style="max-width:640px"><div class="modal-head"><h3 id="op-co-title">Changeover</h3><button onclick="opModalClose()" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div id="op-co-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" type="button" onclick="opModalClose()">Cancel</button><button class="btn primary" type="button" id="op-co-save" onclick="opCOSave(this)">Save changeover</button></div></div></div></div>
 <div class="modal-bg" id="pw-modal-bg">
@@ -2614,6 +2623,114 @@ function renderEditTicketPhotoPreview(){
 function removeExistingEditTicketPhoto(i){editTicketExistingPhotos.splice(i,1);renderEditTicketPhotoPreview();}
 function removeNewEditTicketPhoto(i){editTicketNewPhotos.splice(i,1);renderEditTicketPhotoPreview();}
 
+// ═════════ PUNCH LIST — IMPORT FROM EXCEL ═════════
+// Template → fill → upload → check every row → import. Nothing is saved until "Import" is pressed.
+const PLI_CATS=['Design Deficiency','Construction','Pre-Commissioning','Commissioning','HSE','Documentation'];
+const PLI_COLS=[['date','Date Raised',['date raised','date','raised date','date opened','opened']],['system_name','System',['system','system name','area']],['description','Description',['description','punch description','punch item','punch point','issue','finding','details']],
+  ['priority','Priority (A/B/C)',['priority','priority (a/b/c)','prio']],['category','Category',['category','type','punch category']],['kks','KKS',['kks','kks code','tag','tag no','tag number']],['pid','P&ID',['p&id','pid','p&id no','drawing','drawing no']],
+  ['action','Action Required',['action required','action','corrective action','recommendation','remarks']],['deadline','Deadline',['deadline','target date','due date','due']],['raised_by','Raised By',['raised by','originator','raised']],['status','Status',['status']],['no','Ticket No.',['ticket no.','ticket no','ticket','ref','reference']]];
+let pliRows=[];
+function pliCan(){return typeof isSupervisor==='function'&&isSupervisor();}
+function pliOpen(){
+  if(!pliCan()){showToast('Only supervisors and admins can import punch items.','error');return;}
+  pliRows=[];pliRender();document.getElementById('pli-bg').classList.add('show');
+}
+function pliClose(){document.getElementById('pli-bg').classList.remove('show');}
+async function pliTemplate(){
+  try{const ExcelJS=await loadLib('excel');const wb=new ExcelJS.Workbook();const ws=wb.addWorksheet('Punch List');
+    const cols=PLI_COLS.filter(c=>!['status','no'].includes(c[0]));
+    ws.columns=cols.map(c=>({header:c[1],key:c[0],width:{description:60,action:40,system_name:28,category:20,raised_by:20}[c[0]]||14}));
+    const h=ws.getRow(1);h.height=22;h.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};c.alignment={vertical:'middle'};});
+    ws.addRow({date:new Date(),system_name:'Fuel Gas System',description:'Example — delete this row: missing insulation on drain line downstream of 10EKG20AA101',priority:'B',category:'Construction',kks:'10EKG20BR101',pid:'',action:'Install insulation as per spec',deadline:'',raised_by:currentUser?.name||''});
+    ws.getRow(2).font={italic:true,color:{argb:'FF94A3B8'}};
+    for(let r=2;r<=1000;r++){ws.getCell(r,4).dataValidation={type:'list',allowBlank:true,formulae:['"A,B,C"']};ws.getCell(r,5).dataValidation={type:'list',allowBlank:true,formulae:['"'+PLI_CATS.join(',')+'"']};
+      ws.getCell(r,1).numFmt='dd-mmm-yyyy';ws.getCell(r,9).numFmt='dd-mmm-yyyy';}
+    ws.views=[{state:'frozen',ySplit:1}];
+    const g=wb.addWorksheet('How to fill');g.columns=[{width:22},{width:90}];
+    [['Column','What to write'],['Date Raised','Date the item was raised. Empty = today.'],['System','Required. e.g. Fuel Gas System'],['Description','Required. What is wrong.'],['Priority (A/B/C)','A = safety critical, B = operational, C = minor. Empty = B.'],['Category','One of: '+PLI_CATS.join(', ')+'. Empty = Commissioning.'],['KKS / P&ID','Optional.'],['Action Required','Optional.'],['Deadline','Optional date. Must not be before Date Raised.'],['Raised By','Empty = your name.'],['',''],['Tip','The register exported from the site (Export Excel) can also be uploaded — the columns are recognised automatically. Items already on the site are detected and skipped.']]
+      .forEach((r,i)=>{const x=g.addRow(r);if(i===0)x.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};});x.alignment={wrapText:true,vertical:'top'};});
+    const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download='QAS2_PunchList_Import_Template.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+  }catch(e){showToast('Could not make the template: '+e.message,'error');}
+}
+function pliNorm(s){return String(s??'').toLowerCase().replace(/[\s_]+/g,' ').replace(/[^\w&/ ().]/g,'').trim();}
+function pliCellText(v){if(v==null)return '';if(v instanceof Date)return v;if(typeof v==='object'){if(v.richText)return v.richText.map(x=>x.text).join('');if(v.text!=null)return String(v.text);if(v.result!=null)return v.result instanceof Date?v.result:String(v.result);if(v.hyperlink)return String(v.text||v.hyperlink);}return typeof v==='number'?v:String(v).trim();}
+function pliDate(v){
+  if(v==null||v==='')return '';
+  if(v instanceof Date)return isNaN(v)?null:new Date(v.getTime()+12*36e5).toISOString().slice(0,10);
+  if(typeof v==='number'&&v>20000&&v<80000)return new Date(Date.UTC(1899,11,30)+Math.round(v)*864e5).toISOString().slice(0,10);
+  const s=String(v).trim();let m;
+  if((m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s)))return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  if((m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(s))){const y=m[3].length===2?'20'+m[3]:m[3];return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');}
+  const d=new Date(s);if(!isNaN(d))return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  return null;}
+async function pliPick(input){
+  const f=input.files&&input.files[0];input.value='';if(!f)return;
+  if(!/\.xlsx$/i.test(f.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
+  const st=document.getElementById('pli-st');st.textContent='Reading '+f.name+' …';
+  try{
+    const ExcelJS=await loadLib('excel');const wb=new ExcelJS.Workbook();await wb.xlsx.load(await f.arrayBuffer());
+    let found=null;
+    wb.eachSheet(ws=>{if(found)return;for(let r=1;r<=Math.min(25,ws.rowCount);r++){const vals=[];ws.getRow(r).eachCell({includeEmpty:false},(c,ci)=>vals.push([ci,pliNorm(pliCellText(c.value))]));
+      const map={};PLI_COLS.forEach(([k,,al])=>{const hit=vals.find(([,v])=>al.includes(v));if(hit&&!Object.values(map).includes(hit[0]))map[k]=hit[0];});
+      if(map.description&&map.system_name){found={ws,r,map};break;}}});
+    if(!found)throw new Error('No header row with “System” and “Description” was found. Use the template.');
+    const {ws,r,map}=found;const rows=[];
+    for(let i=r+1;i<=ws.rowCount;i++){const row=ws.getRow(i);const g=k=>map[k]?pliCellText(row.getCell(map[k]).value):'';
+      const o={line:i,date:g('date'),system_name:String(g('system_name')||'').trim(),description:String(g('description')||'').trim(),priority:String(g('priority')||'').trim(),category:String(g('category')||'').trim(),kks:String(g('kks')||'').trim(),pid:String(g('pid')||'').trim(),action:String(g('action')||'').trim(),deadline:g('deadline'),raised_by:String(g('raised_by')||'').trim(),status:String(g('status')||'').trim(),no:String(g('no')||'').trim()};
+      if(!o.system_name&&!o.description&&!o.kks)continue;
+      if(/^example\b/i.test(o.description))continue;
+      rows.push(o);}
+    if(!rows.length)throw new Error('The file has no punch items under the header row.');
+    await fetchAllTickets();
+    pliRows=rows.map(pliCheck);st.textContent=f.name+' · sheet “'+ws.name+'”';pliRender();
+  }catch(e){st.textContent='';showToast(e.message,'error');}
+}
+function pliCheck(o){
+  const errs=[],notes=[];const t=new Date().toISOString().slice(0,10);
+  const d=o.date===''?t:pliDate(o.date);if(d===null)errs.push('Date Raised is not a date');
+  const dl=o.deadline===''?'':pliDate(o.deadline);if(dl===null)errs.push('Deadline is not a date');
+  if(!o.system_name)errs.push('System is empty');if(!o.description)errs.push('Description is empty');
+  let p=String(o.priority||'').toUpperCase();p=/^A|SAFETY/.test(p)?'A':/^C|MINOR/.test(p)?'C':/^B|OPER/.test(p)?'B':'';if(!p){p='B';if(o.priority)notes.push('priority “'+o.priority+'” → B');}
+  let c=PLI_CATS.find(x=>x.toLowerCase()===String(o.category).toLowerCase())||(o.category?o.category:'Commissioning');
+  if(d&&dl&&dl<d)errs.push('Deadline is before Date Raised');
+  const closed=/clos/i.test(o.status);
+  const key=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
+  const dup=(allTickets||[]).find(x=>(o.no&&x.no===o.no)||(key(x.description)===key(o.description)&&key(x.system_name)===key(o.system_name)));
+  const t2={date:d||t,deadline:dl||null,priority:p,system_name:o.system_name,category:c,pid:o.pid,kks:o.kks,description:o.description,action:o.action,raised_by:o.raised_by||currentUser?.name||'',raised_by_username:currentUser?.username||'',status:'OPEN'};
+  const state=errs.length?'bad':dup?'dup':closed?'closed':'ok';
+  return {o,t:t2,errs,notes,dup,state,on:state==='ok'};
+}
+function pliRender(){
+  const box=document.getElementById('pli-body');if(!box)return;
+  if(!pliRows.length){box.innerHTML=`<div class="pli-steps"><div class="pli-s"><span>1</span><div><b>Get the template</b><small>A ready Excel with the right columns and drop-down lists.</small><button class="btn sm" type="button" onclick="pliTemplate()">⬇ Download template</button></div></div>
+      <div class="pli-s"><span>2</span><div><b>Fill it in Excel</b><small>One punch item per row. System and Description are required. You can also upload the register you exported from the site.</small></div></div>
+      <div class="pli-s"><span>3</span><div><b>Upload and check</b><small>Every row is checked first — nothing is saved until you press Import.</small><label class="btn sm primary" style="cursor:pointer">⬆ Choose Excel file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div></div></div>`;
+    document.getElementById('pli-go').style.display='none';return;}
+  const n=k=>pliRows.filter(x=>x.state===k).length;const on=pliRows.filter(x=>x.on).length;
+  const tag={ok:'<span class="pli-t ok">Ready</span>',bad:'<span class="pli-t bad">Fix in Excel</span>',dup:'<span class="pli-t dup">Already on site</span>',closed:'<span class="pli-t cl">Closed in file</span>'};
+  box.innerHTML=`<div class="pli-sum"><div><b>${pliRows.length}</b><span>rows read</span></div><div class="ok"><b>${n('ok')}</b><span>ready</span></div><div class="dup"><b>${n('dup')}</b><span>already on site</span></div><div class="cl"><b>${n('closed')}</b><span>closed in file</span></div><div class="bad"><b>${n('bad')}</b><span>need fixing</span></div></div>
+    <div class="mr-note" style="margin:4px 0 8px">Ticked rows will be imported as <b>OPEN</b> tickets with new numbers. Rows that need fixing can’t be ticked — correct them in Excel and upload again.</div>
+    <div class="pli-tw"><table class="pli-t2"><thead><tr><th><input type="checkbox" aria-label="Tick all" ${on&&on===pliRows.filter(x=>x.state!=='bad').length?'checked':''} onchange="pliRows.forEach(x=>{if(x.state!=='bad')x.on=this.checked});pliRender()"></th><th>Row</th><th>Check</th><th>Pri</th><th>System</th><th>Description</th><th>KKS</th><th>Date</th></tr></thead>
+    <tbody>${pliRows.map((x,i)=>`<tr class="${x.state}"><td><input type="checkbox" ${x.on?'checked':''} ${x.state==='bad'?'disabled':''} onchange="pliRows[${i}].on=this.checked;pliRender()"></td><td>${x.o.line}</td>
+      <td>${tag[x.state]}${x.errs.length?`<small>${escapeHtml(x.errs.join(' · '))}</small>`:''}${x.dup?`<small>${escapeHtml(x.dup.no||'')}</small>`:''}${x.notes.length?`<small>${escapeHtml(x.notes.join(' · '))}</small>`:''}</td>
+      <td><b class="pri-${x.t.priority}">${x.t.priority}</b></td><td>${escapeHtml(x.t.system_name)}</td><td>${escapeHtml(x.t.description)}</td><td class="mono">${escapeHtml(x.t.kks||'')}</td><td>${escapeHtml(x.t.date||'')}</td></tr>`).join('')}</tbody></table></div>
+    <div style="margin-top:8px"><label class="btn sm" style="cursor:pointer">↺ Choose another file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div>`;
+  const go=document.getElementById('pli-go');go.style.display='';go.disabled=!on;go.textContent=on?`Import ${on} ticket${on===1?'':'s'}`:'Nothing ticked';
+}
+async function pliImport(btn){
+  const list=pliRows.filter(x=>x.on&&x.state!=='bad');if(!list.length)return;
+  if(!confirm(`Create ${list.length} new Punch List ticket${list.length===1?'':'s'}?`))return;
+  btn.disabled=true;const old=btn.textContent;btn.textContent='Importing…';
+  try{
+    const start=await peekNextCounter('PL_GLOBAL','qas2_tickets','no');
+    const rows=list.map((x,i)=>({...x.t,no:formatTicketRef(start+i,new Date(x.t.date+'T12:00:00'))}));
+    try{const c=await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL&select=counter')||[];if(c.length)await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL','PATCH',{counter:start+rows.length-1});else await sbFetch('qas2_counters','POST',{month_key:'PL_GLOBAL',counter:start+rows.length-1});}catch(e){}
+    let done=0;for(let i=0;i<rows.length;i+=50){await sbFetch('qas2_tickets','POST',rows.slice(i,i+50));done+=Math.min(50,rows.length-i);btn.textContent=`Importing… ${done}/${rows.length}`;}
+    showToast(`${rows.length} ticket${rows.length===1?'':'s'} imported: ${rows[0].no}${rows.length>1?' → '+rows[rows.length-1].no:''}`,'success');
+    pliClose();invalidateTicketsCache();invalidateDashboardCache();switchTab('register');await loadTickets(true);refreshDashboard(true);
+  }catch(e){showToast('Import stopped: '+e.message+' — tickets saved before the error stay; upload the file again and they will show as “Already on site”.','error');}
+  btn.disabled=false;btn.textContent=old;
+}
 // ── FORM ──
 async function initForm(){
   window._formInit=1;

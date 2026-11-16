@@ -8401,7 +8401,7 @@ async function dpcPrintSection(dates,E,opts){
     const mtd=!single||want('mtd');const NC=mtd?5:4;
     const line=(name,a,b,c,u,cls='')=>`<tr class="${cls}"><td>${name}</td><td class="r"><b>${a}</b></td><td class="r">${b}</td>${mtd?`<td class="r">${c}</td>`:''}<td>${u}</td></tr>`;
     const stat=(m,LL)=>{const v=LL.map(x=>V(m,x)).filter(x=>x!=null);return {avg:avg(v),max:v.length?Math.max(...v):null};};
-    const tCell=(m,x)=>{if(m.mode!=='totalizer')return null;const c=opMDay(R,m,x);if(!c)return '—';if(c.first)return `<small>first reading</small> ${f(LV(m,x),0)}`;if(c.v<0)return `<span style="color:var(--neg)">${f(c.v,0)}</span> <small>check reading</small>`;return f(c.v,dgt(m))+(c.days>1?` <small>(${c.days} days)</small>`:'');};
+    const tCell=(m,x)=>{if(m.mode!=='totalizer')return null;const c=opMDay(R,m,x);if(!c)return '—';if(c.first)return `<small>first reading</small> ${f(LV(m,x),0)}`;if(c.v<0)return `<span style="color:var(--neg)">${f(c.v,0)}</span>`;return f(c.v,dgt(m))+(c.days>1?` <small>(${c.days} days)</small>`:'');};
     const mrow=m=>{const u=E(m.unit||'');if(single&&m.kind==='diesel')return line(E(nm(m)),f(LV(m,d),dgt(m)),f(LV(m,yd),dgt(m)),'—',u);
       if(single&&m.mode==='totalizer'){return line(E(nm(m)),tCell(m,d),tCell(m,yd),f(sum(m,M),0),u);}
       if(single){const t=V(m,d),y=V(m,yd);const fa=avg(M.map(x=>V(m,x)));return line(E(nm(m)),f(t,dgt(m)),f(y,dgt(m)),isSnap(m)?(m.code==='FG-PRESS'&&fa!=null?f(fa,2)+' <small>avg</small>':'—'):f(sum(m,M),0),u);}

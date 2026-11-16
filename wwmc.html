@@ -439,7 +439,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .pli-steps{display:grid;gap:10px}.pli-s{display:flex;gap:12px;border:1px solid #E3E8EF;border-radius:11px;padding:12px 14px}.pli-s>span{width:28px;height:28px;border-radius:50%;background:#1F3864;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.pli-s b{display:block;font-size:14px;color:#0F2747}.pli-s small{display:block;font-size:12.5px;color:#6B7280;margin:2px 0 8px}
 .pli-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pli-sum div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:7px 10px}.pli-sum b{display:block;font-size:19px;color:#0F2747}.pli-sum span{font-size:11px;color:#6B7280}.pli-sum .ok{border-top-color:#16A34A}.pli-sum .dup{border-top-color:#94A3B8}.pli-sum .cl{border-top-color:#64748B}.pli-sum .bad{border-top-color:#DC2626}
 .pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 td:last-child,.pli-t2 td:nth-child(2){white-space:nowrap}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
-.pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
+.pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.done{background:#1F3864;color:#fff}.pli-sum .done{border-top-color:#1F3864}.pli-t2 tr.done td{background:#F0FDF4}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
 .pri-A{color:#B91C1C}.pri-B{color:#B45309}.pri-C{color:#15803D}
 @media(max-width:640px){.pli-sum{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:640px){.op-gnav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.op-gc{white-space:nowrap}}
@@ -1011,6 +1011,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
     <div class="sn" data-sec="pl">
       <button class="tab sn-b" id="tab-new" data-tab="new" onclick="switchTab('new')">＋ New Ticket</button>
       <button class="tab sn-b" id="tab-register" data-tab="register" onclick="switchTab('register')">Register</button>
+      <button class="tab sn-b sup-only" id="tab-pl-import" onclick="pliOpen()" style="display:none">⇧ Import Excel</button>
       <button class="tab sn-b admin-only" id="tab-pl-approvals" data-tab="approvals" onclick="switchTab('approvals')" style="display:none">Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span></button>
     </div>
     <div class="sn" data-sec="dr">
@@ -2657,12 +2658,13 @@ function pliCellText(v){if(v==null)return '';if(v instanceof Date)return v;
   if(typeof v==='number')return v;const s=String(v).trim();return /^#(REF|N\/A|VALUE|NAME|DIV\/0)!?/i.test(s)?'':s;}
 const PLI_EPC={sr:['master log sr.#','master log sr#','sr.#','sr #','item no','s.no','sr. no'],description:['description'],priority:['category','priority'],discipline:['discipline'],raised_by:['issued by','raised by'],pid:['drawing no.','drawing no','drawing'],date:['issued date','date raised','date'],close_by:['close action by'],sub:['subcontractor responsible','subcontractor']};
 async function pliPick(input){
-  const f=input.files&&input.files[0];input.value='';if(!f)return;
-  if(!/\.xlsx$/i.test(f.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
-  const st=document.getElementById('pli-st');st.textContent='Reading '+f.name+' …';
+  const files=[...(input.files||[])];input.value='';if(!files.length)return;
+  const bad=files.filter(f=>!/\.xlsx$/i.test(f.name));if(bad.length){showToast('Only Excel files (.xlsx): '+bad.map(f=>f.name).join(', '),'error');return;}
+  const st=document.getElementById('pli-st');const rows=[];const used=[];const failed=[];
+  try{const ExcelJS=await loadLib('excel');
+  for(const f of files){st.textContent='Reading '+f.name+' …';
   try{
-    const ExcelJS=await loadLib('excel');const wb=new ExcelJS.Workbook();await wb.xlsx.load(await f.arrayBuffer());
-    const rows=[];const used=[];
+    const wb=new ExcelJS.Workbook();await wb.xlsx.load(await f.arrayBuffer());const before=rows.length;
     const sheets=[];wb.eachSheet(ws=>{if(ws.state&&ws.state!=='visible')return;sheets.push(ws);});
     for(const ws of sheets){
       const T=(r,c)=>pliCellText(ws.getRow(r).getCell(c).value);
@@ -2690,11 +2692,16 @@ async function pliPick(input){
             action:[ref,extra].filter(Boolean).join(' — '),deadline:'',raised_by:String(g('raised_by')||'').trim(),status:map.owner_closed&&g('owner_closed')!==''?'Closed':'',no:'',ref,disc:String(g('discipline')||'').trim()});n++;}
         else{const o={line:i,sheet:ws.name,date:g('date'),system_name:String(g('system_name')||'').trim(),description:desc,priority:String(g('priority')||'').trim(),category:String(g('category')||'').trim(),kks:String(g('kks')||'').trim(),pid:String(g('pid')||'').trim(),action:String(g('action')||'').trim(),deadline:g('deadline'),raised_by:String(g('raised_by')||'').trim(),status:String(g('status')||'').trim(),no:String(g('no')||'').trim()};
           if(!o.system_name&&!o.description&&!o.kks)continue;if(/^example\b/i.test(o.description))continue;rows.push(o);n++;}}
-      if(n)used.push(ws.name+(hdr.epc&&meta.system?' — '+meta.system:''));
+      if(n)used.push((files.length>1?f.name.replace(/\.xlsx$/i,'')+' › ':'')+(hdr.epc&&meta.system?meta.system:ws.name)+' ('+n+')');
     }
-    if(!rows.length)throw new Error('No punch items were found. Use the Walk Down Punch List form (Description, Category, Discipline …) or any sheet with System and Description columns.');
+    if(rows.length===before)failed.push(f.name);
+    rows.slice(before).forEach(r=>r.file=f.name);
+  }catch(e){failed.push(f.name+' ('+e.message+')');}}
+    if(!rows.length)throw new Error('No punch items were found'+(failed.length?' in '+failed.join(', '):'')+'. Use the Walk Down Punch List form (Description, Category, Discipline …) or any sheet with System and Description columns.');
     await fetchAllTickets();
-    pliRows=rows.map(pliCheck);st.textContent=f.name+' · '+used.join(' · ');pliRender();
+    // the same item twice in the files: keep the first
+    const seen=new Set();pliRows=rows.map(pliCheck).map(x=>{const k=(x.t.system_name+'|'+x.t.description).toLowerCase().replace(/\s+/g,' ');if(x.state==='ok'&&seen.has(k)){x.state='dup';x.on=false;x.errs=[];x.notes.push('repeated in the file(s)');}seen.add(k);return x;});
+    st.textContent=files.length+' file'+(files.length===1?'':'s')+' · '+used.join(' · ')+(failed.length?' · not read: '+failed.join(', '):'');pliRender();
   }catch(e){st.textContent='';showToast(e.message,'error');}
 }
 function pliCheck(o){
@@ -2716,32 +2723,36 @@ function pliRender(){
   const box=document.getElementById('pli-body');if(!box)return;
   if(!pliRows.length){box.innerHTML=`<div class="pli-steps"><div class="pli-s"><span>1</span><div><b>Get the template</b><small>The plant’s <b>Walk Down Punch List</b> form (EPC format), blank.</small><button class="btn sm" type="button" onclick="pliTemplate()">⬇ Download template</button></div></div>
       <div class="pli-s"><span>2</span><div><b>Fill it in Excel</b><small>Write the <b>System</b> and <b>RFI No.</b> at the top, then one item per row: Description, Category (A/B/C/D), Discipline, Issued by, Issued date. Filled walk-down lists from QA/QC can be uploaded as they are.</small></div></div>
-      <div class="pli-s"><span>3</span><div><b>Upload and check</b><small>Every row is checked first — nothing is saved until you press Import.</small><label class="btn sm primary" style="cursor:pointer">⬆ Choose Excel file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div></div></div>`;
+      <div class="pli-s"><span>3</span><div><b>Upload and check</b><small>Every row is checked first — nothing is saved until you press Import.</small><label class="btn sm primary" style="cursor:pointer">⬆ Choose Excel file(s)<input type="file" accept=".xlsx" multiple hidden onchange="pliPick(this)"></label></div></div></div>`;
     document.getElementById('pli-go').style.display='none';return;}
   const n=k=>pliRows.filter(x=>x.state===k).length;const on=pliRows.filter(x=>x.on).length;
-  const tag={ok:'<span class="pli-t ok">Ready</span>',bad:'<span class="pli-t bad">Fix in Excel</span>',dup:'<span class="pli-t dup">Already on site</span>',closed:'<span class="pli-t cl">Closed in file</span>'};
-  box.innerHTML=`<div class="pli-sum"><div><b>${pliRows.length}</b><span>rows read</span></div><div class="ok"><b>${n('ok')}</b><span>ready</span></div><div class="dup"><b>${n('dup')}</b><span>already on site</span></div><div class="cl"><b>${n('closed')}</b><span>closed in file</span></div><div class="bad"><b>${n('bad')}</b><span>need fixing</span></div></div>
-    <div class="mr-note" style="margin:4px 0 8px">Ticked rows will be imported as <b>OPEN</b> tickets with new numbers. Rows that need fixing can’t be ticked — correct them in Excel and upload again.</div>
-    <div class="pli-tw"><table class="pli-t2"><thead><tr><th><input type="checkbox" aria-label="Tick all" ${on&&on===pliRows.filter(x=>x.state!=='bad').length?'checked':''} onchange="pliRows.forEach(x=>{if(x.state!=='bad')x.on=this.checked});pliRender()"></th><th>Row</th><th>Check</th><th>Pri</th><th>System</th><th>Description</th><th>KKS</th><th>Date</th></tr></thead>
-    <tbody>${pliRows.map((x,i)=>`<tr class="${x.state}"><td><input type="checkbox" ${x.on?'checked':''} ${x.state==='bad'?'disabled':''} onchange="pliRows[${i}].on=this.checked;pliRender()"></td><td>${x.o.line}</td>
-      <td>${tag[x.state]}${x.errs.length?`<small>${escapeHtml(x.errs.join(' · '))}</small>`:''}${x.dup?`<small>${escapeHtml(x.dup.no||'')}</small>`:''}${x.notes.length?`<small>${escapeHtml(x.notes.join(' · '))}</small>`:''}</td>
+  const tag={done:'<span class="pli-t done">✓ Created</span>',ok:'<span class="pli-t ok">Ready</span>',bad:'<span class="pli-t bad">Fix in Excel</span>',dup:'<span class="pli-t dup">Already on site</span>',closed:'<span class="pli-t cl">Closed in file</span>'};
+  box.innerHTML=`<div class="pli-sum">${n('done')?`<div class="done"><b>${n('done')}</b><span>created</span></div>`:`<div><b>${pliRows.length}</b><span>rows read</span></div>`}<div class="ok"><b>${n('ok')}</b><span>ready</span></div><div class="dup"><b>${n('dup')}</b><span>already on site</span></div><div class="cl"><b>${n('closed')}</b><span>closed in file</span></div><div class="bad"><b>${n('bad')}</b><span>need fixing</span></div></div>
+    <div class="mr-note" style="margin:4px 0 8px">Each ticked row becomes <b>its own OPEN ticket</b> with its own number, created one after another. Rows that need fixing can’t be ticked — correct them in Excel and upload again.</div>
+    <div class="pli-tw"><table class="pli-t2"><thead><tr><th><input type="checkbox" aria-label="Tick all" ${on&&on===pliRows.filter(x=>x.state!=='bad'&&x.state!=='done').length?'checked':''} onchange="pliRows.forEach(x=>{if(x.state!=='bad'&&x.state!=='done')x.on=this.checked});pliRender()"></th><th>Row</th><th>Check</th><th>Pri</th><th>System</th><th>Description</th><th>KKS</th><th>Date</th></tr></thead>
+    <tbody>${pliRows.map((x,i)=>`<tr class="${x.state}"><td><input type="checkbox" ${x.on?'checked':''} ${x.state==='bad'||x.state==='done'?'disabled':''} onchange="pliRows[${i}].on=this.checked;pliRender()"></td><td>${x.o.line}</td>
+      <td>${tag[x.state]}${x.errs.length?`<small>${escapeHtml(x.errs.join(' · '))}</small>`:''}${x.newNo?`<small><b>${escapeHtml(x.newNo)}</b></small>`:''}${x.dup?`<small>${escapeHtml(x.dup.no||'')}</small>`:''}${x.notes.length?`<small>${escapeHtml(x.notes.join(' · '))}</small>`:''}</td>
       <td><b class="pri-${x.t.priority}">${x.t.priority}</b></td><td>${escapeHtml(x.t.system_name)}</td><td>${escapeHtml(x.t.description)}${x.o.ref||x.o.disc?`<small>${escapeHtml([x.o.ref,x.o.disc].filter(Boolean).join(' · '))}</small>`:''}</td><td class="mono">${escapeHtml(x.t.kks||'')}</td><td>${escapeHtml(x.t.date||'')}</td></tr>`).join('')}</tbody></table></div>
-    <div style="margin-top:8px"><label class="btn sm" style="cursor:pointer">↺ Choose another file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div>`;
-  const go=document.getElementById('pli-go');go.style.display='';go.disabled=!on;go.textContent=on?`Import ${on} ticket${on===1?'':'s'}`:'Nothing ticked';
+    <div style="margin-top:8px"><label class="btn sm" style="cursor:pointer">↺ Choose other file(s)<input type="file" accept=".xlsx" multiple hidden onchange="pliPick(this)"></label></div>`;
+  const go=document.getElementById('pli-go');go.style.display='';go.disabled=!on&&!n('done');go.textContent=on?`Create ${on} ticket${on===1?'':'s'}`:n('done')?'Open the Register →':'Nothing ticked';
 }
 async function pliImport(btn){
-  const list=pliRows.filter(x=>x.on&&x.state!=='bad');if(!list.length)return;
-  if(!confirm(`Create ${list.length} new Punch List ticket${list.length===1?'':'s'}?`))return;
-  btn.disabled=true;const old=btn.textContent;btn.textContent='Importing…';
+  const list=pliRows.filter(x=>x.on&&x.state!=='bad');if(!list.length){if(pliRows.some(x=>x.state==='done')){pliClose();switchTab('register');}return;}
+  if(!confirm(`Create ${list.length} separate Punch List ticket${list.length===1?'':'s'} — one for each ticked row?`))return;
+  btn.disabled=true;const old=btn.textContent;let ok=0,fail=0;const nos=[];
   try{
-    const start=await peekNextCounter('PL_GLOBAL','qas2_tickets','no');
-    const rows=list.map((x,i)=>({...x.t,no:formatTicketRef(start+i,new Date(x.t.date+'T12:00:00'))}));
-    try{const c=await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL&select=counter')||[];if(c.length)await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL','PATCH',{counter:start+rows.length-1});else await sbFetch('qas2_counters','POST',{month_key:'PL_GLOBAL',counter:start+rows.length-1});}catch(e){}
-    let done=0;for(let i=0;i<rows.length;i+=50){await sbFetch('qas2_tickets','POST',rows.slice(i,i+50));done+=Math.min(50,rows.length-i);btn.textContent=`Importing… ${done}/${rows.length}`;}
-    showToast(`${rows.length} ticket${rows.length===1?'':'s'} imported: ${rows[0].no}${rows.length>1?' → '+rows[rows.length-1].no:''}`,'success');
-    pliClose();invalidateTicketsCache();invalidateDashboardCache();switchTab('register');await loadTickets(true);refreshDashboard(true);
-  }catch(e){showToast('Import stopped: '+e.message+' — tickets saved before the error stay; upload the file again and they will show as “Already on site”.','error');}
-  btn.disabled=false;btn.textContent=old;
+    let next=await peekNextCounter('PL_GLOBAL','qas2_tickets','no');
+    for(const x of list){btn.textContent=`Creating ${ok+fail+1} of ${list.length}…`;
+      const row={...x.t,no:formatTicketRef(next,new Date(x.t.date+'T12:00:00'))};
+      try{const res=await sbFetch('qas2_tickets','POST',row);x.state='done';x.on=false;x.newNo=row.no;x.errs=[];ok++;nos.push(row.no);next++;
+        try{const c=await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL&select=counter')||[];if(c.length)await sbFetch('qas2_counters?month_key=eq.PL_GLOBAL','PATCH',{counter:next-1});else await sbFetch('qas2_counters','POST',{month_key:'PL_GLOBAL',counter:next-1});}catch(e){}
+        if(Array.isArray(res)&&res[0])(allTickets||[]).push(res[0]);}
+      catch(e){x.state='bad';x.on=false;x.errs=['Not saved: '+String(e.message).slice(0,120)];fail++;if(/duplicate|unique/i.test(e.message))next++;}
+      pliRender();const tr=document.querySelectorAll('#pli-body .pli-t2 tbody tr')[pliRows.indexOf(x)];if(tr)tr.scrollIntoView({block:'nearest'});}
+  }catch(e){showToast('Import stopped: '+e.message,'error');}
+  showToast(`${ok} ticket${ok===1?'':'s'} created${nos.length?': '+nos[0]+(nos.length>1?' → '+nos[nos.length-1]:''):''}${fail?' · '+fail+' failed (shown in red)':''}`,fail?'error':'success');
+  btn.disabled=false;btn.textContent=old;pliRender();
+  invalidateTicketsCache();invalidateDashboardCache();loadTickets(true);refreshDashboard(true);
 }
 // ── FORM ──
 async function initForm(){

@@ -400,10 +400,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .op-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-height:300px;overflow:auto;border:1px solid #E3E8EF;border-radius:8px;padding:10px;margin-bottom:6px}.op-pick b{display:block;font-size:11.5px;color:#1F3864;margin-bottom:4px}.op-pick label{display:block;font-size:12.5px;padding:2px 0}
 @media (max-width:760px){.op-grid{grid-template-columns:1fr}.op-row2{grid-template-columns:1fr}.op-in{width:110px}.op-bar input[type=search]{min-width:0;flex:1}}
 .dro summary{cursor:pointer;list-style:none}.dro summary::-webkit-details-marker{display:none}.dro summary::after{content:"▸";float:right;color:#9CA3AF}.dro[open] summary::after{content:"▾"}
-.dro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dro-p{grid-template-columns:repeat(5,minmax(0,1fr))}
-.dro-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
-#dro-eq{padding:6px 8px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:12.5px}
-@media (max-width:640px){.dro-grid,.dro-p{grid-template-columns:1fr 1fr}.mr-cover{grid-template-columns:1fr}}
+@media (max-width:640px){.mr-cover{grid-template-columns:1fr}}
 .dpc-sum{margin-left:auto;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:none;opacity:.75}
 .dpc-t{width:100%;border-collapse:collapse;font-size:13px}.dpc-t th{background:#F1F5FB;color:#1F3864;font-size:11px;font-weight:700;text-align:left;padding:7px 8px;white-space:nowrap}
 .dpc-t td{border-bottom:1px solid #EEF1F5;padding:6px 8px;vertical-align:middle}.dpc-t td small{display:block;font-size:10.5px;color:#6B7280;font-weight:500}.dpc-t .r{text-align:right;font-variant-numeric:tabular-nums}
@@ -422,6 +419,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .op-lh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:2px solid #1F3864;padding-bottom:6px}.op-lh b{font-size:14px;color:#1F3864}.op-lh span{font-size:10.5px;color:#6B7280;font-weight:600}
 .op-lc .op-in{width:100%;min-width:84px;max-width:130px}.op-st .op-in{max-width:80px;min-width:56px}.op-prog{margin-left:auto;font-size:12.5px;color:#6B7280}.op-prog b{color:#1F3864}.op-ok2{color:#15803D;font-weight:700}
 .op-in.chg{background:#FFFBEB;border-color:#F5A524}
+.mr-opsv td.r{text-align:right;font-variant-numeric:tabular-nums}.mr-opsv td:last-child{padding-left:10px;text-align:center}.mr-ops tr.mr-miss th,.mr-ops tr.mr-miss td{background:#FEF2F2}
 .op-mv{margin-top:18px;background:#fff;border:1px solid #E3E8EF;border-radius:12px;padding:4px 14px 12px}.op-mv>summary{cursor:pointer;font-weight:800;color:#1F3864;padding:10px 0;font-size:14px}
 @media (max-width:980px){.op-lgrid{grid-template-columns:1fr}}
 @media (max-width:640px){.op-lc{padding:10px 8px}.op-prog{width:100%;margin:4px 0 0}.dpc-t{font-size:12.5px}.dpc-t .hm{display:none}.dpc-t td,.dpc-t th{padding:6px 4px}.dpc-t input{min-width:70px;max-width:96px;padding:7px 6px}.dpc-v{white-space:normal;min-width:62px}.dpc-f{display:block!important;width:max-content;max-width:110px;white-space:normal;font-size:9.5px!important;margin-left:auto}.dpc-u{display:none}.dpc-mu{display:inline!important}.dpc-t th:last-child{display:none}.dpc-t td:first-child small{display:none}.dpc-k{grid-template-columns:1fr 1fr}}
@@ -5715,7 +5713,6 @@ function drInitForm(){
   draRender();draFillSystems();drpPreview();
 }
 async function drDateChanged(){
-  try{if(document.getElementById('dro-box')?.open)drOpsLoad();}catch(e){}
   const di=document.getElementById('dr-date');if(!di||!di.value)return;
   if(di.value>drToday())di.value=drToday();
   const d=new Date(di.value+'T00:00:00');
@@ -6239,7 +6236,7 @@ function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();let l='';tr
 // · Fuel & water (one meter reading a day) · Setup
 const OP_PAGES=[['today','Today'],['meters','Daily Log'],['hours','Running Hours'],['co','Changeover'],['setup','Setup']];
 const OP_WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-let opPage='today',opDate='',opEq=[],opGroups=[],opCO=[],opMeters=[],opRd=[],opHrs=[],opSet={work_hours:{days:[0,1,2,3,4],from:'07:00',to:'15:00'}},opLoaded=0,opErr='',opDirty=false,opSetupTab='equip';
+let opPage='today',opDate='',opEq=[],opEqAll=[],opGroups=[],opCO=[],opMeters=[],opRd=[],opHrs=[],opSet={work_hours:{days:[0,1,2,3,4],from:'07:00',to:'15:00'}},opLoaded=0,opErr='',opDirty=false,opSetupTab='equip';
 try{const p=localStorage.getItem('qas2_op_page');if(p&&OP_PAGES.some(x=>x[0]===p))opPage=p;}catch(e){}
 const opEl=id=>document.getElementById(id);
 function opISO(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -6267,7 +6264,7 @@ async function opLoad(){
       sbFetch('qas2_op_hours?select=*&reading_date=gte.'+opAdd(from,-31)+'&order=reading_date.asc'),
       sbFetch('qas2_op_settings?select=*'),
       sbFetch('qas2_mr_ops_daily?select=report_date,counters,power,fg_pressure,fg_flow,fg_consumption&report_date=gte.'+opAdd(from,-31)+'&order=report_date.asc').catch(()=>[])]);
-    opEq=(eq||[]).filter(e=>e.active!==false);opGroups=gr||[];opCO=co||[];opMeters=me||[];opRd=rd||[];opHrs=hr||[];opOps=od||[];
+    opEqAll=eq||[];opEq=opEqAll.filter(e=>e.active!==false);opGroups=gr||[];opCO=co||[];opMeters=me||[];opRd=rd||[];opHrs=hr||[];opOps=od||[];
     (st||[]).forEach(s=>opSet[s.key]=s.value);opLoaded=Date.now();opErr='';DC.set('ops',{eq,gr,co,me,rd,hr,st,od});
   }catch(e){opErr=/qas2_op_|PGRST|404|column/i.test(e.message)?'setup':e.message;}
 }
@@ -6327,7 +6324,7 @@ async function opRender(force){
   if(!opDate)opDate=opToday();
   opEl('op-pages').innerHTML=OP_PAGES.filter(p=>p[0]!=='setup'||opCanSetup()).map(p=>`<button type="button" class="mr-pill${opPage===p[0]?' on':''}" onclick="opGo('${p[0]}')">${p[1]}</button>`).join('');
   if(!opLoaded||force){
-    if(!opLoaded){const c=await DC.get('ops');if(c&&c.v&&!opLoaded){const v=c.v;opEq=(v.eq||[]).filter(e=>e.active!==false);opGroups=v.gr||[];opCO=v.co||[];opMeters=v.me||[];opRd=v.rd||[];opHrs=v.hr||[];opOps=v.od||[];(v.st||[]).forEach(s=>opSet[s.key]=s.value);opDraw();
+    if(!opLoaded){const c=await DC.get('ops');if(c&&c.v&&!opLoaded){const v=c.v;opEqAll=v.eq||[];opEq=opEqAll.filter(e=>e.active!==false);opGroups=v.gr||[];opCO=v.co||[];opMeters=v.me||[];opRd=v.rd||[];opHrs=v.hr||[];opOps=v.od||[];(v.st||[]).forEach(s=>opSet[s.key]=s.value);opDraw();
         opLoad().then(()=>{if(!opDirty&&getActiveTabState()==='ops')opDraw();});return;}}
     if(!opEq.length)box.innerHTML='<div class="loading"><div class="loading-spinner"></div><br>Loading…</div>';
     await opLoad();
@@ -6617,10 +6614,11 @@ function opRenderSetup(){
   const tabs=[['equip','Equipment'],['groups','Changeover groups'],['meters','Meters'],['hours','Working hours']];
   let h=`<div class="mr-pills">${tabs.map(t=>`<button type="button" class="mr-pill${opSetupTab===t[0]?' on':''}" onclick="opSetupTab='${t[0]}';opDraw()">${t[1]}</button>`).join('')}</div>`;
   if(opSetupTab==='equip'){
-    h+=`<div class="mr-help">Everything that has a running-hour counter. Tick <b>Monthly report</b> for equipment that should appear in the report's counter table.</div>
-      <div class="mr-tw"><table class="op-t op-set"><thead><tr><th>Code</th><th>Name</th><th>System</th><th>KKS</th><th>Category</th><th>Monthly report</th><th>Active</th></tr></thead><tbody>
-      ${opEq.concat([{code:'',_new:1}]).map(e=>`<tr data-code="${escapeHtml(e.code||'')}"><td>${e._new?'<input data-f="code" placeholder="+ new code">':'<b>'+escapeHtml(e.code)+'</b>'}</td>
+    h+=`<div class="mr-help">Everything that has a running-hour counter. Tick <b>Monthly report</b> for equipment that should appear in the report's counter table. <b>Hours / starts before tracking</b> = the counter values on the baseline date (used for totals since commissioning). This is the only place equipment is edited.</div>
+      <div class="mr-tw"><table class="op-t op-set"><thead><tr><th>Code</th><th>Name</th><th>System</th><th>KKS</th><th>Category</th><th>Hours before tracking</th><th>Starts before tracking</th><th>Baseline date</th><th>Monthly report</th><th>Active</th></tr></thead><tbody>
+      ${opEqAll.concat([{code:'',_new:1}]).map(e=>`<tr data-code="${escapeHtml(e.code||'')}"><td>${e._new?'<input data-f="code" placeholder="+ new code">':'<b>'+escapeHtml(e.code)+'</b>'}</td>
         <td><input data-f="name" value="${escapeHtml(e.name||'')}"></td><td><input data-f="system" value="${escapeHtml(e.system||'')}" list="op-sys-l"></td><td><input data-f="kks" value="${escapeHtml(e.kks||'')}"></td><td><input data-f="grp" value="${escapeHtml(e.grp||'')}"></td>
+        <td><input data-f="baseline_rhr" inputmode="decimal" style="width:90px" value="${e.baseline_rhr!=null&&!e._new?escapeHtml(String(e.baseline_rhr)):''}"></td><td><input data-f="baseline_starts" inputmode="numeric" style="width:80px" value="${e.baseline_starts!=null&&!e._new?escapeHtml(String(e.baseline_starts)):''}"></td><td><input type="date" data-f="baseline_date" value="${escapeHtml(e.baseline_date||'')}"></td>
         <td class="c"><input type="checkbox" data-f="in_report" ${e._new?'':e.in_report!==false?'checked':''}></td><td class="c"><input type="checkbox" data-f="active" ${e.active!==false?'checked':''}></td></tr>`).join('')}</tbody></table></div>
       <datalist id="op-sys-l">${[...new Set(opEq.map(e=>e.system).filter(Boolean))].map(s=>`<option value="${escapeHtml(s)}">`).join('')}</datalist>
       <div class="mr-savebar"><span class="st">Edit any cell, then save</span><button class="btn primary" type="button" onclick="opSaveEquip(this)">Save equipment</button></div>`;
@@ -6646,9 +6644,9 @@ function opRenderSetup(){
 }
 function opCollectRows(){return [...document.querySelectorAll('#op-body table.op-set tbody tr')].map(tr=>{const o={code:tr.dataset.code};tr.querySelectorAll('[data-f]').forEach(i=>{o[i.dataset.f]=i.type==='checkbox'?i.checked:i.value.trim();});return o;});}
 async function opSaveEquip(btn){
-  const rows=opCollectRows().map(r=>{if(!r.code)return null;const old=opEq.find(e=>e.code===r.code);const o={code:r.code.toUpperCase().replace(/\s+/g,'-'),name:r.name||null,system:r.system||null,kks:r.kks||null,grp:r.grp||null,in_report:!!r.in_report,active:!!r.active};
-    if(old&&['name','system','kks','grp','in_report','active'].every(k=>(old[k]??null)===(o[k]??null)||(k==='in_report'&&(old.in_report!==false)===o.in_report)||(k==='active'&&(old.active!==false)===o.active)))return null;
-    if(!old){o.sort_order=200+opEq.length;o.baseline_rhr=0;o.baseline_starts=0;}return o;}).filter(Boolean);
+  const rows=opCollectRows().map(r=>{if(!r.code)return null;const old=opEqAll.find(e=>e.code===r.code);const o={code:r.code.toUpperCase().replace(/\s+/g,'-'),name:r.name||null,system:r.system||null,kks:r.kks||null,grp:r.grp||null,baseline_rhr:opNum(r.baseline_rhr)??0,baseline_starts:opNum(r.baseline_starts)??0,baseline_date:r.baseline_date||null,in_report:!!r.in_report,active:!!r.active};
+    if(old&&['baseline_rhr','baseline_starts'].every(k=>(opNum(old[k])??0)===o[k])&&(old.baseline_date||null)===o.baseline_date&&['name','system','kks','grp','in_report','active'].every(k=>(old[k]??null)===(o[k]??null)||(k==='in_report'&&(old.in_report!==false)===o.in_report)||(k==='active'&&(old.active!==false)===o.active)))return null;
+    if(!old){o.sort_order=200+opEqAll.length;}return o;}).filter(Boolean);
   if(!rows.length){showToast('Nothing changed');return;}
   btn.disabled=true;try{await sbUpsert('qas2_mr_equipment',rows,'code');showToast(rows.length+' saved ✓');await opLoad();opDraw();}catch(e){showToast('Save failed: '+e.message,'error');btn.disabled=false;}
 }
@@ -6801,7 +6799,7 @@ async function _mrLoadOld(force){
   mrRow=(row||[])[0]||{month:mrMonth,data:{}};mrRow.data=mrRow.data||{};
   mrPrev=(prev||[])[0]||null;mrOps=ops||[];mrEquip=eq||[];mrStaff=(st||[]).filter(s=>s.status!=='Removed');mrCR=(cr||[]).filter(c=>c.status!=='Removed');
 }
-const MR_STEPS=[['ops','Daily data','Fuel, power & running hours'],['sections','Write sections','HSE, HR, maintenance …'],['registers','Registers','Staff, CR cases, equipment'],['report','Generate PDF','Cover, design & print']];
+const MR_STEPS=[['ops','Operations data','From Operations ▸ Daily Log'],['sections','Write sections','HSE, HR, maintenance …'],['registers','Registers','Staff, CR cases, annexures'],['report','Generate PDF','Cover, design & print']];
 const MR_GROUPS=[['report','Summary & Events'],['hse','HSE'],['hr','HR & Training'],['opsdata','Operations data'],['docs','SOPs, WIs & Manuals'],['maint','Maintenance'],['finance','Finance & Other']];
 let mrReg='staff',mrOpenGrp='report';
 function mrGo(page){
@@ -6885,14 +6883,20 @@ function mrCopyPrev(k){
   const ia=document.querySelector(`.mr-ta[data-k="${mrIntroKey(k)}"]`);if(ia&&mrPrev.data[mrIntroKey(k)]!=null)ia.value=mrPrev.data[mrIntroKey(k)];
   mrDirty=true;mrSaveBarShow();showToast('Copied from '+mrMonthLabel(mrPrevMonth(mrMonth))+' — press Save.');
 }
+const MR_DLOG=new Set(['ops_fo','ops_inv','ops_h2']);
+function mrDlogCard(s){const v=(mrRow&&mrRow.data&&mrRow.data[s.k])||[];const rows=Array.isArray(v)?v:[];
+  return `<div class="mr-card mr-auto"><div class="mr-sh"><span class="mr-no">${escapeHtml(s.no)}</span><b>${escapeHtml(s.t)}</b>${mrCanEdit()?'<button type="button" class="mr-link" onclick="mrFillFromOps(this)">⟳ Refresh</button>':''}</div>
+    ${rows.length?`<div class="mr-tw"><table class="op-t"><thead><tr>${s.cols.map(c=>`<th>${escapeHtml(c[1])}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${s.cols.map(c=>`<td>${escapeHtml(r[c[0]]??'')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}
+    <div class="mr-autonote">Filled automatically from <a href="#" onclick="mrOpenLog();return false">Operations ▸ Daily Log</a> every time a day is saved.${rows.length?'':' Nothing logged for this month yet.'}</div></div>`;}
 function mrSectionCard(s){
+  if(MR_DLOG.has(s.k))return mrDlogCard(s);
   const head=`<div class="mr-sh"><span class="mr-no">${escapeHtml(s.no)}</span><b>${escapeHtml(s.t)}</b>${s.carry&&mrPrev?`<button type="button" class="mr-link" onclick="mrCopyPrev('${s.k}')">Copy from ${escapeHtml(mrMonthLabel(mrPrevMonth(mrMonth)))}</button>`:''}</div>`;
   if(s.type==='head'||s.type==='head2')return s.intro?`<div class="mr-card mr-headcard">${head}${mrTextEditor(s,mrIntroKey(s.k),true)}</div>`:`<div class="mr-gh">${escapeHtml(s.no)} ${escapeHtml(s.t)}</div>`;
   if(s.type==='auto')return `<div class="mr-card mr-auto">${head}${s.intro?mrTextEditor(s,mrIntroKey(s.k),true):''}<div class="mr-autonote">${mrAutoNote(s)}</div></div>`;
   return `<div class="mr-card">${head}${s.intro?mrTextEditor(s,mrIntroKey(s.k),true):''}${s.type==='table'?mrTableEditor(s):mrTextEditor(s)}</div>`;
 }
 function mrAutoNote(s){
-  return {staff:`Filled automatically from the <a href="#" onclick="mrGo('staff');return false">Staff Register</a>.`,power:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,counters:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a> and <a href="#" onclick="mrGo('equip');return false">Equipment & Running Hours</a>.`,fg:`Filled automatically from the <a href="#" onclick="mrGo('ops');return false">Daily Operations Log</a>.`,punch:'Filled automatically from the Punch List.',cr:`Filled automatically from the <a href="#" onclick="mrGo('cr');return false">CR Cases</a> register.`}[s.src]||'';
+  return {staff:`Filled automatically from the <a href="#" onclick="mrGo('staff');return false">Staff Register</a>.`,power:`Filled automatically from <a href="#" onclick="mrOpenLog();return false">Operations ▸ Daily Log</a>.`,counters:`Starts &amp; trips from <a href="#" onclick="mrOpenLog();return false">Operations ▸ Daily Log</a>, hours from Operations ▸ Running Hours.`,fg:`Filled automatically from <a href="#" onclick="mrOpenLog();return false">Operations ▸ Daily Log</a>.`,punch:'Filled automatically from the Punch List.',cr:`Filled automatically from the <a href="#" onclick="mrGo('cr');return false">CR Cases</a> register.`}[s.src]||'';
 }
 function mrStepsRender(){
   const box=mrEl('mr-steps');if(!box)return;
@@ -6906,7 +6910,7 @@ function mrStepsRender(){
 }
 function mrGoSafe(p){if(mrDirty&&!confirm('You have unsaved changes on this page. Leave without saving?'))return;mrGo(p);}
 function mrGroupStatus(g){const st=MR_SECTIONS.filter(s=>s.g===g).map(mrStatus).filter(Boolean).filter(x=>x[0]!=='auto');const ok=st.filter(x=>x[0]==='ok'||x[0]==='na').length;return [ok,st.length];}
-function mrNaBtn(s){return (s.type==='text'||s.type==='table')&&mrCanEdit()?`<button type="button" class="mr-na" onclick="mrMarkNA('${s.k}')" title="Nothing to report this month — prints “NA”">NA</button>`:'';}
+function mrNaBtn(s){return (s.type==='text'||s.type==='table')&&!MR_DLOG.has(s.k)&&mrCanEdit()?`<button type="button" class="mr-na" onclick="mrMarkNA('${s.k}')" title="Nothing to report this month — prints “NA”">NA</button>`:'';}
 function mrMarkNA(k){const s=MR_BY[k];if(s.type==='table'){const et=document.querySelector(`.mr-et[data-k="${k}"]`);if(et){et.querySelector('tbody').innerHTML='';et.dataset.na='1';}}else{const ta=document.querySelector(`.mr-ta[data-k="${k}"]`);if(ta){ta.value='';ta.dataset.na='1';}}
   const card=document.querySelector(`.mr-card[data-sk="${k}"]`);if(card)card.classList.add('is-na');mrDirty=true;mrSaveBarShow();}
 function mrSaveBarShow(){const b=mrEl('mr-savebar');if(b){b.classList.toggle('dirty',!!mrDirty);const t=b.querySelector('.st');if(t)t.textContent=mrDirty?'Unsaved changes':'All changes saved';}}
@@ -6925,17 +6929,16 @@ function mrRenderSections(){
     ${ro?'<div class="mr-note" style="margin:6px 0 10px">View only — supervisors and admins can edit.</div>':''}
     ${MR_GROUPS.map(grp).join('')}
     ${ro?'':`<div class="mr-savebar" id="mr-savebar"><span class="st">All changes saved</span>${mrPrev?`<button class="btn" type="button" onclick="mrCopyAllPrev(this)">Copy empty from ${escapeHtml(prevL)}</button>`:''}<button class="btn primary" type="button" onclick="mrSaveSections(this)">Save</button></div>`}
-    <div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('ops')">← Daily data</button><button class="btn primary" type="button" onclick="mrGoSafe('registers')">Next: Registers →</button></div>`;
+    <div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('ops')">← Operations data</button><button class="btn primary" type="button" onclick="mrGoSafe('registers')">Next: Registers →</button></div>`;
   mrGrowAll(document.querySelectorAll('#mr-body textarea'));
   document.querySelectorAll('#mr-body details.mr-grp').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){mrOpenGrp=d.dataset.g;mrGrowAll(d.querySelectorAll('textarea'));}}));
   mrEl('mr-body').addEventListener('input',mrSaveBarShow);
   if(ro)document.querySelectorAll('#mr-body textarea,#mr-body button.mr-x,#mr-body .mr-tbtns button').forEach(x=>x.disabled=true);
   if(mrOpenGrp&&mrOpenGrp!=='report')setTimeout(()=>document.querySelector(`#mr-body details[data-g="${mrOpenGrp}"]`)?.scrollIntoView({block:'start',behavior:'smooth'}),60);
 }
-async function mrFillFromOps(btn){if(btn)btn.disabled=true;try{if(!opLoaded)await opLoad();const ch=await opApplyMonthly(mrMonth);showToast(ch.length?'Updated sections '+ch.join(', '):'Already up to date (or nothing logged this month)');}catch(e){showToast(e.message,'error');}if(btn)btn.disabled=false;}
+async function mrFillFromOps(btn){if(btn)btn.disabled=true;try{if(!opLoaded)await opLoad();const ch=await opApplyMonthly(mrMonth);showToast(ch.length?'Updated sections '+ch.join(', '):'Already up to date (or nothing logged this month)');if(ch.length)mrRenderSections();}catch(e){showToast(e.message,'error');}if(btn)btn.disabled=false;}
 function mrRenderOpsStep(){
   mrRenderOps();
-  mrEl('mr-body').insertAdjacentHTML('afterbegin','<div class="mr-next" style="margin:0 0 10px"><span class="mr-note">Diesel (3.1.8), tank inventory (3.1.9) and hydrogen (3.1.10) are filled from the Daily Log each time it is saved.</span><button class="btn sm" type="button" onclick="mrFillFromOps(this)">Fill 3.1.8 – 3.1.10 from Daily Log</button></div><div class="mr-help">These come from <b>Operations ▸ Daily Log</b> (power, fuel gas, starts &amp; trips) and <b>Running Hours</b>. Check for missing days and correct numbers here. Totals for the month are added automatically.</div>');
   mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><span></span><button class="btn primary" type="button" onclick="mrGoSafe('sections')">Next: Write sections →</button></div>`);
 }
 const ANX_TPL_PUNCH="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";
@@ -7266,8 +7269,8 @@ async function mrAnxRefresh(k){
 }
 function mrRenderRegisters(){
   if(mrReg==='annex'){mrEl('mr-body').innerHTML='<div id="mr-anx"></div>';if(!anxView)anxData._stale=true;mrRenderAnnex();}
-  else ({staff:mrRenderStaff,cr:mrRenderCR,equip:mrRenderEquip}[mrReg]||mrRenderStaff)();
-  mrEl('mr-body').insertAdjacentHTML('afterbegin',`<div class="mr-pills">${[['staff','👥 Staff — joined / left'],['cr','❓ CR Cases'],['equip','⚙ Equipment & running hours'],['annex','📎 Annexures (Excel)']].map(x=>`<button type="button" class="mr-pill${mrReg===x[0]?' on':''}" onclick="if(anxDirty.size&&!confirm('You have unsaved changes. Leave without saving?'))return;anxDirty=new Set();anxView=null;mrReg='${x[0]}';mrGoSafe('registers')">${x[1]}</button>`).join('')}</div>`);
+  else ({staff:mrRenderStaff,cr:mrRenderCR}[mrReg]||mrRenderStaff)();
+  mrEl('mr-body').insertAdjacentHTML('afterbegin',`<div class="mr-pills">${[['staff','👥 Staff — joined / left'],['cr','❓ CR Cases'],['annex','📎 Annexures (Excel)']].map(x=>`<button type="button" class="mr-pill${mrReg===x[0]?' on':''}" onclick="if(anxDirty.size&&!confirm('You have unsaved changes. Leave without saving?'))return;anxDirty=new Set();anxView=null;mrReg='${x[0]}';mrGoSafe('registers')">${x[1]}</button>`).join('')}</div>`);
   mrEl('mr-body').insertAdjacentHTML('beforeend',`<div class="mr-next"><button class="btn" type="button" onclick="mrGoSafe('sections')">← Write sections</button><button class="btn primary" type="button" onclick="mrGoSafe('report')">Next: Generate PDF →</button></div>`);
 }
 function mrRenderGroup(){
@@ -7281,47 +7284,26 @@ function mrRenderGroup(){
 // ───────── Daily Operations Log ─────────
 function mrOpsRow(d){return mrOps.find(r=>String(r.report_date).slice(0,10)===d)||{report_date:d,power:{},counters:{}};}
 function mrRenderOps(){
-  const {days}=mrRange(mrMonth);const ro=!mrCanEdit();
+  const {days}=mrRange(mrMonth);const today=drToday();
   const dates=[...Array(days)].map((_,i)=>mrMonth+'-'+String(i+1).padStart(2,'0'));
-  const today=drToday();
-  const cnt=r=>{const c=r.counters||{};const ks=Object.keys(c).filter(k=>c[k]&&(c[k].s||c[k].t||c[k].h));return ks.length?ks.map(k=>`${k} ${c[k].s||0}/${c[k].t||0}/${c[k].h||0}h`).join(', '):'—';};
-  const tot={fgc:0,flow:0,p:{}};
-  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ro?'<span class="mr-note">View only.</span>':'<button class="btn primary" onclick="mrSaveOps(this)">Save changes</button>'}<span class="mr-note">Counters = starts / trips / running hours.</span></div>
-   <div class="mr-tw"><table class="mr-ops"><thead><tr><th rowspan="2">Date</th><th colspan="3">Fuel Gas</th><th colspan="${MR_UNITS.length}">Power Production (MWh)</th><th rowspan="2">Starts / Trips / Hours</th><th rowspan="2">Remarks</th></tr>
-   <tr><th>Pressure<br>(barg)</th><th>Flow<br>(SCFM)</th><th>Consumption<br>(Sm³/day)</th>${MR_UNITS.map(u=>`<th>${u}</th>`).join('')}</tr></thead><tbody>
-   ${dates.map(d=>{const r=mrOpsRow(d);const p=r.power||{};const future=d>today;
-     if(mrNum(r.fg_consumption)!=null)tot.fgc+=mrNum(r.fg_consumption);MR_UNITS.forEach(u=>{if(mrNum(p[u])!=null)tot.p[u]=(tot.p[u]||0)+mrNum(p[u]);});
-     const inp=(f,v)=>`<input type="number" step="any" inputmode="decimal" data-f="${f}" value="${v??''}" ${ro||future?'disabled':''} oninput="mrDirty=true;this.closest('tr').dataset.ch=1">`;
-     return `<tr data-d="${d}" class="${future?'mr-future':''}"><th>${d.slice(8)} ${new Date(d+'T00:00:00').toLocaleString('en-GB',{weekday:'short'})}</th><td>${inp('fg_pressure',r.fg_pressure)}</td><td>${inp('fg_flow',r.fg_flow)}</td><td>${inp('fg_consumption',r.fg_consumption)}</td>${MR_UNITS.map(u=>`<td>${inp('p_'+u,p[u])}</td>`).join('')}
-       <td class="mr-cnt"><span>${escapeHtml(cnt(r))}</span>${ro||future?'':`<button type="button" class="mr-link" onclick="mrCountersOpen('${d}')">Edit</button>`}</td><td><input type="text" data-f="remarks" value="${escapeHtml(r.remarks||'')}" ${ro||future?'disabled':''} oninput="mrDirty=true;this.closest('tr').dataset.ch=1"></td></tr>`;}).join('')}
-   </tbody><tfoot><tr><th>Total</th><td></td><td></td><td><b>${mrFmt(tot.fgc,0)}</b></td>${MR_UNITS.map(u=>`<td><b>${tot.p[u]!=null?mrFmt(tot.p[u]):'-'}</b></td>`).join('')}<td></td><td></td></tr></tfoot></table></div>`;
+  const eq=mrEquip.filter(e=>e.active!==false&&e.in_report!==false).map(e=>e.code);
+  const tot={p:{},g:0,s:0,t:0,h:0};let missing=0;
+  const rows=dates.map(d=>{const r=mrOpsRow(d);const p=r.power||{};const c=r.counters||{};const future=d>today;
+    const g=MR_UNITS.reduce((a,u)=>a+(mrNum(p[u])||0),0);const has=MR_UNITS.some(u=>mrNum(p[u])!=null);
+    let st=0,tr=0,hr=0;Object.values(c).forEach(v=>{st+=v.s||0;tr+=v.t||0;hr+=v.h||0;});
+    MR_UNITS.forEach(u=>{if(mrNum(p[u])!=null)tot.p[u]=(tot.p[u]||0)+mrNum(p[u]);});tot.g+=g;tot.s+=st;tot.t+=tr;tot.h+=hr;
+    const miss=!future&&!has&&r.fg_pressure==null&&!Object.keys(c).length;if(miss)missing++;
+    return `<tr class="${future?'mr-future':''}${miss?' mr-miss':''}"><th>${d.slice(8)} ${new Date(d+'T00:00:00').toLocaleString('en-GB',{weekday:'short'})}</th>
+      ${MR_UNITS.map(u=>`<td class="r">${mrNum(p[u])!=null?mrFmt(mrNum(p[u]),0):'·'}</td>`).join('')}<td class="r"><b>${has?mrFmt(g,0):'·'}</b></td>
+      <td class="r">${r.fg_pressure!=null?mrFmt(mrNum(r.fg_pressure),2):'·'}</td><td class="r">${st||tr?st+' / '+tr:'·'}</td><td class="r">${hr?mrFmt(hr,1):'·'}</td>
+      <td>${future?'':`<button type="button" class="mr-link" onclick="mrOpenLog('${d}')">${miss?'Enter':'Open'}</button>`}</td></tr>`;}).join('');
+  mrEl('mr-body').innerHTML=`<div class="mr-help">Nothing is typed here. Daily figures are entered once in <b>Operations ▸ Daily Log</b> (power, fuel gas, diesel, water, tanks, hydrogen, starts &amp; trips) and <b>Operations ▸ Running Hours</b>; this page shows what reached the report. Press <b>Open</b> on a day to correct it.</div>
+   <div class="mr-bar"><button class="btn primary" type="button" onclick="mrOpenLog()">Open Daily Log</button>${missing?`<span class="mr-note"><b class="op-bad">${missing}</b> past day${missing===1?'':'s'} with nothing logged (highlighted)</span>`:'<span class="mr-note">✓ Every past day has data</span>'}</div>
+   <div class="mr-tw"><table class="mr-ops mr-opsv"><thead><tr><th rowspan="2">Date</th><th colspan="${MR_UNITS.length+1}">Power production (MWh) · 3.1.5</th><th rowspan="2">Fuel gas<br>barg · 3.1.7</th><th rowspan="2">Starts / trips<br>3.1.6</th><th rowspan="2">Running<br>hours</th><th rowspan="2"></th></tr>
+   <tr>${MR_UNITS.map(u=>`<th>${u}</th>`).join('')}<th>Gross</th></tr></thead><tbody>${rows}</tbody>
+   <tfoot><tr><th>Total</th>${MR_UNITS.map(u=>`<td class="r"><b>${tot.p[u]!=null?mrFmt(tot.p[u],0):'-'}</b></td>`).join('')}<td class="r"><b>${mrFmt(tot.g,0)}</b></td><td></td><td class="r"><b>${tot.s} / ${tot.t}</b></td><td class="r"><b>${mrFmt(tot.h,1)}</b></td><td></td></tr></tfoot></table></div>`;
 }
-async function mrSaveOps(btn){
-  const rows=[...document.querySelectorAll('#mr-body tr[data-ch]')];if(!rows.length){showToast('Nothing changed.');return;}
-  btn.disabled=true;btn.textContent='Saving…';
-  try{
-    const out=rows.map(tr=>{const d=tr.dataset.d;const old=mrOpsRow(d);const power={...(old.power||{})};const o={report_date:d,counters:old.counters||{},updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
-      tr.querySelectorAll('input[data-f]').forEach(x=>{const f=x.dataset.f;if(f.startsWith('p_')){const n=mrNum(x.value);if(n==null)delete power[f.slice(2)];else power[f.slice(2)]=n;}else if(f==='remarks')o.remarks=x.value.trim()||null;else o[f]=mrNum(x.value);});
-      o.power=power;return o;});
-    await sbUpsert('qas2_mr_ops_daily',out,'report_date');showToast('Saved ✓');mrDirty=false;mrRender();
-  }catch(e){showToast('Save failed: '+e.message,'error');btn.disabled=false;btn.textContent='Save changes';}
-}
-function mrCountersOpen(d){
-  const r=mrOpsRow(d);const c=r.counters||{};
-  const groups=[...new Set(mrEquip.filter(e=>e.active!==false&&e.in_report!==false).map(e=>e.grp||'Other'))];
-  mrEl('mr-cnt-title').textContent='Starts / trips / running hours — '+formatDateTime(d+'T12:00:00').split(',')[0];
-  mrEl('mr-cnt-body').innerHTML=`<div class="mr-tw"><table class="mr-cnt-t"><thead><tr><th>Equipment</th><th>Starts</th><th>Trips</th><th>Running hours</th></tr></thead><tbody>${groups.map(g=>`<tr class="mr-g"><td colspan="4">${escapeHtml(g)}</td></tr>`+mrEquip.filter(e=>e.active!==false&&(e.grp||'Other')===g).map(e=>{const v=c[e.code]||{};
-    return `<tr data-code="${escapeHtml(e.code)}"><th>${escapeHtml(e.code)}</th><td><input type="number" min="0" step="1" data-x="s" value="${v.s??''}"></td><td><input type="number" min="0" step="1" data-x="t" value="${v.t??''}"></td><td><input type="number" min="0" step="any" data-x="h" value="${v.h??''}"></td></tr>`;}).join('')).join('')}</tbody></table></div>`;
-  mrEl('mr-cnt-save').onclick=()=>mrCountersSave(d);
-  mrEl('mr-cnt-bg').classList.add('show');
-}
-async function mrCountersSave(d){
-  const c={};document.querySelectorAll('#mr-cnt-body tr[data-code]').forEach(tr=>{const v={};tr.querySelectorAll('input').forEach(x=>{const n=mrNum(x.value);if(n!=null&&n!==0)v[x.dataset.x]=n;});if(Object.keys(v).length)c[tr.dataset.code]=v;});
-  const old=mrOpsRow(d);
-  try{await sbUpsert('qas2_mr_ops_daily',[{report_date:d,fg_pressure:old.fg_pressure??null,fg_flow:old.fg_flow??null,fg_consumption:old.fg_consumption??null,power:old.power||{},remarks:old.remarks??null,counters:c,updated_by:currentUser?.name||'',updated_at:new Date().toISOString()}],'report_date');
-    mrEl('mr-cnt-bg').classList.remove('show');showToast('Saved ✓');mrRender();}
-  catch(e){showToast('Save failed: '+e.message,'error');}
-}
+function mrOpenLog(d){if(mrDirty&&!confirm('You have unsaved changes on this page. Leave without saving?'))return;mrDirty=false;opPage='meters';if(d)opDate=d;try{localStorage.setItem('qas2_op_page','meters');}catch(e){}switchTab('ops');window.scrollTo({top:0});}
 // counters summary for a month: per equipment starts, trips, monthly hours, total hours at month end
 async function mrCounterSummary(month){
   const {from,to}=mrRange(month);
@@ -7331,19 +7313,6 @@ async function mrCounterSummary(month){
       if(d>base)tot+=Number(v.h||0);if(d>=from&&d<=to){s+=Number(v.s||0);t+=Number(v.t||0);h+=Number(v.h||0);}});
     const atEnd=to>=String(e.baseline_date||'2026-10-31').slice(0,10);
     return {code:e.code,grp:e.grp,s,t,h,tot:atEnd?tot:null};});
-}
-
-// ───────── Equipment ─────────
-function mrRenderEquip(){
-  const ad=typeof isAdmin==='function'&&isAdmin();
-  mrEl('mr-body').innerHTML=`<div class="mr-bar">${ad?'<button class="btn primary" onclick="mrSaveEquip(this)">Save</button><button class="btn" onclick="mrAddEquip()">+ Add equipment</button>':'<span class="mr-note">View only — admins can edit.</span>'}<span class="mr-note">“Running hours before tracking” = the total on the baseline date (from the October report). Daily hours after that date are added to it.</span></div>
-   <div class="mr-tw"><table class="mr-et mr-eq"><thead><tr><th>Code</th><th>Group</th><th>Running hours before tracking</th><th>Starts before tracking</th><th>Baseline date</th><th>Order</th><th>Active</th></tr></thead><tbody>${mrEquip.map(e=>mrEqRow(e,ad)).join('')}</tbody></table></div>`;
-}
-function mrEqRow(e,ad){const dis=ad?'':'disabled';return `<tr data-id="${e.id??''}"><td><input data-f="code" value="${escapeHtml(e.code||'')}" ${dis}></td><td><input data-f="grp" value="${escapeHtml(e.grp||'')}" ${dis}></td><td><input type="number" step="any" data-f="baseline_rhr" value="${e.baseline_rhr??0}" ${dis}></td><td><input type="number" step="1" data-f="baseline_starts" value="${e.baseline_starts??0}" ${dis}></td><td><input type="date" data-f="baseline_date" value="${String(e.baseline_date||'2026-10-31').slice(0,10)}" ${dis}></td><td><input type="number" step="1" data-f="sort_order" value="${e.sort_order??0}" ${dis}></td><td><input type="checkbox" data-f="active" ${e.active!==false?'checked':''} ${dis}></td></tr>`;}
-function mrAddEquip(){document.querySelector('.mr-eq tbody').insertAdjacentHTML('beforeend',mrEqRow({active:true,sort_order:(mrEquip.length+1)*10},true));}
-async function mrSaveEquip(btn){
-  const rows=[...document.querySelectorAll('.mr-eq tbody tr')].map(tr=>{const o={};tr.querySelectorAll('[data-f]').forEach(x=>{const f=x.dataset.f;o[f]=x.type==='checkbox'?x.checked:['baseline_rhr','baseline_starts','sort_order'].includes(f)?(mrNum(x.value)||0):x.value.trim();});return o;}).filter(o=>o.code);
-  btn.disabled=true;try{await sbUpsert('qas2_mr_equipment',rows,'code');showToast('Saved ✓');mrRender();}catch(e){showToast('Save failed: '+e.message,'error');}finally{btn.disabled=false;}
 }
 
 // ───────── Staff Register ─────────
@@ -7455,6 +7424,7 @@ async function mrDraftExec(){
 // ───────── Monthly Report page (overview + PDF) ─────────
 function mrStatus(s){
   const d=mrRow.data;
+  if(MR_DLOG.has(s.k))return Array.isArray(d[s.k])&&d[s.k].length?['auto','Auto · from Daily Log']:['empty','Nothing logged yet'];
   if(s.type==='head'||s.type==='head2')return null;
   if(s.type==='auto'){
     const n={staff:mrStaff.length,power:mrOps.filter(r=>Object.keys(r.power||{}).length).length,counters:mrOps.filter(r=>Object.keys(r.counters||{}).length).length,fg:mrOps.filter(r=>r.fg_pressure!=null||r.fg_consumption!=null).length,punch:1,cr:mrCR.length}[s.src];
@@ -7845,50 +7815,6 @@ async function mrPrint(theme,win,glance){
     </td></tr></tbody></table></div></body></html>`;
     w.document.open();w.document.write(await sbResolveHtml(html));w.document.close();
   }catch(e){w.document.body.innerHTML='<p style="font:14px Arial;padding:30px;color:#B91C1C">'+(mrSetupMissing?'Run qas2_monthly_setup.sql first.':'Could not build the report: '+escapeHtml(e.message))+'</p>';}
-}
-
-// ───────── shift readings on the daily report ─────────
-async function drOpsLoad(){
-  const box=mrEl('dro-box');if(!box)return;
-  const d=document.getElementById('dr-date')?.value||drToday();
-  try{
-    if(!mrEquip.length)mrEquip=await sbFetch('qas2_mr_equipment?select=*&order=sort_order.asc,code.asc')||[];
-    const r=((await sbFetch('qas2_mr_ops_daily?report_date=eq.'+d+'&select=*'))||[])[0];
-    const sel=mrEl('dro-eq');if(sel)sel.innerHTML='<option value="">— equipment —</option>'+mrEquip.filter(e=>e.active!==false&&e.in_report!==false).map(e=>`<option>${escapeHtml(e.code)}</option>`).join('');
-    const info=mrEl('dro-info');
-    if(r){const p=r.power||{};const parts=[];if(r.fg_pressure!=null)parts.push('FG '+r.fg_pressure+' barg');if(r.fg_consumption!=null)parts.push(mrFmt(mrNum(r.fg_consumption),0)+' Sm³');MR_UNITS.forEach(u=>{if(p[u]!=null)parts.push(u+' '+p[u]+' MWh');});
-      const c=Object.entries(r.counters||{}).map(([k,v])=>k+' '+(v.s||0)+'/'+(v.t||0)+'/'+(v.h||0)+'h');
-      info.innerHTML='Already recorded for this day'+(r.updated_by?' by '+escapeHtml(r.updated_by):'')+': '+escapeHtml(parts.concat(c).join(' · ')||'—')+'. Values you enter below replace them.';}
-    else info.textContent='Nothing recorded for this day yet.';
-    box.dataset.ok='1';
-  }catch(e){box.dataset.ok='';const info=mrEl('dro-info');if(info)info.textContent='Operations readings are not set up yet (run qas2_monthly_setup.sql).';}
-}
-function drOpsAddRow(){
-  const sel=mrEl('dro-eq');const code=sel.value;if(!code)return;
-  if(document.querySelector(`#dro-rows tr[data-code="${CSS.escape(code)}"]`)){sel.value='';return;}
-  mrEl('dro-rows').insertAdjacentHTML('beforeend',`<tr data-code="${escapeHtml(code)}"><th>${escapeHtml(code)}</th><td><input type="number" min="0" step="1" data-x="s" placeholder="0"></td><td><input type="number" min="0" step="1" data-x="t" placeholder="0"></td><td><input type="number" min="0" step="any" data-x="h" placeholder="0"></td><td><button type="button" class="mr-x" onclick="this.closest('tr').remove()" aria-label="Remove">✕</button></td></tr>`);
-  sel.value='';
-}
-function drOpsCollect(){
-  const g=id=>mrNum(mrEl(id)?.value);
-  const o={fg_pressure:g('dro-fgp'),fg_flow:g('dro-fgf'),fg_consumption:g('dro-fgc'),power:{},counters:{}};
-  MR_UNITS.forEach(u=>{const n=g('dro-p-'+u);if(n!=null)o.power[u]=n;});
-  document.querySelectorAll('#dro-rows tr[data-code]').forEach(tr=>{const v={};tr.querySelectorAll('input').forEach(x=>{const n=mrNum(x.value);if(n!=null&&n!==0)v[x.dataset.x]=n;});o.counters[tr.dataset.code]=v;});
-  const rem=(mrEl('dro-rem')?.value||'').trim();if(rem)o.remarks=rem;
-  const any=o.fg_pressure!=null||o.fg_flow!=null||o.fg_consumption!=null||Object.keys(o.power).length||Object.keys(o.counters).length||rem;
-  return any?o:null;
-}
-async function drOpsSave(date){
-  const o=drOpsCollect();if(!o)return;
-  try{
-    const cur=((await sbFetch('qas2_mr_ops_daily?report_date=eq.'+date+'&select=*'))||[])[0]||{};
-    const row={report_date:date,fg_pressure:o.fg_pressure??cur.fg_pressure??null,fg_flow:o.fg_flow??cur.fg_flow??null,fg_consumption:o.fg_consumption??cur.fg_consumption??null,
-      power:{...(cur.power||{}),...o.power},counters:{...(cur.counters||{}),...o.counters},remarks:o.remarks?((cur.remarks?cur.remarks+' | ':'')+o.remarks):(cur.remarks??null),updated_by:currentUser?.name||'',updated_at:new Date().toISOString()};
-    Object.keys(row.counters).forEach(k=>{if(!Object.keys(row.counters[k]||{}).length)delete row.counters[k];});
-    await sbUpsert('qas2_mr_ops_daily',[row],'report_date');
-    ['dro-fgp','dro-fgf','dro-fgc','dro-rem',...MR_UNITS.map(u=>'dro-p-'+u)].forEach(id=>{const el=mrEl(id);if(el)el.value='';});mrEl('dro-rows').innerHTML='';
-    showToast('Operations readings saved ✓');
-  }catch(e){showToast('Report saved, but the operations readings were not: '+(/qas2_mr_ops_daily|PGRST|42P01/.test(e.message)?'run qas2_monthly_setup.sql first.':e.message),'error');}
 }
 
 // ═════════ GROUPED NAVIGATION ═════════

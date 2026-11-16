@@ -423,6 +423,19 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .op-gc{display:inline-flex;align-items:center;gap:6px;border:1px solid #D6DCE5;background:#fff;border-radius:18px;padding:5px 10px;font:inherit;font-size:12.5px;font-weight:600;color:#1F3864;cursor:pointer}
 .op-gc span{font-size:11px;font-weight:800;color:#B45309;background:#FEF3C7;border-radius:10px;padding:1px 7px}.op-gc.ok{border-color:#86EFAC;background:#F0FDF4}.op-gc.ok span{background:#DCFCE7;color:#15803D}.op-gc.part span{background:#FEF3C7}.op-gc.opt span{background:#F1F5F9;color:#64748B}
 .op-lc{scroll-margin-top:170px}
+.op-check{background:#fff;border:1px solid #E3E8EF;border-radius:14px;padding:12px 14px;margin:0 0 12px;display:grid;gap:8px}.op-ch-h{display:flex;justify-content:space-between;align-items:baseline}.op-ch-h b{font-size:15px;color:#0F2747}.op-ch-h span{font-size:12px;color:#6B7280}
+.op-step{display:flex;align-items:center;gap:12px;border:1px solid #E3E8EF;border-radius:11px;padding:10px 12px;cursor:pointer;transition:background .12s}.op-step:hover{background:#F8FAFD}
+.op-sn{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;background:#FEF3C7;color:#92400E}.op-step.part .op-sn{background:#DBEAFE;color:#1E40AF}.op-step.ok .op-sn{background:#DCFCE7;color:#15803D}
+.op-sb2{flex:1;min-width:0}.op-sb2 b{display:block;font-size:14px;color:#0F2747}.op-sb2 small{font-size:12px;color:#6B7280}.op-pb{height:5px;background:#EEF1F5;border-radius:4px;margin-top:6px;overflow:hidden}.op-pb i{display:block;height:100%;background:#F5A524;border-radius:4px}.op-step.part .op-pb i{background:#3B82F6}.op-step.ok .op-pb i{background:#16A34A}
+.op-ll{margin-top:6px}.op-li{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid #EEF1F5}.op-li:last-child{border-bottom:0}.op-li.off .op-lt{opacity:.45}.op-li.off .op-lt b{text-decoration:line-through}
+.op-lt{flex:1;min-width:0}.op-lt b{display:block;font-size:13.5px;color:#0F2747}.op-lt small{font-size:11.5px;color:#6B7280}
+.op-mv2{display:flex;flex-direction:column;gap:2px}.op-mv2 button{border:1px solid #E3E8EF;background:#fff;border-radius:5px;width:24px;height:17px;font-size:8px;line-height:1;color:#475569;cursor:pointer;padding:0}.op-mv2 button:disabled{opacity:.3;cursor:default}
+.op-sw{position:relative;display:inline-block;width:40px!important;min-width:40px;max-width:40px;height:22px;flex:0 0 40px;cursor:pointer;margin:0;padding:0}.op-sw input{opacity:0;width:0;height:0;position:absolute}.op-sw span{position:absolute;inset:0;background:#CBD5E1;border-radius:22px;transition:.15s}.op-sw span::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}.op-sw input:checked+span{background:#16A34A}.op-sw input:checked+span::before{transform:translateX(18px)}.op-sw input:focus-visible+span{outline:2px solid #3B82F6;outline-offset:2px}
+.op-ed{border:1px solid #D6DCE5;background:#fff;border-radius:7px;padding:5px 10px;font:inherit;font-size:12px;font-weight:600;color:#1F3864;cursor:pointer}.op-ed:hover{background:#F1F5FB}
+.op-add{margin-top:8px;width:100%;border:1.5px dashed #B6C3D6;background:#F8FAFD;border-radius:9px;padding:8px;font:inherit;font-size:13px;font-weight:700;color:#1F3864;cursor:pointer}.op-add:hover{background:#EEF3FB}
+.op-form{display:flex;flex-direction:column;gap:10px}.op-fl{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:#374151}.op-fl input,.op-fl select{padding:9px 10px;border:1px solid #D6DCE5;border-radius:8px;font:inherit;font-size:14px;font-weight:400}
+.op-how{display:grid;gap:8px}.op-hc{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;border:1.5px solid #E3E8EF;border-radius:10px;padding:10px 12px;cursor:pointer}.op-hc input{grid-row:span 2;margin-top:3px}.op-hc b{font-size:13.5px;color:#0F2747}.op-hc small{font-size:12px;color:#6B7280}.op-hc:has(input:checked){border-color:#1F3864;background:#F1F5FB}
+.op-chk{display:flex;gap:8px;align-items:center;font-size:13.5px}
 @media (max-width:640px){.op-gnav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.op-gc{white-space:nowrap}}
 .mr-opsv td.r{text-align:right;font-variant-numeric:tabular-nums}.mr-opsv td:last-child{padding-left:10px;text-align:center}.mr-ops tr.mr-miss th,.mr-ops tr.mr-miss td{background:#FEF2F2}
 .op-mv{margin-top:18px;background:#fff;border:1px solid #E3E8EF;border-radius:12px;padding:4px 14px 12px}.op-mv>summary{cursor:pointer;font-weight:800;color:#1F3864;padding:10px 0;font-size:14px}
@@ -688,7 +701,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .drb fieldset{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:12px 0 0}
 .drb legend{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);padding:0 4px}
 .drb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.drb-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}.drb-quick{font-size:12px;margin:2px 0 4px 26px}.drb-quick a{color:var(--navy,#1F3864);font-weight:600}#drb-op-wrap{padding-left:4px}
+.drb-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}.drb-quick{font-size:12px;margin:8px 0 4px 2px}.drb-opp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}.drb-pc{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;border:1.5px solid #E3E8EF;border-radius:10px;padding:9px 11px;cursor:pointer}.drb-pc input{grid-row:span 2;margin-top:3px}.drb-pc b{font-size:13px;color:#0F2747}.drb-pc small{font-size:11.5px;color:#6B7280}.drb-pc:has(input:checked){border-color:#1F3864;background:#F1F5FB}@media(max-width:560px){.drb-opp{grid-template-columns:1fr}}.drb-quick a{color:var(--navy,#1F3864);font-weight:600}#drb-op-wrap{padding-left:4px}
 .drb-opt{display:flex;gap:8px;align-items:center;font-size:13px;padding:4px 0;cursor:pointer}
 @media(max-width:760px){.drs{grid-template-columns:repeat(2,minmax(0,1fr))}.drb-grid,.drb-cols{grid-template-columns:1fr}
   .dra-head{display:none}.dra-row{grid-template-columns:minmax(0,1fr) 118px 30px;border:1px solid var(--border);border-radius:8px;padding:8px;background:#FAFBFC}
@@ -1626,7 +1639,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       </fieldset>
       <fieldset><legend>Plant operations (from Operations)</legend>
         <label class="drb-opt"><input type="checkbox" id="drb-op-on" onchange="drbOpsToggle()"> <b>Add plant operations data</b> for the dates of these reports</label>
-        <div id="drb-op-wrap"><div class="drb-quick"><a href="#" onclick="drbOpsAll(true);return false">Select all</a> · <a href="#" onclick="drbOpsAll(false);return false">Clear</a></div><div id="drb-ops" class="drb-cols"></div></div>
+        <div id="drb-op-wrap"><div id="drb-opp" class="drb-opp"></div><div id="drb-opc"><div class="drb-quick"><a href="#" onclick="drbOpsAll(true);return false">Select all</a> · <a href="#" onclick="drbOpsAll(false);return false">Clear</a></div><div id="drb-ops" class="drb-cols"></div></div></div>
       </fieldset>
       <fieldset><legend>Template</legend><div id="drb-tpl" class="drb-tpls"></div></fieldset>
       <fieldset><legend>Layout</legend>
@@ -6245,7 +6258,7 @@ function smInit(){if(!smEl('sm-panel'))return;smStatus();smBackups();let l='';tr
 // · Fuel & water (one meter reading a day) · Setup
 const OP_PAGES=[['today','Today'],['meters','Daily Log'],['hours','Running Hours'],['co','Changeover'],['setup','Setup']];
 const OP_WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-let opPage='today',opDate='',opEq=[],opEqAll=[],opGroups=[],opCO=[],opMeters=[],opRd=[],opHrs=[],opSet={work_hours:{days:[0,1,2,3,4],from:'07:00',to:'15:00'}},opLoaded=0,opErr='',opDirty=false,opSetupTab='equip';
+let opPage='today',opDate='',opEq=[],opEqAll=[],opGroups=[],opCO=[],opMeters=[],opRd=[],opHrs=[],opSet={work_hours:{days:[0,1,2,3,4],from:'07:00',to:'15:00'}},opLoaded=0,opErr='',opDirty=false,opSetupTab='meters';
 try{const p=localStorage.getItem('qas2_op_page');if(p&&OP_PAGES.some(x=>x[0]===p))opPage=p;}catch(e){}
 const opEl=id=>document.getElementById(id);
 function opISO(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -6349,7 +6362,7 @@ function opDraw(){
   if(opPage==='setup'&&!opCanSetup())opPage='today';
   ({today:opRenderToday,hours:opRenderHours,co:opRenderCO,meters:opRenderMeters,setup:opRenderSetup}[opPage]||opRenderToday)();
 }
-function opGo(p){if(opDirty&&!confirm('You have unsaved readings on this page. Leave without saving?'))return;opPage=p;try{localStorage.setItem('qas2_op_page',p);}catch(e){}opRender();window.scrollTo({top:0});}
+function opGo(p){if(opDirty&&!confirm('You have unsaved readings on this page. Leave without saving?'))return;opPage=p;opLogEdit=false;try{localStorage.setItem('qas2_op_page',p);}catch(e){}opRender();window.scrollTo({top:0});}
 // ── TODAY
 function opRenderToday(){
   const t=opToday();const wc=opWorkCheck();const w=wc.w;
@@ -6368,17 +6381,20 @@ function opRenderToday(){
   opEl('op-body').innerHTML=`
     <div class="op-hero"><div><div class="op-date">${escapeHtml(new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</div>
       <div class="op-shift ${wc.ok?'on':''}">${wc.ok?'● Working hours now':'○ Outside working hours'} · changeovers ${escapeHtml((w.days||[]).map(d=>OP_WD[d].slice(0,3)).join(' '))} ${escapeHtml(w.from||'')}–${escapeHtml(w.to||'')}</div></div>
-      <div class="op-hero-k"><div><b>${due.length}</b><span>changeover${due.length===1?'':'s'} due</span></div><div><b>${hrsIn}/${hrsEq.length}</b><span>hour counters today</span></div><div><b>${mIn}/${mAct.length}</b><span>meter readings today</span></div></div></div>
+      </div>
+    <div class="op-check">${(()=>{const step=(n,title,sub,done,total,go,btn)=>{const pct=total?Math.round(done*100/total):100;const ok=total?done>=total:true;
+        return `<div class="op-step ${ok?'ok':done?'part':''}" onclick="opGo('${go}')"><div class="op-sn">${ok?'✓':n}</div><div class="op-sb2"><b>${title}</b><small>${sub}</small><div class="op-pb"><i style="width:${pct}%"></i></div></div><button class="btn sm ${ok?'':'primary'}" type="button">${btn}</button></div>`;};
+      return `<div class="op-ch-h"><b>Today's checklist</b><span>${escapeHtml(opDL(t))}</span></div>`
+        +step(1,'Daily Log',`${mIn} of ${mAct.length} figures — power, fuel, water, tanks, H₂`,mIn,mAct.length,'meters',mIn>=mAct.length&&mAct.length?'View':'Fill in')
+        +step(2,'Running hours',`${hrsIn} of ${hrsEq.length} counters`,hrsIn,hrsEq.length,'hours',hrsIn>=hrsEq.length&&hrsEq.length?'View':'Fill in')
+        +step(3,'Changeovers',due.length?`${due.length} due${doneToday.length?' · '+doneToday.length+' done':''}`:doneToday.length?doneToday.length+' done today':'Nothing due today',due.length?0:1,1,'co',due.length?'Open':'View');})()}</div>
     <div class="op-grid">
       <div class="mr-card"><div class="mr-sh"><b>Changeovers due</b></div>
         ${due.length?due.sort((a,b)=>b.d.late-a.d.late).map(coRow).join(''):'<div class="op-ok">✓ No changeover due today.</div>'}
         ${doneToday.length?`<div class="op-sub">Done today</div>${doneToday.map(({g,c})=>`<div class="op-done">✓ <b>${escapeHtml(g.name)}</b> — ${(c.stopped||[]).length?escapeHtml((c.stopped||[]).map(opShort).join(', '))+' → '+escapeHtml((c.started||[]).map(opShort).join(', ')):'checked — no change'} <small>${escapeHtml(new Date(c.done_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}))} · ${escapeHtml(c.done_by||'')}${c.outside_hours?' · <span class="op-warn-t">outside working hours</span>':''}</small></div>`).join('')}`:''}
         ${upcoming.length?`<div class="op-sub">Coming up</div>${upcoming.map(({g,d})=>`<div class="op-up"><span>${escapeHtml(opDL(d.due))}</span>${escapeHtml(g.name)}</div>`).join('')}`:''}
       </div>
-      <div class="mr-card"><div class="mr-sh"><b>Today's readings</b><span class="mr-note">once a day</span></div>
-        <div class="op-todo ${hrsIn===hrsEq.length&&hrsEq.length?'ok':''}" onclick="opGo('hours')"><b>Running hours</b><span>${hrsIn} of ${hrsEq.length} counters entered</span><i>→</i></div>
-        <div class="op-todo ${mIn===mAct.length&&mAct.length?'ok':''}" onclick="opGo('meters')"><b>Daily log</b><span>${mIn} of ${mAct.length} figures entered (power, fuel, water, tanks, H₂)</span><i>→</i></div>
-        <div class="op-sub">Yesterday · ${escapeHtml(opDL(y))}</div>
+      <div class="mr-card"><div class="mr-sh"><b>Yesterday at a glance</b><span class="mr-note">${escapeHtml(opDL(y))}</span></div>
         <div class="op-ks">${opYTiles(y)}</div>
       </div>
     </div>`;
@@ -6524,6 +6540,8 @@ function opLogCell(m,cur,d){
 function opOpsOn(d){return opOps.find(r=>r.report_date===d)||null;}
 function opLogEquip(){return opEq.filter(e=>e.in_report!==false);}
 function opRenderMeters(){
+  if(opLogEdit&&opCanSetup()){opEl('op-body').innerHTML=`<div class="op-bar"><b style="font-size:15px;color:#1F3864">✏️ Customize the Daily Log</b><span class="op-prog"></span><button class="btn primary" type="button" onclick="opLogEdit=false;opDraw()">✓ Done</button></div>
+    <div class="mr-help">Switch lines on or off, reorder with ▲▼, rename with <b>Edit</b>, or <b>+ Add line</b>. Everything saves straight away — hidden lines keep their readings.</div>${opLinesEditor()}`;return;}
   const d=opDate,ro=!opCanEnter();const month=d.slice(0,7);const act=opMeters.filter(m=>m.active!==false);
   const days=[];for(let x=month+'-01';x.slice(0,7)===month&&x<=opToday();x=opAdd(x,1))days.push(x);
   const dg=m=>m.unit==='barg'||m.unit==='m'?2:m.unit==='mm'?0:1;
@@ -6554,7 +6572,7 @@ function opRenderMeters(){
     <tfoot><tr><th>${ms.every(isLvl)?'Latest':'Total'}</th>${ms.map(m=>{if(isLvl(m)){const l=dpcPrev(opRd,m.code,opAdd(days[days.length-1]||d,1));return `<th class="r">${l&&l.reading_date>=month+'-01'?opFmt(opNum(l.value),2):'—'}</th>`;}return `<th class="r">${opFmt(tot(m).s,0)}</th>`;}).join('')}</tr></tfoot></table></div>`;};
   const by=k=>act.filter(m=>opKindOf(m)===k);
   opEl('op-body').innerHTML=`<div class="mr-help">One entry for the whole day (<b>24 h</b>). For a totalizer type the meter reading — the site works out the day's value. Diesel and water tanks: type the <b>level</b>. Everything here fills the monthly report (sections 3.1.5 – 3.1.10) and can be added to the printed Daily Report.</div>
-    <div class="op-bar"><button class="btn sm" type="button" onclick="opSetDate(opAdd(opDate,-1))" aria-label="Previous day">◀</button><label class="mr-month">Date <input type="date" value="${d}" max="${opToday()}" onchange="opSetDate(this.value)"></label>${d<opToday()?`<button class="btn sm" type="button" onclick="opSetDate(opAdd(opDate,1))" aria-label="Next day">▶</button>`:''}<span class="op-prog" id="op-prog"></span></div>
+    <div class="op-bar"><button class="btn sm" type="button" onclick="opSetDate(opAdd(opDate,-1))" aria-label="Previous day">◀</button><label class="mr-month">Date <input type="date" value="${d}" max="${opToday()}" onchange="opSetDate(this.value)"></label>${d<opToday()?`<button class="btn sm" type="button" onclick="opSetDate(opAdd(opDate,1))" aria-label="Next day">▶</button>`:''}<span class="op-prog" id="op-prog"></span>${opCanSetup()?'<button class="btn sm" type="button" onclick="if(opDirty&&!confirm(\'You have unsaved changes. Leave without saving?\'))return;opDirty=false;opLogEdit=true;opDraw()">✏️ Customize</button>':''}</div>
     <div class="op-gnav" id="op-gnav"></div>
     <div class="op-lgrid">${OP_LOG_GROUPS.map(card).join('')}${stCard}</div>
     <div class="dpc-k" id="op-k"></div>
@@ -6629,9 +6647,67 @@ async function opApplyMonthly(month){
   }catch(e){console.warn('monthly apply',e.message);}
   return changed;
 }
+// ── LINES OF THE DAILY LOG — plain-language editor, used in Settings and in Daily Log ▸ Customize
+const OP_HOW=[['daily','I write the day’s value','e.g. MWh generated today, H₂ produced today'],['totalizer','I read a meter counter','The meter keeps adding up — the site subtracts the previous reading'],['level','I read a level or pressure','A snapshot (tank level, pressure). For diesel tanks the drop in level is the diesel used']];
+const OP_UNITS=['MWh','barg','mm','m','m³','Sm³','SCFM','L','kg','%'];
+let opLogEdit=false;
+function opHowL(m){return (OP_HOW.find(h=>h[0]===(m.mode||'totalizer'))||OP_HOW[1])[1];}
+function opGroupLines(k){return opMeters.filter(m=>opKindOf(m)===k).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)||String(a.code).localeCompare(b.code));}
+function opLinesEditor(){
+  return `<div class="op-lgrid">${OP_LOG_GROUPS.map(([k,l])=>{const list=opGroupLines(k);if(!list.length&&k==='fuel')return '';const on=list.filter(m=>m.active!==false).length;
+    return `<div class="mr-card op-lc"><div class="op-lh"><b>${l}</b><span>${on} of ${list.length} shown</span></div><div class="op-ll">
+      ${list.map((m,i)=>`<div class="op-li${m.active===false?' off':''}"><div class="op-mv2"><button type="button" aria-label="Move up" ${i?'':'disabled'} onclick="opMeterMove('${escapeHtml(m.code)}',-1)">▲</button><button type="button" aria-label="Move down" ${i<list.length-1?'':'disabled'} onclick="opMeterMove('${escapeHtml(m.code)}',1)">▼</button></div>
+        <div class="op-lt"><b>${escapeHtml(m.name)}</b><small>${escapeHtml(opHowL(m))} · ${escapeHtml(m.unit||'')}</small></div>
+        <label class="op-sw" title="${m.active===false?'Hidden — switch on to show in the Daily Log':'Shown in the Daily Log'}"><input type="checkbox" ${m.active!==false?'checked':''} onchange="opMeterToggle('${escapeHtml(m.code)}',this.checked,this)"><span></span></label>
+        <button type="button" class="op-ed" onclick="opMeterEdit('${escapeHtml(m.code)}')">Edit</button></div>`).join('')||'<div class="mr-note" style="padding:8px 0">No lines yet.</div>'}
+      </div><button type="button" class="op-add" onclick="opMeterEdit(null,'${k}')">+ Add line</button></div>`;}).join('')}</div>`;
+}
+async function opMeterToggle(code,v,el){
+  if(el)el.disabled=true;
+  try{await sbFetch('qas2_op_meters?code=eq.'+encodeURIComponent(code),'PATCH',{active:v});const m=opMeters.find(x=>x.code===code);if(m)m.active=v;showToast(v?'Shown in the Daily Log':'Hidden from the Daily Log (nothing deleted)');opDraw();}
+  catch(e){showToast('Could not save: '+e.message,'error');if(el){el.checked=!v;el.disabled=false;}}
+}
+async function opMeterMove(code,dir){
+  const m=opMeters.find(x=>x.code===code);if(!m)return;const k=opKindOf(m);const list=opGroupLines(k);const i=list.indexOf(m),j=i+dir;if(j<0||j>=list.length)return;
+  [list[i],list[j]]=[list[j],list[i]];const base=OP_LOG_GROUPS.findIndex(g=>g[0]===k)*100;
+  const rows=list.map((x,n)=>({x,so:base+n+1})).filter(o=>o.x.sort_order!==o.so);
+  try{for(const o of rows){await sbFetch('qas2_op_meters?code=eq.'+encodeURIComponent(o.x.code),'PATCH',{sort_order:o.so});o.x.sort_order=o.so;}opDraw();}
+  catch(e){showToast('Could not reorder: '+e.message,'error');}
+}
+function opMeterEdit(code,kind){
+  const m=code?opMeters.find(x=>x.code===code):{code:'',name:'',kind:kind||'water',unit:kind==='power'?'MWh':kind==='diesel'?'mm':kind==='level'?'m':kind==='gas'?'barg':'m³',mode:kind==='power'||kind==='h2'?'daily':kind==='diesel'||kind==='level'||kind==='gas'?'level':'totalizer',active:true};
+  if(!m)return;
+  opEl('op-co-title').textContent=code?'Edit line':'New line';
+  opEl('op-co-body').innerHTML=`<div class="op-form">
+    <label class="op-fl">Name<input id="op-m-name" value="${escapeHtml(m.name||'')}" placeholder="e.g. Demin water tank C" maxlength="60"></label>
+    <div class="op-row2"><label class="op-fl">Section<select id="op-m-kind">${OP_KINDS.map(([v,l])=>`<option value="${v}"${opKindOf(m)===v?' selected':''}>${l}</option>`).join('')}</select></label>
+      <label class="op-fl">Unit<input id="op-m-unit" list="op-units" value="${escapeHtml(m.unit||'')}" maxlength="12"><datalist id="op-units">${OP_UNITS.map(u=>`<option value="${u}">`).join('')}</datalist></label></div>
+    <div class="op-fl">How do you read it?</div>
+    <div class="op-how">${OP_HOW.map(([v,l,d])=>`<label class="op-hc"><input type="radio" name="op-m-mode" value="${v}" ${(m.mode||'totalizer')===v?'checked':''}><b>${l}</b><small>${d}</small></label>`).join('')}</div>
+    <label class="op-chk"><input type="checkbox" id="op-m-act" ${m.active!==false?'checked':''}> Show in the Daily Log</label>
+    ${code?`<div class="mr-note" style="margin-top:6px">Reference: ${escapeHtml(code)} — past readings stay linked to this line.</div>`:''}</div>`;
+  const b=opEl('op-co-save');b.textContent=code?'Save line':'Add line';b.onclick=()=>opMeterSave(code,b);
+  opEl('op-co-bg').classList.add('show');setTimeout(()=>opEl('op-m-name')?.focus(),50);
+}
+function opNewCode(name,kind){const pre={power:'PG',gas:'FG',diesel:'DOT',fuel:'FU',water:'W',level:'TK',h2:'H2'}[kind]||'X';
+  let base=pre+'-'+String(name).toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,16);let c=base,n=2;while(opMeters.some(m=>m.code===c))c=base+'-'+n++;return c;}
+async function opMeterSave(code,btn){
+  const name=opEl('op-m-name').value.trim();if(!name){showToast('Give the line a name.','error');opEl('op-m-name').focus();return;}
+  const kind=opEl('op-m-kind').value,unit=opEl('op-m-unit').value.trim()||'m³',mode=document.querySelector('input[name="op-m-mode"]:checked')?.value||'totalizer',active=opEl('op-m-act').checked;
+  const old=code?opMeters.find(x=>x.code===code):null;
+  if(old&&old.mode!==mode&&opRd.some(r=>r.meter_code===code)&&!confirm('This line already has readings. Changing how it is read changes how the past values are worked out. Continue?'))return;
+  if(opMeters.some(m=>m.code!==code&&m.name.trim().toLowerCase()===name.toLowerCase()&&opKindOf(m)===kind)&&!confirm('A line called “'+name+'” already exists in this section. Add it anyway?'))return;
+  const grpBase=OP_LOG_GROUPS.findIndex(g=>g[0]===kind)*100;
+  const row={code:code||opNewCode(name,kind),name,kind,unit,mode,active,sort_order:old&&opKindOf(old)===kind?old.sort_order:grpBase+opGroupLines(kind).length+1};
+  btn.disabled=true;
+  try{await sbUpsert('qas2_op_meters',[row],'code');const i=opMeters.findIndex(x=>x.code===row.code);if(i>=0)opMeters[i]={...opMeters[i],...row};else opMeters.push(row);
+    opModalClose();showToast(code?'Line saved ✓':'Line added ✓');opDraw();}
+  catch(e){showToast('Could not save: '+e.message,'error');}
+  btn.disabled=false;
+}
 // ── SETUP (supervisors & admins)
 function opRenderSetup(){
-  const tabs=[['equip','Equipment'],['groups','Changeover groups'],['meters','Meters'],['hours','Working hours']];
+  const tabs=[['meters','📋 Daily Log lines'],['equip','⚙ Equipment'],['groups','🔁 Changeover groups'],['hours','🕗 Working hours']];
   let h=`<div class="mr-pills">${tabs.map(t=>`<button type="button" class="mr-pill${opSetupTab===t[0]?' on':''}" onclick="opSetupTab='${t[0]}';opDraw()">${t[1]}</button>`).join('')}</div>`;
   if(opSetupTab==='equip'){
     h+=`<div class="mr-help">Everything that has a running-hour counter. Tick <b>Monthly report</b> for equipment that should appear in the report's counter table. <b>Hours / starts before tracking</b> = the counter values on the baseline date (used for totals since commissioning). This is the only place equipment is edited.</div>
@@ -6647,12 +6723,7 @@ function opRenderSetup(){
       <div class="op-gcs">${opGroups.map(g=>`<div class="mr-card"><div class="op-co-h"><div><b>${escapeHtml(g.name)}</b><small>${escapeHtml(g.grp)} · ${g.weekday!=null?OP_WD[g.weekday]:'no day'} · ${g.duty_n||1} on duty${g.active===false?' · inactive':''}</small></div><button class="btn sm" type="button" onclick="opGrpEdit('${escapeHtml(g.grp)}')">Edit</button></div><div class="mr-note">${(g.members||[]).map(opEqName).map(escapeHtml).join(' · ')}</div></div>`).join('')}</div>
       <button class="btn primary" type="button" onclick="opGrpEdit(null)">+ New changeover group</button>`;
   }else if(opSetupTab==='meters'){
-    h+=`<div class="mr-help"><b>Totalizer</b> = the meter's running total; the site subtracts. <b>Daily value</b> = the day's figure directly. <b>Level / reading</b> = a snapshot (tank level, pressure); for a diesel tank the drop in level is the diesel used. Untick <b>Active</b> to hide a line from the Daily Log.</div>
-      <div class="mr-tw"><table class="op-t op-set"><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Unit</th><th>Entry</th><th>Order</th><th>Active</th></tr></thead><tbody>
-      ${opMeters.concat([{code:'',_new:1,kind:'water',unit:'m³',mode:'totalizer'}]).map(m=>`<tr data-code="${escapeHtml(m.code||'')}"><td>${m._new?'<input data-f="code" placeholder="+ new code">':'<b>'+escapeHtml(m.code)+'</b>'}</td><td><input data-f="name" value="${escapeHtml(m.name||'')}"></td>
-        <td><select data-f="kind">${OP_KINDS.map(([v,l])=>`<option value="${v}"${opKindOf(m)===v?' selected':''}>${l}</option>`).join('')}</select></td><td><input data-f="unit" value="${escapeHtml(m.unit||'')}" style="width:70px"></td>
-        <td><select data-f="mode"><option value="totalizer"${m.mode!=='daily'&&m.mode!=='level'?' selected':''}>Totalizer</option><option value="daily"${m.mode==='daily'?' selected':''}>Daily value</option><option value="level"${m.mode==='level'?' selected':''}>Level / reading</option></select></td><td><input data-f="sort_order" value="${m.sort_order??''}" style="width:60px"></td><td class="c"><input type="checkbox" data-f="active" ${m.active!==false?'checked':''}></td></tr>`).join('')}</tbody></table></div>
-      <div class="mr-savebar"><span class="st">Edit any cell, then save</span><button class="btn primary" type="button" onclick="opSaveMetersSetup(this)">Save meters</button></div>`;
+    h+=`<div class="mr-help">These are the lines of the <b>Daily Log</b>. Switch a line off to hide it (its readings are kept), use ▲▼ to change the order, <b>Edit</b> to rename or change the unit, and <b>+ Add line</b> for a new meter, tank or reading. Changes save straight away.</div>`+opLinesEditor();
   }else{
     const w=opSet.work_hours||{};
     h+=`<div class="mr-help">Changeovers must be done in these hours. Anything recorded outside is still saved but flagged.</div>
@@ -7993,10 +8064,15 @@ function drOpenBuilder(ids){
   document.getElementById('drb-tpl').innerHTML=DRB_TPLS.map(([k,l,d])=>`<label class="drb-tplc"><input type="radio" name="drb-tpl" value="${k}" ${k===tp?'checked':''}><span class="drb-sw drb-sw-${k}" aria-hidden="true"><i></i><i></i><i></i></span><b>${l}</b><small>${d}</small></label>`).join('');
   document.getElementById('drb-bg').classList.add('show');
 }
+const DRB_OPS_PRESETS=[['full','Full operations','Everything logged for the day',null],['prod','Production & consumption','Power, fuel, water, hydrogen',['kpi','power','gas','diesel','water','h2']],['mgmt','Management summary','Key figures, power, starts & trips',['kpi','power','starts']],['custom','Custom','Pick each part yourself',null]];
 function drbOpsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2_drb_ops')||'null');}catch(e){}
-  const on=sv?sv.on:true,ks=sv?sv.k:DRB_OPS.map(x=>x[0]);
+  const on=sv?sv.on:true,pr=sv&&sv.p?sv.p:'full',ks=sv&&sv.k?sv.k:DRB_OPS.map(x=>x[0]);
   document.getElementById('drb-op-on').checked=on;
-  document.getElementById('drb-ops').innerHTML=DRB_OPS.map(([k,l])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${ks.includes(k)?'checked':''}> ${l}</label>`).join('');drbOpsToggle();}
+  document.getElementById('drb-opp').innerHTML=DRB_OPS_PRESETS.map(([k,l,d])=>`<label class="drb-pc"><input type="radio" name="drb-opp" value="${k}" ${k===pr?'checked':''} onchange="drbOpsPreset(this.value)"><b>${l}</b><small>${d}</small></label>`).join('');
+  document.getElementById('drb-ops').innerHTML=DRB_OPS.map(([k,l])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${ks.includes(k)?'checked':''}> ${l}</label>`).join('');
+  drbOpsPreset(pr,true);drbOpsToggle();}
+function drbOpsPreset(p,keep){const x=DRB_OPS_PRESETS.find(y=>y[0]===p)||DRB_OPS_PRESETS[0];document.getElementById('drb-opc').style.display=p==='custom'?'':'none';
+  if(p!=='custom'&&!(keep&&p==='custom')){const ks=x[3]||DRB_OPS.map(y=>y[0]);document.querySelectorAll('#drb-ops input').forEach(i=>i.checked=ks.includes(i.value));}}
 function drbOpsToggle(){const w=document.getElementById('drb-op-wrap');if(w)w.style.display=document.getElementById('drb-op-on').checked?'':'none';}
 function drbOpsAll(v){document.querySelectorAll('#drb-ops input').forEach(i=>i.checked=v);}
 function drbChoice(){
@@ -8008,7 +8084,7 @@ function drbChoice(){
   const tpl=document.querySelector('input[name="drb-tpl"]:checked')?.value||'corporate';try{localStorage.setItem('qas2_drb_tpl',tpl);}catch(e){}
   const rb=document.getElementById('drb-raisedby')?.value??'';try{localStorage.setItem('qas2_drb_raisedby',rb);}catch(e){}
   const ops=document.getElementById('drb-op-on')?.checked?[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value):[];
-  try{localStorage.setItem('qas2_drb_ops',JSON.stringify({on:!!document.getElementById('drb-op-on')?.checked,k:[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value)}));}catch(e){}
+  try{localStorage.setItem('qas2_drb_ops',JSON.stringify({on:!!document.getElementById('drb-op-on')?.checked,p:document.querySelector('input[name="drb-opp"]:checked')?.value||'full',k:[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value)}));}catch(e){}
   return {ids,s,layout,tpl,raisedBy:rb,ops,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){

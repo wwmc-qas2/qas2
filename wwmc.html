@@ -6589,7 +6589,7 @@ function opRenderToday(){
   const doneToday=opGroups.map(g=>({g,c:opCO.find(c=>c.grp===g.grp&&c.done_date===t)})).filter(x=>x.c);
   const upcoming=opGroups.filter(g=>g.active!==false).map(g=>({g,d:opDue(g,t)})).filter(x=>x.d.state==='later').sort((a,b)=>a.d.due.localeCompare(b.d.due)).slice(0,6);
   const hrsEq=opEq.filter(e=>e.track!==false);const hrsIn=hrsEq.filter(e=>opReadingOn(e.code,t)!=null).length;
-  const mAct=opMeters.filter(m=>m.active!==false);const mIn=mAct.filter(m=>opMReading(m.code,t)!=null).length;
+  const mAct=opShown(opMeters);const mIn=mAct.filter(m=>opMReading(m.code,t)!=null).length;
   const y=opAdd(t,-1);
   const coRow=({g,d})=>{const r=opRecommend(g);const fmtL=c=>`${escapeHtml(opShort(c))} <small>${r.hrs[c]!=null?opFmt(r.hrs[c],0)+' h':'no hours'}</small>`;
     return `<div class="op-co ${d.state}"><div class="op-co-h"><b>${escapeHtml(g.name)}</b><span class="op-tag ${d.state}">${d.state==='late'?'Overdue · '+d.late+' day'+(d.late>1?'s':''):'Due today'}</span></div>
@@ -6622,7 +6622,10 @@ function opRenderToday(){
 }
 async function opTodayIssues(){await isLoad();const b=opEl('op-today-is');if(!b||isErr)return;const L=isList.filter(i=>i.status!=='Resolved');if(!L.length){b.style.display='none';return;}
   b.style.display='';b.className='mr-card';b.innerHTML=`<div class="mr-sh"><b>🚩 Major issues open</b><a href="#" class="mr-link" onclick="opGo('issues');return false">All →</a></div>${L.slice(0,5).map(i=>{const ld=isDays(i.last_update_at);const st=ld!=null&&ld>=IS_STALE;return `<div class="op-todo ${st?'':'ok'}" onclick="isOpen(${i.id})"><b>${escapeHtml(i.title)}</b><span>${escapeHtml(i.status)}${st?' · no update for '+ld+' days':''}</span><i>→</i></div>`;}).join('')}`;}
-function opYTiles(y){const act=opMeters.filter(m=>m.active!==false);const t=(v,u,l)=>v==null?`<div class="op-k na"><b>—</b><small>${escapeHtml(l)}</small></div>`:`<div class="op-k"><b>${opFmt(v,u==='%'?2:0)}</b><span>${escapeHtml(u)}</span><small>${escapeHtml(l)}</small></div>`;
+// older lines that the Daily Log replaced: left out once the replacement line exists (their readings stay saved)
+const OP_LEGACY={'FG-PLANT':'FG-PRESS','FG-GT11':'FG-PRESS','FG-GT12':'FG-PRESS','FG-GT13':'FG-PRESS','PW':'FSW','DO-PLANT':'DOT-1','FSWT':'FSWT-A'};
+function opShown(list){const has=new Set((list||[]).filter(m=>m.active!==false).map(m=>m.code));return (list||[]).filter(m=>m.active!==false&&!(OP_LEGACY[m.code]&&has.has(OP_LEGACY[m.code])));}
+function opYTiles(y){const act=opShown(opMeters);const t=(v,u,l)=>v==null?`<div class="op-k na"><b>—</b><small>${escapeHtml(l)}</small></div>`:`<div class="op-k"><b>${opFmt(v,u==='%'?2:0)}</b><span>${escapeHtml(u)}</span><small>${escapeHtml(l)}</small></div>`;
   const g=dpcGross(opRd,act,y);const nm=act.find(m=>m.code===DPC_NET);const nc=nm&&opMDay(opRd,nm,y);const n=nc&&nc.v!=null?nc.v:null;
   let used=null;act.filter(m=>m.kind==='diesel').forEach(m=>{const u=opUsed(opMDay(opRd,m,y));if(u!=null)used=(used||0)+u;});
   const L=[t(g,'MWh','Gross generation')];if(nm)L.push(t(n,'MWh','Net export'),t(g>0&&n!=null?(g-n)*100/g:null,'%','Auxiliary'));
@@ -6765,7 +6768,7 @@ function opLogEquip(){return opEq.filter(e=>e.in_report!==false);}
 function opRenderMeters(){
   if(opLogEdit&&opCanSetup()){opEl('op-body').innerHTML=`<div class="op-bar"><b style="font-size:15px;color:#1F3864">✏️ Customize the Daily Log</b><span class="op-prog"></span><button class="btn primary" type="button" onclick="opLogEdit=false;opDraw()">✓ Done</button></div>
     <div class="mr-help">Switch lines on or off, reorder with ▲▼, rename with <b>Edit</b>, or <b>+ Add line</b>. Everything saves straight away — hidden lines keep their readings.</div>${opLinesEditor()}`;return;}
-  const d=opDate,ro=!opCanEnter();const month=d.slice(0,7);const act=opMeters.filter(m=>m.active!==false);
+  const d=opDate,ro=!opCanEnter();const month=d.slice(0,7);const act=opShown(opMeters);
   const days=[];for(let x=month+'-01';x.slice(0,7)===month&&x<=opToday();x=opAdd(x,1))days.push(x);
   const dg=m=>m.unit==='barg'||m.unit==='m'?2:m.unit==='mm'?0:1;
   const prevCell=m=>{if(m.mode==='daily'){const y=dpcVal(opRd,m.code,opAdd(d,-1));return y!=null?opFmt(y,dg(m))+'<small>yesterday</small>':'<span class="mr-note">—</span>';}
@@ -6816,7 +6819,7 @@ function opLogNav(){const nav=opEl('op-gnav');if(!nav)return;let tot=0,done=0;
   nav.innerHTML=chips;const pr=opEl('op-prog');if(pr)pr.innerHTML=`<b>${done}</b> of ${tot} filled for ${escapeHtml(opDL(opDate))}`;}
 function opLogCur(code){const i=document.querySelector(`#op-body input.op-in[data-m="${CSS.escape(code)}"]`);return i?opNum(i.value):opMReading(code,opDate);}
 function opLogCalc(){
-  const d=opDate;const set=(id,h)=>{const e=opEl(id);if(e)e.innerHTML=h;};const act=opMeters.filter(m=>m.active!==false);
+  const d=opDate;const set=(id,h)=>{const e=opEl(id);if(e)e.innerHTML=h;};const act=opShown(opMeters);
   const day=m=>{const v=opLogCur(m.code);return v==null?null:opMDay(opRd,m,d,v);};
   const gross=dpcGross(opRd,act,d,day),gy=dpcGross(opRd,act,opAdd(d,-1));
   set('op-gt',gross!=null?opFmt(gross,1):'—');set('op-gy',gy!=null?opFmt(gy,1)+'<small>yesterday</small>':'');
@@ -8366,7 +8369,7 @@ async function dpcPrintSection(dates,E,opts){
   try{
     const first=dates[0],last=dates[dates.length-1];const mStart=last.slice(0,7)+'-01';const lo=first<mStart?first:mStart;
     const safe=p=>p.catch(()=>[]);
-    const me=(await safe(sbFetch('qas2_op_meters?select=*&order=sort_order.asc,code.asc'))||[]).filter(m=>m.active!==false);
+    const me=opShown(await safe(sbFetch('qas2_op_meters?select=*&order=sort_order.asc,code.asc'))||[]);
     const want=k=>opts.has(k);
     const [rd,ops,hrs,cos,grs,eqs]=await Promise.all([
       me.length?safe(sbFetch('qas2_op_meter_readings?select=*&'+dpcQ(me)+'&reading_date=gte.'+opAdd(lo,-45)+'&reading_date=lte.'+last+'&order=reading_date.asc')):[],

@@ -736,7 +736,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .drb fieldset{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:12px 0 0}
 .drb legend{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);padding:0 4px}
 .drb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.drb-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}.drb-quick{font-size:12px;margin:8px 0 4px 2px}.drb-opp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}.drb-pc{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;border:1.5px solid #E3E8EF;border-radius:10px;padding:9px 11px;cursor:pointer}.drb-pc input{grid-row:span 2;margin-top:3px}.drb-pc b{font-size:13px;color:#0F2747}.drb-pc small{font-size:11.5px;color:#6B7280}.drb-pc:has(input:checked){border-color:#1F3864;background:#F1F5FB}@media(max-width:560px){.drb-opp{grid-template-columns:1fr}}.drb-quick a{color:var(--navy,#1F3864);font-weight:600}#drb-op-wrap{padding-left:4px}
+.drb-cols{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}.drb-quick{font-size:12px;margin:8px 0 4px 2px}.drb-isl{max-height:180px;overflow:auto;border:1px solid #E3E8EF;border-radius:8px;padding:2px 10px;margin-bottom:6px}.drb-isl .is-st{font-size:10px}#drb-is-wrap{padding-left:4px}.drb-opp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}.drb-pc{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;border:1.5px solid #E3E8EF;border-radius:10px;padding:9px 11px;cursor:pointer}.drb-pc input{grid-row:span 2;margin-top:3px}.drb-pc b{font-size:13px;color:#0F2747}.drb-pc small{font-size:11.5px;color:#6B7280}.drb-pc:has(input:checked){border-color:#1F3864;background:#F1F5FB}@media(max-width:560px){.drb-opp{grid-template-columns:1fr}}.drb-quick a{color:var(--navy,#1F3864);font-weight:600}#drb-op-wrap{padding-left:4px}
 .drb-opt{display:flex;gap:8px;align-items:center;font-size:13px;padding:4px 0;cursor:pointer}
 @media(max-width:760px){.drs{grid-template-columns:repeat(2,minmax(0,1fr))}.drb-grid,.drb-cols{grid-template-columns:1fr}
   .dra-head{display:none}.dra-row{grid-template-columns:minmax(0,1fr) 118px 30px;border:1px solid var(--border);border-radius:8px;padding:8px;background:#FAFBFC}
@@ -1710,6 +1710,11 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <fieldset><legend>Plant operations (from Operations)</legend>
         <label class="drb-opt"><input type="checkbox" id="drb-op-on" onchange="drbOpsToggle()"> <b>Add plant operations data</b> for the dates of these reports</label>
         <div id="drb-op-wrap"><div id="drb-opp" class="drb-opp"></div><div id="drb-opc"><div class="drb-quick"><a href="#" onclick="drbOpsAll(true);return false">Select all</a> · <a href="#" onclick="drbOpsAll(false);return false">Clear</a></div><div id="drb-ops" class="drb-cols"></div></div></div>
+      </fieldset>
+      <fieldset><legend>Major issues &amp; decisions</legend>
+        <label class="drb-opt"><input type="checkbox" id="drb-is-on" onchange="drbIsToggle()"> <b>Add major issues</b> — tick the ones to show</label>
+        <div id="drb-is-wrap"><div class="drb-quick"><a href="#" onclick="drbIsAll('open');return false">Open ones</a> · <a href="#" onclick="drbIsAll(true);return false">All</a> · <a href="#" onclick="drbIsAll(false);return false">None</a></div><div id="drb-is" class="drb-isl"></div>
+          <label class="drb-opt"><input type="radio" name="drb-is-m" value="period" checked> Entries in the report dates (latest one if none)</label><label class="drb-opt"><input type="radio" name="drb-is-m" value="all"> Full timeline of each issue</label></div>
       </fieldset>
       <fieldset><legend>Template</legend><div id="drb-tpl" class="drb-tpls"></div></fieldset>
       <fieldset><legend>Layout</legend>
@@ -7055,15 +7060,15 @@ async function isDrRender(){
   box.innerHTML=(L.length?L.map(i=>{const ld=isDays(i.last_update_at);return `<div class="is-dri"><div><b>${escapeHtml(i.title)}</b><small>${escapeHtml(i.no||'')} · <span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span> · ${ld==null?'':ld===0?'updated today':'updated '+ld+' d ago'}</small>${i.last_update_note?`<small class="is-ln">${escapeHtml(String(i.last_update_note).slice(0,120))}</small>`:''}</div>${isCanAdd()?`<button class="btn sm" type="button" onclick="isOpen(${i.id}).then(()=>document.getElementById('is-note')?.focus())">＋ Today's update</button>`:''}</div>`;}).join(''):'<p class="mr-note">No open major issues.</p>')
     +`<div class="is-drf">${isCanManage()?'<button class="btn sm" type="button" onclick="isEdit(null)">＋ New major issue</button>':''}<span class="mr-note">Open issues and their latest entries are added to the printed report (Print / Save ▸ Major issues).</span></div>`;
 }
-async function isPrintSection(dates,E){
+async function isPrintSection(dates,E,ids,mode){
   try{await isLoad(true);if(isErr||!isList.length)return null;const f=dates[0],l=dates[dates.length-1];
     const inR=x=>{const d=String(x.event_date||x.created_at||'').slice(0,10);return d>=f&&d<=l;};
-    const L=isList.filter(i=>i.status!=='Resolved'||(i.resolved_at&&String(i.resolved_at)>=f&&String(i.resolved_at)<=l)||isEntries(i.id).some(inR));if(!L.length)return null;
-    const rows=L.map(i=>{const all=isEntries(i.id);const rec=all.filter(inR);const show=rec.length?rec:all.slice(-1);
+    const L=ids?isList.filter(i=>ids.map(String).includes(String(i.id))):isList.filter(i=>i.status!=='Resolved'||(i.resolved_at&&String(i.resolved_at)>=f&&String(i.resolved_at)<=l)||isEntries(i.id).some(inR));if(!L.length)return null;
+    const rows=L.map(i=>{const all=isEntries(i.id);const rec=mode==='all'?all:all.filter(inR);const show=rec.length?rec:all.slice(-1);
       return `<div class="iss"><div class="ih"><span class="sev s-${E(i.severity||'Medium')}"></span><b>${E(i.title)}</b><span class="st st-${isStCls(i.status)}">${E(i.status)}</span></div>
         <div class="im2">${E(i.no||'')}${(i.equipment||[]).length?' · '+E(i.equipment.join(', ')):''}${i.date_found?' · found '+E(isD(i.date_found)):''}${(i.impact||[]).length?' · impact: '+E(i.impact.join(', ')):''}</div>
         ${show.map(x=>`<div class="ie2 ${x.kind==='decision'?'dec':''}"><span>${E(isD(x.event_date||x.created_at))}</span><div>${x.kind==='decision'?'<b>Decision:</b> ':''}${E(x.note||'')}${x.kind==='decision'&&(x.decided_by||x.impact)?`<small>${[x.decided_by?'by '+E(x.decided_by):'',x.approved_by?'approved by '+E(x.approved_by):'',x.impact?'impact: '+E(x.impact):''].filter(Boolean).join(' · ')}</small>`:''}</div></div>`).join('')}
-        ${!rec.length?'<div class="nw2">No new entry in this period — latest shown.</div>':''}</div>`;}).join('');
+        ${!rec.length&&all.length?'<div class="nw2">No new entry in this period — latest shown.</div>':''}</div>`;}).join('');
     const css=`<style>.iss{border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin-bottom:8px;break-inside:avoid}.ih{display:flex;align-items:center;gap:8px}.ih b{flex:1;font-size:13px}.sev{width:10px;height:10px;border-radius:50%;flex:none}.s-High{background:#B91C1C}.s-Medium{background:#D97706}.s-Low{background:#15803D}
       .st{font-size:9.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.st-ok{background:var(--okb);color:var(--ok)}.st-neg{background:var(--negb);color:var(--neg)}.st-info{background:var(--infob);color:var(--info)}.st-warn{background:var(--warnb);color:var(--warn)}
       .im2{font-size:10.5px;color:var(--mute);margin:2px 0 6px 18px}.ie2{display:flex;gap:10px;margin-left:18px;padding:4px 0;border-top:1px dashed var(--line);font-size:12px}.ie2>span{width:78px;flex:none;color:var(--mute);font-size:11px}.ie2 small{display:block;color:var(--mute);font-size:10.5px}.ie2.dec{background:#FFFBEB}.ie2.dec b{color:#8A6D1F}.nw2{margin-left:18px;font-size:10.5px;color:var(--mute);font-style:italic}</style>`;
@@ -8354,7 +8359,7 @@ function dpcCols(days,series,o={}){
   if(!tot.some(x=>x)&&!lines.some(l=>l.v.some(v=>v!=null)))s+=`<text x="${pl+iw/2}" y="${pt+ih/2}" text-anchor="middle" fill="#94A3B8" font-size="11">No readings for these days</text>`;
   return s+`</svg><div class="pc-lg">${series.map(x=>`<span><i${x.line?' class="ln"':''} style="${x.line?'border-color:':'background:'}${x.c}"></i>${escapeHtml(x.n)}</span>`).join('')}</div>`;}
 // what can go into the PDF — each one can be ticked on or off in Print / Save
-const DRB_OPS=[['kpi','Key figures (tiles at the top)'],['charts','📈 Charts'],['power','⚡ Power generation'],['gas','🔥 Fuel gas'],['diesel','🛢 Diesel tanks'],['water','💧 Water consumption'],['level','📏 Tank levels'],['h2','🧪 Hydrogen plant'],['starts','▶ Starts & trips'],['hours','⏱ Running hours'],['co','🔁 Changeovers']];
+const DRB_OPS=[['kpi','Key figures (tiles at the top)'],['charts','📈 Charts'],['mtd','📅 Month-to-date column in the table'],['power','⚡ Power generation'],['gas','🔥 Fuel gas'],['diesel','🛢 Diesel tanks'],['water','💧 Water consumption'],['level','📏 Tank levels'],['h2','🧪 Hydrogen plant'],['starts','▶ Starts & trips'],['hours','⏱ Running hours'],['co','🔁 Changeovers']];
 async function dpcPrintSection(dates,E,opts){
   if(!dates.length)return null;
   opts=new Set(opts||DRB_OPS.map(x=>x[0]));if(!opts.size)return null;
@@ -8387,14 +8392,15 @@ async function dpcPrintSection(dates,E,opts){
     const dsl=me.filter(m=>m.kind==='diesel');const usedOn=d=>{let s=null;dsl.forEach(m=>{const v=val(m,d);if(v!=null)s=(s||0)+v;});return s;};
     const h2p=me.filter(m=>m.kind==='h2'&&m.mode!=='level');const dmM=me.find(m=>m.code==='DM');
     const single=dates.length===1;const d=last,yd=opAdd(d,-1),M=span(mStart,d),L=span(first,last);
-    const line=(name,a,b,c,u,cls='')=>`<tr class="${cls}"><td>${name}</td><td class="r"><b>${a}</b></td><td class="r">${b}</td><td class="r">${c}</td><td>${u}</td></tr>`;
+    const mtd=!single||want('mtd');const NC=mtd?5:4;
+    const line=(name,a,b,c,u,cls='')=>`<tr class="${cls}"><td>${name}</td><td class="r"><b>${a}</b></td><td class="r">${b}</td>${mtd?`<td class="r">${c}</td>`:''}<td>${u}</td></tr>`;
     const stat=(m,LL)=>{const v=LL.map(x=>V(m,x)).filter(x=>x!=null);return {avg:avg(v),max:v.length?Math.max(...v):null};};
     const mrow=m=>{const u=E(m.unit||'');if(single){const t=V(m,d),y=V(m,yd);const fa=avg(M.map(x=>V(m,x)));return line(E(nm(m)),f(t,dgt(m)),f(y,dgt(m)),isSnap(m)?(m.code==='FG-PRESS'&&fa!=null?f(fa,2)+' <small>avg</small>':'—'):f(sum(m,M),0),u);}
       const s=stat(m,L);return line(E(nm(m)),isSnap(m)?'—':f(sum(m,L),0),f(s.avg,isSnap(m)?dgt(m):1),f(s.max,dgt(m)),u);};
     const has=m=>(single?[d,yd]:L).some(x=>V(m,x)!=null);
     const kindOpt=k=>k==='fuel'?'diesel':k;
     let rows='';
-    OP_LOG_GROUPS.forEach(([kd,title])=>{if(!want(kindOpt(kd)))return;const list=me.filter(m=>opKindOf(m)===kd&&has(m));if(!list.length)return;rows+=`<tr class="g"><td colspan="5">${title.replace(/^\S+\s/,'')}</td></tr>`;
+    OP_LOG_GROUPS.forEach(([kd,title])=>{if(!want(kindOpt(kd)))return;const list=me.filter(m=>opKindOf(m)===kd&&has(m));if(!list.length)return;rows+=`<tr class="g"><td colspan="${NC}">${title.replace(/^\S+\s/,'')}</td></tr>`;
       if(kd==='power'){const gl=list.filter(dpcIsGross);rows+=gl.map(mrow).join('');
         if(gl.length)rows+=single?line('<b>Total gross generation</b>',f(gOn(d)),f(gOn(yd)),f(sumF(gOn,M)),'MWh','tot'):(()=>{const gv=L.map(gOn).filter(x=>x!=null);return line('<b>Total gross generation</b>',f(sumF(gOn,L)),f(avg(gv)),f(gv.length?Math.max(...gv):null),'MWh','tot');})();
         if(net&&list.includes(net))rows+=mrow(net)+(single?line('Auxiliary consumption',f(auxOf(gOn(d),nOn(d)),2),f(auxOf(gOn(yd),nOn(yd)),2),f(auxOf(sumF(gOn,M),sumF(nOn,M)),2),'%','tot'):line('Auxiliary consumption',f(auxOf(sumF(gOn,L),sumF(nOn,L)),2),'','','%','tot'));
@@ -8419,7 +8425,7 @@ async function dpcPrintSection(dates,E,opts){
       if(want('h2')&&h2p.some(m=>W7.some(y=>val(m,y)!=null)))ch.push(card((single?'Last 7 days':'Day by day')+' — H₂ production, m³',dpcCols(W7,h2p.map((m,i)=>({n:m.name.replace(/ production$/i,''),c:i?'#A78BFA':DPC_COL.h2,v:W7.map(y=>val(m,y))})),{lab,hi:single,h:160})));
       if(want('level')){const lm=me.filter(m=>m.kind==='level'&&V(m,d)!=null);if(lm.length)ch.push(card('Tank levels — '+E(opDL(d))+', m',dpcHBars(lm.map(m=>({l:m.name.replace(/ water tank/i,'').replace(/^Fire & service/i,'F&S').replace(/^Fire-fighting & service/i,'F&S'),v:V(m,d),p:V(m,yd),c:DPC_COL.lvl})),'m',2)));}
       if(ch.length)parts.push(`<div class="pc-charts${ch.length===1?' one':''}">${ch.join('')}</div>`);}
-    if(rows)parts.push(single?`<table class="t pc"><thead><tr><th>Item</th><th class="r" style="width:16%">${E(opDL(d))}</th><th class="r" style="width:16%">Previous day</th><th class="r" style="width:17%">Month to date</th><th style="width:9%">Unit</th></tr></thead><tbody>${rows}</tbody></table>`
+    if(rows)parts.push(single?`<table class="t pc"><thead><tr><th>Item</th><th class="r" style="width:16%">${E(opDL(d))}</th><th class="r" style="width:16%">Previous day</th>${mtd?'<th class="r" style="width:17%">Month to date</th>':''}<th style="width:9%">Unit</th></tr></thead><tbody>${rows}</tbody></table>`
       :`<table class="t pc"><thead><tr><th>Item</th><th class="r" style="width:16%">Period total</th><th class="r" style="width:16%">Daily average</th><th class="r" style="width:16%">Highest</th><th style="width:9%">Unit</th></tr></thead><tbody>${rows}</tbody></table>`);
     // day by day (period only) — only the ticked items
     if(!single&&L.length<=62){const cols=[...(want('diesel')?dsl:[]),...(want('water')?me.filter(m=>m.kind==='water'):[]),...(want('h2')?h2p:[])];const pw=want('power')&&me.some(dpcIsGross);
@@ -8446,7 +8452,7 @@ async function dpcPrintSection(dates,E,opts){
   }catch(e){console.warn('operations section',e.message);return null;}
 }
 // ── print / save builder ──
-const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['issues','Major issues & decisions',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
+const DRB_SECTIONS=[['summary','Summary (numbers at the top)',true],['activities','Activities',true],['achievements','Achievements & milestones',true],['issues','Issues & challenges',true],['plan','Plan for next working day',true],['photos','Photos',false],['tracker','Submission tracker (who reported)',false],['heatmap','System heat map (Plant Map template)',true]];
 let drbIds=null,drCurrentList=[];
 const DRB_TPLS=[['corporate','Corporate','WWMC bordered header, document box'],['modern','Modern','Blue banner, soft cards'],['compact','Compact','Dense, fits more on one page'],['classic','Classic B&W','Black & white, printer friendly'],['plantmap','Plant Map','Plant schematic, day score, today vs yesterday']];
 function drShownIds(){return (drCurrentList||[]).map(r=>String(r.id));}
@@ -8467,20 +8473,29 @@ function drOpenBuilder(ids){
   document.getElementById('drb-title').value='Daily Report';
   {let rb=null;try{rb=localStorage.getItem('qas2_drb_raisedby');}catch(e){}const sel=document.getElementById('drb-raisedby');if(sel)sel.value=rb===null?'Mohammed Alharish':rb;if(sel&&sel.selectedIndex<0)sel.value='Mohammed Alharish';}
   document.getElementById('drb-period').value=d||(f||t?`${f||'…'} to ${t||'…'}`:'');
-  drpRenderOptions();drbOpsRender();
+  drpRenderOptions();drbOpsRender();drbIsRender();
   let tp='corporate';try{tp=localStorage.getItem('qas2_drb_tpl')||'corporate';}catch(e){}
   document.getElementById('drb-tpl').innerHTML=DRB_TPLS.map(([k,l,d])=>`<label class="drb-tplc"><input type="radio" name="drb-tpl" value="${k}" ${k===tp?'checked':''}><span class="drb-sw drb-sw-${k}" aria-hidden="true"><i></i><i></i><i></i></span><b>${l}</b><small>${d}</small></label>`).join('');
   document.getElementById('drb-bg').classList.add('show');
 }
-const DRB_OPS_PRESETS=[['full','Full operations','Everything logged for the day',null],['prod','Production & consumption','Power, fuel, water, hydrogen + charts',['kpi','charts','power','gas','diesel','water','h2']],['mgmt','Management summary','Key figures, charts, power, starts & trips',['kpi','charts','power','starts']],['custom','Custom','Pick each part yourself',null]];
+const DRB_OPS_PRESETS=[['full','Full operations','Everything logged for the day',['kpi','charts','power','gas','diesel','water','level','h2','starts','hours','co']],['prod','Production & consumption','Power, fuel, water, hydrogen + charts',['kpi','charts','power','gas','diesel','water','h2']],['mgmt','Management summary','Key figures, charts, power, starts & trips',['kpi','charts','power','starts']],['custom','Custom','Pick each part yourself',null]];
 function drbOpsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2_drb_ops')||'null');}catch(e){}
-  const on=sv?sv.on:true,pr=sv&&sv.p?sv.p:'full',ks=sv&&sv.k?sv.k:DRB_OPS.map(x=>x[0]);
+  const on=sv?sv.on:true,pr=sv&&sv.p?sv.p:'full',ks=sv&&sv.k?sv.k:DRB_OPS.map(x=>x[0]).filter(k=>k!=='mtd');
   document.getElementById('drb-op-on').checked=on;
   document.getElementById('drb-opp').innerHTML=DRB_OPS_PRESETS.map(([k,l,d])=>`<label class="drb-pc"><input type="radio" name="drb-opp" value="${k}" ${k===pr?'checked':''} onchange="drbOpsPreset(this.value)"><b>${l}</b><small>${d}</small></label>`).join('');
   document.getElementById('drb-ops').innerHTML=DRB_OPS.map(([k,l])=>`<label class="drb-opt"><input type="checkbox" value="${k}" ${ks.includes(k)?'checked':''}> ${l}</label>`).join('');
   drbOpsPreset(pr,true);drbOpsToggle();}
 function drbOpsPreset(p,keep){const x=DRB_OPS_PRESETS.find(y=>y[0]===p)||DRB_OPS_PRESETS[0];document.getElementById('drb-opc').style.display=p==='custom'?'':'none';
   if(p!=='custom'&&!(keep&&p==='custom')){const ks=x[3]||DRB_OPS.map(y=>y[0]);document.querySelectorAll('#drb-ops input').forEach(i=>i.checked=ks.includes(i.value));}}
+async function drbIsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2_drb_is')||'null');}catch(e){}
+  const box=document.getElementById('drb-is');box.innerHTML='<span class="mr-note">Loading…</span>';document.getElementById('drb-is-on').checked=sv?sv.on:true;
+  const m=sv&&sv.m||'period';document.querySelectorAll('input[name="drb-is-m"]').forEach(r=>r.checked=r.value===m);drbIsToggle();
+  await isLoad(true);if(isErr){box.innerHTML='<span class="mr-note">Major Issues is not set up yet.</span>';return;}
+  if(!isList.length){box.innerHTML='<span class="mr-note">No issues recorded.</span>';return;}
+  const off=new Set((sv&&sv.off)||[]);
+  box.innerHTML=isList.map(i=>`<label class="drb-opt"><input type="checkbox" value="${i.id}" ${i.status==='Resolved'?(sv&&sv.onR||[]).includes(i.id)?'checked':'':off.has(i.id)?'':'checked'}> <span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span> ${escapeHtml(i.title)}</label>`).join('');}
+function drbIsToggle(){const w=document.getElementById('drb-is-wrap');if(w)w.style.display=document.getElementById('drb-is-on').checked?'':'none';}
+function drbIsAll(v){document.querySelectorAll('#drb-is input').forEach(i=>{const it=isList.find(x=>String(x.id)===i.value);i.checked=v==='open'?(it&&it.status!=='Resolved'):v;});}
 function drbOpsToggle(){const w=document.getElementById('drb-op-wrap');if(w)w.style.display=document.getElementById('drb-op-on').checked?'':'none';}
 function drbOpsAll(v){document.querySelectorAll('#drb-ops input').forEach(i=>i.checked=v);}
 function drbChoice(){
@@ -8493,7 +8508,9 @@ function drbChoice(){
   const rb=document.getElementById('drb-raisedby')?.value??'';try{localStorage.setItem('qas2_drb_raisedby',rb);}catch(e){}
   const ops=document.getElementById('drb-op-on')?.checked?[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value):[];
   try{localStorage.setItem('qas2_drb_ops',JSON.stringify({on:!!document.getElementById('drb-op-on')?.checked,p:document.querySelector('input[name="drb-opp"]:checked')?.value||'full',k:[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value)}));}catch(e){}
-  return {ids,s,layout,tpl,raisedBy:rb,ops,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
+  const isOn=!!document.getElementById('drb-is-on')?.checked;const isInp=[...document.querySelectorAll('#drb-is input')];const isIds=!isOn?[]:isInp.length?isInp.filter(i=>i.checked).map(i=>+i.value):null;const isM=document.querySelector('input[name="drb-is-m"]:checked')?.value||'period';
+  try{const all=[...document.querySelectorAll('#drb-is input')];if(all.length)localStorage.setItem('qas2_drb_is',JSON.stringify({on:isOn,m:isM,off:all.filter(i=>!i.checked).map(i=>+i.value),onR:all.filter(i=>i.checked&&(isList.find(x=>String(x.id)===i.value)||{}).status==='Resolved').map(i=>+i.value)}));}catch(e){}
+  return {ids,s,layout,tpl,raisedBy:rb,ops,isIds,isM,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){
   const out=[];const base='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
@@ -8565,7 +8582,7 @@ async function drbPrint(){
         ${systems.length?`<div class="chips">${systems.slice(0,24).map(s=>`<span>${E(s)}</span>`).join('')}${systems.length>24?`<span>+${systems.length-24} more</span>`:''}</div>`:''}`});
     }
     if(c.ops&&c.ops.length){prog('Adding plant operations…');const pc=await dpcPrintSection(dates,E,c.ops);if(pc)sections.push(pc);}
-    if(has('issues')){prog('Adding major issues…');const iz=await isPrintSection(dates,E);if(iz)sections.push(iz);}
+    if(c.isIds===null||(c.isIds&&c.isIds.length)){prog('Adding major issues…');const iz=await isPrintSection(dates,E,c.isIds,c.isM);if(iz)sections.push(iz);}
     const actTable=list=>`<table class="t"><thead><tr><th style="width:22%">System</th><th>Activity</th><th style="width:15%">Status</th><th style="width:16%">KKS</th></tr></thead><tbody>${list.map(x=>`<tr><td>${E(x.sys)}</td><td>${E(x.act)}</td><td><span class="st ${stCls(x.st)}">${E(x.st)}</span></td><td class="mono">${E(x.kks)}</td></tr>`).join('')}</tbody></table>`;
     const callout=(cls,icon,title,text)=>`<div class="call ${cls}"><div class="ci">${icon}</div><div><div class="ct">${title}</div><div class="cx">${E(text)}</div></div></div>`;
     if(c.layout==='system'){

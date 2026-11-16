@@ -440,6 +440,15 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .pli-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pli-sum div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:7px 10px}.pli-sum b{display:block;font-size:19px;color:#0F2747}.pli-sum span{font-size:11px;color:#6B7280}.pli-sum .ok{border-top-color:#16A34A}.pli-sum .dup{border-top-color:#94A3B8}.pli-sum .cl{border-top-color:#64748B}.pli-sum .bad{border-top-color:#DC2626}
 .pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 td:last-child,.pli-t2 td:nth-child(2){white-space:nowrap}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
 .pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.done{background:#1F3864;color:#fff}.pli-sum .done{border-top-color:#1F3864}.pli-t2 tr.done td{background:#F0FDF4}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
+.sn-sum{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13.5px}.sn-sum .btn{margin-left:auto}
+.sn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:52vh;overflow:auto;padding-right:2px}.sn-card{border:1px solid #E3E8EF;border-radius:11px;padding:10px 12px;background:#fff}
+.sn-h{display:flex;justify-content:space-between;font-size:12.5px;color:#6B7280;margin-bottom:6px}.sn-h b{color:#0F2747}
+.sn-n{display:flex;align-items:center;gap:8px;font-size:13px;padding:3px 0}.sn-n span{flex:1}.sn-n em{font-style:normal;font-size:11px;font-weight:700;color:#475569;background:#F1F5F9;border-radius:9px;padding:0 7px}
+.sn-t{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px}.sn-t label{width:100%;font-size:11px;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:.04em}.sn-t input{flex:1;min-width:160px;padding:7px 9px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:13.5px;font-weight:600}
+.sn-all{margin-top:12px;border:1px solid #E3E8EF;border-radius:10px;padding:4px 12px 10px}.sn-all summary{cursor:pointer;font-weight:700;color:#1F3864;padding:8px 0}.sn-all input[type=search]{width:100%;padding:7px 9px;border:1px solid #D6DCE5;border-radius:7px;margin-bottom:6px}
+.sn-rows{max-height:34vh;overflow:auto}.sn-r{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #F1F5F9;font-size:13px}.sn-r span{flex:1}.sn-r em{font-style:normal;font-size:11px;color:#64748B}.sn-r input{width:220px;padding:5px 8px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
+.sn-hint{font-size:12px;color:#B45309;margin-top:4px;min-height:0}.sn-hint a{font-weight:700;color:#1F3864}
+@media(max-width:760px){.sn-grid{grid-template-columns:1fr}.sn-r{flex-wrap:wrap}.sn-r input{width:100%}}
 .pri-A{color:#B91C1C}.pri-B{color:#B45309}.pri-C{color:#15803D}
 @media(max-width:640px){.pli-sum{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:640px){.op-gnav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.op-gc{white-space:nowrap}}
@@ -1012,6 +1021,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <button class="tab sn-b" id="tab-new" data-tab="new" onclick="switchTab('new')">＋ New Ticket</button>
       <button class="tab sn-b" id="tab-register" data-tab="register" onclick="switchTab('register')">Register</button>
       <button class="tab sn-b sup-only" id="tab-pl-import" onclick="pliOpen()" style="display:none">⇧ Import Excel</button>
+      <button class="tab sn-b sup-only" id="tab-pl-names" onclick="snOpen()" style="display:none">🧹 System names</button>
       <button class="tab sn-b admin-only" id="tab-pl-approvals" data-tab="approvals" onclick="switchTab('approvals')" style="display:none">Approvals <span id="pl-tab-cnt" style="background:#C00000;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;margin-left:4px;display:none">0</span></button>
     </div>
     <div class="sn" data-sec="dr">
@@ -1075,7 +1085,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
           </div>
         </div>
         <div class="grid2" style="margin-bottom:16px">
-          <div class="field"><label for="f-system">System</label><input id="f-system" placeholder="e.g. BOG Fuel Oil Supply"></div>
+          <div class="field"><label for="f-system">System</label><input id="f-system" list="f-system-l" autocomplete="off" placeholder="e.g. BOG Fuel Oil Supply" onfocus="if(!document.getElementById('f-system-l').options.length)snFillList()" oninput="clearTimeout(window._snh);window._snh=setTimeout(()=>snHint(this),300)"><datalist id="f-system-l"></datalist><div id="f-system-hint" class="sn-hint"></div></div>
           <div class="field"><label for="f-category">Category</label>
             <select id="f-category"><option>Design Deficiency</option><option>Construction</option><option>Pre-Commissioning</option><option>Commissioning</option><option>HSE</option><option>Documentation</option></select>
           </div>
@@ -1554,6 +1564,8 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
   <div class="modal-body"><p class="mr-note" style="margin:0 0 8px">Leave empty for equipment that did not run.</p><div id="mr-cnt-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="document.getElementById('mr-cnt-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-cnt-save">Save</button></div></div></div></div>
 <div class="modal-bg" id="mr-staff-bg"><div class="modal" style="max-width:520px"><div class="modal-head"><h3 id="mr-staff-title">Edit</h3><button onclick="document.getElementById('mr-staff-bg').classList.remove('show')" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div id="mr-staff-form" style="display:flex;flex-direction:column;gap:12px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="document.getElementById('mr-staff-bg').classList.remove('show')">Cancel</button><button class="btn primary" id="mr-staff-save">Save</button></div></div></div></div>
+<div class="modal-bg" id="sn-bg"><div class="modal" style="max-width:980px;width:96vw"><div class="modal-head"><h3>System names — merge look-alikes</h3><button onclick="snClose()" aria-label="Close">&times;</button></div>
+  <div class="modal-body"><div id="sn-body"></div><div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" type="button" onclick="snClose()">Close</button></div></div></div></div>
 <div class="modal-bg" id="pli-bg"><div class="modal" style="max-width:920px;width:96vw"><div class="modal-head"><h3>Import punch items from Excel</h3><button onclick="pliClose()" aria-label="Close">&times;</button></div>
   <div class="modal-body"><div class="mr-note" id="pli-st" style="margin:0 0 8px"></div><div id="pli-body"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn" type="button" onclick="pliClose()">Cancel</button><button class="btn primary" type="button" id="pli-go" onclick="pliImport(this)" style="display:none">Import</button></div></div></div></div>
 <div class="modal-bg" id="op-co-bg"><div class="modal" style="max-width:640px"><div class="modal-head"><h3 id="op-co-title">Changeover</h3><button onclick="opModalClose()" aria-label="Close">&times;</button></div>
@@ -2624,6 +2636,82 @@ function renderEditTicketPhotoPreview(){
 function removeExistingEditTicketPhoto(i){editTicketExistingPhotos.splice(i,1);renderEditTicketPhotoPreview();}
 function removeNewEditTicketPhoto(i){editTicketNewPhotos.splice(i,1);renderEditTicketPhotoPreview();}
 
+// ═════════ SYSTEM NAMES — find look-alikes and merge them into one name ═════════
+const SN_FIX=[[/\bcompressor air\b/g,'compressed air'],[/\bcomp(?:\.|ressed)? ?air\b/g,'compressed air'],[/\bfire[\s-]*fight(?:ing)?\b/g,'firefighting'],[/\bfire[\s-]*water\b/g,'firewater'],[/\bwaste[\s-]*water\b/g,'wastewater'],[/\bde[\s-]*min(?:eralised|eralized|eralization)?\b/g,'demin']];
+const SN_STOP=new Set(['the','system','systems','sys','of','and']);
+function snParse(name){
+  let s=String(name||'').toLowerCase().replace(/&/g,' and ');const paren=((s.match(/\(([^)]*)\)/)||[])[1]||'').replace(/[^a-z0-9]/g,'');
+  s=s.replace(/\([^)]*\)/g,' ');const raw=s.replace(/[^a-z0-9]+/g,' ').split(' ').filter(w=>w&&!SN_STOP.has(w));SN_FIX.forEach(([re,to])=>{s=s.replace(re,to);});
+  const words=s.replace(/[^a-z0-9]+/g,' ').split(' ').filter(w=>w&&!SN_STOP.has(w)).map(w=>w.length>4&&/[^s]s$/.test(w)?w.slice(0,-1):w);
+  const acr=raw.length>=3?raw.map(w=>w[0]).join(''):'';
+  return {key:words.join(' ')||'unspecified',words,acr,paren:paren.length>=2?paren:''};
+}
+function snSame(a,b){
+  if(a.key===b.key)return true;
+  if(a.acr&&a.acr===b.key||b.acr&&b.acr===a.key)return true;
+  if(a.paren&&(a.paren===b.key||a.paren===b.acr||a.paren===b.paren)||b.paren&&(b.paren===a.key||b.paren===a.acr))return true;
+  if(a.words.length>=2&&b.words.length>=2){const A=new Set(a.words),B=new Set(b.words);let n=0;A.forEach(w=>{if(B.has(w))n++;});if(n/(A.size+B.size-n)>=0.8)return true;}
+  return false;
+}
+function snNice(n){const s=String(n||'').trim().replace(/\s+/g,' ').replace(/\s*([\/–-])\s*/g,' $1 ').replace(/\s+/g,' ');const allCaps=s===s.toUpperCase();
+  return s.split(' ').map((w,i)=>{if(/^[(\/–-]/.test(w)&&w.length<=1)return w;const core=w.replace(/[^A-Za-z0-9]/g,'');
+    if(core&&core===core.toUpperCase()&&(/\d/.test(core)||core.length<=4&&(!allCaps||!/[AEIOU]/.test(core.slice(1)))))return w;
+    if(i&&/^(and|of|the|for|to|in)$/i.test(core))return w.toLowerCase();return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ');}
+// groups of look-alike names over all tickets: [{names:[{n,c}], total, best}]
+function snGroups(tickets){
+  const cnt=new Map();(tickets||[]).forEach(t=>{const n=String(t.system_name||'');if(!n.trim())return;cnt.set(n,(cnt.get(n)||0)+1);});
+  const names=[...cnt.keys()];const P=names.map(snParse);const par=names.map((_,i)=>i);const f=i=>par[i]===i?i:(par[i]=f(par[i]));
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++)if(snSame(P[i],P[j]))par[f(i)]=f(j);
+  const g=new Map();names.forEach((n,i)=>{const r=f(i);if(!g.has(r))g.set(r,[]);g.get(r).push({n,c:cnt.get(n)});});
+  return [...g.values()].map(list=>{list.sort((a,b)=>b.c-a.c);const score=x=>x.c*10+(/\([A-Z0-9]{2,}\)/.test(x.n)?6:0)+(x.n!==x.n.toUpperCase()&&x.n!==x.n.toLowerCase()?4:0)-(/[.,;:\-\s]$/.test(x.n)?3:0);
+    let best=snNice(list.slice().sort((a,b)=>score(b)-score(a))[0].n);const ac=list.map(x=>(x.n.match(/\(([A-Z0-9]{2,6})\)/)||[])[1]).find(Boolean);if(ac&&!best.includes('('+ac+')')&&list.length>1)best+=' ('+ac+')';return {names:list,total:list.reduce((a,x)=>a+x.c,0),best};}).sort((a,b)=>(b.names.length>1)-(a.names.length>1)||b.total-a.total);
+}
+// the name already used on the site for a look-alike (for new tickets and imports)
+let snCache=null;
+function snExisting(name,tickets){const p=snParse(name);if(!snCache||snCache.t!==tickets||snCache.n!==tickets.length)snCache={t:tickets,n:tickets.length,g:snGroups(tickets)};const gs=snCache.g;for(const g of gs){if(g.names.some(x=>snSame(p,snParse(x.n))))return g.names[0].n;}return null;}
+let snState=null;
+async function snOpen(){
+  if(!(typeof isSupervisor==='function'&&isSupervisor())){showToast('Only supervisors and admins can rename systems.','error');return;}
+  document.getElementById('sn-bg').classList.add('show');document.getElementById('sn-body').innerHTML='<p class="mr-note">Loading tickets…</p>';
+  await fetchAllTickets(true);snState={groups:snGroups(allTickets),q:''};snRender();
+}
+function snClose(){document.getElementById('sn-bg').classList.remove('show');}
+function snRender(){
+  const box=document.getElementById('sn-body');if(!box||!snState)return;const G=snState.groups;const multi=G.filter(g=>g.names.length>1);
+  const card=(g,gi)=>`<div class="sn-card" data-g="${gi}"><div class="sn-h"><b>${g.total} ticket${g.total===1?'':'s'}</b><span>${g.names.length} spellings</span></div>
+    <div class="sn-v">${g.names.map((x,i)=>`<label class="sn-n"><input type="checkbox" data-i="${i}" checked> <span>${escapeHtml(x.n)}</span><em>${x.c}</em></label>`).join('')}</div>
+    <div class="sn-t"><label>Keep one name for all of them</label><input class="sn-to" list="sn-list-${gi}" value="${escapeHtml(g.best)}"><datalist id="sn-list-${gi}">${[...new Set([g.best,...g.names.map(x=>x.n)])].map(n=>`<option value="${escapeHtml(n)}">`).join('')}</datalist>
+      <button class="btn sm primary" type="button" onclick="snMerge(${gi},this)">Merge</button></div></div>`;
+  const q=snState.q.toLowerCase();const all=G.flatMap(g=>g.names).filter(x=>!q||x.n.toLowerCase().includes(q)).sort((a,b)=>a.n.localeCompare(b.n));
+  box.innerHTML=`<div class="mr-help" style="margin-top:0">The same system was written in different ways, so it shows up several times in the register, the dashboard and the reports. Pick the name to keep and press <b>Merge</b> — the tickets keep everything else; only the System name changes. Untick a spelling that is really a different system.</div>
+    ${multi.length?`<div class="sn-sum"><b>${multi.length}</b> group${multi.length===1?'':'s'} of look-alike names · <b>${multi.reduce((a,g)=>a+g.total,0)}</b> tickets <button class="btn sm" type="button" onclick="snMergeAll(this)">Merge all groups</button></div><div class="sn-grid">${multi.map(g=>card(g,G.indexOf(g))).join('')}</div>`:'<div class="op-ok">✓ No look-alike system names found.</div>'}
+    <details class="sn-all"><summary>All system names (${G.reduce((a,g)=>a+g.names.length,0)}) — rename one by hand</summary>
+      <input type="search" placeholder="Search…" value="${escapeHtml(snState.q)}" oninput="snState.q=this.value;clearTimeout(window._snq);window._snq=setTimeout(()=>{snRender();const s=document.querySelector('.sn-all input[type=search]');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length);}},200)">
+      <datalist id="sn-all-l">${[...new Set(G.map(g=>g.best))].sort().map(n=>`<option value="${escapeHtml(n)}">`).join('')}</datalist>
+      <div class="sn-rows">${all.map(x=>`<div class="sn-r"><span>${escapeHtml(x.n)}</span><em>${x.c}</em><input list="sn-all-l" placeholder="Rename to…" data-from="${escapeHtml(x.n)}"><button class="btn sm" type="button" onclick="snRenameOne(this)">Rename</button></div>`).join('')}</div></details>`;
+  const d=box.querySelector('.sn-all');if(d&&snState.q)d.open=true;
+}
+async function snApply(pairs){ // [[from,to]] → renames every ticket with that exact system name
+  let n=0;for(const [from,to] of pairs){if(!to||from===to)continue;const c=(allTickets||[]).filter(t=>t.system_name===from).length;
+    await sbFetch('qas2_tickets?system_name=eq.'+encodeURIComponent(from),'PATCH',{system_name:to});(allTickets||[]).forEach(t=>{if(t.system_name===from)t.system_name=to;});n+=c;}
+  return n;}
+function snPairs(gi){const g=snState.groups[gi];const el=document.querySelector(`.sn-card[data-g="${gi}"]`);const to=(el.querySelector('.sn-to').value||'').trim();
+  return to?[...el.querySelectorAll('.sn-v input:checked')].map(i=>[g.names[+i.dataset.i].n,to]):[];}
+async function snMerge(gi,btn){const pairs=snPairs(gi);if(!pairs.length){showToast('Write the name to keep.','error');return;}
+  const n=pairs.reduce((a,[f])=>a+(allTickets||[]).filter(t=>t.system_name===f&&f!==pairs[0][1]).length,0);if(!n){showToast('Nothing to change.');return;}
+  if(!confirm(`Rename ${n} ticket${n===1?'':'s'} to “${pairs[0][1]}”?`))return;btn.disabled=true;
+  try{const done=await snApply(pairs);showToast(done+' ticket'+(done===1?'':'s')+' now use “'+pairs[0][1]+'”','success');snAfter();}catch(e){showToast('Could not rename: '+e.message,'error');btn.disabled=false;}}
+async function snMergeAll(btn){const G=snState.groups;const pairs=G.map((g,gi)=>g.names.length>1?snPairs(gi):[]).flat();const n=pairs.reduce((a,[f,t])=>a+(f===t?0:(allTickets||[]).filter(x=>x.system_name===f).length),0);
+  if(!n){showToast('Nothing to change.');return;}if(!confirm(`Rename ${n} tickets so every group uses one name?`))return;btn.disabled=true;
+  try{const done=await snApply(pairs);showToast(done+' tickets renamed','success');snAfter();}catch(e){showToast('Stopped: '+e.message,'error');btn.disabled=false;}}
+async function snRenameOne(btn){const i=btn.previousElementSibling;const from=i.dataset.from,to=i.value.trim();if(!to||to===from){i.focus();return;}
+  const n=(allTickets||[]).filter(t=>t.system_name===from).length;if(!confirm(`Rename ${n} ticket${n===1?'':'s'} from “${from}” to “${to}”?`))return;
+  try{await snApply([[from,to]]);showToast('Renamed','success');snAfter();}catch(e){showToast('Could not rename: '+e.message,'error');}}
+function snAfter(){invalidateTicketsCache();invalidateDashboardCache();snState.groups=snGroups(allTickets);snRender();try{loadTickets(true);}catch(e){}snFillList();}
+// new ticket: suggest the name already in use
+function snFillList(){const dl=document.getElementById('f-system-l');if(!dl)return;const G=snGroups(allTickets||[]);dl.innerHTML=G.map(g=>`<option value="${escapeHtml(g.names[0].n)}">`).join('');}
+function snHint(el){const h=document.getElementById('f-system-hint');if(!h)return;const v=el.value.trim();if(!v){h.innerHTML='';return;}
+  const ex=snExisting(v,allTickets||[]);h.innerHTML=ex&&ex!==v?`Already used on the site as <a href="#" onclick="document.getElementById('f-system').value=this.textContent;document.getElementById('f-system-hint').innerHTML='';return false">${escapeHtml(ex)}</a> — tap to use the same name.`:'';}
 // ═════════ PUNCH LIST — IMPORT FROM EXCEL ═════════
 // Template → fill → upload → check every row → import. Nothing is saved until "Import" is pressed.
 const PLI_CATS=['Design Deficiency','Construction','Pre-Commissioning','Commissioning','HSE','Documentation'];
@@ -2714,8 +2802,9 @@ function pliCheck(o){
   if(d&&dl&&dl<d)errs.push('Deadline is before Date Raised');
   const closed=/clos/i.test(o.status);
   const key=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
-  const dup=(allTickets||[]).find(x=>(o.no&&x.no===o.no)||(key(x.description)===key(o.description)&&key(x.system_name)===key(o.system_name)));
-  const t2={date:d||t,deadline:dl||null,priority:p,system_name:o.system_name,category:c,pid:o.pid,kks:o.kks,description:o.description,action:o.action,raised_by:o.raised_by||currentUser?.name||'',raised_by_username:currentUser?.username||'',status:'OPEN'};
+  const dup=(allTickets||[]).find(x=>(o.no&&x.no===o.no)||(key(x.description)===key(o.description)&&(key(x.system_name)===key(o.system_name)||snSame(snParse(x.system_name),snParse(o.system_name)))));
+  let sysName=o.system_name;if(sysName){const ex=snExisting(sysName,allTickets||[]);if(ex&&ex!==sysName){notes.push('System → “'+ex+'” (name already used on the site)');sysName=ex;}}
+  const t2={date:d||t,deadline:dl||null,priority:p,system_name:sysName,category:c,pid:o.pid,kks:o.kks,description:o.description,action:o.action,raised_by:o.raised_by||currentUser?.name||'',raised_by_username:currentUser?.username||'',status:'OPEN'};
   const state=errs.length?'bad':dup?'dup':closed?'closed':'ok';
   return {o,t:t2,errs,notes,dup,state,on:state==='ok'};
 }

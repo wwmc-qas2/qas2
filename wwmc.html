@@ -438,7 +438,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .op-chk{display:flex;gap:8px;align-items:center;font-size:13.5px}
 .pli-steps{display:grid;gap:10px}.pli-s{display:flex;gap:12px;border:1px solid #E3E8EF;border-radius:11px;padding:12px 14px}.pli-s>span{width:28px;height:28px;border-radius:50%;background:#1F3864;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.pli-s b{display:block;font-size:14px;color:#0F2747}.pli-s small{display:block;font-size:12.5px;color:#6B7280;margin:2px 0 8px}
 .pli-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pli-sum div{border:1px solid #E3E8EF;border-top:3px solid #1F3864;border-radius:9px;padding:7px 10px}.pli-sum b{display:block;font-size:19px;color:#0F2747}.pli-sum span{font-size:11px;color:#6B7280}.pli-sum .ok{border-top-color:#16A34A}.pli-sum .dup{border-top-color:#94A3B8}.pli-sum .cl{border-top-color:#64748B}.pli-sum .bad{border-top-color:#DC2626}
-.pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
+.pli-tw{max-height:46vh;overflow:auto;border:1px solid #E3E8EF;border-radius:9px}.pli-t2{width:100%;border-collapse:collapse;font-size:12.5px}.pli-t2 th{position:sticky;top:0;background:#F1F5FB;color:#1F3864;text-align:left;padding:7px 8px;font-size:11px}.pli-t2 td{padding:6px 8px;border-top:1px solid #EEF1F5;vertical-align:top}.pli-t2 td small{display:block;font-size:11px;color:#6B7280}.pli-t2 td:last-child,.pli-t2 td:nth-child(2){white-space:nowrap}.pli-t2 tr.bad td{background:#FEF2F2}.pli-t2 tr.dup td,.pli-t2 tr.closed td{color:#94A3B8}
 .pli-t{display:inline-block;font-size:10.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.pli-t.ok{background:#DCFCE7;color:#15803D}.pli-t.bad{background:#FEE2E2;color:#B91C1C}.pli-t.dup{background:#F1F5F9;color:#475569}.pli-t.cl{background:#F1F5F9;color:#475569}
 .pri-A{color:#B91C1C}.pri-B{color:#B45309}.pri-C{color:#15803D}
 @media(max-width:640px){.pli-sum{grid-template-columns:repeat(3,1fr)}}
@@ -2636,24 +2636,6 @@ function pliOpen(){
   pliRows=[];pliRender();document.getElementById('pli-bg').classList.add('show');
 }
 function pliClose(){document.getElementById('pli-bg').classList.remove('show');}
-async function pliTemplate(){
-  try{const ExcelJS=await loadLib('excel');const wb=new ExcelJS.Workbook();const ws=wb.addWorksheet('Punch List');
-    const cols=PLI_COLS.filter(c=>!['status','no'].includes(c[0]));
-    ws.columns=cols.map(c=>({header:c[1],key:c[0],width:{description:60,action:40,system_name:28,category:20,raised_by:20}[c[0]]||14}));
-    const h=ws.getRow(1);h.height=22;h.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};c.alignment={vertical:'middle'};});
-    ws.addRow({date:new Date(),system_name:'Fuel Gas System',description:'Example — delete this row: missing insulation on drain line downstream of 10EKG20AA101',priority:'B',category:'Construction',kks:'10EKG20BR101',pid:'',action:'Install insulation as per spec',deadline:'',raised_by:currentUser?.name||''});
-    ws.getRow(2).font={italic:true,color:{argb:'FF94A3B8'}};
-    for(let r=2;r<=1000;r++){ws.getCell(r,4).dataValidation={type:'list',allowBlank:true,formulae:['"A,B,C"']};ws.getCell(r,5).dataValidation={type:'list',allowBlank:true,formulae:['"'+PLI_CATS.join(',')+'"']};
-      ws.getCell(r,1).numFmt='dd-mmm-yyyy';ws.getCell(r,9).numFmt='dd-mmm-yyyy';}
-    ws.views=[{state:'frozen',ySplit:1}];
-    const g=wb.addWorksheet('How to fill');g.columns=[{width:22},{width:90}];
-    [['Column','What to write'],['Date Raised','Date the item was raised. Empty = today.'],['System','Required. e.g. Fuel Gas System'],['Description','Required. What is wrong.'],['Priority (A/B/C)','A = safety critical, B = operational, C = minor. Empty = B.'],['Category','One of: '+PLI_CATS.join(', ')+'. Empty = Commissioning.'],['KKS / P&ID','Optional.'],['Action Required','Optional.'],['Deadline','Optional date. Must not be before Date Raised.'],['Raised By','Empty = your name.'],['',''],['Tip','The register exported from the site (Export Excel) can also be uploaded — the columns are recognised automatically. Items already on the site are detected and skipped.']]
-      .forEach((r,i)=>{const x=g.addRow(r);if(i===0)x.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3864'}};});x.alignment={wrapText:true,vertical:'top'};});
-    const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download='QAS2_PunchList_Import_Template.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
-  }catch(e){showToast('Could not make the template: '+e.message,'error');}
-}
-function pliNorm(s){return String(s??'').toLowerCase().replace(/[\s_]+/g,' ').replace(/[^\w&/ ().]/g,'').trim();}
-function pliCellText(v){if(v==null)return '';if(v instanceof Date)return v;if(typeof v==='object'){if(v.richText)return v.richText.map(x=>x.text).join('');if(v.text!=null)return String(v.text);if(v.result!=null)return v.result instanceof Date?v.result:String(v.result);if(v.hyperlink)return String(v.text||v.hyperlink);}return typeof v==='number'?v:String(v).trim();}
 function pliDate(v){
   if(v==null||v==='')return '';
   if(v instanceof Date)return isNaN(v)?null:new Date(v.getTime()+12*36e5).toISOString().slice(0,10);
@@ -2663,26 +2645,56 @@ function pliDate(v){
   if((m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(s))){const y=m[3].length===2?'20'+m[3]:m[3];return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');}
   const d=new Date(s);if(!isNaN(d))return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   return null;}
+async function pliTemplate(){
+  // the plant's own Walk Down Punch List form (EPC format), blank
+  try{const r=await fetch('templates/QAS2_Walkdown_PunchList_Template.xlsx',{cache:'no-cache'});if(!r.ok)throw new Error('template not found ('+r.status+')');
+    const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download='QAS2_Walkdown_PunchList_Template.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);}
+  catch(e){showToast('Could not download the template: '+e.message,'error');}
+}
+function pliNorm(s){return String(s??'').toLowerCase().replace(/[\s_]+/g,' ').replace(/[^\w&/ ().#]/g,'').replace(/:$/,'').trim();}
+function pliCellText(v){if(v==null)return '';if(v instanceof Date)return v;
+  if(typeof v==='object'){if(v.error)return '';if(v.richText)return v.richText.map(x=>x.text).join('');if('formula' in v||'sharedFormula' in v){const r=v.result;if(r==null||(typeof r==='object'&&!(r instanceof Date)))return '';return r;}if(v.text!=null)return String(v.text);if(v.hyperlink)return String(v.hyperlink);return '';}
+  if(typeof v==='number')return v;const s=String(v).trim();return /^#(REF|N\/A|VALUE|NAME|DIV\/0)!?/i.test(s)?'':s;}
+const PLI_EPC={sr:['master log sr.#','master log sr#','sr.#','sr #','item no','s.no','sr. no'],description:['description'],priority:['category','priority'],discipline:['discipline'],raised_by:['issued by','raised by'],pid:['drawing no.','drawing no','drawing'],date:['issued date','date raised','date'],close_by:['close action by'],sub:['subcontractor responsible','subcontractor']};
 async function pliPick(input){
   const f=input.files&&input.files[0];input.value='';if(!f)return;
   if(!/\.xlsx$/i.test(f.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
   const st=document.getElementById('pli-st');st.textContent='Reading '+f.name+' …';
   try{
     const ExcelJS=await loadLib('excel');const wb=new ExcelJS.Workbook();await wb.xlsx.load(await f.arrayBuffer());
-    let found=null;
-    wb.eachSheet(ws=>{if(found)return;for(let r=1;r<=Math.min(25,ws.rowCount);r++){const vals=[];ws.getRow(r).eachCell({includeEmpty:false},(c,ci)=>vals.push([ci,pliNorm(pliCellText(c.value))]));
-      const map={};PLI_COLS.forEach(([k,,al])=>{const hit=vals.find(([,v])=>al.includes(v));if(hit&&!Object.values(map).includes(hit[0]))map[k]=hit[0];});
-      if(map.description&&map.system_name){found={ws,r,map};break;}}});
-    if(!found)throw new Error('No header row with “System” and “Description” was found. Use the template.');
-    const {ws,r,map}=found;const rows=[];
-    for(let i=r+1;i<=ws.rowCount;i++){const row=ws.getRow(i);const g=k=>map[k]?pliCellText(row.getCell(map[k]).value):'';
-      const o={line:i,date:g('date'),system_name:String(g('system_name')||'').trim(),description:String(g('description')||'').trim(),priority:String(g('priority')||'').trim(),category:String(g('category')||'').trim(),kks:String(g('kks')||'').trim(),pid:String(g('pid')||'').trim(),action:String(g('action')||'').trim(),deadline:g('deadline'),raised_by:String(g('raised_by')||'').trim(),status:String(g('status')||'').trim(),no:String(g('no')||'').trim()};
-      if(!o.system_name&&!o.description&&!o.kks)continue;
-      if(/^example\b/i.test(o.description))continue;
-      rows.push(o);}
-    if(!rows.length)throw new Error('The file has no punch items under the header row.');
+    const rows=[];const used=[];
+    const sheets=[];wb.eachSheet(ws=>{if(ws.state&&ws.state!=='visible')return;sheets.push(ws);});
+    for(const ws of sheets){
+      const T=(r,c)=>pliCellText(ws.getRow(r).getCell(c).value);
+      let hdr=null;
+      for(let r=1;r<=Math.min(30,ws.rowCount);r++){const vals=[];ws.getRow(r).eachCell({includeEmpty:false},(c,ci)=>vals.push([ci,pliNorm(pliCellText(c.value))]));
+        const has=a=>vals.find(([,v])=>a.includes(v));
+        if(has(['description'])&&(has(['master log sr.#','master log sr#','issued by','close action by','discipline']))){ // plant Walk Down Punch List form
+          const map={};Object.entries(PLI_EPC).forEach(([k,al])=>{const h=has(al);if(h)map[k]=h[0];});
+          const sub=[];ws.getRow(r+1).eachCell({includeEmpty:false},(c,ci)=>sub.push([ci,pliNorm(pliCellText(c.value))]));const own=sub.find(([,v])=>v==='owner');if(own){const cd=sub.find(([ci,v])=>ci>own[0]&&/closed date/.test(v));if(cd)map.owner_closed=cd[0];}
+          hdr={r,map,epc:1,first:r+(sub.length?2:1)};break;}
+        const map={};PLI_COLS.forEach(([k,,al])=>{const h=has(al);if(h&&!Object.values(map).includes(h[0]))map[k]=h[0];});
+        if(map.description&&map.system_name){hdr={r,map,first:r+1};break;}}
+      if(!hdr)continue;
+      // form header: System / RFI / Transferred to (label cell, value in the next filled cell on the right)
+      const meta={};if(hdr.epc){for(let r=1;r<hdr.r;r++){const cells=[];ws.getRow(r).eachCell({includeEmpty:false},(c,ci)=>cells.push([ci,pliCellText(c.value)]));
+        cells.forEach(([ci,v],i)=>{const k=pliNorm(v);const nx=cells.slice(i+1).find(x=>x[1]!==''&&!/:\s*$/.test(String(x[1])));const val=nx?nx[1]:'';
+          if(k==='system'&&!meta.system)meta.system=String(val||'').trim();if(/^rfi no/.test(k)&&!meta.rfi)meta.rfi=String(val||'').trim();if(k==='transferred to'&&!meta.to)meta.to=String(val||'').trim();if(/^top no/.test(k)&&!meta.top)meta.top=String(val||'').trim();});}}
+      const {map}=hdr;let n=0;
+      for(let i=hdr.first;i<=ws.rowCount;i++){const g=k=>map[k]?T(i,map[k]):'';const desc=String(g('description')||'').trim();
+        if(hdr.epc){if(!desc)continue;
+          const kk=(desc.match(/\b\d{0,2}[A-Z]{3}\d{2}[A-Z]{2}\d{3}[A-Z]?\b/)||[])[0]||'';const pid=String(g('pid')||'').trim();
+          const ref=[meta.rfi?'RFI '+meta.rfi:'',g('sr')!==''?'item '+g('sr'):''].filter(Boolean).join(' · ');
+          const extra=[g('discipline')?'Discipline: '+g('discipline'):'',g('close_by')?'Close action by: '+g('close_by'):'',g('sub')?'Subcontractor: '+g('sub'):''].filter(Boolean).join(' · ');
+          rows.push({line:i,sheet:ws.name,date:g('date'),system_name:meta.system||'',description:desc,priority:String(g('priority')||'').trim(),category:meta.to||'',kks:kk,pid:/^n\/?a$/i.test(pid)?'':pid,
+            action:[ref,extra].filter(Boolean).join(' — '),deadline:'',raised_by:String(g('raised_by')||'').trim(),status:map.owner_closed&&g('owner_closed')!==''?'Closed':'',no:'',ref,disc:String(g('discipline')||'').trim()});n++;}
+        else{const o={line:i,sheet:ws.name,date:g('date'),system_name:String(g('system_name')||'').trim(),description:desc,priority:String(g('priority')||'').trim(),category:String(g('category')||'').trim(),kks:String(g('kks')||'').trim(),pid:String(g('pid')||'').trim(),action:String(g('action')||'').trim(),deadline:g('deadline'),raised_by:String(g('raised_by')||'').trim(),status:String(g('status')||'').trim(),no:String(g('no')||'').trim()};
+          if(!o.system_name&&!o.description&&!o.kks)continue;if(/^example\b/i.test(o.description))continue;rows.push(o);n++;}}
+      if(n)used.push(ws.name+(hdr.epc&&meta.system?' — '+meta.system:''));
+    }
+    if(!rows.length)throw new Error('No punch items were found. Use the Walk Down Punch List form (Description, Category, Discipline …) or any sheet with System and Description columns.');
     await fetchAllTickets();
-    pliRows=rows.map(pliCheck);st.textContent=f.name+' · sheet “'+ws.name+'”';pliRender();
+    pliRows=rows.map(pliCheck);st.textContent=f.name+' · '+used.join(' · ');pliRender();
   }catch(e){st.textContent='';showToast(e.message,'error');}
 }
 function pliCheck(o){
@@ -2690,7 +2702,7 @@ function pliCheck(o){
   const d=o.date===''?t:pliDate(o.date);if(d===null)errs.push('Date Raised is not a date');
   const dl=o.deadline===''?'':pliDate(o.deadline);if(dl===null)errs.push('Deadline is not a date');
   if(!o.system_name)errs.push('System is empty');if(!o.description)errs.push('Description is empty');
-  let p=String(o.priority||'').toUpperCase();p=/^A|SAFETY/.test(p)?'A':/^C|MINOR/.test(p)?'C':/^B|OPER/.test(p)?'B':'';if(!p){p='B';if(o.priority)notes.push('priority “'+o.priority+'” → B');}
+  let p=String(o.priority||'').toUpperCase();p=/^A|SAFETY/.test(p)?'A':/^C|MINOR/.test(p)?'C':/^B|OPER/.test(p)?'B':/^D/.test(p)?'D':'';if(p==='D'){p='C';notes.push('Category D → C (minor)');}if(!p){p='B';if(o.priority)notes.push('priority “'+o.priority+'” → B');}
   let c=PLI_CATS.find(x=>x.toLowerCase()===String(o.category).toLowerCase())||(o.category?o.category:'Commissioning');
   if(d&&dl&&dl<d)errs.push('Deadline is before Date Raised');
   const closed=/clos/i.test(o.status);
@@ -2702,8 +2714,8 @@ function pliCheck(o){
 }
 function pliRender(){
   const box=document.getElementById('pli-body');if(!box)return;
-  if(!pliRows.length){box.innerHTML=`<div class="pli-steps"><div class="pli-s"><span>1</span><div><b>Get the template</b><small>A ready Excel with the right columns and drop-down lists.</small><button class="btn sm" type="button" onclick="pliTemplate()">⬇ Download template</button></div></div>
-      <div class="pli-s"><span>2</span><div><b>Fill it in Excel</b><small>One punch item per row. System and Description are required. You can also upload the register you exported from the site.</small></div></div>
+  if(!pliRows.length){box.innerHTML=`<div class="pli-steps"><div class="pli-s"><span>1</span><div><b>Get the template</b><small>The plant’s <b>Walk Down Punch List</b> form (EPC format), blank.</small><button class="btn sm" type="button" onclick="pliTemplate()">⬇ Download template</button></div></div>
+      <div class="pli-s"><span>2</span><div><b>Fill it in Excel</b><small>Write the <b>System</b> and <b>RFI No.</b> at the top, then one item per row: Description, Category (A/B/C/D), Discipline, Issued by, Issued date. Filled walk-down lists from QA/QC can be uploaded as they are.</small></div></div>
       <div class="pli-s"><span>3</span><div><b>Upload and check</b><small>Every row is checked first — nothing is saved until you press Import.</small><label class="btn sm primary" style="cursor:pointer">⬆ Choose Excel file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div></div></div>`;
     document.getElementById('pli-go').style.display='none';return;}
   const n=k=>pliRows.filter(x=>x.state===k).length;const on=pliRows.filter(x=>x.on).length;
@@ -2713,7 +2725,7 @@ function pliRender(){
     <div class="pli-tw"><table class="pli-t2"><thead><tr><th><input type="checkbox" aria-label="Tick all" ${on&&on===pliRows.filter(x=>x.state!=='bad').length?'checked':''} onchange="pliRows.forEach(x=>{if(x.state!=='bad')x.on=this.checked});pliRender()"></th><th>Row</th><th>Check</th><th>Pri</th><th>System</th><th>Description</th><th>KKS</th><th>Date</th></tr></thead>
     <tbody>${pliRows.map((x,i)=>`<tr class="${x.state}"><td><input type="checkbox" ${x.on?'checked':''} ${x.state==='bad'?'disabled':''} onchange="pliRows[${i}].on=this.checked;pliRender()"></td><td>${x.o.line}</td>
       <td>${tag[x.state]}${x.errs.length?`<small>${escapeHtml(x.errs.join(' · '))}</small>`:''}${x.dup?`<small>${escapeHtml(x.dup.no||'')}</small>`:''}${x.notes.length?`<small>${escapeHtml(x.notes.join(' · '))}</small>`:''}</td>
-      <td><b class="pri-${x.t.priority}">${x.t.priority}</b></td><td>${escapeHtml(x.t.system_name)}</td><td>${escapeHtml(x.t.description)}</td><td class="mono">${escapeHtml(x.t.kks||'')}</td><td>${escapeHtml(x.t.date||'')}</td></tr>`).join('')}</tbody></table></div>
+      <td><b class="pri-${x.t.priority}">${x.t.priority}</b></td><td>${escapeHtml(x.t.system_name)}</td><td>${escapeHtml(x.t.description)}${x.o.ref||x.o.disc?`<small>${escapeHtml([x.o.ref,x.o.disc].filter(Boolean).join(' · '))}</small>`:''}</td><td class="mono">${escapeHtml(x.t.kks||'')}</td><td>${escapeHtml(x.t.date||'')}</td></tr>`).join('')}</tbody></table></div>
     <div style="margin-top:8px"><label class="btn sm" style="cursor:pointer">↺ Choose another file<input type="file" accept=".xlsx" hidden onchange="pliPick(this)"></label></div>`;
   const go=document.getElementById('pli-go');go.style.display='';go.disabled=!on;go.textContent=on?`Import ${on} ticket${on===1?'':'s'}`:'Nothing ticked';
 }

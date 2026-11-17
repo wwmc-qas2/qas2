@@ -453,6 +453,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-add{margin-top:12px;border:1.5px solid #D6DCE5;border-radius:11px;padding:10px 12px;background:#F8FAFD}.is-add textarea{width:100%;padding:8px 10px;border:1px solid #D6DCE5;border-radius:8px;font:inherit;font-size:13.5px;margin:6px 0}.is-kind{display:flex;gap:16px;font-weight:700;font-size:13px;color:#1F3864}.is-kind label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .is-decf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.is-decf input{padding:7px 9px;border:1px solid #E5C76B;border-radius:7px;font:inherit;font-size:13px;background:#FFFBEB}.is-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px}.is-row input,.is-row select{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
 .is-imps{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}.is-imps label{display:flex;gap:5px;align-items:center}
+#app-upd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:#1F3864;color:#fff;border-radius:12px;padding:10px 12px 10px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:14px;font-weight:600;max-width:calc(100vw - 24px)}#app-upd button{border:0;background:#fff;color:#1F3864;font:inherit;font-weight:800;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
 .is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:640px){.is-facts{grid-template-columns:1fr 1fr}.is-decf{grid-template-columns:1fr}.is-grid{grid-template-columns:1fr}}
@@ -6934,6 +6935,11 @@ async function opMeterSave(code,btn){
   catch(e){showToast('Could not save: '+e.message,'error');}
   btn.disabled=false;
 }
+// ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
+const APP_BUILD='20261117-1230';
+async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
+  if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
+setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
 // ═════════ MAJOR ISSUES & DECISIONS LOG ═════════
 const IS_STATUS=['Open','Under investigation','Decision taken','In progress','Resolved'];
 const IS_CATS=['Electrical','Mechanical','I&C','Civil','HSE','Process / Chemistry','Other'];
@@ -7112,7 +7118,8 @@ async function isPrintSection(dates,E,ids,mode,photos){
     const stc=s=>s==='Resolved'?'s0':s==='Under investigation'||s==='Open'?'s2':'s1';
     const blk=i=>{const all=isEntries(i.id);const rec=mode==='all'?all:all.filter(inR);const show=rec.length?rec:all.slice(-1);
       const rows=show.map(x=>`<tr><td class="nw" style="width:13%">${E(isD(x.event_date||x.created_at))}</td><td>${x.kind==='decision'?'<b style="color:var(--brand)">Decision — </b>':''}${E(x.note||'').replace(/\n/g,'<br>')}${x.kind==='decision'&&(x.decided_by||x.approved_by||x.impact)?`<div class="kk" style="font-size:10.5px;margin-top:3px">${[x.decided_by?'Decided by: '+E(x.decided_by):'',x.approved_by?'Approved by: '+E(x.approved_by):'',x.impact?'Impact: '+E(x.impact):''].filter(Boolean).join(' · ')}</div>`:''}</td><td style="width:15%">${x.status?`<span class="st ${stc(x.status)}">${E(x.status)}</span>`:''}</td></tr>`).join('');
-      const ph=photos===false?[]:show.flatMap(x=>(x.photos||[]).map(p=>({p,d:x.event_date||x.created_at,dec:x.kind==='decision'})));
+      let ph=photos===false?[]:show.flatMap(x=>(x.photos||[]).map(p=>({p,d:x.event_date||x.created_at,dec:x.kind==='decision'})));
+      if(photos!==false&&!ph.length&&mode!=='all')ph=all.flatMap(x=>(x.photos||[]).map(p=>({p,d:x.event_date||x.created_at,dec:x.kind==='decision'}))).slice(-8);
       return `<div class="sysblk"><div class="sysh"><span>${E(i.title)}</span><span class="st ${stc(i.status)}">${E(i.status)}</span><small>${E(i.no||'')}${i.date_found?' · found '+E(isD(i.date_found)):''}</small></div>
         <div class="chips sm">${(i.equipment||[]).map(x=>`<span>${E(x)}</span>`).join('')}${i.severity?`<span>${E(i.severity)} severity</span>`:''}${(i.impact||[]).map(x=>`<span>${E(x)}</span>`).join('')}${i.responsible?`<span>Responsible: ${E(i.responsible)}</span>`:''}</div>
         <table class="t" style="margin-top:6px"><thead><tr><th>Date</th><th>${mode==='all'?'Timeline':'Latest update'}</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="3" class="kk">No entries yet.</td></tr>'}</tbody></table>

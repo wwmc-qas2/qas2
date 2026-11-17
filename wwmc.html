@@ -453,6 +453,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-add{margin-top:12px;border:1.5px solid #D6DCE5;border-radius:11px;padding:10px 12px;background:#F8FAFD}.is-add textarea{width:100%;padding:8px 10px;border:1px solid #D6DCE5;border-radius:8px;font:inherit;font-size:13.5px;margin:6px 0}.is-kind{display:flex;gap:16px;font-weight:700;font-size:13px;color:#1F3864}.is-kind label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .is-decf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.is-decf input{padding:7px 9px;border:1px solid #E5C76B;border-radius:7px;font:inherit;font-size:13px;background:#FFFBEB}.is-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px}.is-row input,.is-row select{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
 .is-imps{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}.is-imps label{display:flex;gap:5px;align-items:center}
+.is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:640px){.is-facts{grid-template-columns:1fr 1fr}.is-decf{grid-template-columns:1fr}.is-grid{grid-template-columns:1fr}}
 .ho-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ho-tools{display:flex;gap:8px;align-items:center;font-size:12px;margin-bottom:6px}.ho-tools input{flex:1;padding:6px 9px;border:1px solid #D6DCE5;border-radius:7px;font:inherit;font-size:13px}.ho-tools a{color:#1F3864;font-weight:700}
@@ -1714,7 +1715,8 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <fieldset><legend>Major issues &amp; decisions</legend>
         <label class="drb-opt"><input type="checkbox" id="drb-is-on" onchange="drbIsToggle()"> <b>Add major issues</b> — tick the ones to show</label>
         <div id="drb-is-wrap"><div class="drb-quick"><a href="#" onclick="drbIsAll('open');return false">Open ones</a> · <a href="#" onclick="drbIsAll(true);return false">All</a> · <a href="#" onclick="drbIsAll(false);return false">None</a></div><div id="drb-is" class="drb-isl"></div>
-          <label class="drb-opt"><input type="radio" name="drb-is-m" value="period" checked> Entries in the report dates (latest one if none)</label><label class="drb-opt"><input type="radio" name="drb-is-m" value="all"> Full timeline of each issue</label></div>
+          <label class="drb-opt"><input type="radio" name="drb-is-m" value="period" checked> Entries in the report dates (latest one if none)</label><label class="drb-opt"><input type="radio" name="drb-is-m" value="all"> Full timeline of each issue</label>
+          <label class="drb-opt"><input type="checkbox" id="drb-is-ph" checked> Show photos</label></div>
       </fieldset>
       <fieldset><legend>Template</legend><div id="drb-tpl" class="drb-tpls"></div></fieldset>
       <fieldset><legend>Layout</legend>
@@ -6947,7 +6949,43 @@ async function isLoad(force){
 }
 function isD(s){if(!s)return '';const d=new Date(String(s).slice(0,10)+'T00:00:00');return isNaN(d)?String(s):d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
 function isDays(s){if(!s)return null;return Math.max(0,Math.round((Date.now()-new Date(s).getTime())/864e5));}
-function isEntries(id){return isUpd.filter(u=>String(u.issue_id)===String(id));}
+function isEntries(id){return isUpd.filter(u=>String(u.issue_id)===String(id)&&!u.superseded).sort((a,b)=>String(a.event_date||a.created_at||'').slice(0,10).localeCompare(String(b.event_date||b.created_at||'').slice(0,10))||a.id-b.id);}
+// ── documents attached to an issue (reports, method statements, letters)
+function isDocsHtml(i){const D=Array.isArray(i.docs)?i.docs:[];
+  return `<div class="is-tlh">Documents <small>${D.length}</small></div><div class="is-docs">${D.map((d,k)=>`<button type="button" class="is-doc" onclick="isDocOpen(${i.id},${k})"><span class="is-dx">${escapeHtml((String(d.name).split('.').pop()||'file').toUpperCase().slice(0,4))}</span><span><b>${escapeHtml(d.name)}</b><small>${escapeHtml([d.size?Math.round(d.size/1024)+' KB':'',d.by||'',d.at?isD(d.at):''].filter(Boolean).join(' · '))}</small></span></button>`).join('')||'<span class="mr-note">No documents yet.</span>'}
+    ${isCanAdd()?`<label class="btn sm" style="cursor:pointer;align-self:center">📎 Add document<input type="file" multiple hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.msg,.txt" onchange="isDocAdd(${i.id},this)"></label>`:''}</div>`;}
+async function isDocOpen(id,k){const i=isList.find(x=>String(x.id)===String(id));const d=i&&(i.docs||[])[k];if(!d)return;const w=window.open('','_blank');
+  try{const u=await sbFileUrl(d.ref);if(w)w.location=u;else location.href=u;}catch(e){if(w)w.close();showToast('Could not open: '+e.message,'error');}}
+async function isUploadDoc(id,name,blob){const ref=await sbUploadBlob(FILES_BUCKET,'issues/'+id+'/docs/'+sbNewName('')+'/'+sbSafeName(name),blob);return {name,ref,size:blob.size,type:blob.type||'',by:currentUser?.name||'',at:new Date().toISOString()};}
+async function isDocAdd(id,inp){const files=[...inp.files];inp.value='';if(!files.length)return;const i=isList.find(x=>String(x.id)===String(id));
+  showToast('Uploading '+files.length+' document(s)…');
+  try{const add=[];for(const f of files){if(f.size>25*1024*1024){showToast(f.name+' is larger than 25 MB','error');continue;}add.push(await isUploadDoc(id,f.name,f));}
+    if(!add.length)return;const docs=[...(i.docs||[]),...add];await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs,updated_at:new Date().toISOString()});i.docs=docs;showToast('Document saved ✓');isOpen(id);}
+  catch(e){showToast('Could not upload: '+(/docs/.test(e.message)?'run qas2_issues_docs_setup.sql first.':e.message),'error');}}
+// ── import a prepared issue package (.qas2issue.json): text, dated timeline, photos and documents in one go
+async function isImportPick(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+  let P;try{P=JSON.parse(await f.text());}catch(e){showToast('This file is not an issue package.','error');return;}
+  if(!P||P.type!=='qas2-issue-package'||!P.issue){showToast('This file is not an issue package.','error');return;}
+  await isLoad(true);const ex=isList.find(x=>x.no&&x.no===P.issue.no);const nPh=(P.entries||[]).reduce((a,x)=>a+(x.photos||[]).length,0)+(P.issue.photos||[]).length;
+  if(!confirm(`${ex?'Update':'Create'} ${P.issue.no||'issue'} — ${P.issue.title}\n\n${(P.entries||[]).length} timeline entries · ${nPh} photos · ${(P.docs||[]).length} documents${ex&&P.replace_timeline?'\n\nThe current timeline entries are kept in the database but hidden (superseded) and replaced by the dated ones in the package.':''}\n\nContinue?`))return;
+  const bar=document.getElementById('is-imp-st');const st=t=>{if(bar)bar.textContent=t;};
+  try{
+    const now=new Date().toISOString();const f2={...P.issue};delete f2.photos;f2.updated_at=now;
+    let id;if(ex){id=ex.id;delete f2.no;await sbFetch('qas2_issues?id=eq.'+id,'PATCH',f2);}
+    else{f2.created_by=currentUser?.name||'';const r=await sbFetch('qas2_issues','POST',f2);id=Array.isArray(r)&&r[0]?r[0].id:null;if(!id){await isLoad(true);id=(isList.find(x=>x.no===P.issue.no)||{}).id;}}
+    if(!id)throw new Error('the issue could not be saved');
+    if(ex&&P.replace_timeline&&isEntries(id).length){st('Hiding the old timeline…');await sbFetch('qas2_issue_updates?issue_id=eq.'+id+'&superseded=eq.false','PATCH',{superseded:true});}
+    if((P.issue.photos||[]).length){st('Uploading issue photos…');await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{photos:[...((ex&&ex.photos)||[]),...await sbStoreList(P.issue.photos,'issues/'+id)]});}
+    const E=P.entries||[];for(let k=0;k<E.length;k++){const x=E[k];st(`Timeline entry ${k+1} of ${E.length}${(x.photos||[]).length?' (with '+x.photos.length+' photo'+(x.photos.length===1?'':'s')+')':''}…`);
+      const photos=(x.photos||[]).length?await sbStoreList(x.photos,'issues/'+id):[];
+      await sbFetch('qas2_issue_updates','POST',{issue_id:id,kind:x.kind||'update',note:x.note||'',status:x.status||null,event_date:x.event_date||null,decided_by:x.decided_by||null,approved_by:x.approved_by||null,impact:x.impact||null,photos,username:currentUser?.name||''});}
+    const docs=[...((ex&&ex.docs)||[])];for(let k=0;k<(P.docs||[]).length;k++){const d=P.docs[k];st(`Document ${k+1} of ${P.docs.length}…`);if(docs.some(o=>o.name===d.name))continue;
+      const bin=atob(d.data);const u=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)u[j]=bin.charCodeAt(j);docs.push(await isUploadDoc(id,d.name,new Blob([u],{type:d.type||'application/pdf'})));}
+    const last=E[E.length-1];await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs,last_update_at:now,last_update_note:last?((last.kind==='decision'?'Decision: ':'')+String(last.note).slice(0,280)):null});
+    st('');await isLoad(true);showToast((P.issue.no||'Issue')+' saved with its photos and documents ✓');opRenderIssues();isOpen(id);
+  }catch(e){st('');showToast('Import stopped: '+(/superseded|docs/.test(e.message)?'run qas2_issues_docs_setup.sql first, then import again.':e.message),'error');}
+}
+
 function isStCls(s){return s==='Resolved'?'ok':s==='Decision taken'||s==='In progress'?'info':s==='Under investigation'?'warn':'neg';}
 function isSevCls(s){return s==='High'?'neg':s==='Low'?'ok':'warn';}
 function isChips(i){return (i.equipment||[]).map(e=>`<span class="is-eq">${escapeHtml(e)}</span>`).join('');}
@@ -6959,14 +6997,14 @@ async function opRenderIssues(){
   const L=isList.filter(i=>isFilter==='all'||(isFilter==='open'?i.status!=='Resolved':i.status==='Resolved'));
   const nOpen=isList.filter(i=>i.status!=='Resolved').length;
   body.innerHTML=`<div class="mr-help">Big problems that run for days or weeks — what happened, every <b>decision</b> (who decided, who approved, the impact) and each follow-up. Open issues and their latest entries go into the Daily Report automatically.</div>
-    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All']].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span>${isCanManage()?'<button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
+    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All']].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span><span id="is-imp-st" class="mr-note"></span>${isCanManage()?'<label class="btn" style="cursor:pointer" title="Import a prepared issue file (.qas2issue.json): text, timeline, photos and documents">⇪ Import issue file<input type="file" accept=".json" hidden onchange="isImportPick(this)"></label><button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
     <div class="is-grid">${L.map(isCard).join('')||'<div class="op-ok">✓ No issues here.</div>'}</div>`;
 }
 function isCard(i){const E=isEntries(i.id);const dec=E.filter(x=>x.kind==='decision').length;const last=i.last_update_at||(E.length?E[E.length-1].created_at:i.created_at);const ld=isDays(last);const stale=i.status!=='Resolved'&&ld!=null&&ld>=IS_STALE;
   return `<div class="is-card ${isSevCls(i.severity)}" onclick="isOpen(${i.id})"><div class="is-top"><span class="is-no">${escapeHtml(i.no||'')}</span><span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span></div>
     <b class="is-t">${escapeHtml(i.title)}</b><div class="is-eqs">${isChips(i)}${i.category?`<span class="is-cat">${escapeHtml(i.category)}</span>`:''}<span class="is-sev ${isSevCls(i.severity)}">${escapeHtml(i.severity||'Medium')}</span></div>
     ${i.last_update_note?`<div class="is-last">${escapeHtml(String(i.last_update_note).slice(0,140))}</div>`:''}
-    <div class="is-meta"><span>${i.date_found?'Found '+escapeHtml(isD(i.date_found)):'Date not set'}</span><span>${dec} decision${dec===1?'':'s'} · ${E.length} entr${E.length===1?'y':'ies'}</span><span class="${stale?'is-stale':''}">${ld==null?'':ld===0?'updated today':'updated '+ld+' d ago'}${stale?' ⚠':''}</span></div></div>`;}
+    <div class="is-meta"><span>${i.date_found?'Found '+escapeHtml(isD(i.date_found)):'Date not set'}</span><span>${dec} decision${dec===1?'':'s'} · ${E.length} entr${E.length===1?'y':'ies'}${(i.docs||[]).length?' · 📎 '+i.docs.length:''}</span><span class="${stale?'is-stale':''}">${ld==null?'':ld===0?'updated today':'updated '+ld+' d ago'}${stale?' ⚠':''}</span></div></div>`;}
 // ── one issue
 async function isOpen(id){
   await isLoad();const i=isList.find(x=>String(x.id)===String(id));if(!i)return;isPending=[];
@@ -6978,6 +7016,7 @@ async function isOpen(id){
     <div class="is-facts"><div><span>Found</span><b>${escapeHtml(isD(i.date_found)||'—')}</b></div><div><span>Category</span><b>${escapeHtml(i.category||'—')}</b></div><div><span>Responsible</span><b>${escapeHtml(i.responsible||'—')}</b></div><div><span>Location</span><b>${escapeHtml(i.location||'—')}</b></div></div>
     <div class="is-desc">${escapeHtml(i.description||'').replace(/\n/g,'<br>')||'<span class="mr-note">No description.</span>'}</div>
     ${(i.photos||[]).length?`<div class="is-ph">${i.photos.map(p=>`<img src="${escapeHtml(img(p))}" onclick="openLightbox(this.src)" alt="">`).join('')}</div>`:''}
+    ${isDocsHtml(i)}
     <div class="is-tlh">Timeline <small>${E.length} entr${E.length===1?'y':'ies'}</small></div>
     <ol class="is-tl">${E.map(x=>`<li class="${x.kind==='decision'?'dec':''}"><div class="is-tlm"><b>${x.kind==='decision'?'DECISION':'Update'}</b><time>${escapeHtml(isD(x.event_date||x.created_at))}</time><span>${escapeHtml(x.username||'')}</span>${x.status?`<span class="is-st ${isStCls(x.status)}">${escapeHtml(x.status)}</span>`:''}</div>
       <div class="is-tln">${escapeHtml(x.note||'').replace(/\n/g,'<br>')}</div>
@@ -7050,6 +7089,7 @@ async function isReport(id){
     <div class="blk neg"><div class="bh"><i>!</i>What happened</div><div class="bb">${e(i.description||'–').replace(/\n/g,'<br>')}</div></div>
     ${dec.length?`<h2>Decisions</h2><table class="t"><thead><tr><th style="width:14%">Date</th><th>Decision</th><th style="width:16%">Decided by</th><th style="width:16%">Approved by</th><th style="width:22%">Impact</th></tr></thead><tbody>${dec.map(x=>`<tr><td class="nw">${e(isD(x.event_date||x.created_at))}</td><td><b>${e(x.note)}</b></td><td>${e(x.decided_by||'')}</td><td>${e(x.approved_by||'')}</td><td>${e(x.impact||'')}</td></tr>`).join('')}</tbody></table>`:''}
     <h2>Full timeline</h2><div class="itl">${E.map(x=>`<div class="ie ${x.kind==='decision'?'dec':''}"><div class="id">${e(isD(x.event_date||x.created_at))}</div><div class="ib"><b>${x.kind==='decision'?'DECISION':'Update'}${x.status?` · <span class="pill ${isStCls(x.status)}">${e(x.status)}</span>`:''}</b><div>${e(x.note||'').replace(/\n/g,'<br>')}</div>${x.kind==='decision'&&(x.decided_by||x.approved_by||x.impact)?`<small>${[x.decided_by?'Decided by '+e(x.decided_by):'',x.approved_by?'Approved by '+e(x.approved_by):'',x.impact?'Impact: '+e(x.impact):''].filter(Boolean).join(' · ')}</small>`:''}<small>${e(x.username||'')}</small>${(x.photos||[]).length?`<div class="photos">${x.photos.map(p=>`<figure><div class="im"><img src="${e(p)}"></div></figure>`).join('')}</div>`:''}</div></div>`).join('')}</div>
+    ${(i.docs||[]).length?`<h2>Documents</h2><table class="t"><tbody>${i.docs.map((d,k)=>`<tr><td style="width:5%">${k+1}</td><td><b>${e(d.name)}</b></td><td style="width:22%">${e(d.by||'')}</td><td style="width:16%" class="nw">${e(isD(d.at))}</td></tr>`).join('')}</tbody></table>`:''}
     ${(i.photos||[]).length?`<h2>Photos</h2><div class="photos">${i.photos.map((p,k)=>`<figure><div class="im"><img src="${e(p)}"></div><figcaption>Photo ${k+1}</figcaption></figure>`).join('')}</div>`:''}
     <div class="foot"><span>QAS2 CORE · Wahat Al Wusta Maintenance Co.</span><span>${e(i.no)}</span></div></section></body></html>`;
   w.document.open();w.document.write(await sbResolveHtml(html));w.document.close();
@@ -7064,7 +7104,7 @@ async function isDrRender(){
   box.innerHTML=(L.length?L.map(i=>{const ld=isDays(i.last_update_at);return `<div class="is-dri"><div><b>${escapeHtml(i.title)}</b><small>${escapeHtml(i.no||'')} · <span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span> · ${ld==null?'':ld===0?'updated today':'updated '+ld+' d ago'}</small>${i.last_update_note?`<small class="is-ln">${escapeHtml(String(i.last_update_note).slice(0,120))}</small>`:''}</div>${isCanAdd()?`<button class="btn sm" type="button" onclick="isOpen(${i.id}).then(()=>document.getElementById('is-note')?.focus())">＋ Today's update</button>`:''}</div>`;}).join(''):'<p class="mr-note">No open major issues.</p>')
     +`<div class="is-drf">${isCanManage()?'<button class="btn sm" type="button" onclick="isEdit(null)">＋ New major issue</button>':''}<span class="mr-note">Open issues and their latest entries are added to the printed report (Print / Save ▸ Major issues).</span></div>`;
 }
-async function isPrintSection(dates,E,ids,mode){
+async function isPrintSection(dates,E,ids,mode,photos){
   try{await isLoad(true);if(isErr||!isList.length)return null;const f=dates[0],l=dates[dates.length-1];
     const inR=x=>{const d=String(x.event_date||x.created_at||'').slice(0,10);return d>=f&&d<=l;};
     const L=ids?isList.filter(i=>ids.map(String).includes(String(i.id))):isList.filter(i=>i.status!=='Resolved'||(i.resolved_at&&String(i.resolved_at)>=f&&String(i.resolved_at)<=l)||isEntries(i.id).some(inR));if(!L.length)return null;
@@ -7072,10 +7112,10 @@ async function isPrintSection(dates,E,ids,mode){
       return `<div class="iss"><div class="ih"><span class="sev s-${E(i.severity||'Medium')}"></span><b>${E(i.title)}</b><span class="st st-${isStCls(i.status)}">${E(i.status)}</span></div>
         <div class="im2">${E(i.no||'')}${(i.equipment||[]).length?' · '+E(i.equipment.join(', ')):''}${i.date_found?' · found '+E(isD(i.date_found)):''}${(i.impact||[]).length?' · impact: '+E(i.impact.join(', ')):''}</div>
         ${show.map(x=>`<div class="ie2 ${x.kind==='decision'?'dec':''}"><span>${E(isD(x.event_date||x.created_at))}</span><div>${x.kind==='decision'?'<b>Decision:</b> ':''}${E(x.note||'')}${x.kind==='decision'&&(x.decided_by||x.impact)?`<small>${[x.decided_by?'by '+E(x.decided_by):'',x.approved_by?'approved by '+E(x.approved_by):'',x.impact?'impact: '+E(x.impact):''].filter(Boolean).join(' · ')}</small>`:''}</div></div>`).join('')}
-        ${!rec.length&&all.length?'<div class="nw2">No new entry in this period — latest shown.</div>':''}</div>`;}).join('');
+        ${!rec.length&&all.length?'<div class="nw2">No new entry in this period — latest shown.</div>':''}${(()=>{if(photos===false)return '';const ph=show.flatMap(x=>x.photos||[]).slice(0,mode==='all'?8:4);return ph.length?`<div class="iph">${ph.map(p=>`<img src="${E(p)}" alt="">`).join('')}</div>`:'';})()}${(i.docs||[]).length?`<div class="idoc">Documents: ${i.docs.map(d=>E(d.name)).join(' · ')}</div>`:''}</div>`;}).join('');
     const css=`<style>.iss{border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin-bottom:8px;break-inside:avoid}.ih{display:flex;align-items:center;gap:8px}.ih b{flex:1;font-size:13px}.sev{width:10px;height:10px;border-radius:50%;flex:none}.s-High{background:#B91C1C}.s-Medium{background:#D97706}.s-Low{background:#15803D}
       .st{font-size:9.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.st-ok{background:var(--okb);color:var(--ok)}.st-neg{background:var(--negb);color:var(--neg)}.st-info{background:var(--infob);color:var(--info)}.st-warn{background:var(--warnb);color:var(--warn)}
-      .im2{font-size:10.5px;color:var(--mute);margin:2px 0 6px 18px}.ie2{display:flex;gap:10px;margin-left:18px;padding:4px 0;border-top:1px dashed var(--line);font-size:12px}.ie2>span{width:78px;flex:none;color:var(--mute);font-size:11px}.ie2 small{display:block;color:var(--mute);font-size:10.5px}.ie2.dec{background:#FFFBEB}.ie2.dec b{color:#8A6D1F}.nw2{margin-left:18px;font-size:10.5px;color:var(--mute);font-style:italic}</style>`;
+      .im2{font-size:10.5px;color:var(--mute);margin:2px 0 6px 18px}.ie2{display:flex;gap:10px;margin-left:18px;padding:4px 0;border-top:1px dashed var(--line);font-size:12px}.ie2>span{width:78px;flex:none;color:var(--mute);font-size:11px}.ie2 small{display:block;color:var(--mute);font-size:10.5px}.iph{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 2px 18px}.iph img{width:100%;height:30mm;object-fit:cover;border-radius:5px;border:1px solid var(--line)}.idoc{margin:4px 0 0 18px;font-size:10.5px;color:var(--mute)}.ie2.dec{background:#FFFBEB}.ie2.dec b{color:#8A6D1F}.nw2{margin-left:18px;font-size:10.5px;color:var(--mute);font-style:italic}</style>`;
     return {t:'Major issues &amp; decisions <small>'+L.filter(i=>i.status!=='Resolved').length+' open</small>',cls:'isssec',h:css+rows};
   }catch(e){console.warn('issues section',e.message);return null;}
 }
@@ -8520,9 +8560,9 @@ function drbChoice(){
   const rb=document.getElementById('drb-raisedby')?.value??'';try{localStorage.setItem('qas2_drb_raisedby',rb);}catch(e){}
   const ops=document.getElementById('drb-op-on')?.checked?[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value):[];
   try{localStorage.setItem('qas2_drb_ops',JSON.stringify({on:!!document.getElementById('drb-op-on')?.checked,p:document.querySelector('input[name="drb-opp"]:checked')?.value||'full',k:[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value)}));}catch(e){}
-  const isOn=!!document.getElementById('drb-is-on')?.checked;const isInp=[...document.querySelectorAll('#drb-is input')];const isIds=!isOn?[]:isInp.length?isInp.filter(i=>i.checked).map(i=>+i.value):null;const isM=document.querySelector('input[name="drb-is-m"]:checked')?.value||'period';
+  const isOn=!!document.getElementById('drb-is-on')?.checked;const isInp=[...document.querySelectorAll('#drb-is input')];const isIds=!isOn?[]:isInp.length?isInp.filter(i=>i.checked).map(i=>+i.value):null;const isM=document.querySelector('input[name="drb-is-m"]:checked')?.value||'period';const isPh=document.getElementById('drb-is-ph')?.checked!==false;
   try{const all=[...document.querySelectorAll('#drb-is input')];if(all.length)localStorage.setItem('qas2_drb_is',JSON.stringify({on:isOn,m:isM,off:all.filter(i=>!i.checked).map(i=>+i.value),onR:all.filter(i=>i.checked&&(isList.find(x=>String(x.id)===i.value)||{}).status==='Resolved').map(i=>+i.value)}));}catch(e){}
-  return {ids,s,layout,tpl,raisedBy:rb,ops,isIds,isM,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
+  return {ids,s,layout,tpl,raisedBy:rb,ops,isIds,isM,isPh,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){
   const out=[];const base='id,report_no,report_date,prepared_by,submitted_by_username,role,system_worked,content,achievements,issues,next_plan,created_at';
@@ -8594,7 +8634,7 @@ async function drbPrint(){
         ${systems.length?`<div class="chips">${systems.slice(0,24).map(s=>`<span>${E(s)}</span>`).join('')}${systems.length>24?`<span>+${systems.length-24} more</span>`:''}</div>`:''}`});
     }
     if(c.ops&&c.ops.length){prog('Adding plant operations…');const pc=await dpcPrintSection(dates,E,c.ops);if(pc)sections.push(pc);}
-    if(c.isIds===null||(c.isIds&&c.isIds.length)){prog('Adding major issues…');const iz=await isPrintSection(dates,E,c.isIds,c.isM);if(iz)sections.push(iz);}
+    if(c.isIds===null||(c.isIds&&c.isIds.length)){prog('Adding major issues…');const iz=await isPrintSection(dates,E,c.isIds,c.isM,c.isPh);if(iz)sections.push(iz);}
     const actTable=list=>`<table class="t"><thead><tr><th style="width:22%">System</th><th>Activity</th><th style="width:15%">Status</th><th style="width:16%">KKS</th></tr></thead><tbody>${list.map(x=>`<tr><td>${E(x.sys)}</td><td>${E(x.act)}</td><td><span class="st ${stCls(x.st)}">${E(x.st)}</span></td><td class="mono">${E(x.kks)}</td></tr>`).join('')}</tbody></table>`;
     const callout=(cls,icon,title,text)=>`<div class="call ${cls}"><div class="ci">${icon}</div><div><div class="ct">${title}</div><div class="cx">${E(text)}</div></div></div>`;
     if(c.layout==='system'){

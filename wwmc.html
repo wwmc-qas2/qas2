@@ -1715,7 +1715,7 @@ mark.om-hl{background:#FDE68A;color:inherit;padding:0 1px;border-radius:2px}
       <fieldset><legend>Major issues &amp; decisions</legend>
         <label class="drb-opt"><input type="checkbox" id="drb-is-on" onchange="drbIsToggle()"> <b>Add major issues</b> — tick the ones to show</label>
         <div id="drb-is-wrap"><div class="drb-quick"><a href="#" onclick="drbIsAll('open');return false">Open ones</a> · <a href="#" onclick="drbIsAll(true);return false">All</a> · <a href="#" onclick="drbIsAll(false);return false">None</a></div><div id="drb-is" class="drb-isl"></div>
-          <label class="drb-opt"><input type="radio" name="drb-is-m" value="period" checked> Entries in the report dates (latest one if none)</label><label class="drb-opt"><input type="radio" name="drb-is-m" value="all"> Full timeline of each issue</label>
+          <label class="drb-opt"><input type="radio" name="drb-is-m" value="all" checked> Full timeline of each issue (all entries and photos)</label><label class="drb-opt"><input type="radio" name="drb-is-m" value="period"> Only entries in the report dates (latest one if none)</label>
           <label class="drb-opt"><input type="checkbox" id="drb-is-ph" checked> Show photos</label></div>
       </fieldset>
       <fieldset><legend>Template</legend><div id="drb-tpl" class="drb-tpls"></div></fieldset>
@@ -7105,18 +7105,21 @@ async function isDrRender(){
     +`<div class="is-drf">${isCanManage()?'<button class="btn sm" type="button" onclick="isEdit(null)">＋ New major issue</button>':''}<span class="mr-note">Open issues and their latest entries are added to the printed report (Print / Save ▸ Major issues).</span></div>`;
 }
 async function isPrintSection(dates,E,ids,mode,photos){
+  // styled with the report's own classes (.sysblk, .t, .chips, .photos) so it matches every template
   try{await isLoad(true);if(isErr||!isList.length)return null;const f=dates[0],l=dates[dates.length-1];
     const inR=x=>{const d=String(x.event_date||x.created_at||'').slice(0,10);return d>=f&&d<=l;};
     const L=ids?isList.filter(i=>ids.map(String).includes(String(i.id))):isList.filter(i=>i.status!=='Resolved'||(i.resolved_at&&String(i.resolved_at)>=f&&String(i.resolved_at)<=l)||isEntries(i.id).some(inR));if(!L.length)return null;
-    const rows=L.map(i=>{const all=isEntries(i.id);const rec=mode==='all'?all:all.filter(inR);const show=rec.length?rec:all.slice(-1);
-      return `<div class="iss"><div class="ih"><span class="sev s-${E(i.severity||'Medium')}"></span><b>${E(i.title)}</b><span class="st st-${isStCls(i.status)}">${E(i.status)}</span></div>
-        <div class="im2">${E(i.no||'')}${(i.equipment||[]).length?' · '+E(i.equipment.join(', ')):''}${i.date_found?' · found '+E(isD(i.date_found)):''}${(i.impact||[]).length?' · impact: '+E(i.impact.join(', ')):''}</div>
-        ${show.map(x=>`<div class="ie2 ${x.kind==='decision'?'dec':''}"><span>${E(isD(x.event_date||x.created_at))}</span><div>${x.kind==='decision'?'<b>Decision:</b> ':''}${E(x.note||'')}${x.kind==='decision'&&(x.decided_by||x.impact)?`<small>${[x.decided_by?'by '+E(x.decided_by):'',x.approved_by?'approved by '+E(x.approved_by):'',x.impact?'impact: '+E(x.impact):''].filter(Boolean).join(' · ')}</small>`:''}</div></div>`).join('')}
-        ${!rec.length&&all.length?'<div class="nw2">No new entry in this period — latest shown.</div>':''}${(()=>{if(photos===false)return '';const ph=show.flatMap(x=>x.photos||[]).slice(0,mode==='all'?8:4);return ph.length?`<div class="iph">${ph.map(p=>`<img src="${E(p)}" alt="">`).join('')}</div>`:'';})()}${(i.docs||[]).length?`<div class="idoc">Documents: ${i.docs.map(d=>E(d.name)).join(' · ')}</div>`:''}</div>`;}).join('');
-    const css=`<style>.iss{border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin-bottom:8px;break-inside:avoid}.ih{display:flex;align-items:center;gap:8px}.ih b{flex:1;font-size:13px}.sev{width:10px;height:10px;border-radius:50%;flex:none}.s-High{background:#B91C1C}.s-Medium{background:#D97706}.s-Low{background:#15803D}
-      .st{font-size:9.5px;font-weight:800;border-radius:9px;padding:1px 8px;white-space:nowrap}.st-ok{background:var(--okb);color:var(--ok)}.st-neg{background:var(--negb);color:var(--neg)}.st-info{background:var(--infob);color:var(--info)}.st-warn{background:var(--warnb);color:var(--warn)}
-      .im2{font-size:10.5px;color:var(--mute);margin:2px 0 6px 18px}.ie2{display:flex;gap:10px;margin-left:18px;padding:4px 0;border-top:1px dashed var(--line);font-size:12px}.ie2>span{width:78px;flex:none;color:var(--mute);font-size:11px}.ie2 small{display:block;color:var(--mute);font-size:10.5px}.iph{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 2px 18px}.iph img{width:100%;height:30mm;object-fit:cover;border-radius:5px;border:1px solid var(--line)}.idoc{margin:4px 0 0 18px;font-size:10.5px;color:var(--mute)}.ie2.dec{background:#FFFBEB}.ie2.dec b{color:#8A6D1F}.nw2{margin-left:18px;font-size:10.5px;color:var(--mute);font-style:italic}</style>`;
-    return {t:'Major issues &amp; decisions <small>'+L.filter(i=>i.status!=='Resolved').length+' open</small>',cls:'isssec',h:css+rows};
+    const stc=s=>s==='Resolved'?'s0':s==='Under investigation'||s==='Open'?'s2':'s1';
+    const blk=i=>{const all=isEntries(i.id);const rec=mode==='all'?all:all.filter(inR);const show=rec.length?rec:all.slice(-1);
+      const rows=show.map(x=>`<tr><td class="nw" style="width:13%">${E(isD(x.event_date||x.created_at))}</td><td>${x.kind==='decision'?'<b style="color:var(--brand)">Decision — </b>':''}${E(x.note||'').replace(/\n/g,'<br>')}${x.kind==='decision'&&(x.decided_by||x.approved_by||x.impact)?`<div class="kk" style="font-size:10.5px;margin-top:3px">${[x.decided_by?'Decided by: '+E(x.decided_by):'',x.approved_by?'Approved by: '+E(x.approved_by):'',x.impact?'Impact: '+E(x.impact):''].filter(Boolean).join(' · ')}</div>`:''}</td><td style="width:15%">${x.status?`<span class="st ${stc(x.status)}">${E(x.status)}</span>`:''}</td></tr>`).join('');
+      const ph=photos===false?[]:show.flatMap(x=>(x.photos||[]).map(p=>({p,d:x.event_date||x.created_at,dec:x.kind==='decision'})));
+      return `<div class="sysblk"><div class="sysh"><span>${E(i.title)}</span><span class="st ${stc(i.status)}">${E(i.status)}</span><small>${E(i.no||'')}${i.date_found?' · found '+E(isD(i.date_found)):''}</small></div>
+        <div class="chips sm">${(i.equipment||[]).map(x=>`<span>${E(x)}</span>`).join('')}${i.severity?`<span>${E(i.severity)} severity</span>`:''}${(i.impact||[]).map(x=>`<span>${E(x)}</span>`).join('')}${i.responsible?`<span>Responsible: ${E(i.responsible)}</span>`:''}</div>
+        <table class="t" style="margin-top:6px"><thead><tr><th>Date</th><th>${mode==='all'?'Timeline':'Latest update'}</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="3" class="kk">No entries yet.</td></tr>'}</tbody></table>
+        ${!rec.length&&all.length&&mode!=='all'?'<p class="note kk">No new entry in the report dates — latest entry shown.</p>':''}
+        ${ph.length?`<h4>Photos</h4><div class="photos">${ph.map((x,k)=>`<figure><div class="ph"><img src="${E(x.p)}" alt=""></div><figcaption><b>${E(isD(x.d))}</b> · Photo ${k+1}${x.dec?' · decision':''}</figcaption></figure>`).join('')}</div>`:''}
+        ${(i.docs||[]).length?`<p class="note"><b style="color:var(--brand)">Documents:</b> ${i.docs.map(d=>E(d.name)).join(' · ')}</p>`:''}</div>`;};
+    return {t:'Major issues &amp; decisions <small>'+L.filter(i=>i.status!=='Resolved').length+' open</small>',cls:'isssec',h:'<style>.isssec .photos{grid-template-columns:repeat(4,1fr);gap:8px}.isssec .sysblk{break-inside:auto}.isssec .sysh{align-items:center}.isssec .sysh .st{font-weight:700}.isssec .sysh .st.s0{color:var(--ok)}.isssec .sysh .st.s1{color:var(--info)}.isssec .sysh .st.s2{color:var(--warn)}</style>'+L.map(blk).join('')};
   }catch(e){console.warn('issues section',e.message);return null;}
 }
 // ── SETUP (supervisors & admins)
@@ -8539,9 +8542,9 @@ function drbOpsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2
   drbOpsPreset(pr,true);drbOpsToggle();}
 function drbOpsPreset(p,keep){const x=DRB_OPS_PRESETS.find(y=>y[0]===p)||DRB_OPS_PRESETS[0];document.getElementById('drb-opc').style.display=p==='custom'?'':'none';
   if(p!=='custom'&&!(keep&&p==='custom')){const ks=x[3]||DRB_OPS.map(y=>y[0]);document.querySelectorAll('#drb-ops input').forEach(i=>i.checked=ks.includes(i.value));}}
-async function drbIsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2_drb_is')||'null');}catch(e){}
+async function drbIsRender(){let sv=null;try{sv=JSON.parse(localStorage.getItem('qas2_drb_is2')||'null');}catch(e){}
   const box=document.getElementById('drb-is');box.innerHTML='<span class="mr-note">Loading…</span>';document.getElementById('drb-is-on').checked=sv?sv.on:true;
-  const m=sv&&sv.m||'period';document.querySelectorAll('input[name="drb-is-m"]').forEach(r=>r.checked=r.value===m);drbIsToggle();
+  const m=sv&&sv.m||'all';document.querySelectorAll('input[name="drb-is-m"]').forEach(r=>r.checked=r.value===m);drbIsToggle();
   await isLoad(true);if(isErr){box.innerHTML='<span class="mr-note">Major Issues is not set up yet.</span>';return;}
   if(!isList.length){box.innerHTML='<span class="mr-note">No issues recorded.</span>';return;}
   const off=new Set((sv&&sv.off)||[]);
@@ -8561,7 +8564,7 @@ function drbChoice(){
   const ops=document.getElementById('drb-op-on')?.checked?[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value):[];
   try{localStorage.setItem('qas2_drb_ops',JSON.stringify({on:!!document.getElementById('drb-op-on')?.checked,p:document.querySelector('input[name="drb-opp"]:checked')?.value||'full',k:[...document.querySelectorAll('#drb-ops input:checked')].map(i=>i.value)}));}catch(e){}
   const isOn=!!document.getElementById('drb-is-on')?.checked;const isInp=[...document.querySelectorAll('#drb-is input')];const isIds=!isOn?[]:isInp.length?isInp.filter(i=>i.checked).map(i=>+i.value):null;const isM=document.querySelector('input[name="drb-is-m"]:checked')?.value||'period';const isPh=document.getElementById('drb-is-ph')?.checked!==false;
-  try{const all=[...document.querySelectorAll('#drb-is input')];if(all.length)localStorage.setItem('qas2_drb_is',JSON.stringify({on:isOn,m:isM,off:all.filter(i=>!i.checked).map(i=>+i.value),onR:all.filter(i=>i.checked&&(isList.find(x=>String(x.id)===i.value)||{}).status==='Resolved').map(i=>+i.value)}));}catch(e){}
+  try{const all=[...document.querySelectorAll('#drb-is input')];if(all.length)localStorage.setItem('qas2_drb_is2',JSON.stringify({on:isOn,m:isM,off:all.filter(i=>!i.checked).map(i=>+i.value),onR:all.filter(i=>i.checked&&(isList.find(x=>String(x.id)===i.value)||{}).status==='Resolved').map(i=>+i.value)}));}catch(e){}
   return {ids,s,layout,tpl,raisedBy:rb,ops,isIds,isM,isPh,title:document.getElementById('drb-title').value.trim()||'Daily Report',period:document.getElementById('drb-period').value.trim()};
 }
 async function drbFetch(ids,withPhotos,onProgress){

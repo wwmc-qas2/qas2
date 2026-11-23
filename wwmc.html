@@ -715,7 +715,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .drc-legend{display:flex;gap:12px;font-size:10.5px;color:var(--gray);margin-top:6px}
 .drc-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;background:#F3F4F6}
 .drc-legend .ok::before{background:#DCFCE7}.drc-legend .miss::before{background:#FEE2E2}
-.dri{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 8px}
+.dri{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 8px;table-layout:fixed}.dri td{overflow-wrap:anywhere}.dri-none{color:#94A3B8}
 .dri th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#6B7280;text-align:left;padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--border)}
 .dri td{padding:5px 6px;border-bottom:1px solid #F1F3F6;vertical-align:top}
 .dri-kks{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#6B7280}
@@ -724,7 +724,8 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .dri-st-0 i{background:#16A34A}.dri-st-1 i{background:#2563EB}.dri-st-2 i{background:#D97706}.dri-st-3 i{background:#6B7280}
 .dri-sys{display:inline-flex;align-items:center;gap:5px;background:#EEF3FB;color:#1F3864;border:1px solid #D6E2F3;border-radius:7px;padding:3px 8px;font-size:11.5px;font-weight:600;line-height:1.3}
 .dri-sys::before{content:"⚙";font-size:11px;opacity:.7}
-.dri-kks code{font-family:Consolas,Menlo,monospace;font-size:11px;background:#F3F4F6;border-radius:5px;padding:2px 6px;color:#374151;white-space:nowrap}
+.dri-kks code{font-family:Consolas,Menlo,monospace;font-size:11px;background:#F3F4F6;border-radius:5px;padding:2px 6px;color:#374151;word-break:break-all}
+@media (max-width:640px){.dri col:nth-child(1){width:24%}.dri col:nth-child(3){width:26%}.dri col:nth-child(4){width:18%}.dri-st{white-space:normal}}
 .dri td{vertical-align:top}.dri-act{line-height:1.5;white-space:pre-line}
 .drc-lbl{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1F3864;margin:2px 0 4px}
 .drc-txt{white-space:pre-line;margin-bottom:8px}
@@ -4232,7 +4233,7 @@ function renderReportsList(reports, selectedDate){
           </div>
         </div>
         <div class="dr-report-body" id="rbody-${r.id}">
-          ${(()=>{const its=drParseItems(r);return its?`<div class="drc-lbl">Activities</div>`+drItemsTable(its):`<div class="drc-lbl">Activities</div><div class="drc-txt">${escapeHtml(r.content||'–')}</div>`;})()}
+          ${(()=>{const its=drShowItems(r);return its?`<div class="drc-lbl">Activities</div>`+drItemsTable(its):`<div class="drc-lbl">Activities</div><div class="drc-txt">${escapeHtml(r.content||'–')}</div>`;})()}
           ${Array.isArray(r.items)&&r.items.length&&drNotes(r)?`<div class="drc-txt" style="margin-bottom:8px"><b>Notes: </b>${escapeHtml(drNotes(r))}</div>`:''}
           ${r.achievements&&r.achievements!=='None reported'?`<div class="drc-call ok"><span class="ic" aria-hidden="true">✓</span><div><b>Achievements</b>${escapeHtml(r.achievements)}</div></div>`:''}
           ${!drNoIssue(r.issues)?`<div class="drc-call neg"><span class="ic" aria-hidden="true">!</span><div><b>Issues &amp; challenges</b>${escapeHtml(r.issues)}</div></div>`:''}
@@ -6069,6 +6070,12 @@ function drParseText(txt){
   // the same activity saved twice (old edit) — keep the first
   const seen=new Set();return out.filter(x=>{const k=x.act.toLowerCase().replace(/\s+/g,' ');if(seen.has(k))return false;seen.add(k);return true;});
 }
+// rows to SHOW (cards and print): every report as the same table. Plain text without statuses becomes one row per line,
+// and an activity without a system takes the system written on the report.
+function drShowItems(r){let it=drParseItems(r);
+  if(!it){const txt=String(r.content||'').trim();if(!txt||txt==='–')return null;it=txt.split(/\n+/).map(l=>l.replace(/^[•\-*]\s*/,'').trim()).filter(Boolean).map(act=>({sys:'',act,st:'',kks:''}));}
+  const rs=String(r.system_worked||'').trim();const fb=rs&&!/^general$/i.test(rs)?rs:'';
+  return it.map(x=>({...x,sys:x.sys||fb}));}
 function drParseItems(r){
   if(Array.isArray(r.items)&&r.items.length)return r.items;
   return drParseText(r.content);
@@ -6076,7 +6083,7 @@ function drParseItems(r){
 const DRI_ICON={'Completed':'✓','In progress':'↻','On hold':'‖','Planned':'◷'};
 function drItemsTable(items){
   if(!Array.isArray(items)||!items.length)return '';
-  return `<table class="dri"><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${x.sys?`<span class="dri-sys" title="System">${escapeHtml(x.sys)}</span>`:''}</td><td class="dri-act">${escapeHtml(x.act||'')}</td><td><span class="dri-st dri-st-${Math.max(0,DRA_STATUS.indexOf(x.st))}"><i aria-hidden="true">${DRI_ICON[x.st]||'•'}</i>${escapeHtml(x.st||'')}</span></td><td class="dri-kks">${x.kks?`<code>${escapeHtml(x.kks)}</code>`:''}</td></tr>`).join('')}</tbody></table>`;
+  return `<table class="dri"><colgroup><col style="width:17%"><col><col style="width:13%"><col style="width:12%"></colgroup><thead><tr><th>System</th><th>Activity</th><th>Status</th><th>KKS</th></tr></thead><tbody>${items.map(x=>`<tr><td>${x.sys?`<span class="dri-sys" title="System">${escapeHtml(x.sys)}</span>`:''}</td><td class="dri-act">${escapeHtml(x.act||'')}</td><td>${x.st?`<span class="dri-st dri-st-${Math.max(0,DRA_STATUS.indexOf(x.st))}"><i aria-hidden="true">${DRI_ICON[x.st]||'•'}</i>${escapeHtml(x.st)}</span>`:'<span class="dri-none">—</span>'}</td><td class="dri-kks">${x.kks?`<code>${escapeHtml(x.kks)}</code>`:''}</td></tr>`).join('')}</tbody></table>`;
 }
 
 
@@ -6946,7 +6953,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261122-1620';
+const APP_BUILD='20261123-1600';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -8655,7 +8662,7 @@ async function drbPrint(){
     }
     if(c.ops&&c.ops.length){prog('Adding plant operations…');const pc=await dpcPrintSection(dates,E,c.ops);if(pc)sections.push(pc);}
     if(c.isIds===null||(c.isIds&&c.isIds.length)){prog('Adding major issues…');const iz=await isPrintSection(dates,E,c.isIds,c.isM,c.isPh);if(iz)sections.push(iz);}
-    const actTable=list=>`<table class="t"><thead><tr><th style="width:22%">System</th><th>Activity</th><th style="width:15%">Status</th><th style="width:16%">KKS</th></tr></thead><tbody>${list.map(x=>`<tr><td>${E(x.sys)}</td><td style="white-space:pre-line">${E(x.act)}</td><td><span class="st ${stCls(x.st)}">${E(x.st)}</span></td><td class="mono">${E(x.kks)}</td></tr>`).join('')}</tbody></table>`;
+    const actTable=list=>`<table class="t"><thead><tr><th style="width:22%">System</th><th>Activity</th><th style="width:15%">Status</th><th style="width:16%">KKS</th></tr></thead><tbody>${list.map(x=>`<tr><td>${E(x.sys)}</td><td style="white-space:pre-line">${E(x.act)}</td><td>${x.st?`<span class="st ${stCls(x.st)}">${E(x.st)}</span>`:'<span style="color:var(--mute)">—</span>'}</td><td class="mono">${E(x.kks)}</td></tr>`).join('')}</tbody></table>`;
     const callout=(cls,icon,title,text)=>`<div class="call ${cls}"><div class="ci">${icon}</div><div><div class="ct">${title}</div><div class="cx">${E(text)}</div></div></div>`;
     if(c.layout==='system'){
       if(has('activities')){
@@ -8671,7 +8678,7 @@ async function drbPrint(){
       if(has('photos')){const ph=reps.flatMap(r=>(r.photos||[]).map(p=>({p,who:r.prepared_by,d:r.report_date})));if(ph.length)sections.push({t:'Site photos',h:photoGrid(ph)});}
     }else{
       sections.push({t:reps.length===1?'Daily report':'Daily reports',h:reps.map(r=>{
-        const it=Array.isArray(r.items)&&r.items.length?r.items:null;const notes=it?drNotes(r):'';
+        const it=drShowItems(r);const notes=Array.isArray(r.items)&&r.items.length?drNotes(r):'';
         return `<article class="rep">
           <div class="rh"><div class="av">${E(initials(r.prepared_by))}</div><div class="who"><b>${E(r.prepared_by||r.submitted_by_username)}</b><span>${E(r.role||'')}</span></div>
             <div class="meta"><span class="mono">${E(r.report_no)}</span><span>${E(fmtD(r.report_date))}</span></div></div>

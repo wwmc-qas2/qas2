@@ -457,6 +457,8 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-pick{display:grid;gap:8px}.is-pick   .is-ed{margin-left:auto;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:11px;padding:2px 8px;cursor:pointer;color:#374151}.is-ed:hover{background:#F3F4F6}
   .is-eform{display:flex;flex-direction:column;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px}.is-eform textarea{width:100%;font:inherit;font-size:13px;padding:8px;border:1px solid #D1D5DB;border-radius:6px}.is-eform .is-decf{display:flex}
   .is-delb{color:#B91C1C!important;border-color:#FCA5A5!important}
+  .crx-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.crx-k div{background:#F3F6FA;border-radius:8px;padding:8px;text-align:center}.crx-k b{display:block;font-size:20px;color:#12264A}.crx-k span{font-size:11px;color:#6B7280}
+  .crx-h{font-weight:700;color:#12264A;margin-top:12px;font-size:12px;text-transform:uppercase;letter-spacing:.05em}.crx-l{max-height:240px;overflow:auto;border:1px solid #E5E7EB;border-radius:8px;font-size:12px}.crx-l div{padding:6px 8px;border-bottom:1px solid #F1F5F9;display:flex;flex-wrap:wrap;gap:4px 10px}.crx-l s{color:#9CA3AF}.crx-l b{color:#166534}
   .is-new{flex-direction:column;align-items:flex-start;gap:2px;border:1.5px dashed #1F3864;background:#F1F5FB}.is-pick .is-new b{color:#1F3864}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
 .is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
@@ -6957,7 +6959,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1555';
+const APP_BUILD='20261124-1620';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -7811,6 +7813,7 @@ async function anxUpload(file,expect){
   try{
     if(!/\.xlsx$/i.test(file.name))throw new Error('Please choose an Excel file (.xlsx).');
     const buf=await file.arrayBuffer();const bk=await xlOpen(buf);const kind=anxDetect(bk);
+    if(!kind&&await crxRead(buf).then(r=>r&&r.rows.length).catch(()=>0)){anxBusy=false;return anxImportCR(file);}
     if(!kind)throw new Error('This file does not look like one of the annexures (Training, SOPs, WIs or PM plans).');
     if(expect&&expect!==kind&&!confirm(`This file looks like Annexure-${ANX[kind].n} (${ANX[kind].title}), not Annexure-${ANX[expect].n}. Upload it as Annexure-${ANX[kind].n}?`)){anxBusy=false;return;}
     const {rows,sheets}=await anxParse(bk,kind);if(!rows.length)throw new Error('No rows were found in this file.');
@@ -7916,6 +7919,61 @@ async function anxGenCR(){
     xlDownload(await xlSave(bk),`Annexure-6 Q2 - Clarification Cases ${mrMonthLabel(mrMonth)}.xlsx`);showToast('CR cases Excel ready — '+rows.length+' cases');
   }catch(e){showToast('Could not build the Excel file: '+e.message,'error');}
 }
+// ── Annexure-6: update the CR cases from an Excel file (matched by CR No.)
+const CRX_F=[['cr_no',/^(cr|clarification|request|rfc|rfi)\s*(request\s*)?(no|number|ref|reference|id)\b|^cr$|^ref(erence)?\s*no/],['issue_date',/^(issue|issued|raised|submission|submitted)\s*(date|on)?$|^date\s*(of\s*)?(issue|issued|raised)|^date$/],
+  ['subject',/related system|subject|description|title|^system|document/],['status',/^(cr\s*)?status$/],['closed_date',/clos(ed|ure|ing)\s*(date|on)?|date\s*(of\s*)?clos/],['action',/^action|response|reply|^next step/],['notes',/^(notes?|remarks?|comments?)$/]];
+let crxPlan=null;
+function crxDate(v){if(v==null||v==='')return null;const s=String(v).trim();if(/^\d{4,5}(\.\d+)?$/.test(s))return xlSerialToIso(s)||null;let m;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)))return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  if((m=s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/)))return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  const d=new Date(s);return isNaN(d)?null:new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);}
+function crxStatus(v){const s=String(v||'').toLowerCase();if(!s.trim())return null;if(/clos|done|complete|resolved|answered/.test(s))return 'Closed';if(/review|discussion|progress|pending|ongoing|evaluat/.test(s))return 'Under review';if(/remov|cancel|withdraw|void/.test(s))return 'Removed';return 'Issued';}
+const crxKey=s=>String(s||'').toUpperCase().replace(/\s+/g,'');
+async function crxRead(buf){
+  const bk=await xlOpen(buf);
+  for(const sh of [...bk.sheets].sort((a,b)=>/cr|register|case/i.test(b.name)-/cr|register|case/i.test(a.name))){
+    await xlSheet(bk,sh.name);const cells=xlCells(bk,bk.xml[sh.path]);let hdr=0,map={};
+    for(let r=1;r<=20&&!hdr;r++){const m={};for(const c of cells.values()){if(c.row!==r||c.v==null)continue;const lab=anxNorm(c.v);const f=CRX_F.find(z=>z[1].test(lab)&&!Object.values(m).includes(z[0]));if(f&&!m[c.col])m[c.col]=f[0];}
+      if(Object.values(m).includes('cr_no')&&Object.keys(m).length>=3){hdr=r;map=m;}}
+    if(!hdr)continue;const maxR=Math.max(0,...[...cells.values()].map(c=>c.row));const rows=[];const keyCol=Object.keys(map).find(c=>map[c]==='cr_no');
+    for(let r=hdr+1;r<=maxR;r++){const k=cells.get(keyCol+r);const no=k&&k.v!=null?String(k.v).trim():'';if(!no||!/[a-z]/i.test(no)&&!/\d{3}/.test(no))continue;
+      const o={cr_no:no};for(const [col,f] of Object.entries(map)){if(f==='cr_no')continue;const c=cells.get(col+r);let v=c&&c.v!=null?String(c.v).trim():'';
+        if(f==='issue_date'||f==='closed_date')v=crxDate(v);else if(f==='status')v=crxStatus(v);if(v!=null&&v!=='')o[f]=v;}
+      rows.push(o);}
+    return {sheet:sh.name,cols:Object.values(map),rows};}
+  return null;}
+async function anxImportCR(file){
+  if(!mrCanEdit()){showToast('Only supervisors and admins can update the CR cases.','error');return;}
+  if(!/\.xlsx$/i.test(file.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
+  showToast('Reading '+file.name+' …');
+  try{const R=await crxRead(await file.arrayBuffer());if(!R||!R.rows.length)throw new Error('No CR list was found in this file — it needs a "CR No" column.');
+    const db=await sbFetch('qas2_mr_cr_cases?select=*&order=cr_no.asc')||[];
+    if(db.length){const has=new Set(Object.keys(db[0]));R.rows.forEach(o=>Object.keys(o).forEach(f=>{if(!has.has(f))delete o[f];}));}const byNo=new Map(db.map(c=>[crxKey(c.cr_no),c]));
+    const add=[],upd=[],same=[],seen=new Set();
+    for(const o of R.rows){const k=crxKey(o.cr_no);if(seen.has(k))continue;seen.add(k);const ex=byNo.get(k);
+      if(o.status==='Closed'&&!o.closed_date&&!(ex&&ex.closed_date))o.closed_date=new Date().toISOString().slice(0,10);
+      if(!ex){add.push({status:'Issued',...o});continue;}
+      const ch={};for(const f of ['issue_date','subject','status','closed_date','action','notes']){if(!(f in o))continue;const a=String(ex[f]==null?'':ex[f]).slice(0,f.endsWith('date')?10:9999).trim(),b=String(o[f]).trim();if(a!==b)ch[f]=o[f];}
+      if(ch.status&&ch.status!=='Closed'&&ex.closed_date&&!('closed_date' in o))ch.closed_date=null;
+      Object.keys(ch).length?upd.push({ex,ch}):same.push(ex);}
+    const notIn=db.filter(c=>c.status!=='Removed'&&!seen.has(crxKey(c.cr_no)));
+    crxPlan={add,upd,file:file.name};
+    const L={issue_date:'Issue date',subject:'Subject',status:'Status',closed_date:'Closed on',action:'Action',notes:'Notes'};const e=escapeHtml;const sh=v=>e(String(v==null||v===''?'—':v).slice(0,60));
+    mrEl('mr-staff-title').textContent='Update CR cases from Excel';
+    mrEl('mr-staff-form').innerHTML=`<div class="mr-note" style="margin-bottom:8px">📄 <b>${e(file.name)}</b> · sheet “${e(R.sheet)}” · ${R.rows.length} rows read. Cases are matched by <b>CR No</b>; empty cells in the file do not erase anything.</div>
+      <div class="crx-k"><div><b>${add.length}</b><span>new</span></div><div><b>${upd.length}</b><span>updated</span></div><div><b>${same.length}</b><span>no change</span></div><div><b>${notIn.length}</b><span>not in the file (kept)</span></div></div>
+      ${upd.length?`<div class="crx-h">Changes</div><div class="crx-l">${upd.map(({ex,ch})=>`<div><code>${e(ex.cr_no)}</code> ${Object.entries(ch).map(([f,v])=>`<span>${L[f]}: <s>${sh(ex[f]&&f.endsWith('date')?String(ex[f]).slice(0,10):ex[f])}</s> → <b>${sh(v)}</b></span>`).join('')}</div>`).join('')}</div>`:''}
+      ${add.length?`<div class="crx-h">New cases</div><div class="crx-l">${add.map(o=>`<div><code>${e(o.cr_no)}</code> <span>${sh(o.subject)}</span> <span>· ${e(o.status)}</span></div>`).join('')}</div>`:''}
+      ${!add.length&&!upd.length?'<div class="op-ok" style="margin-top:10px">✓ The site already matches this file — nothing to update.</div>':''}`;
+    const btn=mrEl('mr-staff-save');btn.textContent=add.length||upd.length?`Apply ${add.length+upd.length} change${add.length+upd.length===1?'':'s'}`:'Close';
+    btn.onclick=()=>add.length||upd.length?crxApply(btn):mrEl('mr-staff-bg').classList.remove('show');mrEl('mr-staff-bg').classList.add('show');
+  }catch(e){showToast(e.message,'error');}}
+async function crxApply(btn){const P=crxPlan;if(!P)return;btn.disabled=true;let n=0,bad=0;const tot=P.add.length+P.upd.length;
+  for(const o of P.add){btn.textContent=`Saving ${++n} of ${tot}…`;try{await sbFetch('qas2_mr_cr_cases','POST',o);}catch(e){bad++;}}
+  for(const {ex,ch} of P.upd){btn.textContent=`Saving ${++n} of ${tot}…`;try{await sbFetch('qas2_mr_cr_cases?id=eq.'+ex.id,'PATCH',ch);}catch(e){bad++;}}
+  crxPlan=null;btn.disabled=false;btn.textContent='Save';mrEl('mr-staff-bg').classList.remove('show');
+  showToast(bad?`${tot-bad} saved, ${bad} could not be saved`:`CR cases updated ✓ (${P.add.length} new, ${P.upd.length} updated)`,bad?'error':'success');
+  try{mrCR=((await sbFetch('qas2_mr_cr_cases?select=*&order=cr_no.asc'))||[]).filter(c=>c.status!=='Removed');}catch(e){}mrRenderAnnex();}
 // ── page: Monthly Report → ③ Registers → Annexures
 async function mrRenderAnnex(){
   const body=mrEl('mr-anx');if(!body)return;
@@ -7927,10 +7985,10 @@ async function mrRenderAnnex(){
     const kp=c?(k==='pm'?`<div class="anx-k"><b>${(a.meta.sheets||[]).length}</b> systems · <b>${c.total}</b> PM tasks</div>`:`<div class="anx-k"><b>${c.total}</b> items · <span class="ok">${c.ok} done</span>${c.on?` · <span class="on">${c.on} in progress</span>`:''}${c.pend?` · <span class="pe">${c.pend} pending</span>`:''}${c.x?` · ${c.x} cancelled`:''}</div>`):'';
     return `<div class="anx-card"><div class="anx-h"><span class="anx-n">${d.n}</span><div><b>Annexure-${d.n}</b><small>${escapeHtml(d.title)}</small></div></div>${st}${kp}
       <div class="anx-b">${a?`<button class="btn sm" type="button" onclick="anxOpen('${k}')">${ed&&ANX[k].edit.length?'✎ View / edit':'View'}</button><button class="btn sm" type="button" onclick="anxDownload('${k}')">⬇ Excel</button>`:''}${ed?`<button class="btn sm ${a?'':'primary'}" type="button" onclick="anxPick('${k}')">⬆ ${a?'Replace':'Upload Excel'}</button>`:''}</div></div>`;};
-  const gen=(k,d,info,fn)=>`<div class="anx-card anx-gen"><div class="anx-h"><span class="anx-n">${d.n}</span><div><b>Annexure-${d.n}</b><small>${escapeHtml(d.title)}</small></div></div><div class="anx-when">Built from the site's data — always up to date.</div><div class="anx-k">${info}</div><div class="anx-b"><button class="btn sm primary" type="button" onclick="${fn}()">⬇ Generate Excel</button></div></div>`;
+  const gen=(k,d,info,fn)=>`<div class="anx-card anx-gen"><div class="anx-h"><span class="anx-n">${d.n}</span><div><b>Annexure-${d.n}</b><small>${escapeHtml(d.title)}</small></div></div><div class="anx-when">Built from the site's data — always up to date.</div><div class="anx-k">${info}</div><div class="anx-b"><button class="btn sm primary" type="button" onclick="${fn}()">⬇ Generate Excel</button>${k==='cr'&&ed?'<label class="btn sm" style="cursor:pointer" title="Upload an Excel list of CR cases — new cases are added and changed ones updated (matched by CR No)">⬆ Upload Excel<input type="file" accept=".xlsx" hidden onchange="const f=this.files[0];this.value=\'\';if(f)anxImportCR(f)"></label>':''}</div></div>`;
   body.innerHTML=`<div class="mr-help">Upload each annexure's Excel file once. The site reads it, fills the matching report tables (2.4, 3.2, 3.3.2, 3.3.4) and keeps the file. Update statuses here or upload a newer file — <b>⬇ Excel</b> gives you the same file with the site's changes written in (dashboards and charts recalculate when opened).</div>
     ${ed?`<div class="anx-drop" id="anx-drop" onclick="anxPick()"><b>⬆ Upload an annexure Excel</b><span>Drop the .xlsx here or click — the site recognises which annexure it is.</span></div>`:''}
-    <div class="anx-grid">${Object.entries(ANX).filter(([k])=>k!=='pm').map(([k,d])=>card(k,d)).join('')}${gen('punch',ANX_GEN.punch,nT!=null?`<b>${nT}</b> punch points`:'Punch List register','anxGenPunch')}${card('pm',ANX.pm)}${gen('cr',ANX_GEN.cr,`<b>${(mrCR||[]).length}</b> CR cases`,'anxGenCR')}</div>`;
+    <div class="anx-grid">${Object.entries(ANX).filter(([k])=>k!=='pm').map(([k,d])=>card(k,d)).join('')}${gen('punch',ANX_GEN.punch,nT!=null?`<b>${nT}</b> punch points`:'Punch List register','anxGenPunch')}${card('pm',ANX.pm)}${gen('cr',ANX_GEN.cr,`<b>${(mrCR||[]).length}</b> CR cases · ${(mrCR||[]).filter(c=>c.status!=='Closed').length} open`,'anxGenCR')}</div>`;
   const dz=mrEl('anx-drop');if(dz){['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on');}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on');}));dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)anxUpload(f);});}
 }
 function anxOpen(k){anxView=k;anxFilter={sh:'',st:'',q:''};anxDirty=new Set();mrRenderAnnex();window.scrollTo({top:0});}
@@ -8053,7 +8111,7 @@ function mrStaffEdit(id){
     <div class="field"><label>Status</label><select id="st-status">${['Planned','Expected','Joined','Left'].map(d=>`<option ${d===s.status?'selected':''}>${d}</option>`).join('')}${id?'<option value="Removed">Removed (entered by mistake)</option>':''}</select></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label>Joined / expected on</label><input type="date" id="st-join" value="${s.join_date?String(s.join_date).slice(0,10):''}"></div><div class="field"><label>Left on</label><input type="date" id="st-leave" value="${s.leave_date?String(s.leave_date).slice(0,10):''}"></div></div>
     <div class="field"><label>Notes</label><input id="st-notes" value="${escapeHtml(s.notes||'')}"></div>`;
-  mrEl('mr-staff-save').onclick=()=>mrStaffSave(id);mrEl('mr-staff-bg').classList.add('show');
+  mrEl('mr-staff-save').textContent='Save';mrEl('mr-staff-save').onclick=()=>mrStaffSave(id);mrEl('mr-staff-bg').classList.add('show');
 }
 async function mrStaffSave(id){
   const o={name:mrEl('st-name').value.trim(),position:mrEl('st-pos').value.trim()||null,department:mrEl('st-dept').value,status:mrEl('st-status').value,join_date:mrEl('st-join').value||null,leave_date:mrEl('st-leave').value||null,notes:mrEl('st-notes').value.trim()||null};
@@ -8083,7 +8141,7 @@ function mrCrEdit(id){
     <div class="field"><label>Related system / document</label><textarea id="cr-subj" rows="2">${escapeHtml(c.subject||'')}</textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label>Status</label><select id="cr-status">${['Issued','Under review','Closed'].map(d=>`<option ${d===c.status?'selected':''}>${d}</option>`).join('')}${id?'<option value="Removed">Removed (entered by mistake)</option>':''}</select></div><div class="field"><label>Closed on</label><input type="date" id="cr-closed" value="${c.closed_date?String(c.closed_date).slice(0,10):''}"></div></div>
     <div class="field"><label>Action</label><input id="cr-action" value="${escapeHtml(c.action||'')}"></div>`;
-  mrEl('mr-staff-save').onclick=()=>mrCrSave(id);mrEl('mr-staff-bg').classList.add('show');
+  mrEl('mr-staff-save').textContent='Save';mrEl('mr-staff-save').onclick=()=>mrCrSave(id);mrEl('mr-staff-bg').classList.add('show');
 }
 async function mrCrSave(id){
   const o={cr_no:mrEl('cr-no').value.trim(),issue_date:mrEl('cr-date').value||null,subject:mrEl('cr-subj').value.trim()||null,status:mrEl('cr-status').value,closed_date:mrEl('cr-closed').value||null,action:mrEl('cr-action').value.trim()||null};

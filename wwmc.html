@@ -454,6 +454,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-decf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.is-decf input{padding:7px 9px;border:1px solid #E5C76B;border-radius:7px;font:inherit;font-size:13px;background:#FFFBEB}.is-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px}.is-row input,.is-row select{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
 .is-imps{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}.is-imps label{display:flex;gap:5px;align-items:center}
 #app-upd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:#1F3864;color:#fff;border-radius:12px;padding:10px 12px 10px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:14px;font-weight:600;max-width:calc(100vw - 24px)}#app-upd button{border:0;background:#fff;color:#1F3864;font:inherit;font-weight:800;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.is-pick{display:grid;gap:8px}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
 .is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:640px){.is-facts{grid-template-columns:1fr 1fr}.is-decf{grid-template-columns:1fr}.is-grid{grid-template-columns:1fr}}
@@ -6953,7 +6954,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261123-1600';
+const APP_BUILD='20261124-1200';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -6986,9 +6987,27 @@ async function isDocAdd(id,inp){const files=[...inp.files];inp.value='';if(!file
     if(!add.length)return;const docs=[...(i.docs||[]),...add];await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs,updated_at:new Date().toISOString()});i.docs=docs;showToast('Document saved ✓');isOpen(id);}
   catch(e){showToast('Could not upload: '+(/docs/.test(e.message)?'run qas2_issues_docs_setup.sql first.':e.message),'error');}}
 // ── import a prepared issue package (.qas2issue.json): text, dated timeline, photos and documents in one go
-async function isImportPick(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
-  let P;try{P=JSON.parse(await f.text());}catch(e){showToast('This file is not an issue package.','error');return;}
-  if(!P||P.type!=='qas2-issue-package'||!P.issue){showToast('This file is not an issue package.','error');return;}
+// a document or photo chosen with the upload button: ask which issue it belongs to
+let isAttachFiles=[];
+async function isAttachAsk(files){await isLoad(true);if(!isList.length){showToast('Create the issue first, then add documents to it.','error');return;}isAttachFiles=files;
+  document.getElementById('is-title').textContent='Add '+(files.length===1?'“'+files[0].name+'”':files.length+' files')+' to which issue?';
+  document.getElementById('is-body').innerHTML=`<p class="mr-note" style="margin-top:0">Documents (PDF, Word, Excel…) go to the issue's <b>Documents</b>; photos are added to its timeline as a new entry.</p><div class="is-pick">${isList.slice().sort((a,b)=>(a.status==='Resolved')-(b.status==='Resolved')||String(b.no).localeCompare(String(a.no))).map(i=>`<button type="button" onclick="isAttachTo(${i.id},this)"><span class="is-no">${escapeHtml(i.no||'')}</span><b>${escapeHtml(i.title)}</b><span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span></button>`).join('')}</div>`;
+  document.getElementById('is-foot').innerHTML='<span style="flex:1"></span><button class="btn" type="button" onclick="isClose()">Cancel</button>';document.getElementById('is-bg').classList.add('show');}
+async function isAttachTo(id,btn){const files=isAttachFiles;isAttachFiles=[];if(!files.length)return;btn.disabled=true;const i=isList.find(x=>String(x.id)===String(id));
+  const imgs=files.filter(f=>/^image\//.test(f.type)),docs=files.filter(f=>!/^image\//.test(f.type));
+  try{if(docs.length){showToast('Uploading '+docs.length+' document(s)…');const add=[];for(const f of docs){if(f.size>25*1024*1024){showToast(f.name+' is larger than 25 MB','error');continue;}add.push(await isUploadDoc(id,f.name,f));}
+      if(add.length){const d2=[...(i.docs||[]),...add];await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs:d2,updated_at:new Date().toISOString()});i.docs=d2;}}
+    if(imgs.length){showToast('Uploading '+imgs.length+' photo(s)…');const du=[];for(const f of imgs.slice(0,12)){try{du.push(await compressImage(f));}catch(e){}}
+      const photos=await sbStoreList(du,'issues/'+id);const note='Photos added: '+imgs.map(f=>f.name).join(', ');
+      await sbFetch('qas2_issue_updates','POST',{issue_id:id,kind:'update',note,status:i.status,event_date:new Date().toISOString().slice(0,10),photos,username:currentUser?.name||''});
+      await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{last_update_at:new Date().toISOString(),last_update_note:note.slice(0,280),updated_at:new Date().toISOString()});}
+    await isLoad(true);showToast('Added to '+(i.no||'the issue')+' ✓');isOpen(id);if(opPage==='issues')opRenderIssues();}
+  catch(e){showToast('Could not upload: '+(/docs/.test(e.message)?'run qas2_issues_docs_setup.sql first.':e.message),'error');btn.disabled=false;}}
+async function isImportPick(inp){const fl=[...(inp.files||[])];inp.value='';if(!fl.length)return;
+  if(fl.some(f=>!/\.json$/i.test(f.name))){isAttachAsk(fl.filter(f=>!/\.json$/i.test(f.name)));return;}
+  const f=fl[0];
+  let P;try{P=JSON.parse(await f.text());}catch(e){P=null;}
+  if(!P||P.type!=='qas2-issue-package'||!P.issue){showToast('This .json file is not an issue file prepared for the site.','error');return;}
   await isLoad(true);const ex=isList.find(x=>x.no&&x.no===P.issue.no);const nPh=(P.entries||[]).reduce((a,x)=>a+(x.photos||[]).length,0)+(P.issue.photos||[]).length;
   if(!confirm(`${ex?'Update':'Create'} ${P.issue.no||'issue'} — ${P.issue.title}\n\n${(P.entries||[]).length} timeline entries · ${nPh} photos · ${(P.docs||[]).length} documents${ex&&P.replace_timeline?'\n\nThe current timeline entries are kept in the database but hidden (superseded) and replaced by the dated ones in the package.':''}\n\nContinue?`))return;
   const bar=document.getElementById('is-imp-st');const st=t=>{if(bar)bar.textContent=t;};
@@ -7020,7 +7039,7 @@ async function opRenderIssues(){
   const L=isList.filter(i=>isFilter==='all'||(isFilter==='open'?i.status!=='Resolved':i.status==='Resolved'));
   const nOpen=isList.filter(i=>i.status!=='Resolved').length;
   body.innerHTML=`<div class="mr-help">Big problems that run for days or weeks — what happened, every <b>decision</b> (who decided, who approved, the impact) and each follow-up. Open issues and their latest entries go into the Daily Report automatically.</div>
-    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All']].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span><span id="is-imp-st" class="mr-note"></span>${isCanManage()?'<label class="btn" style="cursor:pointer" title="Import a prepared issue file (.qas2issue.json): text, timeline, photos and documents">⇪ Import issue file<input type="file" accept=".json" hidden onchange="isImportPick(this)"></label><button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
+    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All']].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span><span id="is-imp-st" class="mr-note"></span>${isCanManage()?'<label class="btn" style="cursor:pointer" title="Add documents or photos to an issue, or import a prepared issue file (.qas2issue.json)">⇪ Upload files<input type="file" multiple accept=".json,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.msg,.txt,image/*" hidden onchange="isImportPick(this)"></label><button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
     <div class="is-grid">${L.map(isCard).join('')||'<div class="op-ok">✓ No issues here.</div>'}</div>`;
 }
 function isCard(i){const E=isEntries(i.id);const dec=E.filter(x=>x.kind==='decision').length;const last=i.last_update_at||(E.length?E[E.length-1].created_at:i.created_at);const ld=isDays(last);const stale=i.status!=='Resolved'&&ld!=null&&ld>=IS_STALE;

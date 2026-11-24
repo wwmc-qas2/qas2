@@ -454,7 +454,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-decf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.is-decf input{padding:7px 9px;border:1px solid #E5C76B;border-radius:7px;font:inherit;font-size:13px;background:#FFFBEB}.is-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px}.is-row input,.is-row select{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
 .is-imps{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}.is-imps label{display:flex;gap:5px;align-items:center}
 #app-upd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:#1F3864;color:#fff;border-radius:12px;padding:10px 12px 10px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:14px;font-weight:600;max-width:calc(100vw - 24px)}#app-upd button{border:0;background:#fff;color:#1F3864;font:inherit;font-weight:800;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
-.is-pick{display:grid;gap:8px}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
+.is-pick{display:grid;gap:8px}.is-pick .is-new{flex-direction:column;align-items:flex-start;gap:2px;border:1.5px dashed #1F3864;background:#F1F5FB}.is-pick .is-new b{color:#1F3864}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
 .is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:640px){.is-facts{grid-template-columns:1fr 1fr}.is-decf{grid-template-columns:1fr}.is-grid{grid-template-columns:1fr}}
@@ -6954,7 +6954,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1200';
+const APP_BUILD='20261124-1215';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -6987,11 +6987,87 @@ async function isDocAdd(id,inp){const files=[...inp.files];inp.value='';if(!file
     if(!add.length)return;const docs=[...(i.docs||[]),...add];await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs,updated_at:new Date().toISOString()});i.docs=docs;showToast('Document saved ✓');isOpen(id);}
   catch(e){showToast('Could not upload: '+(/docs/.test(e.message)?'run qas2_issues_docs_setup.sql first.':e.message),'error');}}
 // ── import a prepared issue package (.qas2issue.json): text, dated timeline, photos and documents in one go
+// ── NEW ISSUE FROM A DOCUMENT: the site reads the PDF (text, dates, units, KKS, photos) and fills the issue form
+let isDocDraft=null;   // {files:[File]} — attached as documents when the new issue is saved
+async function isPdfLib(){if(window.pdfjsLib)return window.pdfjsLib;
+  try{const base=new URL('vendor/pdfjs/',location.href).href;const m=await import(base+'pdf.min.mjs');m.GlobalWorkerOptions.workerSrc=base+'pdf.worker.min.mjs';window.pdfjsLib=m;return m;}catch(e){console.warn('local pdf.js failed, trying CDN',e);}
+  await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=res;s.onerror=()=>rej(new Error('The PDF reader could not be loaded (check the internet connection).'));document.head.appendChild(s);});
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return window.pdfjsLib;}
+async function isReadPdf(file){
+  const lib=await isPdfLib();const pdf=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+  let meta={};try{meta=(await pdf.getMetadata()).info||{};}catch(e){}
+  const pages=[],imgs=[];
+  for(let p=1;p<=Math.min(pdf.numPages,30);p++){const pg=await pdf.getPage(p);const tc=await pg.getTextContent();
+    let line='',lines=[],lastY=null;tc.items.forEach(it=>{const y=Math.round(it.transform[5]);if(lastY!==null&&Math.abs(y-lastY)>2){if(line.trim())lines.push(line.trim());line='';}line+=(line&&!/\s$/.test(line)&&!/^\s/.test(it.str)?' ':'')+it.str;lastY=y;});if(line.trim())lines.push(line.trim());pages.push(lines);
+    if(imgs.length<12){try{const ops=await pg.getOperatorList();const O=lib.OPS;
+      for(let k=0;k<ops.fnArray.length&&imgs.length<12;k++){if(ops.fnArray[k]!==O.paintImageXObject)continue;const name=ops.argsArray[k][0];
+        const im=await new Promise(r=>{try{(name.startsWith('g_')?pg.commonObjs:pg.objs).get(name,r);}catch(e){r(null);}setTimeout(()=>r(null),3000);});
+        if(!im||im.width<220||im.height<160)continue;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const x=c.getContext('2d');
+        if(im.bitmap)x.drawImage(im.bitmap,0,0);else if(im.data){const id=x.createImageData(im.width,im.height);const d=im.data;
+          if(d.length===im.width*im.height*4)id.data.set(d);else if(d.length===im.width*im.height*3){for(let a=0,b=0;a<d.length;a+=3,b+=4){id.data[b]=d[a];id.data[b+1]=d[a+1];id.data[b+2]=d[a+2];id.data[b+3]=255;}}else continue;x.putImageData(id,0,0);}else continue;
+        const mx=1400,sc=Math.min(1,mx/Math.max(c.width,c.height));const o=document.createElement('canvas');o.width=Math.round(c.width*sc);o.height=Math.round(c.height*sc);o.getContext('2d').drawImage(c,0,0,o.width,o.height);imgs.push(o.toDataURL('image/jpeg',0.8));}}catch(e){}}}
+  return {meta,pages,imgs,n:pdf.numPages};
+}
+function isDraftFromText(r,fname){
+  const all=r.pages.flat();const text=all.join('\n');
+  const junk=/^(page \d+|\d+ of \d+|confidential|wahat|al[- ]wusta|wwmc|ceec|china energy|doc(ument)? no|rev(ision)?\b|date\s*:|prepared by|approved by|checked by|qassim|www\.|http)/i;
+  const okLine=l=>l.length>=12&&l.length<=140&&!junk.test(l)&&/[a-z]/i.test(l)&&!/^[\d\W]+$/.test(l);
+  let title=String(r.meta.Title||'').trim();if(!title||/^(microsoft|untitled|document|\d)/i.test(title)||title.length<8)title='';
+  const head=all.slice(0,40);const KW=/(report|incident|briefing|failure|damage|issue|problem|investigation|method statement|trip|leak|ncr|notification|statement|notice|memo)/i;
+  const secRx=/^(\d+[\d.]*\s*)?(executive summary|summary|incident description|description of (the )?(incident|event|problem|damage)|background|incident overview|overview|event description|what happened|problem description|introduction|purpose)\b/i;
+  if(!title){let k=head.findIndex(l=>okLine(l)&&KW.test(l));if(k<0)k=head.findIndex(okLine);
+    if(k>=0){title=head[k];
+      // a bare heading such as "INCIDENT REPORT" or "METHOD STATEMENT": add the subject line under it
+      if(title.split(/\s+/).length<=3){const nx=head.slice(k+1,k+4).find(l=>okLine(l)&&!secRx.test(l)&&!/^(incident )?date\b|^location\b|^project\b/i.test(l));if(nx){const cap=title===title.toUpperCase()?title.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):title;title=cap+' – '+nx;k=head.indexOf(nx);}}
+      // a title broken over two lines
+      const nx2=head[k+1];if(nx2&&title.length>=40&&nx2.length<=40&&!/\d/.test(nx2)&&!secRx.test(nx2)&&!/[.:]$/.test(nx2)&&/^[A-Z]/.test(nx2))title+=' '+nx2;}
+    else title=fname.replace(/\.[^.]+$/,'').replace(/^[0-9a-f]{8}-/,'').replace(/[_-]+/g,' ');}
+  title=title.replace(/\s+/g,' ').replace(/^[\d.\s]+/,'').replace(/\s*[–-]\s*(and|or|of|the)?\s*$/i,'').slice(0,140);
+  // description: the summary / incident description / purpose section if there is one, otherwise the first real paragraphs
+  let start=all.findIndex(l=>secRx.test(l));let body=[];
+  const from=start>=0?start+1:Math.max(0,all.indexOf(title)+1);
+  const isHead=l=>/^(\d+[\d.]*\s*)?[A-Z][A-Za-z &/()'-]{3,60}:?$/.test(l)&&!/[.]$/.test(l);
+  for(let k=from;k<all.length&&body.join(' ').length<1100;k++){const l=all[k];if(start>=0&&k>from&&isHead(l)&&body.length>2)break;if(junk.test(l)||l.length<3||/^(figure|fig\.|photo)\s*\d/i.test(l))continue;body.push(l);}
+  // actions / decisions taken, if the document lists them
+  const actRx=/^(\d+[\d.]*\s*)?(immediate (response|actions?)|corrective actions?|mitigation( plan)?|actions? taken|decisions?|proposed (preliminary )?solution|recommendations?|way forward|next steps|conclusion)\b/i;
+  const ai=all.findIndex((l,i)=>i>=from&&actRx.test(l));const acts=[];
+  if(ai>=0){let cur='';for(let k=ai+1;k<all.length&&acts.length<5;k++){const l=all[k];if(isHead(l)&&!/^\d+\.\s/.test(l)&&(cur||acts.length))break;if(junk.test(l)||/^(figure|fig\.)\s*\d/i.test(l))continue;
+      if(/^([•\-–▪●*]|\d+[.)]\s)/.test(l)){if(cur)acts.push(cur);cur=l.replace(/^([•\-–▪●*]|\d+[.)])\s*/,'');}else if(cur)cur+=' '+l;else cur=l;}
+    if(cur&&acts.length<5)acts.push(cur);}
+  let description=body.join(' ').replace(/\s+/g,' ').replace(/(\d)\s+(st|nd|rd|th)\s+/g,'$1$2 ').trim();if(description.length>1100)description=description.slice(0,1100).replace(/\s\S*$/,'')+' …';
+  if(acts.length)description+='\n\nActions:\n'+acts.map(x=>{x=x.replace(/\s+/g,' ').replace(/(\d)\s+(st|nd|rd|th)\b/g,'$1$2');return '• '+(x.length>240?x.slice(0,240).replace(/\s\S*$/,'')+' …':x);}).join('\n');
+  // date found: first full date in the text
+  const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec';const mi=m=>['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m.slice(0,3).toLowerCase());
+  let date=null;const p2=n=>String(n).padStart(2,'0');let m;
+  if((m=text.match(new RegExp('\\b(\\d{1,2})\\s*(?:st|nd|rd|th)?[\\s-]+('+MON+')[a-z]*[\\s,.-]+(20\\d{2})\\b','i'))))date=m[3]+'-'+p2(mi(m[2])+1)+'-'+p2(m[1]);
+  else if((m=text.match(new RegExp('\\b('+MON+')[a-z]*\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(20\\d{2})\\b','i'))))date=m[3]+'-'+p2(mi(m[1])+1)+'-'+p2(m[2]);
+  else if((m=text.match(/\b(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})\b/)))date=m[1]+'-'+p2(m[2])+'-'+p2(m[3]);
+  else if((m=text.match(/\b(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})\b/)))date=m[3]+'-'+p2(m[2])+'-'+p2(m[1]);
+  if(date&&(isNaN(new Date(date))||date>new Date().toISOString().slice(0,10)))date=null;
+  // units and KKS
+  const units=[...new Set((text.match(/\b(GT|ST|HRSG|GSUT|STG)\s?-?(1[1-3]|2[12])\b/gi)||[]).map(u=>u.toUpperCase().replace(/[\s-]/g,'').replace(/^STG/,'ST')))].slice(0,6);
+  const kks=[...new Set(text.match(/\b\d{2}[A-Z]{3}\d{2}[A-Z]{2}\d{3}\b/g)||[])].slice(0,8);
+  const t=text.toLowerCase();const has=w=>w.some(x=>t.includes(x));
+  const category=has(['kv','cable','transformer','breaker','switchgear','busbar','generator','relay'])?'Electrical':has(['dcs','transmitter','instrument','signal','sensor','plc','control loop'])?'I&C':has(['pump','valve','pipe','bearing','vacuum','seal','compressor','fan','turbine casing','leak'])?'Mechanical':has(['concrete','foundation','civil','road','fence'])?'Civil':has(['injury','first aid','fire','hse'])?'HSE':'Other';
+  const severity=has(['damage','incident','trip','fire','injury','failure','burn','explosion'])?'High':'Medium';
+  const impact=[has(['injury','safety','hazard','incident'])&&'Safety',has(['trip','outage','unavailable','availability','shutdown','damage'])&&'Availability',has(['delay','schedule','lead time'])&&'Schedule',has(['cost','replace','order','purchase'])&&'Cost',has(['spill','environment','emission'])&&'Environment'].filter(Boolean);
+  if(kks.length)description+=(description?'\n\n':'')+'KKS mentioned: '+kks.join(', ');
+  const loc=(all.find(l=>/^location\s*:?\s+\S/i.test(l))||'').replace(/^location\s*:?\s*/i,'').slice(0,80)||null;
+  return {title,description,date_found:date,location:loc,equipment:units,category,severity,impact,status:'Open',photos:r.imgs};
+}
+async function isNewFromDoc(btn){
+  const files=isAttachFiles;const pdf=files.find(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name));if(!pdf){showToast('Choose a PDF to read.','error');return;}
+  btn.disabled=true;btn.innerHTML='<b>Reading '+escapeHtml(pdf.name)+'…</b>';
+  try{const r=await isReadPdf(pdf);const d=isDraftFromText(r,pdf.name);isAttachFiles=[];isDocDraft={files};
+    isEdit(null,d);const bn=document.getElementById('is-body');bn.insertAdjacentHTML('afterbegin',`<div class="mr-help" style="margin-top:0">📄 Filled from <b>${escapeHtml(pdf.name)}</b> (${r.n} page${r.n===1?'':'s'}, ${d.photos.length} photo${d.photos.length===1?'':'s'} found). Check the title and the summary, change what is needed, then press <b>Create issue</b>. The file${files.length>1?'s are':' is'} saved under the issue's Documents.</div>`);
+    const c=document.getElementById('is-pc');if(c)c.textContent=d.photos.length?d.photos.length+' photo(s) from the document will be added':'';}
+  catch(e){btn.disabled=false;btn.innerHTML='<b>＋ New issue from this document</b>';showToast('Could not read the PDF: '+e.message,'error');}
+}
 // a document or photo chosen with the upload button: ask which issue it belongs to
 let isAttachFiles=[];
-async function isAttachAsk(files){await isLoad(true);if(!isList.length){showToast('Create the issue first, then add documents to it.','error');return;}isAttachFiles=files;
+async function isAttachAsk(files){await isLoad(true);if(!isList.length&&!files.some(f=>/\.pdf$/i.test(f.name))){showToast('Create the issue first, then add documents to it.','error');return;}isAttachFiles=files;
   document.getElementById('is-title').textContent='Add '+(files.length===1?'“'+files[0].name+'”':files.length+' files')+' to which issue?';
-  document.getElementById('is-body').innerHTML=`<p class="mr-note" style="margin-top:0">Documents (PDF, Word, Excel…) go to the issue's <b>Documents</b>; photos are added to its timeline as a new entry.</p><div class="is-pick">${isList.slice().sort((a,b)=>(a.status==='Resolved')-(b.status==='Resolved')||String(b.no).localeCompare(String(a.no))).map(i=>`<button type="button" onclick="isAttachTo(${i.id},this)"><span class="is-no">${escapeHtml(i.no||'')}</span><b>${escapeHtml(i.title)}</b><span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span></button>`).join('')}</div>`;
+  document.getElementById('is-body').innerHTML=`${files.some(f=>/\.pdf$/i.test(f.name))&&isCanManage()?`<div class="is-pick" style="margin-bottom:12px"><button type="button" class="is-new" onclick="isNewFromDoc(this)"><b>＋ New issue from this document</b><span class="mr-note">The site reads the PDF and fills in the title, summary, date, units and photos</span></button></div><div class="is-tlh" style="margin-top:0">…or add to an existing issue</div>`:''}<p class="mr-note" style="margin-top:0">Documents (PDF, Word, Excel…) go to the issue's <b>Documents</b>; photos are added to its timeline as a new entry.</p><div class="is-pick">${isList.slice().sort((a,b)=>(a.status==='Resolved')-(b.status==='Resolved')||String(b.no).localeCompare(String(a.no))).map(i=>`<button type="button" onclick="isAttachTo(${i.id},this)"><span class="is-no">${escapeHtml(i.no||'')}</span><b>${escapeHtml(i.title)}</b><span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span></button>`).join('')}</div>`;
   document.getElementById('is-foot').innerHTML='<span style="flex:1"></span><button class="btn" type="button" onclick="isClose()">Cancel</button>';document.getElementById('is-bg').classList.add('show');}
 async function isAttachTo(id,btn){const files=isAttachFiles;isAttachFiles=[];if(!files.length)return;btn.disabled=true;const i=isList.find(x=>String(x.id)===String(id));
   const imgs=files.filter(f=>/^image\//.test(f.type)),docs=files.filter(f=>!/^image\//.test(f.type));
@@ -7089,8 +7165,8 @@ async function isAddEntry(id,btn){
     isPending=[];await isLoad(true);showToast(kind==='decision'?'Decision recorded ✓':'Update saved ✓');isOpen(id);if(opPage==='issues')opRenderIssues();isDrRender();
   }catch(e){showToast('Could not save: '+e.message,'error');btn.disabled=false;btn.textContent='Save entry';}
 }
-function isEdit(id){
-  const i=id?isList.find(x=>String(x.id)===String(id)):{title:'',equipment:[],category:'Electrical',severity:'Medium',impact:[],status:'Open',date_found:new Date().toISOString().slice(0,10)};isPending=[];
+function isEdit(id,draft){
+  const i=id?isList.find(x=>String(x.id)===String(id)):(draft||{title:'',equipment:[],category:'Electrical',severity:'Medium',impact:[],status:'Open',date_found:new Date().toISOString().slice(0,10)});isPending=draft&&draft.photos?draft.photos.slice():[];if(!draft)isDocDraft=null;
   const eqs=[...new Set(['GT11','GT12','GT13','ST21','ST22','HRSG11','HRSG12','HRSG13','GSUT 11','GSUT 12','GSUT 13','GSUT 21','GSUT 22',...(opEqAll||[]).map(e=>e.code)])];
   document.getElementById('is-title').textContent=id?'Edit '+(i.no||'issue'):'New major issue';
   document.getElementById('is-body').innerHTML=`<div class="op-form">
@@ -7111,11 +7187,13 @@ async function isSave(id,btn){
     impact:[...document.querySelectorAll('.is-imps input:checked')].map(x=>x.value),location:document.getElementById('ie-l').value.trim()||null,responsible:document.getElementById('ie-r').value.trim()||null,description:document.getElementById('ie-x').value.trim()||null,updated_at:new Date().toISOString()};
   btn.disabled=true;
   try{const old=id?isList.find(x=>String(x.id)===String(id)):null;
-    if(isPending.length)o.photos=[...((old&&old.photos)||[]),...await sbStoreList(isPending,'issues/'+(id||'new'))];
+    let firstPh=[];if(isPending.length){const st=await sbStoreList(isPending,'issues/'+(id||'new'));if(!id&&isDocDraft)firstPh=st;else o.photos=[...((old&&old.photos)||[]),...st];}
     if(id){await sbFetch('qas2_issues?id=eq.'+id,'PATCH',o);}
     else{const mx=Math.max(0,...isList.map(x=>+(String(x.no||'').match(/(\d+)$/)||[0,0])[1]));o.no='QAS2-ISS-'+String(mx+1).padStart(3,'0');o.created_by=currentUser?.name||'';o.last_update_at=new Date().toISOString();o.last_update_note='Issue opened.';
       const r=await sbFetch('qas2_issues','POST',o);id=Array.isArray(r)&&r[0]?r[0].id:null;
-      if(id)await sbFetch('qas2_issue_updates','POST',{issue_id:id,kind:'update',note:o.description||'Issue opened.',status:o.status,event_date:o.date_found,photos:[],username:currentUser?.name||''});}
+      if(id)await sbFetch('qas2_issue_updates','POST',{issue_id:id,kind:'update',note:o.description||'Issue opened.',status:o.status,event_date:o.date_found,photos:firstPh,username:currentUser?.name||''});
+      if(id&&isDocDraft&&isDocDraft.files.length){try{const add=[];for(const f of isDocDraft.files)add.push(await isUploadDoc(id,f.name,f));await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs:add});}catch(e){showToast('Issue saved, but the document was not: '+e.message,'error');}}
+      isDocDraft=null;}
     isPending=[];await isLoad(true);showToast('Saved ✓');if(id)isOpen(id);else isClose();if(opPage==='issues')opRenderIssues();isDrRender();
   }catch(e){showToast('Could not save: '+(/qas2_issue|42P01|PGRST/.test(e.message)?'run qas2_issues_setup.sql first.':e.message),'error');btn.disabled=false;}
 }

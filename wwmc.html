@@ -454,7 +454,10 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-decf{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.is-decf input{padding:7px 9px;border:1px solid #E5C76B;border-radius:7px;font:inherit;font-size:13px;background:#FFFBEB}.is-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px}.is-row input,.is-row select{padding:5px 7px;border:1px solid #D6DCE5;border-radius:6px;font:inherit;font-size:12.5px}
 .is-imps{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}.is-imps label{display:flex;gap:5px;align-items:center}
 #app-upd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:#1F3864;color:#fff;border-radius:12px;padding:10px 12px 10px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:14px;font-weight:600;max-width:calc(100vw - 24px)}#app-upd button{border:0;background:#fff;color:#1F3864;font:inherit;font-weight:800;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
-.is-pick{display:grid;gap:8px}.is-pick .is-new{flex-direction:column;align-items:flex-start;gap:2px;border:1.5px dashed #1F3864;background:#F1F5FB}.is-pick .is-new b{color:#1F3864}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
+.is-pick{display:grid;gap:8px}.is-pick   .is-ed{margin-left:auto;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:11px;padding:2px 8px;cursor:pointer;color:#374151}.is-ed:hover{background:#F3F4F6}
+  .is-eform{display:flex;flex-direction:column;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px}.is-eform textarea{width:100%;font:inherit;font-size:13px;padding:8px;border:1px solid #D1D5DB;border-radius:6px}.is-eform .is-decf{display:flex}
+  .is-delb{color:#B91C1C!important;border-color:#FCA5A5!important}
+  .is-new{flex-direction:column;align-items:flex-start;gap:2px;border:1.5px dashed #1F3864;background:#F1F5FB}.is-pick .is-new b{color:#1F3864}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
 .is-docs{display:flex;flex-wrap:wrap;gap:8px}.is-doc{display:flex;align-items:center;gap:9px;border:1px solid #E3E8EF;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;text-align:left;font:inherit;max-width:100%}.is-doc:hover{background:#F8FAFD}.is-doc b{display:block;font-size:12.5px;color:#0F2747;word-break:break-word}.is-doc small{font-size:11px;color:#6B7280}.is-dx{flex:none;width:34px;height:34px;border-radius:7px;background:#B91C1C;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .is-dri{display:flex;align-items:center;gap:10px;border:1px solid #E3E8EF;border-radius:10px;padding:8px 10px;margin-bottom:8px}.is-dri>div{flex:1;min-width:0}.is-dri b{display:block;font-size:13.5px;color:#0F2747}.is-dri small{display:block;font-size:11.5px;color:#6B7280}.is-dri .is-ln{color:#374151;margin-top:2px}.is-drf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:640px){.is-facts{grid-template-columns:1fr 1fr}.is-decf{grid-template-columns:1fr}.is-grid{grid-template-columns:1fr}}
@@ -6954,7 +6957,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1240';
+const APP_BUILD='20261124-1450';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -6963,12 +6966,12 @@ const IS_STATUS=['Open','Under investigation','Decision taken','In progress','Re
 const IS_CATS=['Electrical','Mechanical','I&C','Civil','HSE','Process / Chemistry','Other'];
 const IS_IMPACT=['Safety','Availability','Schedule','Cost','Environment'];
 const IS_STALE=7;
-let isList=[],isUpd=[],isErr='',isLoaded=0,isFilter='open',isPending=[];
+let isList=[],isAll=[],isUpd=[],isErr='',isLoaded=0,isFilter='open',isPending=[];
 function isCanManage(){return typeof isSupervisor==='function'&&isSupervisor();}
 function isCanAdd(){return !!currentUser&&!isViewer();}
 async function isLoad(force){
   if(isLoaded&&!force&&Date.now()-isLoaded<60000)return;
-  try{const [a,b]=await Promise.all([sbFetch('qas2_issues?select=*&order=no.asc'),sbFetch('qas2_issue_updates?select=*&order=id.asc')]);isList=a||[];isUpd=b||[];isErr='';isLoaded=Date.now();}
+  try{const [a,b]=await Promise.all([sbFetch('qas2_issues?select=*&order=no.asc'),sbFetch('qas2_issue_updates?select=*&order=id.asc')]);isAll=a||[];isList=isAll.filter(i=>!i.deleted_at);isUpd=b||[];isErr='';isLoaded=Date.now();}
   catch(e){isErr=/qas2_issue|PGRST|42P01|404/.test(e.message)?'setup':e.message;}
 }
 function isD(s){if(!s)return '';const d=new Date(String(s).slice(0,10)+'T00:00:00');return isNaN(d)?String(s):d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
@@ -7114,12 +7117,12 @@ async function isImportPick(inp){const fl=[...(inp.files||[])];inp.value='';if(!
   const f=fl[0];
   let P;try{P=JSON.parse(await f.text());}catch(e){P=null;}
   if(!P||P.type!=='qas2-issue-package'||!P.issue){showToast('This .json file is not an issue file prepared for the site.','error');return;}
-  await isLoad(true);const ex=isList.find(x=>x.no&&x.no===P.issue.no);const nPh=(P.entries||[]).reduce((a,x)=>a+(x.photos||[]).length,0)+(P.issue.photos||[]).length;
+  await isLoad(true);const ex=isAll.find(x=>x.no&&x.no===P.issue.no);const nPh=(P.entries||[]).reduce((a,x)=>a+(x.photos||[]).length,0)+(P.issue.photos||[]).length;
   if(!confirm(`${ex?'Update':'Create'} ${P.issue.no||'issue'} — ${P.issue.title}\n\n${(P.entries||[]).length} timeline entries · ${nPh} photos · ${(P.docs||[]).length} documents${ex&&P.replace_timeline?'\n\nThe current timeline entries are kept in the database but hidden (superseded) and replaced by the dated ones in the package.':''}\n\nContinue?`))return;
   const bar=document.getElementById('is-imp-st');const st=t=>{if(bar)bar.textContent=t;};
   try{
     const now=new Date().toISOString();const f2={...P.issue};delete f2.photos;f2.updated_at=now;
-    let id;if(ex){id=ex.id;delete f2.no;await sbFetch('qas2_issues?id=eq.'+id,'PATCH',f2);}
+    let id;if(ex){id=ex.id;delete f2.no;if(ex.deleted_at)f2.deleted_at=null;await sbFetch('qas2_issues?id=eq.'+id,'PATCH',f2);}
     else{f2.created_by=currentUser?.name||'';const r=await sbFetch('qas2_issues','POST',f2);id=Array.isArray(r)&&r[0]?r[0].id:null;if(!id){await isLoad(true);id=(isList.find(x=>x.no===P.issue.no)||{}).id;}}
     if(!id)throw new Error('the issue could not be saved');
     if(ex&&P.replace_timeline&&isEntries(id).length){st('Hiding the old timeline…');await sbFetch('qas2_issue_updates?issue_id=eq.'+id+'&superseded=eq.false','PATCH',{superseded:true});}
@@ -7142,11 +7145,12 @@ async function opRenderIssues(){
   const body=opEl('op-body');if(!isLoaded)body.innerHTML='<p class="mr-note">Loading…</p>';
   await isLoad();if(opPage!=='issues')return;
   if(isErr){body.innerHTML=`<div class="mr-warn">${isErr==='setup'?'The Major Issues log is not set up yet — run <b>qas2_issues_setup.sql</b> in Supabase → SQL Editor, then refresh.':'Could not load: '+escapeHtml(isErr)}</div>`;return;}
-  const L=isList.filter(i=>isFilter==='all'||(isFilter==='open'?i.status!=='Resolved':i.status==='Resolved'));
+  const del=isAll.filter(i=>i.deleted_at);if(isFilter==='deleted'&&!del.length)isFilter='open';
+  const L=isFilter==='deleted'?del:isList.filter(i=>isFilter==='all'||(isFilter==='open'?i.status!=='Resolved':i.status==='Resolved'));
   const nOpen=isList.filter(i=>i.status!=='Resolved').length;
   body.innerHTML=`<div class="mr-help">Big problems that run for days or weeks — what happened, every <b>decision</b> (who decided, who approved, the impact) and each follow-up. Open issues and their latest entries go into the Daily Report automatically.</div>
-    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All']].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span><span id="is-imp-st" class="mr-note"></span>${isCanManage()?'<label class="btn" style="cursor:pointer" title="Add documents or photos to an issue, or import a prepared issue file (.qas2issue.json)">⇪ Upload files<input type="file" multiple accept=".json,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.msg,.txt,image/*" hidden onchange="isImportPick(this)"></label><button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
-    <div class="is-grid">${L.map(isCard).join('')||'<div class="op-ok">✓ No issues here.</div>'}</div>`;
+    <div class="op-bar"><div class="mr-pills" style="margin:0">${[['open','Open ('+nOpen+')'],['resolved','Resolved'],['all','All'],...(del.length&&isCanManage()?[['deleted','🗑 Deleted ('+del.length+')']]:[])].map(([k,l])=>`<button type="button" class="mr-pill${isFilter===k?' on':''}" onclick="isFilter='${k}';opRenderIssues()">${l}</button>`).join('')}</div><span style="flex:1"></span><span id="is-imp-st" class="mr-note"></span>${isCanManage()?'<label class="btn" style="cursor:pointer" title="Add documents or photos to an issue, or import a prepared issue file (.qas2issue.json)">⇪ Upload files<input type="file" multiple accept=".json,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.msg,.txt,image/*" hidden onchange="isImportPick(this)"></label><button class="btn primary" type="button" onclick="isEdit(null)">＋ New issue</button>':''}</div>
+    ${isFilter==='deleted'?'<div class="mr-note" style="margin:8px 0">Deleted issues are hidden from the site and the Daily Report, but kept in the database. Open one to restore it.</div>':''}<div class="is-grid">${L.map(isCard).join('')||'<div class="op-ok">✓ No issues here.</div>'}</div>`;
 }
 function isCard(i){const E=isEntries(i.id);const dec=E.filter(x=>x.kind==='decision').length;const last=i.last_update_at||(E.length?E[E.length-1].created_at:i.created_at);const ld=isDays(last);const stale=i.status!=='Resolved'&&ld!=null&&ld>=IS_STALE;
   return `<div class="is-card ${isSevCls(i.severity)}" onclick="isOpen(${i.id})"><div class="is-top"><span class="is-no">${escapeHtml(i.no||'')}</span><span class="is-st ${isStCls(i.status)}">${escapeHtml(i.status)}</span></div>
@@ -7155,7 +7159,7 @@ function isCard(i){const E=isEntries(i.id);const dec=E.filter(x=>x.kind==='decis
     <div class="is-meta"><span>${i.date_found?'Found '+escapeHtml(isD(i.date_found)):'Date not set'}</span><span>${dec} decision${dec===1?'':'s'} · ${E.length} entr${E.length===1?'y':'ies'}${(i.docs||[]).length?' · 📎 '+i.docs.length:''}</span><span class="${stale?'is-stale':''}">${ld==null?'':ld===0?'updated today':'updated '+ld+' d ago'}${stale?' ⚠':''}</span></div></div>`;}
 // ── one issue
 async function isOpen(id){
-  await isLoad();const i=isList.find(x=>String(x.id)===String(id));if(!i)return;isPending=[];
+  await isLoad();const i=isAll.find(x=>String(x.id)===String(id));if(!i)return;isPending=[];
   const E=isEntries(id);const bg=document.getElementById('is-bg');
   const refs=[...(i.photos||[]),...E.flatMap(x=>x.photos||[])];let urls={};try{const u=await sbSignRefs(refs.filter(isSbRef));refs.filter(isSbRef).forEach((r,k)=>urls[r]=u[k]);}catch(e){}
   const img=r=>urls[r]||r;
@@ -7166,19 +7170,45 @@ async function isOpen(id){
     ${(i.photos||[]).length?`<div class="is-ph">${i.photos.map(p=>`<img src="${escapeHtml(img(p))}" onclick="openLightbox(this.src)" alt="">`).join('')}</div>`:''}
     ${isDocsHtml(i)}
     <div class="is-tlh">Timeline <small>${E.length} entr${E.length===1?'y':'ies'}</small></div>
-    <ol class="is-tl">${E.map(x=>`<li class="${x.kind==='decision'?'dec':''}"><div class="is-tlm"><b>${x.kind==='decision'?'DECISION':'Update'}</b><time>${escapeHtml(isD(x.event_date||x.created_at))}</time><span>${escapeHtml(x.username||'')}</span>${x.status?`<span class="is-st ${isStCls(x.status)}">${escapeHtml(x.status)}</span>`:''}</div>
+    <ol class="is-tl">${E.map(x=>`<li class="${x.kind==='decision'?'dec':''}" data-e="${x.id}"><div class="is-tlm"><b>${x.kind==='decision'?'DECISION':'Update'}</b><time>${escapeHtml(isD(x.event_date||x.created_at))}</time><span>${escapeHtml(x.username||'')}</span>${x.status?`<span class="is-st ${isStCls(x.status)}">${escapeHtml(x.status)}</span>`:''}${isCanManage()&&!i.deleted_at?`<button type="button" class="is-ed" title="Edit this entry (date, text, status)" onclick="isEntryEdit(${i.id},${x.id},this)">✎ Edit</button>`:''}</div>
       <div class="is-tln">${escapeHtml(x.note||'').replace(/\n/g,'<br>')}</div>
       ${x.kind==='decision'&&(x.decided_by||x.approved_by||x.impact)?`<div class="is-dec">${x.decided_by?`<span><i>Decided by</i>${escapeHtml(x.decided_by)}</span>`:''}${x.approved_by?`<span><i>Approved by</i>${escapeHtml(x.approved_by)}</span>`:''}${x.impact?`<span><i>Impact</i>${escapeHtml(x.impact)}</span>`:''}</div>`:''}
       ${(x.photos||[]).length?`<div class="is-ph sm">${x.photos.map(p=>`<img src="${escapeHtml(img(p))}" onclick="openLightbox(this.src)" alt="">`).join('')}</div>`:''}</li>`).join('')||'<li class="mr-note">No entries yet.</li>'}</ol>
-    ${isCanAdd()?`<div class="is-add"><div class="is-kind"><label><input type="radio" name="is-k" value="update" checked onchange="isKind()"> Update</label>${isCanManage()?'<label><input type="radio" name="is-k" value="decision" onchange="isKind()"> Decision</label>':''}</div>
+    ${i.deleted_at?`<div class="mr-warn">🗑 This issue was deleted${i.deleted_by?' by '+escapeHtml(i.deleted_by):''} on ${escapeHtml(isD(i.deleted_at))}. It is hidden from the site and the Daily Report.</div>`:''}
+    ${isCanAdd()&&!i.deleted_at?`<div class="is-add"><div class="is-kind"><label><input type="radio" name="is-k" value="update" checked onchange="isKind()"> Update</label>${isCanManage()?'<label><input type="radio" name="is-k" value="decision" onchange="isKind()"> Decision</label>':''}</div>
       <textarea id="is-note" rows="3" placeholder="What happened / what was decided?"></textarea>
       <div class="is-decf" id="is-decf" style="display:none"><input id="is-by" placeholder="Decided by (e.g. EPC / Siemens / Owner)"><input id="is-ap" placeholder="Approved by"><input id="is-im" placeholder="Impact (e.g. ST21 energisation delayed)"></div>
       <div class="is-row"><label>Date <input type="date" id="is-dt" value="${new Date().toISOString().slice(0,10)}" max="${new Date().toISOString().slice(0,10)}"></label><label>Status <select id="is-st">${IS_STATUS.map(s=>`<option${s===i.status?' selected':''}>${s}</option>`).join('')}</select></label>
         <label class="btn sm" style="cursor:pointer">📷 Photos<input type="file" accept="image/*" multiple hidden onchange="isPick(this)"></label><span id="is-pc" class="mr-note"></span><span style="flex:1"></span><button class="btn primary" type="button" onclick="isAddEntry(${i.id},this)">Save entry</button></div></div>`:''}`;
-  document.getElementById('is-foot').innerHTML=`${isCanManage()?`<button class="btn" type="button" onclick="isEdit(${i.id})">✎ Edit issue</button>`:''}<button class="btn" type="button" onclick="isReport(${i.id})">📄 Issue report (PDF)</button><span style="flex:1"></span><button class="btn" type="button" onclick="isClose()">Close</button>`;
+  document.getElementById('is-foot').innerHTML=i.deleted_at?`${isCanManage()?`<button class="btn primary" type="button" onclick="isRestore(${i.id},this)">↺ Restore issue</button>`:''}<span style="flex:1"></span><button class="btn" type="button" onclick="isClose()">Close</button>`:`${isCanManage()?`<button class="btn" type="button" onclick="isEdit(${i.id})">✎ Edit issue</button><button class="btn is-delb" type="button" onclick="isDelete(${i.id},this)">🗑 Delete</button>`:''}<button class="btn" type="button" onclick="isReport(${i.id})">📄 Issue report (PDF)</button><span style="flex:1"></span><button class="btn" type="button" onclick="isClose()">Close</button>`;
   bg.classList.add('show');
 }
 function isClose(){document.getElementById('is-bg').classList.remove('show');}
+// ── delete / restore an issue (hidden, never removed from the database)
+async function isDelete(id,btn){const i=isAll.find(x=>String(x.id)===String(id));if(!i)return;
+  if(!confirm(`Delete ${i.no||'this issue'} — ${i.title}?\n\nIt will be hidden from Major Issues, Today and the Daily Report. It stays in the database (with its timeline, photos and documents) and can be restored from the "Deleted" filter.`))return;
+  btn.disabled=true;try{const now=new Date().toISOString();await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{deleted_at:now,deleted_by:currentUser?.name||'',updated_at:now});
+    await isLoad(true);isClose();showToast((i.no||'Issue')+' deleted');if(opPage==='issues')opRenderIssues();isDrRender();}
+  catch(e){btn.disabled=false;showToast(/deleted_/.test(e.message)?'Run qas2_issues_delete_setup.sql in Supabase first, then try again.':'Could not delete: '+e.message,'error');}}
+async function isRestore(id,btn){btn.disabled=true;try{await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{deleted_at:null,deleted_by:null,updated_at:new Date().toISOString()});await isLoad(true);showToast('Issue restored ✓');isFilter='all';isOpen(id);if(opPage==='issues')opRenderIssues();isDrRender();}catch(e){btn.disabled=false;showToast('Could not restore: '+e.message,'error');}}
+// ── edit one timeline entry: the corrected entry is saved as a new row and the old one is marked superseded (kept, not shown)
+async function isEntryReplace(x,ch){const row={issue_id:x.issue_id,kind:x.kind||'update',note:x.note||'',status:x.status||null,event_date:x.event_date||null,decided_by:x.decided_by||null,approved_by:x.approved_by||null,impact:x.impact||null,photos:x.photos||[],username:x.username||currentUser?.name||'',...ch};
+  await sbFetch('qas2_issue_updates','POST',row);await sbFetch('qas2_issue_updates?id=eq.'+x.id,'PATCH',{superseded:true});}
+function isEntryEdit(iid,eid,btn){const x=isUpd.find(u=>String(u.id)===String(eid));const li=btn.closest('li');if(!x||!li)return;const today=new Date().toISOString().slice(0,10);
+  li.innerHTML=`<div class="is-eform"><div class="is-row"><label>Date <input type="date" class="ee-d" value="${escapeHtml(String(x.event_date||x.created_at||'').slice(0,10))}" max="${today}"></label>
+    <label>Type <select class="ee-k"><option value="update"${x.kind!=='decision'?' selected':''}>Update</option><option value="decision"${x.kind==='decision'?' selected':''}>Decision</option></select></label>
+    <label>Status <select class="ee-s"><option value="">—</option>${IS_STATUS.map(s=>`<option${s===x.status?' selected':''}>${s}</option>`).join('')}</select></label></div>
+    <textarea class="ee-n" rows="4">${escapeHtml(x.note||'')}</textarea>
+    <div class="is-decf"><input class="ee-by" placeholder="Decided by" value="${escapeHtml(x.decided_by||'')}"><input class="ee-ap" placeholder="Approved by" value="${escapeHtml(x.approved_by||'')}"><input class="ee-im" placeholder="Impact" value="${escapeHtml(x.impact||'')}"></div>
+    <div class="is-row"><button type="button" class="btn sm is-delb" onclick="isEntryRemove(${iid},${eid},this)">Remove entry</button><span style="flex:1"></span><button type="button" class="btn sm" onclick="isOpen(${iid})">Cancel</button><button type="button" class="btn sm primary" onclick="isEntrySave(${iid},${eid},this)">Save entry</button></div></div>`;
+  li.querySelector('.ee-d').focus();}
+async function isEntrySave(iid,eid,btn){const x=isUpd.find(u=>String(u.id)===String(eid));const li=btn.closest('li');if(!x||!li)return;const v=c=>li.querySelector(c).value.trim();
+  const note=v('.ee-n');if(!note){showToast('The entry text cannot be empty.','error');return;}
+  const kind=v('.ee-k');const ch={event_date:v('.ee-d')||null,kind,note,status:v('.ee-s')||null,decided_by:kind==='decision'?v('.ee-by')||null:null,approved_by:kind==='decision'?v('.ee-ap')||null:null,impact:kind==='decision'?v('.ee-im')||null:null};
+  btn.disabled=true;try{await isEntryReplace(x,ch);await isLoad(true);showToast('Entry updated ✓');isOpen(iid);if(opPage==='issues')opRenderIssues();isDrRender();}
+  catch(e){btn.disabled=false;showToast('Could not save: '+(/superseded/.test(e.message)?'run qas2_issues_docs_setup.sql first.':e.message),'error');}}
+async function isEntryRemove(iid,eid,btn){if(!confirm('Remove this entry from the timeline?\n\nIt is hidden from the site and the reports, but kept in the database.'))return;btn.disabled=true;
+  try{await sbFetch('qas2_issue_updates?id=eq.'+eid,'PATCH',{superseded:true});await isLoad(true);showToast('Entry removed');isOpen(iid);if(opPage==='issues')opRenderIssues();isDrRender();}catch(e){btn.disabled=false;showToast('Could not remove: '+e.message,'error');}}
 function isKind(){const d=document.querySelector('input[name="is-k"]:checked')?.value==='decision';document.getElementById('is-decf').style.display=d?'':'none';const st=document.getElementById('is-st');if(d&&st&&['Open','Under investigation'].includes(st.value))st.value='Decision taken';}
 async function isPick(inp){for(const f of [...inp.files].slice(0,6)){try{isPending.push(await compressImage(f));}catch(e){}}inp.value='';const c=document.getElementById('is-pc');if(c)c.textContent=isPending.length?isPending.length+' photo(s) attached':'';}
 async function isAddEntry(id,btn){
@@ -7218,8 +7248,10 @@ async function isSave(id,btn){
   btn.disabled=true;
   try{const old=id?isList.find(x=>String(x.id)===String(id)):null;
     let firstPh=[];if(isPending.length){const st=await sbStoreList(isPending,'issues/'+(id||'new'));if(!id&&isDocDraft)firstPh=st;else o.photos=[...((old&&old.photos)||[]),...st];}
-    if(id){await sbFetch('qas2_issues?id=eq.'+id,'PATCH',o);}
-    else{const mx=Math.max(0,...isList.map(x=>+(String(x.no||'').match(/(\d+)$/)||[0,0])[1]));o.no='QAS2-ISS-'+String(mx+1).padStart(3,'0');o.created_by=currentUser?.name||'';o.last_update_at=new Date().toISOString();o.last_update_note='Issue opened.';
+    if(id){await sbFetch('qas2_issues?id=eq.'+id,'PATCH',o);
+      const first=isUpd.filter(u=>String(u.issue_id)===String(id)&&!u.superseded).sort((a,b)=>a.id-b.id)[0];
+      if(old&&o.date_found&&o.date_found!==old.date_found&&first&&(!old.date_found||first.event_date===old.date_found)){try{await isEntryReplace(first,{event_date:o.date_found});}catch(e){}}}
+    else{const mx=Math.max(0,...isAll.map(x=>+(String(x.no||'').match(/(\d+)$/)||[0,0])[1]));o.no='QAS2-ISS-'+String(mx+1).padStart(3,'0');o.created_by=currentUser?.name||'';o.last_update_at=new Date().toISOString();o.last_update_note='Issue opened.';
       const r=await sbFetch('qas2_issues','POST',o);id=Array.isArray(r)&&r[0]?r[0].id:null;
       if(id)await sbFetch('qas2_issue_updates','POST',{issue_id:id,kind:'update',note:o.description||'Issue opened.',status:o.status,event_date:o.date_found,photos:firstPh,username:currentUser?.name||''});
       if(id&&isDocDraft&&isDocDraft.files.length){try{const add=[];for(const f of isDocDraft.files)add.push(await isUploadDoc(id,f.name,f));await sbFetch('qas2_issues?id=eq.'+id,'PATCH',{docs:add});}catch(e){showToast('Issue saved, but the document was not: '+e.message,'error');}}

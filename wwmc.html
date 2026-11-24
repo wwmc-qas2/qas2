@@ -6959,7 +6959,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1620';
+const APP_BUILD='20261124-1610';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -7946,7 +7946,10 @@ async function anxImportCR(file){
   if(!mrCanEdit()){showToast('Only supervisors and admins can update the CR cases.','error');return;}
   if(!/\.xlsx$/i.test(file.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
   showToast('Reading '+file.name+' …');
-  try{const R=await crxRead(await file.arrayBuffer());if(!R||!R.rows.length)throw new Error('No CR list was found in this file — it needs a "CR No" column.');
+  try{const buf=await file.arrayBuffer();const R=await crxRead(buf);
+    if(!R||!R.rows.length){const k=anxDetect(await xlOpen(buf));
+      if(k){if(confirm(`This file is not a CR list — it looks like Annexure-${ANX[k].n} (${ANX[k].title}).\n\nUpload it as Annexure-${ANX[k].n}?`))return anxUpload(file,k);return;}
+      throw new Error('No CR list was found in this file — it needs a "CR No" column.');}
     const db=await sbFetch('qas2_mr_cr_cases?select=*&order=cr_no.asc')||[];
     if(db.length){const has=new Set(Object.keys(db[0]));R.rows.forEach(o=>Object.keys(o).forEach(f=>{if(!has.has(f))delete o[f];}));}const byNo=new Map(db.map(c=>[crxKey(c.cr_no),c]));
     const add=[],upd=[],same=[],seen=new Set();

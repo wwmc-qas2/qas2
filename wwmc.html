@@ -6957,7 +6957,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1500';
+const APP_BUILD='20261124-1555';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -6999,17 +6999,38 @@ async function isPdfLib(){if(window.pdfjsLib)return window.pdfjsLib;
 async function isReadPdf(file){
   const lib=await isPdfLib();const pdf=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
   let meta={};try{meta=(await pdf.getMetadata()).info||{};}catch(e){}
-  const pages=[],imgs=[];
+  const pages=[],imgs=[],labels=[];
+  const CAP=/^(fig(?:ure)?|photo|picture|image|pic)\.?\s*[“”"'(]?\s*([A-Z0-9]{1,3}(?:\s*[\/,&-]\s*[A-Z0-9]{1,3})*)\s*[“”"')]?\s*[:.\-–—]?\s*(.*)$/i;
   for(let p=1;p<=Math.min(pdf.numPages,30);p++){const pg=await pdf.getPage(p);const tc=await pg.getTextContent();
     let line='',lines=[],lastY=null;tc.items.forEach(it=>{const y=Math.round(it.transform[5]);if(lastY!==null&&Math.abs(y-lastY)>2){if(line.trim())lines.push(line.trim());line='';}line+=(line&&!/\s$/.test(line)&&!/^\s/.test(it.str)?' ':'')+it.str;lastY=y;});if(line.trim())lines.push(line.trim());pages.push(lines);
+    // figure captions on this page, with their position (several can sit on one line)
+    const caps=[];const T=tc.items.filter(it=>it.str&&it.str.trim());
+    for(let k=0;k<T.length;k++){if(!/^(fig(ure)?|photo|picture|image|pic)(?![a-z])\.?/i.test(T[k].str.trim()))continue;const y=T[k].transform[5],x=T[k].transform[4];let s=T[k].str;
+      for(let j=k+1;j<T.length&&Math.abs(T[j].transform[5]-y)<=3&&!/^(fig(ure)?|photo|picture|image|pic)(?![a-z])\.?/i.test(T[j].str.trim());j++)s+=(/\s$/.test(s)||/^\s/.test(T[j].str)?'':' ')+T[j].str;
+      const m=s.replace(/\s+/g,' ').trim().match(CAP);if(!m)continue;const kind=/^ph/i.test(m[1])?'Photo':'Figure';const rest=m[3].replace(/^[.:\-–—\s]+/,'').trim();
+      caps.push({x,y,t:(kind+' '+m[2].replace(/\s+/g,'')+(rest?' – '+rest:'')).slice(0,90)});}
     if(imgs.length<12){try{const ops=await pg.getOperatorList();const O=lib.OPS;
-      for(let k=0;k<ops.fnArray.length&&imgs.length<12;k++){if(ops.fnArray[k]!==O.paintImageXObject)continue;const name=ops.argsArray[k][0];
+      // follow the drawing matrix so each picture's place on the page is known
+      const mul=(m,n)=>[m[0]*n[0]+m[2]*n[1],m[1]*n[0]+m[3]*n[1],m[0]*n[2]+m[2]*n[3],m[1]*n[2]+m[3]*n[3],m[0]*n[4]+m[2]*n[5]+m[4],m[1]*n[4]+m[3]*n[5]+m[5]];
+      let ctm=[1,0,0,1,0,0];const stack=[];
+      for(let k=0;k<ops.fnArray.length&&imgs.length<12;k++){const fn=ops.fnArray[k],a=ops.argsArray[k];
+        if(fn===O.save){stack.push(ctm);continue;}if(fn===O.restore){ctm=stack.pop()||[1,0,0,1,0,0];continue;}
+        if(fn===O.transform){ctm=mul(ctm,a);continue;}
+        if(fn===O.paintFormXObjectBegin){stack.push(ctm);if(Array.isArray(a[0])&&a[0].length===6)ctm=mul(ctm,a[0]);continue;}if(fn===O.paintFormXObjectEnd){ctm=stack.pop()||[1,0,0,1,0,0];continue;}
+        if(fn!==O.paintImageXObject)continue;const name=a[0];
         const im=await new Promise(r=>{try{(name.startsWith('g_')?pg.commonObjs:pg.objs).get(name,r);}catch(e){r(null);}setTimeout(()=>r(null),3000);});
         if(!im||im.width<220||im.height<160)continue;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const x=c.getContext('2d');
         if(im.bitmap)x.drawImage(im.bitmap,0,0);else if(im.data){const id=x.createImageData(im.width,im.height);const d=im.data;
-          if(d.length===im.width*im.height*4)id.data.set(d);else if(d.length===im.width*im.height*3){for(let a=0,b=0;a<d.length;a+=3,b+=4){id.data[b]=d[a];id.data[b+1]=d[a+1];id.data[b+2]=d[a+2];id.data[b+3]=255;}}else continue;x.putImageData(id,0,0);}else continue;
-        const mx=1400,sc=Math.min(1,mx/Math.max(c.width,c.height));const o=document.createElement('canvas');o.width=Math.round(c.width*sc);o.height=Math.round(c.height*sc);o.getContext('2d').drawImage(c,0,0,o.width,o.height);imgs.push(o.toDataURL('image/jpeg',0.8));}}catch(e){}}}
-  return {meta,pages,imgs,n:pdf.numPages};
+          if(d.length===im.width*im.height*4)id.data.set(d);else if(d.length===im.width*im.height*3){for(let a2=0,b=0;a2<d.length;a2+=3,b+=4){id.data[b]=d[a2];id.data[b+1]=d[a2+1];id.data[b+2]=d[a2+2];id.data[b+3]=255;}}else continue;x.putImageData(id,0,0);}else continue;
+        // the caption that belongs to this picture: the nearest one below it, otherwise the nearest above
+        const xs=[ctm[4],ctm[4]+ctm[0]+ctm[2]],ys=[ctm[5],ctm[5]+ctm[1]+ctm[3]];const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),cx=(x0+x1)/2;
+        let best=null,bd=1e9;caps.forEach(cp=>{const below=cp.y<=y0+4,dy=below?y0-cp.y:cp.y-y1;if(dy<-4)return;const inX=cp.x>=x0-40&&cp.x<=x1+20;const d=(below?0:60)+Math.max(0,dy)+(inX?0:Math.min(200,Math.abs(cp.x-cx))*0.6);if(d<bd&&Math.max(0,dy)<180){bd=d;best=cp;}});
+        if(!best&&caps.length===1)best=caps[0];const label=best?best.t:'';
+        const mx=1400,sc=Math.min(1,mx/Math.max(c.width,c.height));const W=Math.round(c.width*sc),H=Math.round(c.height*sc);const band=label?Math.max(30,Math.round(Math.max(W,H)*0.045)):0;
+        const o=document.createElement('canvas');o.width=W;o.height=H+band;const g=o.getContext('2d');g.drawImage(c,0,0,W,H);
+        if(label){g.fillStyle='#12264A';g.fillRect(0,H,W,band);g.fillStyle='#fff';const fs=Math.round(band*0.52);g.font='600 '+fs+'px "Segoe UI",Arial,sans-serif';g.textBaseline='middle';let t=label;while(t.length>8&&g.measureText(t).width>W-band*0.8)t=t.slice(0,-2);if(t!==label)t=t.replace(/\s\S*$/,'')+'…';g.fillText(t,Math.round(band*0.4),H+band/2);}
+        imgs.push(o.toDataURL('image/jpeg',0.8));labels.push(label);}}catch(e){}}}
+  return {meta,pages,imgs,labels,n:pdf.numPages};
 }
 function isDraftFromText(r,fname){
   // 1. clean: drop running headers/footers (lines repeated on most pages) and document-control lines

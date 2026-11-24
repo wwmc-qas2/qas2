@@ -6954,7 +6954,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1215';
+const APP_BUILD='20261124-1240';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -7009,58 +7009,88 @@ async function isReadPdf(file){
   return {meta,pages,imgs,n:pdf.numPages};
 }
 function isDraftFromText(r,fname){
-  const all=r.pages.flat();const text=all.join('\n');
-  const junk=/^(page \d+|\d+ of \d+|confidential|wahat|al[- ]wusta|wwmc|ceec|china energy|doc(ument)? no|rev(ision)?\b|date\s*:|prepared by|approved by|checked by|qassim|www\.|http)/i;
+  // 1. clean: drop running headers/footers (lines repeated on most pages) and document-control lines
+  const np=r.pages.length,cnt={};r.pages.forEach(p=>new Set(p).forEach(l=>cnt[l]=(cnt[l]||0)+1));
+  const rep=l=>np>=2&&cnt[l]>=Math.max(2,Math.ceil(np*0.5))&&l.length<160&&!/^(figures?|photos?|appendix|annex|attachments?)\b/i.test(l);
+  const ctl=/^.{0,40}\brev(ision)?\.?\s*\d+\b.{0,40}$|www\.|https?:|\S+@\S+\.\w|general use|^page \d+|\bpage \d+ of \d+|^\d+\s*(of|\/)\s*\d+$|^fig(ure|\.)[\s"“”'(]+[a-z0-9]{1,3}\s*["“”')]?\s*$/i;
+  const first=(r.pages[0]||[]).filter(l=>!ctl.test(l));
+  const all=r.pages.flat().filter(l=>l&&!rep(l)&&!ctl.test(l));const text=all.join('\n');const raw=r.pages.flat().join('\n');
+  const junk=/^(page \d+|\d+ of \d+|confidential|wahat|al[- ]wusta|wwmc|ceec|china energy|doc(ument)? no|rev(ision)?\b|date\s*:|prepared by|approved by|checked by|qassim|signature)/i;
+  const lbl=/^[A-Z#][A-Za-z.\/ #]{1,30}:\s/;
   const okLine=l=>l.length>=12&&l.length<=140&&!junk.test(l)&&/[a-z]/i.test(l)&&!/^[\d\W]+$/.test(l);
+  const cut=(s,n)=>s.length>n?s.slice(0,n).replace(/\s\S*$/,'')+' …':s;
+  const tidy=s=>s.replace(/\s+/g,' ').replace(/(\d)\s+(st|nd|rd|th)\b/g,'$1$2').replace(/\s+([.,;:)])/g,'$1').trim();
+  // 2. "Label: value" fields (report forms put several on one line)
+  const kv={};all.slice(0,80).forEach(l=>{const re=/([A-Z][A-Za-z\/ ]{1,30}?(?: No\.)?)\s*:\s*(.+?)(?=\s+[A-Z][A-Za-z\/ ]{1,30}?(?: No\.)?\s*:\s|$)/g;let m;while((m=re.exec(l))){const k=m[1].trim().toLowerCase(),v=m[2].trim().replace(/\.$/,'');if(v&&!(k in kv))kv[k]=v;}});
+  const kvGet=(...rxs)=>{for(const rx of rxs){const k=Object.keys(kv).find(x=>rx.test(x));if(k)return kv[k];}return '';};
+  // 3. sections
+  const isHead=l=>/^(\d+[\d.]*\s*)?[A-Z][A-Za-z &/()'-]{3,60}:?$/.test(l)&&!/[.]$/.test(l)&&l.replace(/^[\d.\s]+/,'').split(/\s+/).length<=8;
+  const capHead=l=>l.length<=60&&l===l.toUpperCase()&&/[A-Z]{3}/.test(l)&&!/[.]$/.test(l)&&!/^[•\-–]/.test(l)&&!/^\d+\s+\S+\s+\d/.test(l);
+  const numHead=l=>/^\d+[\d.]*\s/.test(l)&&isHead(l);
+  const sect=(rx,from=0)=>{const i=all.findIndex((l,k)=>k>=from&&rx.test(l)&&(isHead(l)||capHead(l)));if(i<0)return null;const h=all[i],num=/^\d/.test(h),cap=capHead(h)&&!num,out=[];
+    for(let k=i+1;k<all.length;k++){const l=all[k];if(capHead(l)&&!/^\d/.test(l)&&out.length)break;if(out.length>2&&(num?numHead(l):!cap&&isHead(l)))break;if(/^(signature|date)\s*:/i.test(l))continue;out.push(l);}return {i,h,lines:out};};
+  const items=(ls,max)=>{const out=[];let cur='';const push=()=>{if(cur.trim())out.push(cur);cur='';};
+    for(const l of ls){if(/^(fig(ure)?|photo)\s*[\d“"'(]/i.test(l))continue;if(numHead(l)){push();continue;}if(/^([•\-–▪●*]|\d+[.)])\s/.test(l)){push();cur=l.replace(/^([•\-–▪●*]|\d+[.)])\s*/,'');}else if(/^o\s/.test(l)){push();}else if(cur)cur+=' '+l;}
+    push();return out.slice(0,max).map(x=>cut(tidy(x),230));};
+  const sumRx=/^(\d+[\d.]*\s*)?(executive summary|summary|incident description|description of (the )?(incident|event|problem|damage)|background|incident overview|overview|event description|what happened|problem description|customer complaint|complaint|enquiry|subject|scope of (the )?(inspection|work)|introduction|purpose)\b/i;
+  const S=sect(sumRx);let summary=S?tidy(S.lines.filter(l=>!/^(figure|fig\.|photo)\s*\d/i.test(l)).join(' ')):'';
+  // 4. title
   let title=String(r.meta.Title||'').trim();if(!title||/^(microsoft|untitled|document|\d)/i.test(title)||title.length<8)title='';
-  const head=all.slice(0,40);const KW=/(report|incident|briefing|failure|damage|issue|problem|investigation|method statement|trip|leak|ncr|notification|statement|notice|memo)/i;
-  const secRx=/^(\d+[\d.]*\s*)?(executive summary|summary|incident description|description of (the )?(incident|event|problem|damage)|background|incident overview|overview|event description|what happened|problem description|introduction|purpose)\b/i;
-  if(!title){let k=head.findIndex(l=>okLine(l)&&KW.test(l));if(k<0)k=head.findIndex(okLine);
+  const head=first.slice(0,40);const KW=/(report|incident|briefing|failure|damage|issue|problem|investigation|method statement|trip|leak|ncr|notification|statement|notice|memo)/i;
+  const generic=t=>!t||(t.split(/\s+/).length<=3&&/(report|statement|briefing|notice|memo|inspection|record|form)/i.test(t));
+  const unitKV=kvGet(/^unit( name| no\.?| tag)?$/,/^(equipment( tag| no\.?| id)?|tag( no\.?)?|asset( no\.?)?|position)$/),eqType=kvGet(/^equipment (type|description)$/,/^system$/);
+  let subj=kvGet(/^(subject|title|report title)$/);
+  if(!subj&&summary){const s1=summary.split(/(?<=[.!?])\s/)[0];const m=s1.match(/\b(following|due to|resulting from|caused by|after)\s+(.+)/i);subj=(m?m[2]:s1).replace(/[.\s]+$/,'');subj=subj.charAt(0).toUpperCase()+subj.slice(1);}
+  if(!title&&subj&&(unitKV||eqType))title=[unitKV,eqType].filter(Boolean).join(' ')+' – '+cut(subj,100).replace(/ …$/,'');
+  if(!title){let k=head.findIndex(l=>okLine(l)&&!lbl.test(l)&&KW.test(l));if(k<0)k=head.findIndex(l=>okLine(l)&&!lbl.test(l));
     if(k>=0){title=head[k];
-      // a bare heading such as "INCIDENT REPORT" or "METHOD STATEMENT": add the subject line under it
-      if(title.split(/\s+/).length<=3){const nx=head.slice(k+1,k+4).find(l=>okLine(l)&&!secRx.test(l)&&!/^(incident )?date\b|^location\b|^project\b/i.test(l));if(nx){const cap=title===title.toUpperCase()?title.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):title;title=cap+' – '+nx;k=head.indexOf(nx);}}
-      // a title broken over two lines
-      const nx2=head[k+1];if(nx2&&title.length>=40&&nx2.length<=40&&!/\d/.test(nx2)&&!secRx.test(nx2)&&!/[.:]$/.test(nx2)&&/^[A-Z]/.test(nx2))title+=' '+nx2;}
+      if(generic(title)){const nx=head.slice(k+1,k+4).find(l=>okLine(l)&&!lbl.test(l)&&!sumRx.test(l)&&!/^(incident )?date\b|^location\b|^project\b/i.test(l));if(nx){const t0=title===title.toUpperCase()?title.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):title;title=t0+' – '+nx;k=head.indexOf(nx);}}
+      const nx2=head[k+1];if(nx2&&title.length>=40&&nx2.length<=40&&!/\d/.test(nx2)&&!sumRx.test(nx2)&&!/[.:]$/.test(nx2)&&/^[A-Z]/.test(nx2))title+=' '+nx2;}
     else title=fname.replace(/\.[^.]+$/,'').replace(/^[0-9a-f]{8}-/,'').replace(/[_-]+/g,' ');}
   title=title.replace(/\s+/g,' ').replace(/^[\d.\s]+/,'').replace(/\s*[–-]\s*(and|or|of|the)?\s*$/i,'').slice(0,140);
-  // description: the summary / incident description / purpose section if there is one, otherwise the first real paragraphs
-  let start=all.findIndex(l=>secRx.test(l));let body=[];
-  const from=start>=0?start+1:Math.max(0,all.indexOf(title)+1);
-  const isHead=l=>/^(\d+[\d.]*\s*)?[A-Z][A-Za-z &/()'-]{3,60}:?$/.test(l)&&!/[.]$/.test(l);
-  for(let k=from;k<all.length&&body.join(' ').length<1100;k++){const l=all[k];if(start>=0&&k>from&&isHead(l)&&body.length>2)break;if(junk.test(l)||l.length<3||/^(figure|fig\.|photo)\s*\d/i.test(l))continue;body.push(l);}
-  // actions / decisions taken, if the document lists them
-  const actRx=/^(\d+[\d.]*\s*)?(immediate (response|actions?)|corrective actions?|mitigation( plan)?|actions? taken|decisions?|proposed (preliminary )?solution|recommendations?|way forward|next steps|conclusion)\b/i;
-  const ai=all.findIndex((l,i)=>i>=from&&actRx.test(l));const acts=[];
-  if(ai>=0){let cur='';for(let k=ai+1;k<all.length&&acts.length<5;k++){const l=all[k];if(isHead(l)&&!/^\d+\.\s/.test(l)&&(cur||acts.length))break;if(junk.test(l)||/^(figure|fig\.)\s*\d/i.test(l))continue;
-      if(/^([•\-–▪●*]|\d+[.)]\s)/.test(l)){if(cur)acts.push(cur);cur=l.replace(/^([•\-–▪●*]|\d+[.)])\s*/,'');}else if(cur)cur+=' '+l;else cur=l;}
-    if(cur&&acts.length<5)acts.push(cur);}
-  let description=body.join(' ').replace(/\s+/g,' ').replace(/(\d)\s+(st|nd|rd|th)\s+/g,'$1$2 ').trim();if(description.length>1100)description=description.slice(0,1100).replace(/\s\S*$/,'')+' …';
-  if(acts.length)description+='\n\nActions:\n'+acts.map(x=>{x=x.replace(/\s+/g,' ').replace(/(\d)\s+(st|nd|rd|th)\b/g,'$1$2');return '• '+(x.length>240?x.slice(0,240).replace(/\s\S*$/,'')+' …':x);}).join('\n');
-  // date found: first full date in the text
-  const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec';const mi=m=>['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m.slice(0,3).toLowerCase());
-  let date=null;const p2=n=>String(n).padStart(2,'0');let m;
-  if((m=text.match(new RegExp('\\b(\\d{1,2})\\s*(?:st|nd|rd|th)?[\\s-]+('+MON+')[a-z]*[\\s,.-]+(20\\d{2})\\b','i'))))date=m[3]+'-'+p2(mi(m[2])+1)+'-'+p2(m[1]);
-  else if((m=text.match(new RegExp('\\b('+MON+')[a-z]*\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(20\\d{2})\\b','i'))))date=m[3]+'-'+p2(mi(m[1])+1)+'-'+p2(m[2]);
-  else if((m=text.match(/\b(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})\b/)))date=m[1]+'-'+p2(m[2])+'-'+p2(m[3]);
-  else if((m=text.match(/\b(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})\b/)))date=m[3]+'-'+p2(m[2])+'-'+p2(m[1]);
-  if(date&&(isNaN(new Date(date))||date>new Date().toISOString().slice(0,10)))date=null;
-  // units and KKS
-  const units=[...new Set((text.match(/\b(GT|ST|HRSG|GSUT|STG)\s?-?(1[1-3]|2[12])\b/gi)||[]).map(u=>u.toUpperCase().replace(/[\s-]/g,'').replace(/^STG/,'ST')))].slice(0,6);
-  const kks=[...new Set(text.match(/\b\d{2}[A-Z]{3}\d{2}[A-Z]{2}\d{3}\b/g)||[])].slice(0,8);
-  const t=text.toLowerCase();const has=w=>w.some(x=>t.includes(x));
-  const category=has(['kv','cable','transformer','breaker','switchgear','busbar','generator','relay'])?'Electrical':has(['dcs','transmitter','instrument','signal','sensor','plc','control loop'])?'I&C':has(['pump','valve','pipe','bearing','vacuum','seal','compressor','fan','turbine casing','leak'])?'Mechanical':has(['concrete','foundation','civil','road','fence'])?'Civil':has(['injury','first aid','fire','hse'])?'HSE':'Other';
-  const severity=has(['damage','incident','trip','fire','injury','failure','burn','explosion'])?'High':'Medium';
-  const impact=[has(['injury','safety','hazard','incident'])&&'Safety',has(['trip','outage','unavailable','availability','shutdown','damage'])&&'Availability',has(['delay','schedule','lead time'])&&'Schedule',has(['cost','replace','order','purchase'])&&'Cost',has(['spill','environment','emission'])&&'Environment'].filter(Boolean);
-  if(kks.length)description+=(description?'\n\n':'')+'KKS mentioned: '+kks.join(', ');
-  const loc=(all.find(l=>/^location\s*:?\s+\S/i.test(l))||'').replace(/^location\s*:?\s*/i,'').slice(0,80)||null;
-  return {title,description,date_found:date,location:loc,equipment:units,category,severity,impact,status:'Open',photos:r.imgs};
+  if(!summary){const from=Math.max(0,all.indexOf(title)+1);const b=[];for(let k=from;k<all.length&&b.join(' ').length<900;k++){const l=all[k];if(junk.test(l)||l.length<3||lbl.test(l))continue;b.push(l);}summary=tidy(b.join(' '));}
+  summary=cut(summary,900);
+  // 5. cause, findings and actions
+  const C=sect(/^(\d+[\d.]*\s*)?((immediate|preliminary|probable|direct)?\s*(root )?cause|causes)\b/i);
+  const F=sect(/^(\d+[\d.]*\s*)?(findings|observations|inspection (findings|results)|job performed|work performed|results)\b/i);
+  const A=sect(/^(\d+[\d.]*\s*)?(immediate (response|actions?)|corrective actions?|mitigation( plan)?|actions? taken|decisions?|proposed (preliminary )?solution|conclusions?|recommendations?|way forward|next steps)\b/i,S?S.i:0);
+  const finds=F?items(F.lines,8):[];const acts=A?items(A.lines,6):[];
+  // 6. date: a labelled date first, then the first date in the text
+  const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec';const mi=m=>['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m.slice(0,3).toLowerCase());const p2=n=>String(n).padStart(2,'0');
+  const pd=x=>{let m;x=String(x||'');
+    if((m=x.match(new RegExp('\\b(\\d{1,2})\\s*(?:st|nd|rd|th)?[\\s-]+('+MON+')[a-z]*[\\s,.-]+(20\\d{2})\\b','i'))))return m[3]+'-'+p2(mi(m[2])+1)+'-'+p2(m[1]);
+    if((m=x.match(new RegExp('\\b('+MON+')[a-z]*\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(20\\d{2})\\b','i'))))return m[3]+'-'+p2(mi(m[1])+1)+'-'+p2(m[2]);
+    if((m=x.match(/\b(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})\b/)))return m[1]+'-'+p2(m[2])+'-'+p2(m[3]);
+    if((m=x.match(/\b(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})\b/)))return m[3]+'-'+p2(m[2])+'-'+p2(m[1]);return null;};
+  const okD=d=>d&&!isNaN(new Date(d))&&d<=new Date().toISOString().slice(0,10)?d:null;
+  const lineD=(all.find(l=>/^(incident|event|failure) date\b/i.test(l))||'');
+  const date=okD(pd(kvGet(/^(incident|event|failure) date$/,/^date of (the )?(incident|event|failure)$/,/^date found$/)))||okD(pd(lineD))||okD(pd(kvGet(/^(inspection|report|visit) date$/,/^date$/)))||okD(pd(text));
+  // 7. units, KKS, location, category, severity, impact
+  const um=(raw.match(/\b(GT|ST|HRSG|GSUT|STG)\s?-?(1[1-3]|2[12])\b|\b(E?DG|UAT|BFP|CEP|CWP|AUX)\s?-?\d{1,2}\b/gi)||[]).map(u=>u.toUpperCase().replace(/\s/g,'').replace(/^STG/,'ST').replace(/^(GT|ST|HRSG|GSUT)-/,'$1').replace(/^(E?DG|UAT|BFP|CEP|CWP|AUX)-?(\d)/,'$1-$2'));
+  if(unitKV&&unitKV.length<=12)um.unshift(unitKV.toUpperCase());const units=[...new Set(um)].slice(0,6);
+  const kks=[...new Set(raw.match(/\b\d{2}[A-Z]{3}\d{2}[A-Z]{2}\d{3}\b/g)||[])].slice(0,8);
+  let loc=(all.find(l=>/^location\s*:?\s+\S/i.test(l))||'').replace(/^location\s*:?\s*/i,'')||kvGet(/^(site )?location$/,/^area$/);if(/power plant|qassim|project|^site$/i.test(loc))loc='';loc=loc.slice(0,80)||null;
+  const t=text.toLowerCase();const has=w=>w.some(x=>t.includes(x));const score=ws=>ws.reduce((n,w)=>n+(t.split(w).length-1),0);
+  const CAT={Electrical:['kv','cable','transformer','breaker','switchgear','busbar','relay','alternator','megger','insulation','earthing'],'I&C':['dcs','transmitter','instrument','signal','sensor','plc','control loop','ecu','logic'],Mechanical:['pump','valve','pipe','bearing','vacuum','seal','compressor','fan','leak','engine','turbocharger','rust','corrosion','cylinder','liner','crankshaft','cooler','lube oil','vibration'],Civil:['concrete','foundation','civil','road','fence','building'],HSE:['injury','first aid','hse','near miss'],'Process / Chemistry':['chemical','dosing','conductivity','ph ','water quality']};
+  let category='Other',best=0;for(const k in CAT){const s=score(CAT[k]);if(s>best){best=s;category=k;}}
+  const severity=has(['damage','incident','trip','fire','injury','failure','burn','explosion','severe','heavy rust','strip down','not approved'])?'High':'Medium';
+  const impact=[has(['injury','safety','hazard','incident'])&&'Safety',has(['trip','outage','unavailable','availability','shutdown','damage','strip down','out of service'])&&'Availability',has(['delay','schedule','lead time'])&&'Schedule',has(['cost','replace','order','purchase','spare parts'])&&'Cost',has(['spill','environment','emission'])&&'Environment'].filter(Boolean);
+  // 8. description
+  const det=['report date','unit name','equipment type','job status','contractor','customer name'].filter(k=>kv[k]).map(k=>k.replace(/\b\w/g,c=>c.toUpperCase())+': '+kv[k]);
+  let description=summary;
+  if(C&&C.lines.length)description+='\n\nCause: '+cut(tidy(C.lines.join(' ')),400);
+  if(finds.length)description+='\n\nFindings:\n'+finds.map(x=>'• '+x).join('\n');
+  if(acts.length)description+='\n\nActions / recommendations:\n'+acts.map(x=>'• '+x).join('\n');
+  if(kks.length)description+='\n\nKKS mentioned: '+kks.join(', ');
+  if(det.length)description+='\n\n'+det.join(' · ');
+  return {title,description:description.trim(),date_found:date,location:loc,equipment:units,category,severity,impact,status:'Open',photos:r.imgs};
 }
 async function isNewFromDoc(btn){
   const files=isAttachFiles;const pdf=files.find(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name));if(!pdf){showToast('Choose a PDF to read.','error');return;}
   btn.disabled=true;btn.innerHTML='<b>Reading '+escapeHtml(pdf.name)+'…</b>';
   try{const r=await isReadPdf(pdf);const d=isDraftFromText(r,pdf.name);isAttachFiles=[];isDocDraft={files};
     isEdit(null,d);const bn=document.getElementById('is-body');bn.insertAdjacentHTML('afterbegin',`<div class="mr-help" style="margin-top:0">📄 Filled from <b>${escapeHtml(pdf.name)}</b> (${r.n} page${r.n===1?'':'s'}, ${d.photos.length} photo${d.photos.length===1?'':'s'} found). Check the title and the summary, change what is needed, then press <b>Create issue</b>. The file${files.length>1?'s are':' is'} saved under the issue's Documents.</div>`);
-    const c=document.getElementById('is-pc');if(c)c.textContent=d.photos.length?d.photos.length+' photo(s) from the document will be added':'';}
+    const tx=document.getElementById('ie-x');if(tx){tx.style.minHeight='300px';}const c=document.getElementById('is-pc');if(c)c.textContent=d.photos.length?d.photos.length+' photo(s) from the document will be added':'';}
   catch(e){btn.disabled=false;btn.innerHTML='<b>＋ New issue from this document</b>';showToast('Could not read the PDF: '+e.message,'error');}
 }
 // a document or photo chosen with the upload button: ask which issue it belongs to

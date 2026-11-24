@@ -6959,7 +6959,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1610';
+const APP_BUILD='20261124-1625';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -7920,33 +7920,35 @@ async function anxGenCR(){
   }catch(e){showToast('Could not build the Excel file: '+e.message,'error');}
 }
 // ── Annexure-6: update the CR cases from an Excel file (matched by CR No.)
-const CRX_F=[['cr_no',/^(cr|clarification|request|rfc|rfi)\s*(request\s*)?(no|number|ref|reference|id)\b|^cr$|^ref(erence)?\s*no/],['issue_date',/^(issue|issued|raised|submission|submitted)\s*(date|on)?$|^date\s*(of\s*)?(issue|issued|raised)|^date$/],
-  ['subject',/related system|subject|description|title|^system|document/],['status',/^(cr\s*)?status$/],['closed_date',/clos(ed|ure|ing)\s*(date|on)?|date\s*(of\s*)?clos/],['action',/^action|response|reply|^next step/],['notes',/^(notes?|remarks?|comments?)$/]];
-let crxPlan=null;
+const CRX_F=[['cr_no',/^(cr|clarifications?|requests?|rfc|rfi)(\s*requests?)?\s*(no|number|ref|reference|id)\b|^cr$|^ref(erence)?\s*no/],['issue_date',/^(issue|issued|raised|raising|submission|submitted)\s*(date|data|on)?$|^date\s*(of\s*)?(issue|issued|raised)|^date$/],
+  ['subject',/related system|subject|desc|discr|discription|title|^system|document/],['status',/^(cr\s*)?status\b/],['closed_date',/clos(ed|ure|ing)\s*(date|on)?|date\s*(of\s*)?clos/],['action',/^action|response|reply|^next step/],['notes',/^(notes?|remarks?|comments?)$/]];
+let crxPlan=null,crxFile=null;
 function crxDate(v){if(v==null||v==='')return null;const s=String(v).trim();if(/^\d{4,5}(\.\d+)?$/.test(s))return xlSerialToIso(s)||null;let m;
   if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)))return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
   if((m=s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/)))return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
   const d=new Date(s);return isNaN(d)?null:new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);}
 function crxStatus(v){const s=String(v||'').toLowerCase();if(!s.trim())return null;if(/clos|done|complete|resolved|answered/.test(s))return 'Closed';if(/review|discussion|progress|pending|ongoing|evaluat/.test(s))return 'Under review';if(/remov|cancel|withdraw|void/.test(s))return 'Removed';return 'Issued';}
 const crxKey=s=>String(s||'').toUpperCase().replace(/\s+/g,'');
-async function crxRead(buf){
-  const bk=await xlOpen(buf);
-  for(const sh of [...bk.sheets].sort((a,b)=>/cr|register|case/i.test(b.name)-/cr|register|case/i.test(a.name))){
+async function crxRead(buf,want){
+  const bk=await xlOpen(buf);const pri=n=>/^(qs2|q2)\b|qassim/i.test(n)?3:/cr|register|case/i.test(n)?2:/both|boht|all/i.test(n)?1:0;const found=[];
+  for(const sh of [...bk.sheets].sort((a,b)=>pri(b.name)-pri(a.name))){
     await xlSheet(bk,sh.name);const cells=xlCells(bk,bk.xml[sh.path]);let hdr=0,map={};
     for(let r=1;r<=20&&!hdr;r++){const m={};for(const c of cells.values()){if(c.row!==r||c.v==null)continue;const lab=anxNorm(c.v);const f=CRX_F.find(z=>z[1].test(lab)&&!Object.values(m).includes(z[0]));if(f&&!m[c.col])m[c.col]=f[0];}
       if(Object.values(m).includes('cr_no')&&Object.keys(m).length>=3){hdr=r;map=m;}}
     if(!hdr)continue;const maxR=Math.max(0,...[...cells.values()].map(c=>c.row));const rows=[];const keyCol=Object.keys(map).find(c=>map[c]==='cr_no');
     for(let r=hdr+1;r<=maxR;r++){const k=cells.get(keyCol+r);const no=k&&k.v!=null?String(k.v).trim():'';if(!no||!/[a-z]/i.test(no)&&!/\d{3}/.test(no))continue;
       const o={cr_no:no};for(const [col,f] of Object.entries(map)){if(f==='cr_no')continue;const c=cells.get(col+r);let v=c&&c.v!=null?String(c.v).trim():'';
-        if(f==='issue_date'||f==='closed_date')v=crxDate(v);else if(f==='status')v=crxStatus(v);if(v!=null&&v!=='')o[f]=v;}
+        if(f==='issue_date'||f==='closed_date')v=crxDate(v);
+        else if(f==='status'&&v.length>24){if(!Object.values(map).includes('action'))o.action=v;v=/\b(clos(ed|ure)|resolved|answered|done|completed)\b/i.test(v)?'Closed':null;}
+        else if(f==='status')v=crxStatus(v);if(v!=null&&v!=='')o[f]=v;}
       rows.push(o);}
-    return {sheet:sh.name,cols:Object.values(map),rows};}
-  return null;}
-async function anxImportCR(file){
+    if(rows.length)found.push({sheet:sh.name,cols:Object.values(map),rows});}
+  if(!found.length)return null;const R=found.find(f=>f.sheet===want)||found[0];R.sheets=found.map(f=>f.sheet+' ('+f.rows.length+')');R.names=found.map(f=>f.sheet);return R;}
+async function anxImportCR(file,want){
   if(!mrCanEdit()){showToast('Only supervisors and admins can update the CR cases.','error');return;}
   if(!/\.xlsx$/i.test(file.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
   showToast('Reading '+file.name+' …');
-  try{const buf=await file.arrayBuffer();const R=await crxRead(buf);
+  try{const buf=await file.arrayBuffer();const R=await crxRead(buf,want);crxFile=file;
     if(!R||!R.rows.length){const k=anxDetect(await xlOpen(buf));
       if(k){if(confirm(`This file is not a CR list — it looks like Annexure-${ANX[k].n} (${ANX[k].title}).\n\nUpload it as Annexure-${ANX[k].n}?`))return anxUpload(file,k);return;}
       throw new Error('No CR list was found in this file — it needs a "CR No" column.');}
@@ -7963,7 +7965,7 @@ async function anxImportCR(file){
     crxPlan={add,upd,file:file.name};
     const L={issue_date:'Issue date',subject:'Subject',status:'Status',closed_date:'Closed on',action:'Action',notes:'Notes'};const e=escapeHtml;const sh=v=>e(String(v==null||v===''?'—':v).slice(0,60));
     mrEl('mr-staff-title').textContent='Update CR cases from Excel';
-    mrEl('mr-staff-form').innerHTML=`<div class="mr-note" style="margin-bottom:8px">📄 <b>${e(file.name)}</b> · sheet “${e(R.sheet)}” · ${R.rows.length} rows read. Cases are matched by <b>CR No</b>; empty cells in the file do not erase anything.</div>
+    mrEl('mr-staff-form').innerHTML=`<div class="mr-note" style="margin-bottom:8px">📄 <b>${e(file.name)}</b> · ${R.names.length>1?`sheet <select onchange="anxImportCR(crxFile,this.value)">${R.names.map((n,i)=>`<option value="${e(n)}"${n===R.sheet?' selected':''}>${e(R.sheets[i])}</option>`).join('')}</select>`:`sheet “${e(R.sheet)}”`} · ${R.rows.length} rows read. Cases are matched by <b>CR No</b>; empty cells in the file do not erase anything.</div>
       <div class="crx-k"><div><b>${add.length}</b><span>new</span></div><div><b>${upd.length}</b><span>updated</span></div><div><b>${same.length}</b><span>no change</span></div><div><b>${notIn.length}</b><span>not in the file (kept)</span></div></div>
       ${upd.length?`<div class="crx-h">Changes</div><div class="crx-l">${upd.map(({ex,ch})=>`<div><code>${e(ex.cr_no)}</code> ${Object.entries(ch).map(([f,v])=>`<span>${L[f]}: <s>${sh(ex[f]&&f.endsWith('date')?String(ex[f]).slice(0,10):ex[f])}</s> → <b>${sh(v)}</b></span>`).join('')}</div>`).join('')}</div>`:''}
       ${add.length?`<div class="crx-h">New cases</div><div class="crx-l">${add.map(o=>`<div><code>${e(o.cr_no)}</code> <span>${sh(o.subject)}</span> <span>· ${e(o.status)}</span></div>`).join('')}</div>`:''}

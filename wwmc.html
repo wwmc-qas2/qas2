@@ -457,6 +457,7 @@ button,.btn,.tab,a,select,summary,label{touch-action:manipulation;-webkit-tap-hi
 .is-pick{display:grid;gap:8px}.is-pick   .is-ed{margin-left:auto;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:11px;padding:2px 8px;cursor:pointer;color:#374151}.is-ed:hover{background:#F3F4F6}
   .is-eform{display:flex;flex-direction:column;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px}.is-eform textarea{width:100%;font:inherit;font-size:13px;padding:8px;border:1px solid #D1D5DB;border-radius:6px}.is-eform .is-decf{display:flex}
   .is-delb{color:#B91C1C!important;border-color:#FCA5A5!important}
+  .crx-sh{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;background:#F3F6FA;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:13px}.crx-sh span{font-weight:600;color:#12264A}.crx-sh label{display:flex;gap:5px;align-items:center;cursor:pointer}.crx-sh small{color:#6B7280}
   .crx-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.crx-k div{background:#F3F6FA;border-radius:8px;padding:8px;text-align:center}.crx-k b{display:block;font-size:20px;color:#12264A}.crx-k span{font-size:11px;color:#6B7280}
   .crx-h{font-weight:700;color:#12264A;margin-top:12px;font-size:12px;text-transform:uppercase;letter-spacing:.05em}.crx-l{max-height:240px;overflow:auto;border:1px solid #E5E7EB;border-radius:8px;font-size:12px}.crx-l div{padding:6px 8px;border-bottom:1px solid #F1F5F9;display:flex;flex-wrap:wrap;gap:4px 10px}.crx-l s{color:#9CA3AF}.crx-l b{color:#166534}
   .is-new{flex-direction:column;align-items:flex-start;gap:2px;border:1.5px dashed #1F3864;background:#F1F5FB}.is-pick .is-new b{color:#1F3864}.is-pick button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E3E8EF;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}.is-pick button:hover{background:#F1F5FB;border-color:#1F3864}.is-pick b{flex:1;font-size:14px;color:#0F2747}
@@ -6959,7 +6960,7 @@ async function opMeterSave(code,btn){
   btn.disabled=false;
 }
 // ═════════ NEW VERSION NOTICE — tells the user when the site was updated, so an old copy is not used ═════════
-const APP_BUILD='20261124-1625';
+const APP_BUILD='20261124-1640';
 async function appCheckUpdate(){try{if(location.protocol==='file:')return;const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();const m=t.match(/const APP_BUILD='([^']+)'/);
   if(m&&m[1]!==APP_BUILD&&!document.getElementById('app-upd')){const d=document.createElement('div');d.id='app-upd';d.innerHTML='<span>🔄 A new version of the site is available.</span><button type="button" onclick="location.reload()">Reload now</button>';document.body.appendChild(d);}}catch(e){}}
 setTimeout(appCheckUpdate,4000);setInterval(appCheckUpdate,5*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appCheckUpdate();});
@@ -7943,8 +7944,13 @@ async function crxRead(buf,want){
         else if(f==='status')v=crxStatus(v);if(v!=null&&v!=='')o[f]=v;}
       rows.push(o);}
     if(rows.length)found.push({sheet:sh.name,cols:Object.values(map),rows});}
-  if(!found.length)return null;const R=found.find(f=>f.sheet===want)||found[0];R.sheets=found.map(f=>f.sheet+' ('+f.rows.length+')');R.names=found.map(f=>f.sheet);return R;}
-async function anxImportCR(file,want){
+  if(!found.length)return null;
+  // which sheets to take: the user's choice, else the last choice, else this plant + "both plants" (not the other plant)
+  let sel=Array.isArray(want)?want:null;if(!sel){try{const m=JSON.parse(localStorage.getItem('qas2_crx_sheets')||'null');if(m)sel=found.map(f=>f.sheet).filter(n=>m.includes(n));}catch(e){}}
+  if(!sel||!sel.length)sel=found.filter(f=>!/ta2|taiba|t2\b/i.test(f.sheet)).map(f=>f.sheet);if(!sel.length)sel=[found[0].sheet];
+  const rows=[],seen=new Set();found.filter(f=>sel.includes(f.sheet)).forEach(f=>f.rows.forEach(o=>{const k=crxKey(o.cr_no);if(!seen.has(k)){seen.add(k);rows.push({...o});}}));
+  return {sheet:sel.join(' + '),sel,all:found.map(f=>({n:f.sheet,c:f.rows.length})),cols:[...new Set(found.flatMap(f=>f.cols))],rows};}
+async function anxImportCR(file,want){if(Array.isArray(want)){try{localStorage.setItem('qas2_crx_sheets',JSON.stringify(want));}catch(e){}}
   if(!mrCanEdit()){showToast('Only supervisors and admins can update the CR cases.','error');return;}
   if(!/\.xlsx$/i.test(file.name)){showToast('Please choose an Excel file (.xlsx).','error');return;}
   showToast('Reading '+file.name+' …');
@@ -7965,7 +7971,7 @@ async function anxImportCR(file,want){
     crxPlan={add,upd,file:file.name};
     const L={issue_date:'Issue date',subject:'Subject',status:'Status',closed_date:'Closed on',action:'Action',notes:'Notes'};const e=escapeHtml;const sh=v=>e(String(v==null||v===''?'—':v).slice(0,60));
     mrEl('mr-staff-title').textContent='Update CR cases from Excel';
-    mrEl('mr-staff-form').innerHTML=`<div class="mr-note" style="margin-bottom:8px">📄 <b>${e(file.name)}</b> · ${R.names.length>1?`sheet <select onchange="anxImportCR(crxFile,this.value)">${R.names.map((n,i)=>`<option value="${e(n)}"${n===R.sheet?' selected':''}>${e(R.sheets[i])}</option>`).join('')}</select>`:`sheet “${e(R.sheet)}”`} · ${R.rows.length} rows read. Cases are matched by <b>CR No</b>; empty cells in the file do not erase anything.</div>
+    mrEl('mr-staff-form').innerHTML=`<div class="mr-note" style="margin-bottom:8px">📄 <b>${e(file.name)}</b> · ${R.rows.length} CR cases read.</div>${R.all.length>1?`<div class="crx-sh"><span>Take the cases from:</span>${R.all.map(x=>`<label><input type="checkbox" value="${e(x.n)}"${R.sel.includes(x.n)?' checked':''} onchange="const v=[...this.closest('.crx-sh').querySelectorAll('input:checked')].map(i=>i.value);if(!v.length){this.checked=true;return;}anxImportCR(crxFile,v)"> ${e(x.n)} <small>(${x.c})</small></label>`).join('')}</div>`:''}<div class="mr-note" style="margin-bottom:8px"> Cases are matched by <b>CR No</b>; empty cells in the file do not erase anything.</div>
       <div class="crx-k"><div><b>${add.length}</b><span>new</span></div><div><b>${upd.length}</b><span>updated</span></div><div><b>${same.length}</b><span>no change</span></div><div><b>${notIn.length}</b><span>not in the file (kept)</span></div></div>
       ${upd.length?`<div class="crx-h">Changes</div><div class="crx-l">${upd.map(({ex,ch})=>`<div><code>${e(ex.cr_no)}</code> ${Object.entries(ch).map(([f,v])=>`<span>${L[f]}: <s>${sh(ex[f]&&f.endsWith('date')?String(ex[f]).slice(0,10):ex[f])}</s> → <b>${sh(v)}</b></span>`).join('')}</div>`).join('')}</div>`:''}
       ${add.length?`<div class="crx-h">New cases</div><div class="crx-l">${add.map(o=>`<div><code>${e(o.cr_no)}</code> <span>${sh(o.subject)}</span> <span>· ${e(o.status)}</span></div>`).join('')}</div>`:''}
